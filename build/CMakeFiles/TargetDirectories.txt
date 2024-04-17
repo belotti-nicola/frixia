@@ -1,3 +1,0 @@
-/home/nicola/Projects/FRIXIA/frixia/build/CMakeFiles/rebuild_cache.dir
-/home/nicola/Projects/FRIXIA/frixia/build/CMakeFiles/edit_cache.dir
-/home/nicola/Projects/FRIXIA/frixia/build/CMakeFiles/main.dir
