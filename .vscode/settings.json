@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "epoll.h": "c",
+        "frixia_http.h": "c"
+    }
+}

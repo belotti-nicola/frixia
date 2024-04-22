@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(
-  frixia
-  VERSION 1.0
-  LANGUAGES CXX
-  DESCRIPTION "Event Engine example"
-  )
+project(frixia C)
 
-add_executable(main 
-  main.cpp
+add_executable(frixia
+  main.c
+  src/core/frixia.h
+  src/core/frixia.c
 )
+
