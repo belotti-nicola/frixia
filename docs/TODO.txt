@@ -1,1 +1,1 @@
-returning error codes
+returning error codes (frixia + errno)
