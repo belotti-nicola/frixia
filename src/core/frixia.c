@@ -51,7 +51,7 @@ int frixia_start(){
     if (change_fd == -1) {
         return ERR_CHANGEPIPE_OPENINGFD;
     }
-    printf("EPOLL CHANGE::%d",change_fd);
+    printf("EPOLL CHANGE::%d\n",change_fd);
 
     //add the "change-epoll_ctl" fd
     struct epoll_event ev;
@@ -75,7 +75,11 @@ int frixia_start(){
         }
         for(int i=0;i<events_number;i++){
             if(events[i].data.fd == change_fd){
-                keep_looping = false;
+                char buf[1024];
+                read(change_fd,buf,O_NONBLOCK);
+                if(strcmp(buf, "stop\n")== 0){
+                    keep_looping = false;
+                }
             }
         }
     }
