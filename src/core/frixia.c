@@ -27,7 +27,9 @@
 //max events definition for epoll_wait
 #define FRIXIA_EPOLL_WAIT_MAX_SIZE 10
 
-#define FRIXIA_READ_SIZE 10
+//COMMAND LENGTH READING THE PIPE
+#define FRIXIA_READ_SIZE 64
+
 
 enum possible_returns {
     OK,
@@ -92,63 +94,72 @@ int frixia_start(){
         }
         for(int i=0;i<events_number;i++){
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
+            printf("%d\n",events[i].data.fd);
             if(events[i].data.fd == change_fd){
-                char buf[1024];
-                read(change_fd,buf,O_NONBLOCK);
+                char buf[FRIXIA_READ_SIZE];
+                read(change_fd,buf,FRIXIA_READ_SIZE+1);
+                printf("::%s\n",buf);
                 if(strcmp(buf, "STOP ALL\n") == 0){
                     keep_looping = false;
                     return frixia_stop();
                 } 
-                if(strcmp(buf, "START HTTP\n") == 0 && http_fd == -1 ) {
-                    http_fd = socket(AF_INET, SOCK_STREAM, 0);
-                    if(http_fd == -1)
-                    {
-                        printf("ERROR CREATING SOCKET FILE DESCRIPTOR\n");
-                        return ERR_HTTP_SOCKET;
-                    }
-                    printf("http %d\n",http_fd);
-                    int reuse=1;
-                    if (setsockopt(http_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&reuse, sizeof(reuse))<0){
-                        printf("setsockopt(SO_REUSEADDR) failed\n");
-                        return ERR_HTTP_SETSOCKETOPT;
-                    }
+                if(strcmp(buf, "START HTTP\n") == 0) 
+                {
+                    printf("START HTTP %d\n",http_fd);
+                    if(http_fd == -1 ){
+                        http_fd = socket(AF_INET, SOCK_STREAM, 0);
+                        if(http_fd == -1)
+                        {
+                            printf("ERROR CREATING SOCKET FILE DESCRIPTOR\n");
+                            return ERR_HTTP_SOCKET;
+                        }
+                        printf("http %d\n",http_fd);
+                        int reuse=1;
+                        if (setsockopt(http_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&reuse, sizeof(reuse))<0){
+                            printf("setsockopt(SO_REUSEADDR) failed\n");
+                            return ERR_HTTP_SETSOCKETOPT;
+                        }
 
-                    struct sockaddr_in serveraddr;
-                    serveraddr.sin_family = AF_INET;
-                    serveraddr.sin_addr.s_addr = INADDR_ANY;
-                    serveraddr.sin_port = htons(8080);
-                    int retVal = bind(http_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
-                    if(retVal < 0)
-                    {
-                        printf("bind error!!%d\n",errno);
-                        return ERR_HTTP_BIND;
-                    }
+                        struct sockaddr_in serveraddr;
+                        serveraddr.sin_family = AF_INET;
+                        serveraddr.sin_addr.s_addr = INADDR_ANY;
+                        serveraddr.sin_port = htons(8080);
+                        int retVal = bind(http_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
+                        if(retVal < 0)
+                        {
+                            printf("bind error!!%d\n",errno);
+                            return ERR_HTTP_BIND;
+                        }
 
-                    if(listen(http_fd, 10) == -1)
-                    {
-                        printf("listen error!!\n");
-                        return ERR_HTTP_LISTEN;
-                    }
-                    struct epoll_event ev_http;
-                    ev_http.events = EPOLLIN | EPOLLET;
-                    ev_http.data.fd = http_fd;
-                    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, http_fd, &ev_http) < 0) {
-                        printf("%d\n",errno);
-                        return ERR_EPOLL_CTL_ADDHTTP;
-                    }
-                                
+                        if(listen(http_fd, 10) == -1)
+                        {
+                            printf("listen error!!\n");
+                            return ERR_HTTP_LISTEN;
+                        }
+                        struct epoll_event ev_http;
+                        ev_http.events = EPOLLIN | EPOLLET;
+                        ev_http.data.fd = http_fd;
+                        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, http_fd, &ev_http) < 0) {
+                            printf("%d\n",errno);
+                            return ERR_EPOLL_CTL_ADDHTTP;
+                        }
+                    }           
                 }
-                if(strcmp(buf, "STOP HTTP\n") == 0 && http_fd != -1) {
-                    epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD,http_fd, NULL); 
-                    if(epoll_ctl_retval == -1){
-                        printf("%d\n",errno);
-                        return ERR_HTTP_STOP;
+                if(strcmp(buf, "STOP HTTP\n") == 0 ) 
+                {
+                    printf("STOP HTTP %d\n",http_fd);
+                    if (http_fd > 0 ){
+                        epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD,http_fd, NULL); 
+                        if(epoll_ctl_retval == -1){
+                            printf("%d\n",errno);
+                            return ERR_HTTP_STOP;
+                        }
                     }
                 }
                 if(strcmp(buf, "START UDP\n") == 0) {} 
                 if(strcmp(buf, "STOP UDP\n") == 0) {}
             } else {
-                printf("%d.\n",events[i].data.fd);
+                printf("FRIXIA FD CHANGED::%d\n",events[i].data.fd);
             }
             
         }
