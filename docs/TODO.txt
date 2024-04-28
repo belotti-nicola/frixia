@@ -1,1 +1,4 @@
 returning error codes (frixia + errno)
+rename HTTP in TCP
+change_epoll_ctl seems to spawn 2 events 
+define start stop in one single point, usable everywhere
