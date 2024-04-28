@@ -45,13 +45,18 @@ enum possible_returns {
     ERR_HTTP_SETSOCKETOPT,
     ERR_HTTP_BIND,
     ERR_HTTP_LISTEN,
-    ERR_HTTP_STOP
+    ERR_HTTP_STOP,
+    ERR_UDP_SOCKET,
+    ERR_UDP_ADD,
+    ERR_UDP_LISTEN,
+    ERR_UDP_NONBLOCKING,
+    ERR_UDP_STOP
 
 };
 
 
 int frixia_start(){
-    int http_fd=-1;
+    int http_fd=-1,udp_fd;
 
     //create epoll
 	int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -156,8 +161,42 @@ int frixia_start(){
                         }
                     }
                 }
-                if(strcmp(buf, "START UDP\n") == 0) {} 
-                if(strcmp(buf, "STOP UDP\n") == 0) {}
+                if(strcmp(buf, "START UDP\n") == 0) {
+                    struct sockaddr_in servaddr, cliaddr; 
+                    
+                    // Creating socket file descriptor
+                    udp_fd = socket(AF_INET, SOCK_DGRAM, 0);
+                    if ( udp_fd == -1 ) { 
+                        return ERR_UDP_SOCKET; 
+                    }
+                                       
+                    // Filling server information 
+                    servaddr.sin_family    = AF_INET; // IPv4 
+                    servaddr.sin_addr.s_addr = INADDR_ANY; 
+                    servaddr.sin_port = htons(8080); 
+                    int bind_ret_val = bind(udp_fd,(const struct sockaddr *)&servaddr,sizeof(servaddr)); 
+                    if ( bind_ret_val == -1 ) { 
+                        return ERR_UDP_SOCKET;  
+                    }
+
+                    struct epoll_event ev_udp;
+                    ev_udp.events = EPOLLIN | EPOLLET;
+                    ev_udp.data.fd = udp_fd;
+                    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, udp_fd, &ev_udp) < 0) {
+                        printf("%d\n",errno);
+                        return ERR_UDP_ADD;
+                    }                                    
+                } 
+                if(strcmp(buf, "STOP UDP\n") == 0) {
+                    printf("STOP UDP %d\n",udp_fd);
+                    if (udp_fd > 0 ){
+                        epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_DEL,udp_fd, NULL); 
+                        if(epoll_ctl_retval == -1){
+                            printf("%d\n",errno);
+                            return ERR_UDP_STOP;
+                        }
+                    }
+                }
             } else {
                 printf("FRIXIA FD CHANGED::%d\n",events[i].data.fd);
             }
