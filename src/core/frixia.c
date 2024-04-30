@@ -54,6 +54,7 @@ enum possible_returns {
 
 };
 
+#define ERRNO_CHECK(A) (A>0?(A):({printf("%d %s %d\n",errno,__FILE__,__LINE__);exit(EXIT_FAILURE);}))
 
 int frixia_start(){
     int http_fd=-1,udp_fd;
