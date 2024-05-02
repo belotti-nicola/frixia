@@ -54,7 +54,6 @@ enum possible_returns {
 
 };
 
-#define ERRNO_CHECK(A) (A>0?(A):({printf("%d %s %d\n",errno,__FILE__,__LINE__);exit(EXIT_FAILURE);}))
 
 int frixia_start(){
     int http_fd=-1,udp_fd;
@@ -208,12 +207,22 @@ int frixia_start(){
     return OK;
 }
 
-int frixia_stop(){
-    //stop all
+int frixia_stop(http_fd,udp_fd){
+    if(http_fd > 2){
+        FILE *fp = fopen("change_epoll_ctl", "ab");
+        if (fp != NULL){
+            fputs("STOP_HTTP\n", fp);
+            fclose(fp);
+        }
+    }
+    if(udp_fd > 2){
+        FILE *fp = fopen("change_epoll_ctl", "ab");
+        if (fp != NULL){
+            fputs("STOP UPD\n", fp);
+            fclose(fp);
+        }
+    }
 
     return OK;
 }
 
-int frixia_start_http_listening(){
-    return 1;
-}
