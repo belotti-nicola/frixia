@@ -50,7 +50,9 @@ enum possible_returns {
     ERR_UDP_ADD,
     ERR_UDP_LISTEN,
     ERR_UDP_NONBLOCKING,
-    ERR_UDP_STOP
+    ERR_UDP_STOP,
+    ERR_STOPPING_FRIXIA_HTTP,
+    ERR_STOPPING_FRIXIA_UDP
 
 };
 
@@ -210,17 +212,19 @@ int frixia_start(){
 int frixia_stop(http_fd,udp_fd){
     if(http_fd > 2){
         FILE *fp = fopen("change_epoll_ctl", "ab");
-        if (fp != NULL){
-            fputs("STOP_HTTP\n", fp);
-            fclose(fp);
+        if (fp == NULL){
+            return ERR_STOPPING_FRIXIA_HTTP;
         }
+        fputs("STOP_HTTP\n", fp);
+        fclose(fp);
     }
     if(udp_fd > 2){
         FILE *fp = fopen("change_epoll_ctl", "ab");
-        if (fp != NULL){
-            fputs("STOP UPD\n", fp);
-            fclose(fp);
+        if (fp == NULL){
+            return ERR_STOPPING_FRIXIA_UDP;
         }
+        fputs("STOP UPD\n", fp);
+        fclose(fp);
     }
 
     return OK;
