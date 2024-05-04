@@ -108,7 +108,7 @@ int frixia_start(){
                 printf("::%s\n",buf);
                 if(strcmp(buf, "STOP ALL\n") == 0){
                     keep_looping = false;
-                    return frixia_stop();
+                    return frixia_stop(http_fd, udp_fd);
                 } 
                 if(strcmp(buf, "START HTTP\n") == 0) 
                 {
@@ -209,7 +209,7 @@ int frixia_start(){
     return OK;
 }
 
-int frixia_stop(http_fd,udp_fd){
+int frixia_stop(int http_fd,int udp_fd){
     if(http_fd > 2){
         FILE *fp = fopen("change_epoll_ctl", "ab");
         if (fp == NULL){
