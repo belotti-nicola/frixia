@@ -18,6 +18,8 @@
 
 
 #include "frixia.h"
+#include "../http/frixia_http.h"
+
 
 
 //expected fds to monitor. Just a kernel hint
@@ -199,9 +201,18 @@ int frixia_start(){
                         }
                     }
                 }
-            } else {
-                printf("FRIXIA FD CHANGED::%d\n",events[i].data.fd);
             }
+            
+            if(events[i].data.fd == http_fd){
+                printf("HTTP %d\n",parse_http_request());
+            }
+            
+            if(events[i].data.fd == udp_fd){
+                printf("UDP %d\n",parse_http_request());
+            }
+            
+            
+            printf("event::%d :: %d %d\n",events[i].data.fd,http_fd,udp_fd);
             
         }
     }

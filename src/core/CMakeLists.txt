@@ -1,9 +1,6 @@
-target_sources(core
-  PRIVATE frixia.c
-  PUBLIC frixia.h
-)
-
-
-target_include_directories(core
-  PUBLIC core
+add_library(core
+  frixia.c
+  frixia.h
+  ../http/frixia_http.h
+  ../http/frixia_http.c
 )
