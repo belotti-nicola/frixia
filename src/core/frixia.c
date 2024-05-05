@@ -19,6 +19,7 @@
 
 #include "frixia.h"
 #include "../http/frixia_http.h"
+#include "../http/frixia_http_request.h"
 
 
 
@@ -223,6 +224,9 @@ int frixia_start(){
                     return ERR_READING_TCP;
                 }
                 //DO PROCESSING SOMEWAY AND COMPUTE ANSWER (WHICH IS BUFFER)
+                struct HTTPRequest r;
+                parse_http_request(buffer,&r);
+                printf("%s\n",r.method);
                 if (write(client_fd, buffer, size) < 0) {
 				    return ERR_WRITING_TCP;
                 }
