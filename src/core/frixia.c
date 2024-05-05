@@ -54,7 +54,10 @@ enum possible_returns {
     ERR_UDP_NONBLOCKING,
     ERR_UDP_STOP,
     ERR_STOPPING_FRIXIA_HTTP,
-    ERR_STOPPING_FRIXIA_UDP
+    ERR_STOPPING_FRIXIA_UDP,
+    ERR_ACCEPTING_TCP,
+    ERR_READING_TCP,
+    ERR_WRITING_TCP
 
 };
 
@@ -204,16 +207,33 @@ int frixia_start(){
             }
             
             if(events[i].data.fd == http_fd){
-                printf("HTTP %d\n",parse_http_request());
+                char buffer[2048] = {0};
+                struct sockaddr in_addr;
+                socklen_t in_len;
+                int client_fd;
+
+                in_len = sizeof(in_addr);
+                client_fd = accept(http_fd, &in_addr, &in_len);
+                if(client_fd == -1){
+                    return ERR_ACCEPTING_TCP;
+                }
+                memset(buffer, 0, sizeof(buffer));
+                int size = read(client_fd, buffer, sizeof(buffer));
+                if ( size < 0 ) {
+                    return ERR_READING_TCP;
+                }
+                //DO PROCESSING SOMEWAY AND COMPUTE ANSWER (WHICH IS BUFFER)
+                if (write(client_fd, buffer, size) < 0) {
+				    return ERR_WRITING_TCP;
+                }
+			    close(client_fd);
             }
             
             if(events[i].data.fd == udp_fd){
-                printf("UDP %d\n",parse_http_request());
+                printf("UDP \n");
             }
             
-            
-            printf("event::%d :: %d %d\n",events[i].data.fd,http_fd,udp_fd);
-            
+                        
         }
     }
 
