@@ -13,19 +13,12 @@
 
 
 enum Method {
+    PARSE_ERROR,
     GET,
-    POST
-};
-
-
-enum State {
-    START,
-    METHOD,
-    PATH,
-    VERSION,
-    HEADER_KEY,
-    HEADER_VALUE,
-    END
+    POST,
+    PUT,
+    PATCH,
+    DELETE
 };
 
 struct HTTPRequest {
@@ -37,53 +30,208 @@ struct HTTPRequest {
 };
 
 void parse_http_request(char *request_string, struct HTTPRequest *request) {
-    enum State state = START;
-    char* aux = request_string;
-    int i;
-    switch(*request_string){
-        case 'G':
-            request->method = GET;
-            aux = aux+4;
-            break;
-        case 'P':
-            request->method = POST;
-            aux = aux+5;
-            break;
-        default:
-            break;
+    if(*request_string == '\0'){
+        printf("A");
+        return;
     }
-    for(i=0;*aux != ' ';aux++,i++){
-        request->path[i]=*aux;
-    }
-    request->path[i] = '\0';
 
-    aux++;
+    int state = 1;
+    char* ptr = request_string;
+    while(*ptr != '\0'){
+        switch(state){
+            case -1: {
+                ptr++;
+                request->method = PARSE_ERROR;
+                break;
+            }
+            case 1:{
+                if(*ptr != 'G' && *ptr != 'P' && *ptr != 'D'){
+                    state=-1;
+                }
+                if(*ptr == 'G'){
+                    state=2;
+                }
+                if(*ptr == 'P'){
+                    state=5;
+                }
+                if(*ptr == 'D'){
+                    state=12;
+                }
+                ptr++;
+                break;
+            }
+            case 2:{
+                if(*ptr != 'E'){
+                    state=-1;
+                }
+                if(*ptr == 'E'){
+                    state=3;
+                }
+                ptr++;
+                break;
+            }
+            case 3:{
+                if(*ptr != 'T'){
+                    state=-1;
+                }
+                if(*ptr == 'T'){
+                    state=4;
+                    request->method = GET;
+                }
+                ptr++;
+                break;
+            }
+            case 4:{
+                ptr++;
+                break;
+            }
+            case 5:{
+                if(*ptr != 'O' && *ptr != 'U' && *ptr != 'A'){
+                    state=-1;
+                }
+                if(*ptr == 'O'){
+                    state=6;
+                }
+                if(*ptr == 'U'){
+                    state=8;
+                }
+                if(*ptr == 'A'){
+                    state=9;
+                }
+                ptr++;
+                break;
+            }
+            case 6:{
+                if(*ptr != 'S'){
+                    state=-1;
+                }
+                if(*ptr == 'S'){
+                    state=7;
+                }
+                ptr++;
+                break;
+            }
+            case 7:{
+                if(*ptr != 'T'){
+                    state=-1;
+                }
+                if(*ptr == 'T'){
+                    state=4;
+                    request->method = POST;
+                }
+                ptr++;
+                break;
+            }
+            case 8:{
+                if(*ptr != 'T'){
+                    state=-1;
+                }
+                if(*ptr == 'T'){
+                    state=4;
+                    request->method = PUT;
+                }
+                ptr++;
+                break;
+            }
+            case 9:{
+                if(*ptr != 'T'){
+                    state=-1;
+                }
+                if(*ptr == 'T'){
+                    state=10;
+                }
+                ptr++;
+                break;
+            }
+            case 10:{
+                if(*ptr != 'C'){
+                    state=-1;
+                }
+                if(*ptr == 'C'){
+                    state=11;
+                }
+                ptr++;
+                break;
+            }
+            case 11:{
+                if(*ptr != 'H'){
+                    state=-1;
+                }
+                if(*ptr == 'H'){
+                    request->method = PATCH;
+                    state=4;
+                }
+                ptr++;
+                break;
+            }
+            case 12:{
+                if(*ptr != 'E'){
+                    state=-1;
+                }
+                if(*ptr == 'E'){
+                    state=13;
+                }
+                ptr++;
+                break;
+            }
+            case 13:{
+                if(*ptr != 'L'){
+                    state=-1;
+                }
+                if(*ptr == 'L'){
+                    state=14;
+                }
+                ptr++;
+                break;
+            }
+            case 14:{
+                if(*ptr != 'E'){
+                    state=-1;
+                }
+                if(*ptr == 'E'){
+                    state=15;
+                }
+                ptr++;
+                break;
+            }
+            case 15:{
+                if(*ptr != 'T'){
+                    state=-1;
+                }
+                if(*ptr == 'T'){
+                    state=16;
+                }
+                ptr++;
+                break;
+            }
+            case 16:{
+                if(*ptr != 'E'){
+                    state=-1;
+                }
+                if(*ptr == 'E'){
+                    state=4;
+                    request->method = DELETE;
+                }
+                ptr++;
+                break;
+            }
+        }
+    };
 
-    for(i=0;*aux != '\n';aux++,i++){
-        request->version[i]=*aux;
-    }
-    request->version[i] = '\0';
-    aux++;
 
-    printf("%s-",*aux);
-    for(i=0;*(aux+i)!='\0';i++){
-        printf("%d-",*aux);
-    }
+    printf("\nstate::%d\n",request->method);
+
 
 }
 
 
 int main() {
     struct HTTPRequest request;
-    FILE *fp = fopen("samples/sample3.txt", "r");
+    FILE *fp = fopen("samples/sample1.txt", "r");
     char request_string[200] = {0};
     fgets(request_string,201,fp); 
 
     parse_http_request(request_string, &request);
-    printf("\n");
-    printf("Method: %d\n", request.method);
-    printf("Path: %s\n", request.path);
-    printf("Version: %s\n",request.version);
 
     return 0;
 }
