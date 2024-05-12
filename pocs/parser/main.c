@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_METHOD_LENGTH 10
 #define MAX_PATH_LENGTH 100
@@ -31,7 +32,7 @@ struct HTTPRequest {
 
 void parse_http_request(char *request_string, struct HTTPRequest *request) {
     if(*request_string == '\0'){
-        printf("A");
+        printf("Empty string.");
         return;
     }
 
@@ -83,8 +84,9 @@ void parse_http_request(char *request_string, struct HTTPRequest *request) {
             }
             case 4:{
                 ptr++;
-                break;
+                state=17;
             }
+                break;
             case 5:{
                 if(*ptr != 'O' && *ptr != 'U' && *ptr != 'A'){
                     state=-1;
@@ -215,6 +217,119 @@ void parse_http_request(char *request_string, struct HTTPRequest *request) {
                 ptr++;
                 break;
             }
+            case 17: {
+                if(*ptr!=' '){
+                    state=-1;
+                }
+                if(*ptr==' '){
+                    state=18;
+                }
+                *ptr++;
+                break;
+            }
+            case 18: {
+                if(*ptr!=' ' && *ptr!='H'){
+                    state=-1;
+                }
+                if(*ptr==' '){
+                    state=18;
+                }
+                if(*ptr=='H'){
+                    state=19;
+                }
+                *ptr++;
+                break;
+            }
+            case 19: {
+                if(*ptr!='T'){
+                    state=-1;
+                }
+                if(*ptr=='T'){
+                    state=20;
+                }
+                *ptr++;
+                break;
+            }
+            case 20: {
+                if(*ptr!='T'){
+                    state=-1;
+                }
+                if(*ptr=='T'){
+                    state=21;
+                }
+                *ptr++;
+                break;
+            }
+            case 21: {
+                if(*ptr!='P'){
+                    state=-1;
+                }
+                if(*ptr=='P'){
+                    state=22;
+                }
+                *ptr++;
+                break;
+            }
+            case 22: {
+                if(*ptr!='/'){
+                    state=-1;
+                }
+                if(*ptr=='/'){
+                    state=23;
+                }
+                *ptr++;
+                break;
+            }
+            case 23: {
+                if(*ptr<'/'){
+                    state=-1;
+                }
+                if(*ptr=='/'){
+                    state=24;
+                }
+                *ptr++;
+                break;
+            }
+            case 24: {
+                if(*ptr<'0' || *ptr>'9'){
+                    state=-1;
+                }
+                if(*ptr=='/'){
+                    state=25;
+                }
+                *ptr++;
+                break;
+            }
+            case 25: {
+                if(*ptr<'.'){
+                    state=-1;
+                }
+                if(*ptr=='.'){
+                    state=26;
+                }
+                *ptr++;
+                break;
+            }
+            case 26: {
+                if(*ptr<'0' || *ptr>'9'){
+                    state=-1;
+                }
+                if(*ptr=='/'){
+                    state=27;
+                }
+                *ptr++;
+                break;
+            }
+            case 27: {
+                if(*ptr!='\n'){
+                    state=-1;
+                }
+                if(*ptr=='\n'){
+                    state=27;
+                }
+                *ptr++;
+                break;
+            }
         }
     };
 
@@ -227,7 +342,7 @@ void parse_http_request(char *request_string, struct HTTPRequest *request) {
 
 int main() {
     struct HTTPRequest request;
-    FILE *fp = fopen("samples/sample1.txt", "r");
+    FILE *fp = fopen("samples/sample3.txt", "r");
     char request_string[200] = {0};
     fgets(request_string,201,fp); 
 

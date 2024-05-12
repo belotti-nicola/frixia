@@ -1,9 +1,10 @@
 FEAT:
-    parser (UDP/TCP)
+    parser (UDP/TCP) 
     other listeners services
     dispatchers
     create library
     python integration
+    HTTP/UDP/.. to add fd listenings
 
 FIX:
     returning error codes (frixia + errno)
