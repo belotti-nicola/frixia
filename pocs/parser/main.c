@@ -36,7 +36,7 @@ void parse_http_request(char *request_string, struct HTTPRequest *request) {
         return;
     }
 
-    int state = 1;
+    int state = 1,tmp_index=0;
     char* ptr = request_string;
     while(*ptr != '\0'){
         switch(state){
@@ -82,9 +82,15 @@ void parse_http_request(char *request_string, struct HTTPRequest *request) {
                 ptr++;
                 break;
             }
-            case 4:{
-                ptr++;
-                state=17;
+            case 4: {
+                if(*ptr!=' '){
+                    state=-1;
+                }
+                if(*ptr==' '){
+                    state=17;
+                }
+                *ptr++;
+                break;
             }
                 break;
             case 5:{
@@ -219,14 +225,43 @@ void parse_http_request(char *request_string, struct HTTPRequest *request) {
             }
             case 17: {
                 if(*ptr!=' '){
+                    request->path[tmp_index]='\0';
                     state=-1;
                 }
                 if(*ptr==' '){
+                    state=17;
+                }
+                if(*ptr=='/'){
                     state=18;
+                    request->path[tmp_index]='/';
+                    tmp_index++;
                 }
                 *ptr++;
                 break;
             }
+            case 18: {
+                if(!isalpha(*ptr) && !isalnum(*ptr) && *ptr!='/' && *ptr!=' ' && *ptr=='.'){
+                    request->path[tmp_index]='\0';
+                    state=-1;
+                }
+                if(isalpha(*ptr) || isalnum(*ptr) || *ptr=='/' || *ptr=='.'){
+                    state=18;
+                    request->path[tmp_index]=*ptr;
+                    tmp_index++;
+                }
+                if(*ptr == ' '){
+                    state=19;
+                }
+                *ptr++;
+                break;
+            }
+            case 19:{
+                request->path[tmp_index]='\0';
+                *ptr++;
+            }
+         
+            /*
+            
             case 18: {
                 if(*ptr!=' ' && *ptr!='H'){
                     state=-1;
@@ -330,13 +365,13 @@ void parse_http_request(char *request_string, struct HTTPRequest *request) {
                 *ptr++;
                 break;
             }
+            */
         }
     };
 
 
     printf("\nstate::%d\n",request->method);
-
-
+    printf("\npath::%s\n",request->path);
 }
 
 
