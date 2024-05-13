@@ -4,7 +4,8 @@ FEAT:
     dispatchers
     create library
     python integration
-    HTTP/UDP/.. to add fd listenings
+    TCP/UDP/.. to add fd listenings
+    reentrancy check
 
 FIX:
     returning error codes (frixia + errno)
@@ -16,3 +17,5 @@ FIX:
     logger
     automatic test
 
+TODO 
+    icon

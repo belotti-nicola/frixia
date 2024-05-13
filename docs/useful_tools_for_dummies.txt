@@ -1,6 +1,6 @@
 *********************************************************************                                                               *
-echo "ADD HTTP" > change_epoll_ctl
-echo "START HTTP" > change_epoll_ctl
+echo "ADD TCP" > change_epoll_ctl
+echo "START TCP" > change_epoll_ctl
 curl 127.0.0.1:8080/helloworld
 
 *********************************************************************

@@ -1,6 +1,6 @@
 add_library(core
   frixia.c
   frixia.h
-  ../http/frixia_http.h
-  ../http/frixia_http.c
+  ../tcp/frixia_tcp.h
+  ../tcp/frixia_tcp.c
 )

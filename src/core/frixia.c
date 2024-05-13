@@ -18,8 +18,8 @@
 
 
 #include "frixia.h"
-#include "../http/frixia_http.h"
-#include "../http/frixia_http_request.h"
+#include "../tcp/frixia_tcp.h"
+#include "../tcp/frixia_http_request.h"
 
 
 
@@ -43,18 +43,18 @@ enum possible_returns {
     ERR_CHANGEPIPE_MKFIFO,
     ERR_CHANGEPIPE_OPENINGFD,
     ERR_EPOLL_WAIT,
-    ERR_EPOLL_CTL_ADDHTTP,
-    ERR_HTTP_SOCKET,
-    ERR_HTTP_SETSOCKETOPT,
-    ERR_HTTP_BIND,
-    ERR_HTTP_LISTEN,
-    ERR_HTTP_STOP,
+    ERR_EPOLL_CTL_ADDTCP,
+    ERR_TCP_SOCKET,
+    ERR_TCP_SETSOCKETOPT,
+    ERR_TCP_BIND,
+    ERR_TCP_LISTEN,
+    ERR_TCP_STOP,
     ERR_UDP_SOCKET,
     ERR_UDP_ADD,
     ERR_UDP_LISTEN,
     ERR_UDP_NONBLOCKING,
     ERR_UDP_STOP,
-    ERR_STOPPING_FRIXIA_HTTP,
+    ERR_STOPPING_FRIXIA_TCP,
     ERR_STOPPING_FRIXIA_UDP,
     ERR_ACCEPTING_TCP,
     ERR_READING_TCP,
@@ -64,7 +64,7 @@ enum possible_returns {
 
 
 int frixia_start(){
-    int http_fd=-1,udp_fd;
+    int tcp_fd=-1,udp_fd;
 
     //create epoll
 	int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -114,58 +114,58 @@ int frixia_start(){
                 printf("::%s\n",buf);
                 if(strcmp(buf, "STOP ALL\n") == 0){
                     keep_looping = false;
-                    return frixia_stop(http_fd, udp_fd);
+                    return frixia_stop(tcp_fd, udp_fd);
                 } 
-                if(strcmp(buf, "START HTTP\n") == 0) 
+                if(strcmp(buf, "START TCP\n") == 0) 
                 {
-                    printf("START HTTP %d\n",http_fd);
-                    if(http_fd == -1 ){
-                        http_fd = socket(AF_INET, SOCK_STREAM, 0);
-                        if(http_fd == -1)
+                    printf("START TCP %d\n",tcp_fd);
+                    if(tcp_fd == -1 ){
+                        tcp_fd = socket(AF_INET, SOCK_STREAM, 0);
+                        if(tcp_fd == -1)
                         {
                             printf("ERROR CREATING SOCKET FILE DESCRIPTOR\n");
-                            return ERR_HTTP_SOCKET;
+                            return ERR_TCP_SOCKET;
                         }
-                        printf("http %d\n",http_fd);
+                        printf("tcp %d\n",tcp_fd);
                         int reuse=1;
-                        if (setsockopt(http_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&reuse, sizeof(reuse))<0){
+                        if (setsockopt(tcp_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&reuse, sizeof(reuse))<0){
                             printf("setsockopt(SO_REUSEADDR) failed\n");
-                            return ERR_HTTP_SETSOCKETOPT;
+                            return ERR_TCP_SETSOCKETOPT;
                         }
 
                         struct sockaddr_in serveraddr;
                         serveraddr.sin_family = AF_INET;
                         serveraddr.sin_addr.s_addr = INADDR_ANY;
                         serveraddr.sin_port = htons(8080);
-                        int retVal = bind(http_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
+                        int retVal = bind(tcp_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
                         if(retVal < 0)
                         {
                             printf("bind error!!%d\n",errno);
-                            return ERR_HTTP_BIND;
+                            return ERR_TCP_BIND;
                         }
 
-                        if(listen(http_fd, 10) == -1)
+                        if(listen(tcp_fd, 10) == -1)
                         {
                             printf("listen error!!\n");
-                            return ERR_HTTP_LISTEN;
+                            return ERR_TCP_LISTEN;
                         }
-                        struct epoll_event ev_http;
-                        ev_http.events = EPOLLIN | EPOLLET;
-                        ev_http.data.fd = http_fd;
-                        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, http_fd, &ev_http) < 0) {
+                        struct epoll_event ev_tcp;
+                        ev_tcp.events = EPOLLIN | EPOLLET;
+                        ev_tcp.data.fd = tcp_fd;
+                        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, tcp_fd, &ev_tcp) < 0) {
                             printf("%d\n",errno);
-                            return ERR_EPOLL_CTL_ADDHTTP;
+                            return ERR_EPOLL_CTL_ADDTCP;
                         }
                     }           
                 }
-                if(strcmp(buf, "STOP HTTP\n") == 0 ) 
+                if(strcmp(buf, "STOP TCP\n") == 0 ) 
                 {
-                    printf("STOP HTTP %d\n",http_fd);
-                    if (http_fd > 0 ){
-                        epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD,http_fd, NULL); 
+                    printf("STOP TCP %d\n",tcp_fd);
+                    if (tcp_fd > 0 ){
+                        epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD,tcp_fd, NULL); 
                         if(epoll_ctl_retval == -1){
                             printf("%d\n",errno);
-                            return ERR_HTTP_STOP;
+                            return ERR_TCP_STOP;
                         }
                     }
                 }
@@ -207,14 +207,14 @@ int frixia_start(){
                 }
             }
             
-            if(events[i].data.fd == http_fd){
+            if(events[i].data.fd == tcp_fd){
                 char buffer[2048] = {0};
                 struct sockaddr in_addr;
                 socklen_t in_len;
                 int client_fd;
 
                 in_len = sizeof(in_addr);
-                client_fd = accept(http_fd, &in_addr, &in_len);
+                client_fd = accept(tcp_fd, &in_addr, &in_len);
                 if(client_fd == -1){
                     return ERR_ACCEPTING_TCP;
                 }
@@ -244,13 +244,13 @@ int frixia_start(){
     return OK;
 }
 
-int frixia_stop(int http_fd,int udp_fd){
-    if(http_fd > 2){
+int frixia_stop(int tcp_fd,int udp_fd){
+    if(tcp_fd > 2){
         FILE *fp = fopen("change_epoll_ctl", "ab");
         if (fp == NULL){
-            return ERR_STOPPING_FRIXIA_HTTP;
+            return ERR_STOPPING_FRIXIA_TCP;
         }
-        fputs("STOP_HTTP\n", fp);
+        fputs("STOP_TCP\n", fp);
         fclose(fp);
     }
     if(udp_fd > 2){
