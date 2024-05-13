@@ -21,13 +21,13 @@ int start_tcp_listening(int frixia_tcp_fd,int epoll_fd,int port)
         printf("ERROR CREATING SOCKET FILE DESCRIPTOR\n");
         return -1;
     }
-    printf("tcp %d\n", frixia_tcp_fd);
+    printf("tcp fd is: %d\n", frixia_tcp_fd);
 
     int reuse = 1;
     if (setsockopt(frixia_tcp_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&reuse, sizeof(reuse)) < 0)
     {
         printf("setsockopt(SO_REUSEADDR) failed\n");
-        return -1;
+        return -2;
     }
 
     struct sockaddr_in serveraddr;
@@ -38,22 +38,24 @@ int start_tcp_listening(int frixia_tcp_fd,int epoll_fd,int port)
     if (retVal < 0)
     {
         printf("bind error!!%d\n", errno);
-        return -1;
+        return -3;
     }
 
     if (listen(frixia_tcp_fd, 10) == -1)
     {
         printf("listen error!!\n");
-        return -1;
+        return -4;
     }
     struct epoll_event ev_tcp;
     ev_tcp.events = EPOLLIN | EPOLLET;
     ev_tcp.data.fd = frixia_tcp_fd;
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, frixia_tcp_fd, &ev_tcp) < 0)
     {
-        printf("%d\n", errno);
-        return -1;
+        printf("epoll_ctl error: %d\n", errno);
+        return -5;
     }
+
+    return frixia_tcp_fd;
 }
 
 int stop_tcp_listening(int frixia_tcp_fd,int epoll_fd)

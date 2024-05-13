@@ -61,7 +61,7 @@ enum possible_returns
 
 int frixia_start()
 {
-    int tcp_fd = -1, udp_fd;
+    int tcp_fd = -1, udp_fd=-1;
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -111,12 +111,12 @@ int frixia_start()
         for (int i = 0; i < events_number; i++)
         {
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
-            printf("%d\n", events[i].data.fd);
+            printf("event intercepted::%d(%d)\n", events[i].data.fd,tcp_fd);
             if (events[i].data.fd == change_fd)
             {
                 char buf[FRIXIA_READ_SIZE];
                 read(change_fd, buf, FRIXIA_READ_SIZE + 1);
-                printf("::%s\n", buf);
+                printf("pipe::reading::%s\n", buf);
                 if (strcmp(buf, "STOP ALL\n") == 0)
                 {
                     keep_looping = false;
@@ -124,8 +124,8 @@ int frixia_start()
                 }
                 if (strcmp(buf, "START TCP\n") == 0)
                 {
-                    printf("START TCP %d\n", tcp_fd);
                     tcp_fd = start_tcp_listening(tcp_fd, epoll_fd, 8080);
+                    printf("START TCP %d\n", tcp_fd);
                     if (tcp_fd < 0)
                     {
                         printf("START TCP ERROR %d\n", tcp_fd);
