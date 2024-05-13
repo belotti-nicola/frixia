@@ -1,3 +1,4 @@
 #include "frixia_http_request.h"
 
-void parse_http_request(char *request_string, struct HTTPRequest *request);
+int start_tcp_listening(int fd, int epoll_fd, int port);
+int stop_tcp_listening(int fd,int epoll_fd);
