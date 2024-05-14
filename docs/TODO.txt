@@ -1,21 +1,19 @@
 FEAT:
     parser (UDP/TCP) 
-    other listeners services
+    HTTPS (integrabile)
     dispatchers
-    create library
     python integration
-    TCP/UDP/.. to add fd listenings
-    reentrancy check
+    reentrancy check (multiple threads)
+    custom protocol to listen to (specify ports)
 
 FIX:
-    returning error codes (frixia + errno)
-    rename HTTP in TCP
-    define start stop in one single point, usable everywhere
     give a proper name to change_epoll_ctl
-    HTTPS
-    fix cmake build
     logger
     automatic test
 
 TODO 
     icon
+    create library
+
+CHOICES
+    C vs C++
