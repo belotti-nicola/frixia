@@ -30,38 +30,25 @@
 // COMMAND LENGTH READING THE PIPE
 #define FRIXIA_READ_SIZE 64
 
-enum possible_returns
-{
-    OK,
-    ERR_EPOLL_CREATE,
-    ERR_EPOLL_CTL,
-    ERR_CHANGE_FILEDESCRIPTOR,
-    ERR_MKFIFO,
-    ERR_CHANGEPIPE_MKFIFO,
-    ERR_CHANGEPIPE_OPENINGFD,
-    ERR_EPOLL_WAIT,
-    ERR_EPOLL_CTL_ADDTCP,
-    ERR_TCP_SOCKET,
-    ERR_TCP_SETSOCKETOPT,
-    ERR_TCP_BIND,
-    ERR_TCP_LISTEN,
-    ERR_TCP_STOP,
-    ERR_UDP_SOCKET,
-    ERR_UDP_ADD,
-    ERR_UDP_LISTEN,
-    ERR_UDP_NONBLOCKING,
-    ERR_UDP_STOP,
-    ERR_STOPPING_FRIXIA_TCP,
-    ERR_STOPPING_FRIXIA_UDP,
-    ERR_ACCEPTING_TCP,
-    ERR_READING_TCP,
-    ERR_WRITING_TCP
+//FD Data Structure size
+#define MAXIMUM_FILEDESCRIPTORS 10
 
-};
+#include "frixia_codes.h"
+#include "frixia_fd_ds.h"
 
 int frixia_start()
 {
     int tcp_fd = -1, udp_fd=-1;
+
+    struct FrixiaFDDataStructure fd_types[MAXIMUM_FILEDESCRIPTORS];
+    for(int i=0;i<MAXIMUM_FILEDESCRIPTORS;i++){
+        fd_types[i].fd = i;
+        fd_types[i].type= UNDEFINED;
+    }
+    fd_types[0].fd = STD_INPUT;
+    fd_types[1].fd = STD_OUTPUT;
+    fd_types[2].fd = STD_ERR;
+    
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -84,6 +71,9 @@ int frixia_start()
         return ERR_CHANGEPIPE_OPENINGFD;
     }
     printf("EPOLL CHANGE::%d\n", change_fd);
+    fd_types[change_fd].fd = change_fd;
+    fd_types[change_fd].type = PIPE;
+
 
     // add the "change-epoll_ctl" fd
     struct epoll_event ev;
@@ -112,7 +102,8 @@ int frixia_start()
         {
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
             printf("event intercepted::%d(%d)\n", events[i].data.fd,tcp_fd);
-            if (events[i].data.fd == change_fd)
+            int detected_event_fd = events[i].data.fd;
+            if ( fd_types[detected_event_fd].type == PIPE)
             {
                 char buf[FRIXIA_READ_SIZE];
                 read(change_fd, buf, FRIXIA_READ_SIZE + 1);
@@ -150,37 +141,11 @@ int frixia_start()
                 }
             }
 
-            if (events[i].data.fd == tcp_fd)
-            {
-                printf("tcp event");
-                char buffer[2048] = {0};
-                struct sockaddr in_addr;
-                socklen_t in_len;
-                int client_fd;
-
-                in_len = sizeof(in_addr);
-                client_fd = accept(tcp_fd, &in_addr, &in_len);
-                if (client_fd == -1)
-                {
-                    return ERR_ACCEPTING_TCP;
-                }
-                memset(buffer, 0, sizeof(buffer));
-                int size = read(client_fd, buffer, sizeof(buffer));
-                if (size < 0)
-                {
-                    return ERR_READING_TCP;
-                }
-                // DO PROCESSING SOMEWAY AND COMPUTE ANSWER (WHICH IS BUFFER)
-                if (write(client_fd, buffer, size) < 0)
-                {
-                    return ERR_WRITING_TCP;
-                }
-                close(client_fd);
+            if ( fd_types[detected_event_fd].type == HTTP){
+                printf("XXX\n");
             }
-
-            if (events[i].data.fd == udp_fd)
-            {
-                printf("UDP \n");
+            if ( fd_types[detected_event_fd].type == UDP){
+                printf("YYY\n");
             }
         }
     }

@@ -4,5 +4,5 @@ add_library(core
   ../tcp/frixia_tcp.h
   ../tcp/frixia_tcp.c
   ../udp/frixia_udp.h
-  ../udp/frixia_udp.c  
+  ../udp/frixia_udp.c
 )

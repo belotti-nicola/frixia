@@ -5,11 +5,12 @@
 #include <errno.h>
 #include <sys/eventfd.h>
 #include <sys/epoll.h>
+#include <unistd.h>
 
 #include "frixia_tcp.h"
 #include "../core/frixia_codes.h"
 
-int start_tcp_listening(int frixia_tcp_fd,int epoll_fd,int port)
+int start_tcp_listening(int frixia_tcp_fd, int epoll_fd, int port)
 {
     if (frixia_tcp_fd > 2)
     {
@@ -59,7 +60,7 @@ int start_tcp_listening(int frixia_tcp_fd,int epoll_fd,int port)
     return frixia_tcp_fd;
 }
 
-int stop_tcp_listening(int frixia_tcp_fd,int epoll_fd)
+int stop_tcp_listening(int frixia_tcp_fd, int epoll_fd)
 {
     printf("STOP TCP %d\n", frixia_tcp_fd);
     if (frixia_tcp_fd > 0)
@@ -71,4 +72,32 @@ int stop_tcp_listening(int frixia_tcp_fd,int epoll_fd)
             return ERR_STOPPING_FRIXIA_TCP;
         }
     }
+}
+
+int read_tcp_socket(int filedescriptor)
+{
+    printf("tcp event");
+    char buffer[2048] = {0};
+    struct sockaddr in_addr;
+    socklen_t in_len;
+    int client_fd;
+
+    in_len = sizeof(in_addr);
+    client_fd = accept(filedescriptor, &in_addr, &in_len);
+    if (client_fd == -1)
+    {
+        return ERR_ACCEPTING_TCP;
+    }
+    memset(buffer, 0, sizeof(buffer));
+    int size = read(client_fd, buffer, sizeof(buffer));
+    if (size < 0)
+    {
+        return ERR_READING_TCP;
+    }
+    // DO PROCESSING SOMEWAY AND COMPUTE ANSWER (WHICH IS BUFFER)
+    if (write(client_fd, buffer, size) < 0)
+    {
+        return ERR_WRITING_TCP;
+    }
+    close(client_fd);
 }
