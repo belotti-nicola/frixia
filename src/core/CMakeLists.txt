@@ -6,3 +6,9 @@ add_library(core
   ../udp/frixia_udp.h
   ../udp/frixia_udp.c
 )
+
+add_subdirectory(ctl_parser)
+
+target_link_libraries(core 
+  ctl_parser
+)
