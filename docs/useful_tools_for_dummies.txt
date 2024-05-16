@@ -1,6 +1,5 @@
 *********************************************************************                                                               *
-echo "ADD TCP" > change_epoll_ctl
-echo "START TCP" > change_epoll_ctl
+echo "START TCP" > ctl_pipe
 curl 127.0.0.1:8080/helloworld
 
 *********************************************************************

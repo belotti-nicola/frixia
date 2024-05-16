@@ -20,7 +20,9 @@
 #include "../tcp/frixia_tcp.h"
 #include "../udp/frixia_udp.h"
 #include "ctl_parser/control_strings_parser.h"
-
+#include "frixia_codes.h"
+#include "fd_pool/filedescriptor_pool_defs.h"
+#include "fd_pool/filedescriptor_pool.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -32,24 +34,18 @@
 // COMMAND LENGTH READING THE PIPE
 #define FRIXIA_READ_SIZE 64
 
-//FD Data Structure size
+// FD Data Structure size
 #define MAXIMUM_FILEDESCRIPTORS 10
-
-#include "frixia_codes.h"
-#include "frixia_fd_ds.h"
 
 int frixia_start()
 {
-    int tcp_fd = -1, udp_fd=-1;
-    struct FrixiaFDDataStructure fd_types[MAXIMUM_FILEDESCRIPTORS];
-    for(int i=0;i<MAXIMUM_FILEDESCRIPTORS;i++){
-        fd_types[i].fd = i;
-        fd_types[i].type= UNDEFINED;
+    struct FrixiaFD f_fds[10];
+    for (int i = 0; i < 10; i++)
+    {
+        f_fds[i].type = UNDEFINED;
+        f_fds[i].port = 0;
+        f_fds[i].fd = -1;
     }
-    fd_types[0].fd = STD_INPUT;
-    fd_types[1].fd = STD_OUTPUT;
-    fd_types[2].fd = STD_ERR;
-    
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -61,7 +57,7 @@ int frixia_start()
 
     // create the change epoll filedescriptor
     //(which is a pipe)
-    const char *fname = "change_epoll_ctl";
+    const char *fname = "ctl_pipe";
     if (mkfifo(fname, 0666))
     {
         return ERR_CHANGEPIPE_MKFIFO;
@@ -71,10 +67,11 @@ int frixia_start()
     {
         return ERR_CHANGEPIPE_OPENINGFD;
     }
-    printf("EPOLL CHANGE::%d\n", change_fd);
-    fd_types[change_fd].fd = change_fd;
-    fd_types[change_fd].type = PIPE;
-
+    struct FrixiaFD ctl_ffd;
+    ctl_ffd.type = PIPE;
+    ctl_ffd.fd = change_fd;
+    strcpy(ctl_ffd.filename, fname);
+    add_fd_to_pool(ctl_ffd, f_fds, 10);
 
     // add the "change-epoll_ctl" fd
     struct epoll_event ev;
@@ -102,79 +99,80 @@ int frixia_start()
         for (int i = 0; i < events_number; i++)
         {
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
-            printf("event intercepted::%d(%d)\n", events[i].data.fd,tcp_fd);
+            printf("event intercepted::%d\n", events[i].data.fd);
             int detected_event_fd = events[i].data.fd;
-            if ( fd_types[detected_event_fd].type == PIPE)
+            int index = search_fd(detected_event_fd, f_fds, 10);
+            printf("f_fds[index].fd %d\n", f_fds[index].fd);
+            switch ((enum FrixiaFDType)f_fds[index].type)
+            {
+            case PIPE:
             {
                 char buf[FRIXIA_READ_SIZE];
-                read(change_fd, buf, FRIXIA_READ_SIZE + 1);
-                printf("pipe::reading::%s\n", buf);
+                if( read(f_fds[index].fd, buf, FRIXIA_READ_SIZE) == -1)
+                {
+                    return ERR_READ_PIPE;
+                }
+                printf("%d", parse_control_strings(buf));
                 if (strcmp(buf, "STOP ALL\n") == 0)
                 {
                     keep_looping = false;
-                    return frixia_stop(tcp_fd, udp_fd);
+                    frixia_stop(epoll_fd, f_fds, 10);
                 }
                 if (strcmp(buf, "START TCP\n") == 0)
                 {
-                    tcp_fd = start_tcp_listening(tcp_fd, epoll_fd, 8080);
-                    printf("START TCP %d\n", tcp_fd);
-                    if (tcp_fd < 0)
-                    {
-                        printf("START TCP ERROR %d\n", tcp_fd);
-                        return -1;
-                    }
+                    start_tcp_listening(epoll_fd, f_fds[index].fd, 8080);
                 }
                 if (strcmp(buf, "STOP TCP\n") == 0)
                 {
-                    stop_tcp_listening(tcp_fd,epoll_fd);
+                    stop_tcp_listening(f_fds[index].fd, epoll_fd);
                 }
                 if (strcmp(buf, "START UDP\n") == 0)
                 {
-                    int udp_fd = start_udp_listening(udp_fd,epoll_fd,8080);
-                    if (udp_fd < 0)
-                    {
-                        return -1;
-                    }
+                    start_udp_listening(epoll_fd, f_fds[index].fd, 8080);
                 }
                 if (strcmp(buf, "STOP UDP\n") == 0)
                 {
-                    stop_udp_listening(udp_fd,epoll_fd);
+                    stop_udp_listening(epoll_fd, f_fds[index].fd);
                 }
+                break;
             }
-
-            if ( fd_types[detected_event_fd].type == HTTP){
-                printf("XXX\n");
+            case TCP:
+            {
+                printf("tcp");
+                break;
             }
-            if ( fd_types[detected_event_fd].type == UDP){
-                printf("YYY\n");
+            case UDP:
+            {
+                printf("UDP");
+                break;
+            }
+            case UNDEFINED:
+            {
+                printf("UNDEFINED");
+                break;
+            }
             }
         }
     }
-
     return OK;
 }
-
-int frixia_stop(int tcp_fd, int udp_fd)
+int frixia_stop(int epoll_fd,
+                struct FrixiaFD f[],
+                int max_size)
 {
-    if (tcp_fd > 2)
+    int ret_val, target_fd;
+    for (int i = 0; i < max_size; i++)
     {
-        FILE *fp = fopen("change_epoll_ctl", "ab");
-        if (fp == NULL)
+        target_fd = (*(f + i)).fd;
+        switch ((*(f + i)).type)
         {
-            return ERR_STOPPING_FRIXIA_TCP;
+        case TCP:
+            stop_tcp_listening(target_fd, epoll_fd);
+            break;
+        case UDP:
+            stop_udp_listening(target_fd, epoll_fd);
+            break;
         }
-        fputs("STOP_TCP\n", fp);
-        fclose(fp);
-    }
-    if (udp_fd > 2)
-    {
-        FILE *fp = fopen("change_epoll_ctl", "ab");
-        if (fp == NULL)
-        {
-            return ERR_STOPPING_FRIXIA_UDP;
-        }
-        fputs("STOP UPD\n", fp);
-        fclose(fp);
     }
 
     return OK;

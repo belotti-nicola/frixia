@@ -8,7 +8,10 @@ add_library(core
 )
 
 add_subdirectory(ctl_parser)
+add_subdirectory(fd_pool)
+
 
 target_link_libraries(core 
   ctl_parser
+  fd_pool
 )
