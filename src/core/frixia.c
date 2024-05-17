@@ -102,17 +102,17 @@ int frixia_start()
             printf("event intercepted::%d\n", events[i].data.fd);
             int detected_event_fd = events[i].data.fd;
             int index = search_fd(detected_event_fd, f_fds, 10);
-            printf("f_fds[index].fd %d\n", f_fds[index].fd);
+            printf("f_fds[index].fd %d %d\n", f_fds[index].fd, f_fds[index].type);
             switch ((enum FrixiaFDType)f_fds[index].type)
             {
             case PIPE:
             {
                 char buf[FRIXIA_READ_SIZE];
-                if( read(f_fds[index].fd, buf, FRIXIA_READ_SIZE) == -1)
+                if (read(f_fds[index].fd, buf, FRIXIA_READ_SIZE) == -1)
                 {
                     return ERR_READ_PIPE;
                 }
-                printf("%d", parse_control_strings(buf));
+                printf("\nPARSE::%d\n", parse_control_strings(buf));
                 if (strcmp(buf, "STOP ALL\n") == 0)
                 {
                     keep_looping = false;
@@ -120,36 +120,43 @@ int frixia_start()
                 }
                 if (strcmp(buf, "START TCP\n") == 0)
                 {
-                    start_tcp_listening(epoll_fd, f_fds[index].fd, 8080);
+                    start_tcp_listening(f_fds,
+                                        10,
+                                        epoll_fd,
+                                        8080);
                 }
                 if (strcmp(buf, "STOP TCP\n") == 0)
                 {
-                    stop_tcp_listening(f_fds[index].fd, epoll_fd);
+                    stop_tcp_listening(detected_event_fd, f_fds, 10, epoll_fd);
                 }
                 if (strcmp(buf, "START UDP\n") == 0)
                 {
-                    start_udp_listening(epoll_fd, f_fds[index].fd, 8080);
+                    printf("ST UDP");
                 }
                 if (strcmp(buf, "STOP UDP\n") == 0)
                 {
-                    stop_udp_listening(epoll_fd, f_fds[index].fd);
+                    printf("ST UDP");
                 }
                 break;
             }
             case TCP:
             {
-                printf("tcp");
+                printf("SWITCH to tcp\n");
                 break;
             }
             case UDP:
             {
-                printf("UDP");
+                printf("SWITCH to UDP\n");
                 break;
             }
             case UNDEFINED:
             {
-                printf("UNDEFINED");
+                printf("SWITCH to UNDEFINED\n");
                 break;
+            }
+            default:
+            {
+                printf("aaaa");
             }
             }
         }
@@ -167,9 +174,11 @@ int frixia_stop(int epoll_fd,
         switch ((*(f + i)).type)
         {
         case TCP:
-            stop_tcp_listening(target_fd, epoll_fd);
+            printf("Frixia stopped TCP listening on port:%d\n", (*(f + i)).port);
+            stop_tcp_listening(target_fd, f, 10, epoll_fd);
             break;
         case UDP:
+            printf("Frixia stopped UDP listening on port:%d\n", (*(f + i)).port);
             stop_udp_listening(target_fd, epoll_fd);
             break;
         }
