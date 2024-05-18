@@ -112,7 +112,7 @@ int frixia_start()
                 {
                     return ERR_READ_PIPE;
                 }
-                printf("\nPARSE::%d\n", parse_control_strings(buf));
+
                 if (strcmp(buf, "STOP ALL\n") == 0)
                 {
                     keep_looping = false;
@@ -127,15 +127,24 @@ int frixia_start()
                 }
                 if (strcmp(buf, "STOP TCP\n") == 0)
                 {
-                    stop_tcp_listening(detected_event_fd, f_fds, 10, epoll_fd);
+                    stop_tcp_listening(detected_event_fd,
+                                       f_fds,
+                                       10,
+                                       epoll_fd);
                 }
                 if (strcmp(buf, "START UDP\n") == 0)
                 {
-                    printf("ST UDP");
+                    start_udp_listening(f_fds,
+                                        10,
+                                        epoll_fd,
+                                        8080);
                 }
                 if (strcmp(buf, "STOP UDP\n") == 0)
                 {
-                    printf("ST UDP");
+                    stop_udp_listening(detected_event_fd,
+                                       f_fds,
+                                       10,
+                                       epoll_fd);
                 }
                 break;
             }
@@ -156,7 +165,7 @@ int frixia_start()
             }
             default:
             {
-                printf("aaaa");
+                printf("defaulting::");
             }
             }
         }
@@ -179,7 +188,7 @@ int frixia_stop(int epoll_fd,
             break;
         case UDP:
             printf("Frixia stopped UDP listening on port:%d\n", (*(f + i)).port);
-            stop_udp_listening(target_fd, epoll_fd);
+            stop_udp_listening(target_fd, f, 10, epoll_fd);
             break;
         }
     }

@@ -86,12 +86,12 @@ int stop_tcp_listening(int closing_fd,
     for (int i = 0; i < max_size; i++)
     {
         if (
-            (*(f_fd + i)).fd == closing_fd)
+            (*(f_fd + i)).fd == closing_fd )
         {
             int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, closing_fd, NULL);
             if (epoll_ctl_retval == -1)
             {
-                printf("%d\n", errno);
+                printf("stop_tcp_listening %d\n", errno);
                 return ERR_STOPPING_FRIXIA_TCP;
             }
             return OK;

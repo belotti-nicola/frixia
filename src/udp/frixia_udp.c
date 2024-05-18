@@ -11,12 +11,15 @@
 #include "frixia_udp.h"
 #include "../core/frixia_codes.h"
 
-int start_udp_listening(int udp_fd, int epoll_fd, int port)
+int start_udp_listening(struct FrixiaFD f_fd[],
+                        int max_size,
+                        int epoll_fd,
+                        int port)
 {
     struct sockaddr_in servaddr, cliaddr;
 
     // Creating socket file descriptor
-    udp_fd = socket(AF_INET, SOCK_DGRAM, 0);
+    int udp_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (udp_fd == -1)
     {
         return ERR_UDP_SOCKET;
@@ -40,17 +43,24 @@ int start_udp_listening(int udp_fd, int epoll_fd, int port)
         printf("%d\n", errno);
         return ERR_EPOLL_CTL_ADDUDP;
     }
+
+    return OK;
+    
 }
-int stop_udp_listening(int upd_fd,int epoll_fd)
+int stop_udp_listening(int closing_fd,
+                       struct FrixiaFD f_fd[],
+                       int max_size,
+                       int epoll_fd)
 {
-    printf("STOP UDP %d\n", upd_fd);
-    if (upd_fd > 0)
+    printf("STOP UDP %d\n", closing_fd);
+    if (closing_fd > 0)
     {
-        int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, upd_fd, NULL);
+        int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, closing_fd, NULL);
         if (epoll_ctl_retval == -1)
         {
             printf("%d\n", errno);
             return ERR_STOPPING_FRIXIA_UDP;
         }
     }
+    return OK;
 }
