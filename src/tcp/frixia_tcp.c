@@ -9,21 +9,10 @@
 
 #include "frixia_tcp.h"
 #include "../core/frixia_codes.h"
-#include "../core/fd_pool/filedescriptor_pool.h"
 
-int start_tcp_listening(struct FrixiaFD f_fd[],
-                        int max_size,
-                        int epoll_fd,
+int start_tcp_listening(int epoll_fd,
                         int port)
 {
-    for (int i = 0; i < max_size; i++)
-    {
-        if (
-            (*(f_fd + i)).type == TCP &&
-            (*(f_fd + i)).port == port)
-            return ALREADY_LISTENING_ON_TCP_PORT;
-    }
-
     int tcp_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (tcp_fd == -1)
     {
@@ -63,43 +52,12 @@ int start_tcp_listening(struct FrixiaFD f_fd[],
         printf("epoll_ctl error: %d\n", errno);
         return ERR_EPOLL_CTL_ADDTCP;
     }
-
-    for (int i = 0; i < max_size; i++)
-    {
-        if (
-            (*(f_fd + i)).type == UNDEFINED)
-        {
-            (*(f_fd + i)).fd = tcp_fd;
-            (*(f_fd + i)).type = TCP;
-            (*(f_fd + i)).port = port;
-            return tcp_fd;
-        }
-    }
-
-    return -1;
+    return tcp_fd;
 }
 
-int stop_tcp_listening(int closing_fd,
-                       struct FrixiaFD f_fd[],
-                       int max_size, int epoll_fd)
+int stop_tcp_listening(int epoll_fd,
+                       int closing_fd)
 {
-    printf("stop_tcp_listening %d %d\n",closing_fd,epoll_fd);
-    int index = -1;
-    for (int i = 0; i < max_size; i++)
-    {
-        if (
-            (*(f_fd + i)).fd == closing_fd)
-        {
-            index = i;
-        }
-    }
-
-    if (index == -1)
-    {
-        printf("NO_TCP_ON_SPECIFIED_PORT_FOUND\n");
-        return NO_TCP_ON_SPECIFIED_PORT_FOUND;
-    }
-
     int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, closing_fd, NULL);
     if (epoll_ctl_retval == -1)
     {
@@ -107,11 +65,6 @@ int stop_tcp_listening(int closing_fd,
         return ERR_STOPPING_FRIXIA_TCP;
     }
     close(closing_fd);
-
-    remove_fd(closing_fd,
-              f_fd,
-              10);
-    
     return OK;
 }
 

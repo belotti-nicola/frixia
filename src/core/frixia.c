@@ -122,20 +122,25 @@ int frixia_start()
                 }
                 if (strstr(buf, "START TCP\n") != NULL)
                 {
-                    start_tcp_listening(f_fds,
-                                        10,
-                                        epoll_fd,
-                                        8080);
+                    int f_tcp = start_tcp_listening(epoll_fd,
+                                                    8080);
+                    struct FrixiaFD f;
+                    f.fd = f_tcp;
+                    f.type = TCP;
+                    f.port = 8080;
+                    add_fd_to_pool(f, f_fds, 10);
                 }
                 if (strstr(buf, "STOP TCP\n") != NULL)
                 {
                     int tcp_index = search_tcp_fd_by_port(8080,
                                                           f_fds,
                                                           10);
-                    int ret = stop_tcp_listening(f_fds[tcp_index].fd,
-                                                 f_fds,
-                                                 10,
-                                                 epoll_fd);
+                    int target_fd = f_fds[tcp_index].fd;
+                    int ret = stop_tcp_listening(epoll_fd,
+                                                 target_fd);
+                    remove_fd(target_fd,
+                              f_fds,
+                              10);
                 }
                 if (strstr(buf, "START UDP\n") != NULL)
                 {
@@ -181,15 +186,17 @@ int frixia_stop(int epoll_fd,
                 struct FrixiaFD f[],
                 int max_size)
 {
-    int ret_val, target_fd;
+    int ret_val, target_fd, type;
     for (int i = 0; i < max_size; i++)
     {
-        target_fd = (*(f + i)).fd;
-        switch ((*(f + i)).type)
+        target_fd = f[i].fd;
+        type = f[i].type;
+        switch (type)
         {
         case TCP:
             printf("Frixia stopped TCP listening on port:%d\n", (*(f + i)).port);
-            stop_tcp_listening(target_fd, f, 10, epoll_fd);
+            target_fd = f[i].fd;
+            stop_tcp_listening(epoll_fd, target_fd);
             break;
         case UDP:
             printf("Frixia stopped UDP listening on port:%d\n", (*(f + i)).port);
