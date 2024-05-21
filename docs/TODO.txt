@@ -1,17 +1,16 @@
 FEAT:
-    parser (UDP/TCP) 
     HTTPS (integrabile)
     dispatchers
     python integration
     reentrancy check (multiple threads)
-    custom protocol to listen to (specify ports)
 
 FIX:
-    give a proper name to change_epoll_ctl
     logger
-    automatic test
+    automatic testing
 
-TODO 
+TODO
+    refactoring (TCP only TCP, no FrixiaStructures that are used before syscalls)
+    parser (UDP/TCP) 
     icon
     create library
 
