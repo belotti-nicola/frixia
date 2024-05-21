@@ -14,4 +14,9 @@ int search_fd(int fd,
 int remove_fd(int fd,
               struct FrixiaFD f_fds[],
               int max_size);
+
+int search_tcp_fd_by_port(int port,
+                          struct FrixiaFD f_fds[],
+                          int max_size);
+
 #endif

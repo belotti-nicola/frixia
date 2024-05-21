@@ -89,6 +89,7 @@ int frixia_start()
     struct epoll_event *events;
     events = calloc(FRIXIA_EPOLL_WAIT_MAX_SIZE, sizeof(struct epoll_event));
     char read_buffer[FRIXIA_READ_SIZE + 1];
+    int fifo_bytes_read = 0;
     while (keep_looping)
     {
         events_number = epoll_wait(epoll_fd, events, FRIXIA_EPOLL_WAIT_MAX_SIZE, -1);
@@ -102,44 +103,48 @@ int frixia_start()
             printf("event intercepted::%d\n", events[i].data.fd);
             int detected_event_fd = events[i].data.fd;
             int index = search_fd(detected_event_fd, f_fds, 10);
-            printf("f_fds[index].fd %d %d\n", f_fds[index].fd, f_fds[index].type);
+            printf("index %d f_fds[index].fd %d f_fd type %d\n", index, f_fds[index].fd, f_fds[index].type);
             switch ((enum FrixiaFDType)f_fds[index].type)
             {
             case PIPE:
             {
                 char buf[FRIXIA_READ_SIZE];
-                if (read(f_fds[index].fd, buf, FRIXIA_READ_SIZE) == -1)
+                fifo_bytes_read = read(f_fds[index].fd, buf, FRIXIA_READ_SIZE);
+                if (fifo_bytes_read == -1)
                 {
                     return ERR_READ_PIPE;
                 }
 
-                if (strcmp(buf, "STOP ALL\n") == 0)
+                if (strstr(buf, "STOP ALL\n") != NULL)
                 {
                     keep_looping = false;
                     frixia_stop(epoll_fd, f_fds, 10);
                 }
-                if (strcmp(buf, "START TCP\n") == 0)
+                if (strstr(buf, "START TCP\n") != NULL)
                 {
                     start_tcp_listening(f_fds,
                                         10,
                                         epoll_fd,
                                         8080);
                 }
-                if (strcmp(buf, "STOP TCP\n") == 0)
+                if (strstr(buf, "STOP TCP\n") != NULL)
                 {
-                    stop_tcp_listening(detected_event_fd,
-                                       f_fds,
-                                       10,
-                                       epoll_fd);
+                    int tcp_index = search_tcp_fd_by_port(8080,
+                                                          f_fds,
+                                                          10);
+                    int ret = stop_tcp_listening(f_fds[tcp_index].fd,
+                                                 f_fds,
+                                                 10,
+                                                 epoll_fd);
                 }
-                if (strcmp(buf, "START UDP\n") == 0)
+                if (strstr(buf, "START UDP\n") != NULL)
                 {
                     start_udp_listening(f_fds,
                                         10,
                                         epoll_fd,
                                         8080);
                 }
-                if (strcmp(buf, "STOP UDP\n") == 0)
+                if (strstr(buf, "STOP UDP\n") != NULL)
                 {
                     stop_udp_listening(detected_event_fd,
                                        f_fds,

@@ -67,13 +67,13 @@ int start_tcp_listening(struct FrixiaFD f_fd[],
     for (int i = 0; i < max_size; i++)
     {
         if (
-            (*(f_fd + i)).type == UNDEFINED )
-            {
-                (*(f_fd+i)).fd = tcp_fd;
-                (*(f_fd+i)).type = TCP;
-                (*(f_fd+i)).port = port;
-                return tcp_fd;
-            }
+            (*(f_fd + i)).type == UNDEFINED)
+        {
+            (*(f_fd + i)).fd = tcp_fd;
+            (*(f_fd + i)).type = TCP;
+            (*(f_fd + i)).port = port;
+            return tcp_fd;
+        }
     }
 
     return -1;
@@ -83,22 +83,36 @@ int stop_tcp_listening(int closing_fd,
                        struct FrixiaFD f_fd[],
                        int max_size, int epoll_fd)
 {
+    printf("stop_tcp_listening %d %d\n",closing_fd,epoll_fd);
+    int index = -1;
     for (int i = 0; i < max_size; i++)
     {
         if (
-            (*(f_fd + i)).fd == closing_fd )
+            (*(f_fd + i)).fd == closing_fd)
         {
-            int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, closing_fd, NULL);
-            if (epoll_ctl_retval == -1)
-            {
-                printf("stop_tcp_listening %d\n", errno);
-                return ERR_STOPPING_FRIXIA_TCP;
-            }
-            return OK;
+            index = i;
         }
     }
 
-    return NO_TCP_ON_SPECIFIED_PORT_FOUND;
+    if (index == -1)
+    {
+        printf("NO_TCP_ON_SPECIFIED_PORT_FOUND\n");
+        return NO_TCP_ON_SPECIFIED_PORT_FOUND;
+    }
+
+    int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, closing_fd, NULL);
+    if (epoll_ctl_retval == -1)
+    {
+        printf("ERR_STOPPING_FRIXIA_TCP %d\n", errno);
+        return ERR_STOPPING_FRIXIA_TCP;
+    }
+    close(closing_fd);
+
+    remove_fd(closing_fd,
+              f_fd,
+              10);
+    
+    return OK;
 }
 
 int read_tcp_socket(int filedescriptor)
