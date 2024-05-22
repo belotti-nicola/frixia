@@ -3,17 +3,8 @@
 
 #define MAXSTR 10
 
-enum FrixiaFDType
-{
-    STD_INPUT,
-    STD_OUTPUT,
-    STD_ERR,
-    TCP,
-    UDP,
-    FIFO,
+#include "../frixia_common.h"
 
-    UNDEFINED
-};
 
 enum FD_POOL_EXIT_CODES{
     ADD_OK=1,

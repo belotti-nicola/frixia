@@ -24,6 +24,7 @@
 #include "frixia_codes.h"
 #include "fd_pool/filedescriptor_pool_defs.h"
 #include "fd_pool/filedescriptor_pool.h"
+#include "ctl_parser/control_commands.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -103,7 +104,11 @@ int frixia_start()
                 {
                     return ERR_READ_FIFO;
                 }
-
+                struct FrixiaCTL* p_f;
+                struct FrixiaCTL fr;
+                p_f = &fr;
+                int parse_ec = parse_control_strings(buf,p_f);
+                printf("PARSE: %d, CMD::%d %d %d\n",parse_ec,p_f->c,p_f->type,p_f->port);
                 if (strstr(buf, "STOP ALL\n") != NULL)
                 {
                     keep_looping = false;

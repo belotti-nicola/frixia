@@ -2,10 +2,14 @@
 #include <stdio.h>
 #include <ctype.h>
 
-enum parse_code parse_control_strings(char *s)
+#include "control_commands.h"
+#include "../frixia_common.h"
+
+enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
 {
     int state = 0;
-    for (; *s != '\0'; s++)
+    printf("S: %s\n",s);
+    for (; *s != '\0' && *s != '\n' && *s != '\r'; s++)
     {
         switch (state)
         {
@@ -71,6 +75,8 @@ enum parse_code parse_control_strings(char *s)
             if (*s == 'T')
             {
                 state = 5;
+                f->c = START;
+
             }
             break;
         }
@@ -134,6 +140,7 @@ enum parse_code parse_control_strings(char *s)
             if (*s == 'P')
             {
                 state = 9;
+                f->type = TCP;
             }
             break;
         }
@@ -170,6 +177,7 @@ enum parse_code parse_control_strings(char *s)
             if (isdigit(*s))
             {
                 state = 11;
+                f->port = 8080;
             }
             break;
         }
@@ -194,6 +202,7 @@ enum parse_code parse_control_strings(char *s)
             if (*s == 'P')
             {
                 state = 14;
+                f->type = UDP;
             }
             break;
         }
@@ -211,11 +220,11 @@ enum parse_code parse_control_strings(char *s)
         }
         case 15:
         {
-            if (*s != 'I')
+            if (*s != 'F')
             {
                 return PARSE_ERROR;
             }
-            if (*s == 'I')
+            if (*s == 'F')
             {
                 state = 16;
             }
@@ -223,11 +232,11 @@ enum parse_code parse_control_strings(char *s)
         }
         case 16:
         {
-            if (*s != 'P')
+            if (*s != 'I')
             {
                 return PARSE_ERROR;
             }
-            if (*s == 'P')
+            if (*s == 'I')
             {
                 state = 17;
             }
@@ -235,13 +244,14 @@ enum parse_code parse_control_strings(char *s)
         }
         case 17:
         {
-            if (*s != 'E')
+            if (*s != 'O')
             {
                 return PARSE_ERROR;
             }
-            if (*s == 'E')
+            if (*s == 'O')
             {
                 state = 18;
+                f->type = FIFO;
             }
             break;
         }
@@ -278,6 +288,7 @@ enum parse_code parse_control_strings(char *s)
             if (isalpha(*s))
             {
                 state = 20;
+                f->port = 8080;
             }
             break;
         }
@@ -290,6 +301,7 @@ enum parse_code parse_control_strings(char *s)
             if (*s == 'P')
             {
                 state = 22;
+                f->c = STOP;
             }
             break;
         }
@@ -310,7 +322,7 @@ enum parse_code parse_control_strings(char *s)
             if (*s != ' ' &&
                 *s != 'T' &&
                 *s != 'U' &&
-                *s != 'P' &&
+                *s != 'F' &&
                 *s != 'A')
             {
                 return PARSE_ERROR;
@@ -327,7 +339,7 @@ enum parse_code parse_control_strings(char *s)
             {
                 state = 12;
             }
-            if (*s == 'P')
+            if (*s == 'F')
             {
                 state = 15;
             }
@@ -358,15 +370,16 @@ enum parse_code parse_control_strings(char *s)
             if (*s == 'L')
             {
                 state = 26;
+                f->c = STOPALL;
             }
             break;
         }
         }
     }
-    printf("state:%d\n", state);
+
     if (state == 11 ||
         state == 20 ||
-        state == 26)
+        state == 25)
         return PARSE_OK;
     else
         return PARSE_ERROR;

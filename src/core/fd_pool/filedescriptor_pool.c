@@ -36,7 +36,7 @@ int search_fd(int fd,
 {
     for (int i = 0; i < max_size; i++)
     {
-        printf("fd %d f_fds %d\n",fd,f_fds[i]);
+        printf("fd %d f_fds %d\n",fd,f_fds[i].fd);
         struct FrixiaFD curr_fd = *(f_fds + i);
         if (curr_fd.fd == fd)
         {
