@@ -7,17 +7,27 @@ int add_fd_to_pool(struct FrixiaFD fd,
                    struct FrixiaFD f_fds[],
                    int max_size)
 {
+    int index = -1;
     for (int i = 0; i < max_size; i++)
     {
-        if ((*(f_fds + i)).type == UNDEFINED)
+        if (f_fds[i].type == UNDEFINED)
         {
-            (*(f_fds + i)).fd = fd.fd;
-            (*(f_fds + i)).type = fd.type;
-            (*(f_fds + i)).port = fd.port;
-            return ADD_OK;
+            index = i;
+            break;
         }
     }
-    return NO_AVAILABLE_SPACE_IN_DATASTRUCTURE;
+    if ( index == -1 )
+    {
+        printf("NO_AVAILABLE_SPACE_IN_DATASTRUCTURE\n");
+        return NO_AVAILABLE_SPACE_IN_DATASTRUCTURE;
+    }
+    printf("Adding to index:%d,%d %d %d %s\n",index,fd.fd,fd.type,fd.port,fd.filename);
+    f_fds[index].fd   = fd.fd;
+    f_fds[index].type = fd.type;
+    f_fds[index].port = fd.port;
+    return ADD_OK;
+
+    
 }
 
 int search_fd(int fd,
@@ -26,6 +36,7 @@ int search_fd(int fd,
 {
     for (int i = 0; i < max_size; i++)
     {
+        printf("fd %d f_fds %d\n",fd,f_fds[i]);
         struct FrixiaFD curr_fd = *(f_fds + i);
         if (curr_fd.fd == fd)
         {

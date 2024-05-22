@@ -5,6 +5,9 @@ add_library(core
   ../tcp/frixia_tcp.c
   ../udp/frixia_udp.h
   ../udp/frixia_udp.c
+  ../fifo/frixia_fifo.h
+  ../fifo/frixia_fifo.c
+  
 )
 
 add_subdirectory(ctl_parser)

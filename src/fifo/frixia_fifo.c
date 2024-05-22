@@ -16,18 +16,17 @@
 #include "frixia_fifo.h"
 #include "../core/frixia_codes.h"
 
-
 int start_fifo_listening(int epoll_fd,
-                         char *name)
+                         const char *name)
 {
     if (mkfifo(name, 0666))
     {
-        return ERR_CHANGEPIPE_MKFIFO;
+        return ERR_CHANGEFIFO_MKFIFO;
     }
     int change_fd = open(name, O_RDONLY);
     if (change_fd == -1)
     {
-        return ERR_CHANGEPIPE_OPENINGFD;
+        return ERR_CHANGEFIFO_OPENINGFD;
     }
 
     struct epoll_event ev;
@@ -38,7 +37,7 @@ int start_fifo_listening(int epoll_fd,
     {
         return ERR_EPOLL_CTL;
     }
-    return OK;
+    return change_fd;
 }
 
 int stop_fifo_listening(int epoll_fd,
@@ -52,4 +51,16 @@ int stop_fifo_listening(int epoll_fd,
     }
     close(closing_fd);
     return OK;
+}
+
+int read_fifo_fd(int fd,
+                 char *buf,
+                 int size)
+{
+    int bytes_read = read(fd, buf, size);
+    if (bytes_read == -1)
+    {
+        return ERR_READING_FIFO;
+    }
+    return bytes_read;
 }

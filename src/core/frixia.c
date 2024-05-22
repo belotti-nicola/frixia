@@ -19,6 +19,7 @@
 #include "frixia.h"
 #include "../tcp/frixia_tcp.h"
 #include "../udp/frixia_udp.h"
+#include "../fifo/frixia_fifo.h"
 #include "ctl_parser/control_strings_parser.h"
 #include "frixia_codes.h"
 #include "fd_pool/filedescriptor_pool_defs.h"
@@ -31,7 +32,7 @@
 // max events definition for epoll_wait
 #define FRIXIA_EPOLL_WAIT_MAX_SIZE 10
 
-// COMMAND LENGTH READING THE PIPE
+// COMMAND LENGTH READING THE FIFO
 #define FRIXIA_READ_SIZE 64
 
 // FD Data Structure size
@@ -45,6 +46,7 @@ int frixia_start()
         f_fds[i].type = UNDEFINED;
         f_fds[i].port = 0;
         f_fds[i].fd = -1;
+        strcpy(f_fds[i].filename,"");
     }
 
     // create epoll
@@ -56,32 +58,16 @@ int frixia_start()
     printf("EPOLL FILE DESCRIPTOR:: %d\n", epoll_fd);
 
     // create the change epoll filedescriptor
-    //(which is a pipe)
-    const char *fname = "ctl_pipe";
-    if (mkfifo(fname, 0666))
-    {
-        return ERR_CHANGEPIPE_MKFIFO;
-    }
-    int change_fd = open(fname, O_RDONLY);
-    if (change_fd == -1)
-    {
-        return ERR_CHANGEPIPE_OPENINGFD;
-    }
+    //(which is a FIFO)
+    const char *fname = "ctl_fifo";
+    int change_fd = start_fifo_listening(epoll_fd, fname);
+
     struct FrixiaFD ctl_ffd;
-    ctl_ffd.type = PIPE;
+    ctl_ffd.type = FIFO;
     ctl_ffd.fd = change_fd;
     strcpy(ctl_ffd.filename, fname);
     add_fd_to_pool(ctl_ffd, f_fds, 10);
 
-    // add the "change-epoll_ctl" fd
-    struct epoll_event ev;
-    ev.events = EPOLLIN | EPOLLET;
-    ev.data.fd = change_fd;
-    int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, change_fd, &ev);
-    if (epoll_ctl_retval == -1)
-    {
-        return ERR_EPOLL_CTL;
-    }
 
     // start epoll
     int events_number;
@@ -103,16 +89,19 @@ int frixia_start()
             printf("event intercepted::%d\n", events[i].data.fd);
             int detected_event_fd = events[i].data.fd;
             int index = search_fd(detected_event_fd, f_fds, 10);
-            printf("index %d f_fds[index].fd %d f_fd type %d\n", index, f_fds[index].fd, f_fds[index].type);
+            printf("index %d f_fds[index].fd %d f_fd type %d filename %s\n", index,
+                   f_fds[index].fd,
+                   f_fds[index].type,
+                   f_fds[index].filename);
             switch ((enum FrixiaFDType)f_fds[index].type)
             {
-            case PIPE:
+            case FIFO:
             {
                 char buf[FRIXIA_READ_SIZE];
                 fifo_bytes_read = read(f_fds[index].fd, buf, FRIXIA_READ_SIZE);
                 if (fifo_bytes_read == -1)
                 {
-                    return ERR_READ_PIPE;
+                    return ERR_READ_FIFO;
                 }
 
                 if (strstr(buf, "STOP ALL\n") != NULL)

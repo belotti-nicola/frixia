@@ -10,7 +10,7 @@ enum FrixiaFDType
     STD_ERR,
     TCP,
     UDP,
-    PIPE,
+    FIFO,
 
     UNDEFINED
 };
