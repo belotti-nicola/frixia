@@ -369,7 +369,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             }
             if (*s == 'L')
             {
-                state = 26;
+                state = 25;
                 f->c = STOPALL;
             }
             break;

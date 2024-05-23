@@ -3,13 +3,14 @@ FEAT:
     dispatchers
     python integration
     reentrancy check (multiple threads)
-
-FIX:
     logger
     automatic testing
 
+FIX:
+    parsing can SUCCED for WRONG STRINGS for very bad combination of strings (STOP ALLLLLL works)
+    parsing integer up to 65535
+
 TODO
-    refactoring (TCP only TCP, no FrixiaStructures that are used before syscalls)
     parser (UDP/TCP) 
     icon
     create library
