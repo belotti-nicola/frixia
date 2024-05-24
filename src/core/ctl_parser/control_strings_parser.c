@@ -1,13 +1,34 @@
 #include "control_strings_parser.h"
 #include <stdio.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 #include "control_commands.h"
 #include "../frixia_common.h"
 
+bool included_in(char *c, char less, char more)
+{
+    if ( *c < less )
+    {
+        return false;
+    }
+    if ( *c > more ) 
+    {
+        return false;
+    }
+    return true;
+}
+
 enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
 {
     int state = 0;
+
+    int first_digit  = -1,
+        second_digit = -1,
+        third_digit  = -1,
+        fourth_digit = -1,
+        fifth_digit  = -1;
+
     printf("S: %s\n",s);
     for (; *s != '\0' && *s != '\n' && *s != '\r'; s++)
     {
@@ -174,10 +195,17 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 return PARSE_ERROR;
             }
-            if (isdigit(*s))
+            if (*s == '0')
             {
                 state = 11;
-                f->port = 8080;
+            }
+            if ( included_in(*s,1,6) )
+            {
+                state = 27;
+            }
+            if ( included_in(*s,7,9) )
+            {
+                state = 38;
             }
             break;
         }
@@ -373,6 +401,175 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
                 f->c = STOPALL;
             }
             break;
+        }
+        //case 26: 
+        case 27:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( included_in(*s,0,5) )
+            {
+                state = 28;
+            }
+            if ( included_in(*s,6,9) )
+            {
+                state = 35;
+            }
+            break;
+        } 
+        case 28:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( included_in(*s,6,9) )
+            {
+                state = 29;
+            }
+            if ( included_in(*s,6,9) )
+            {
+                state = 31;
+            }
+            break;
+        } 
+        case 29:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( included_in(*s,6,9) )
+            {
+                state = 32;
+            }
+            break;
+        } 
+        case 30:
+        {
+
+        }
+        case 31:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( included_in(*s,4,9) )
+            {
+                state = 32;
+            }
+            if ( included_in(*s,0,3) )
+            {
+                state = 33;
+            }
+            break;
+        }
+        case 32:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( included_in(*s,4,9) )
+            {
+                state = 32;
+            }
+            if ( included_in(*s,0,3) )
+            {
+                state = 33;
+            }
+            break;
+        }
+        case 33:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if (*s >= '6')
+            {
+                return PARSE_ERROR;
+            }
+            if ( included_in(*s,0,5) )
+            {
+                state = 32;
+            }
+            break;
+        }
+        case 34:
+        {
+
+        }
+        case 35:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if (isdigit(*s))
+            {
+                state = 36;
+            }
+            break;
+        }
+        case 36:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( isdigit(*s))
+            {
+                state = 37;
+            }
+            break;
+        }
+        case 37:
+        {
+
+        }
+        case 38:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( isdigit(*s))
+            {
+                state = 39;
+            }
+            break;
+        }
+        case 39:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( isdigit(*s))
+            {
+                state = 40;
+            }
+            break;
+        }
+        case 40:
+        {
+            if (!isdigit(*s))
+            {
+                return PARSE_ERROR;
+            }
+            if ( isdigit(*s))
+            {
+                state = 41;
+            }
+            break;
+        }
+        case 41:
+        {
+
         }
         }
     }
