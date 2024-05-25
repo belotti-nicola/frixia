@@ -6,30 +6,41 @@
 #include "control_commands.h"
 #include "../frixia_common.h"
 
-bool included_in(char *c, char less, char more)
+bool included_in(char c, char less, char more)
 {
-    if ( *c < less )
+    if (c < less)
     {
         return false;
     }
-    if ( *c > more ) 
+    if (c > more)
     {
         return false;
     }
     return true;
 }
 
-enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
+int compute_integer(int d[])
+{
+    int val = 0;
+    int curr_weight = 1;
+    for(int i=0;i<5;i++)
+    {
+        if(d[i]>0 && d[i]<9)
+        {
+            val += d[i] * curr_weight;
+            curr_weight *= 10;
+        }
+    }
+    return val;
+}
+
+enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
 {
     int state = 0;
 
-    int first_digit  = -1,
-        second_digit = -1,
-        third_digit  = -1,
-        fourth_digit = -1,
-        fifth_digit  = -1;
+    int digits[5];
 
-    printf("S: %s\n",s);
+    printf("S: %s\n", s);
     for (; *s != '\0' && *s != '\n' && *s != '\r'; s++)
     {
         switch (state)
@@ -97,7 +108,6 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 state = 5;
                 f->c = START;
-
             }
             break;
         }
@@ -199,14 +209,15 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 state = 11;
             }
-            if ( included_in(*s,1,6) )
+            if (included_in(*s, 1, 6))
             {
                 state = 27;
             }
-            if ( included_in(*s,7,9) )
+            if (included_in(*s, 7, 9))
             {
                 state = 38;
             }
+            digits[0] = *s - '0';
             break;
         }
         case 12:
@@ -402,54 +413,59 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             }
             break;
         }
-        //case 26: 
+        case 26:
+        {
+        }
         case 27:
         {
             if (!isdigit(*s))
             {
                 return PARSE_ERROR;
             }
-            if ( included_in(*s,0,5) )
+            if (included_in(*s, 0, 5))
             {
                 state = 28;
             }
-            if ( included_in(*s,6,9) )
+            if (included_in(*s, 6, 9))
             {
                 state = 35;
             }
+            digits[1] = *s - '0';
             break;
-        } 
+        }
         case 28:
         {
             if (!isdigit(*s))
             {
                 return PARSE_ERROR;
             }
-            if ( included_in(*s,6,9) )
+            if (included_in(*s, 6, 9))
             {
                 state = 29;
             }
-            if ( included_in(*s,6,9) )
+            if (included_in(*s, 6, 9))
             {
                 state = 31;
             }
+            digits[2] = *s - '0';
             break;
-        } 
+        }
         case 29:
         {
             if (!isdigit(*s))
             {
                 return PARSE_ERROR;
             }
-            if ( included_in(*s,6,9) )
+            if (included_in(*s, 6, 9))
             {
                 state = 32;
             }
+            digits[3] = *s - '0';
             break;
-        } 
+        }
         case 30:
         {
-
+            digits[4] = *s - '0';
         }
         case 31:
         {
@@ -457,14 +473,15 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 return PARSE_ERROR;
             }
-            if ( included_in(*s,4,9) )
+            if (included_in(*s, 4, 9))
             {
                 state = 32;
             }
-            if ( included_in(*s,0,3) )
+            if (included_in(*s, 0, 3))
             {
                 state = 33;
             }
+            digits[3] = *s - '0';
             break;
         }
         case 32:
@@ -473,11 +490,11 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 return PARSE_ERROR;
             }
-            if ( included_in(*s,4,9) )
+            if (included_in(*s, 4, 9))
             {
                 state = 32;
             }
-            if ( included_in(*s,0,3) )
+            if (included_in(*s, 0, 3))
             {
                 state = 33;
             }
@@ -493,15 +510,15 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 return PARSE_ERROR;
             }
-            if ( included_in(*s,0,5) )
+            if (included_in(*s, 0, 5))
             {
                 state = 32;
             }
+            digits[4] = *s - '0';
             break;
         }
         case 34:
         {
-
         }
         case 35:
         {
@@ -513,6 +530,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 state = 36;
             }
+            digits[2] = *s - '0';
             break;
         }
         case 36:
@@ -521,15 +539,15 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 return PARSE_ERROR;
             }
-            if ( isdigit(*s))
+            if (isdigit(*s))
             {
                 state = 37;
             }
+            digits[3] = *s - '0';
             break;
         }
         case 37:
         {
-
         }
         case 38:
         {
@@ -537,10 +555,11 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 return PARSE_ERROR;
             }
-            if ( isdigit(*s))
+            if (isdigit(*s))
             {
                 state = 39;
             }
+            digits[1] = *s - '0';
             break;
         }
         case 39:
@@ -549,10 +568,11 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 return PARSE_ERROR;
             }
-            if ( isdigit(*s))
+            if (isdigit(*s))
             {
                 state = 40;
             }
+            digits[2] = *s - '0';
             break;
         }
         case 40:
@@ -561,18 +581,21 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL* f)
             {
                 return PARSE_ERROR;
             }
-            if ( isdigit(*s))
+            if (isdigit(*s))
             {
                 state = 41;
             }
+            digits[3] = *s - '0';
             break;
         }
         case 41:
         {
-
         }
         }
     }
+
+    int v = compute_integer(digits);
+    f->port = v;
 
     if (state == 11 ||
         state == 20 ||
