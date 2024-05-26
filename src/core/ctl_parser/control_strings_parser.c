@@ -36,6 +36,11 @@ int compute_integer(int d[])
 
 enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
 {
+    if(*s == '\0')
+    {
+        return PARSE_ERROR;
+    }
+
     int state = 0;
 
     int digits[5];

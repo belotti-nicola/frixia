@@ -4,6 +4,7 @@ project(frixia C)
 
 
 add_subdirectory(src)
+add_subdirectory(test)
 
 add_executable(frixia
   main.c
@@ -12,3 +13,4 @@ add_executable(frixia
 target_link_libraries(frixia 
   core
 )
+
