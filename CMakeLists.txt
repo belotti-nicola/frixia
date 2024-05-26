@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 project(frixia C)
-
+include(CTest)
 
 add_subdirectory(src)
 add_subdirectory(test)
