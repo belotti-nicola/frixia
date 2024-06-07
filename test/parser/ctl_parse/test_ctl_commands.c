@@ -42,13 +42,13 @@ void test_parse_ok(char *directory,
                    char *fdtype,
                    char *argument)
 {
-    printf("test_parse_error %s %s\n",directory,filename);
+    printf("test_parse_ok dir:%s file:%s cmd:%s fdtype:%s arg:%s",directory,filename,cmd,fdtype,argument);
     char f[PATH_MAX]= {'\0'};
     snprintf(f, sizeof(f), "%s%s%s%s","test_strings/", directory, "/", filename);
     FILE *fptr = fopen(f, "r");
     if (fptr == NULL)
     {
-        printf("test_parse_error %s\n",f);
+        printf("exiting with failure test_parse_error %s\n",f);
         exit(EXIT_FAILURE);
     }
 
@@ -58,11 +58,19 @@ void test_parse_ok(char *directory,
     int ret_val = parse_control_strings(test_sample,&fctl);
     fclose(fptr);
     
-    if(ret_val != PARSE_OK)
+    if(ret_val == PARSE_ERROR)
     {
-        printf("EXIT_FAILURE %s\n",f);
+        printf("EXIT_FAILURE RET CODE %s\n",f);
         exit(EXIT_FAILURE);
     }
+
+    enum command_type CMD = get_commands_by_string(cmd);
+    if(CMD != fctl.c )
+    {
+        printf("EXIT_FAILURE CMD %d %s\n",fctl.c,cmd);
+        exit(EXIT_FAILURE);
+    }
+    printf("%d %d\n",CMD,fctl.c);
 }
 
 int main(void)

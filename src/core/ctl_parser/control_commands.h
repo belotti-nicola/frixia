@@ -4,10 +4,13 @@
 #include "../frixia_common.h"
 
 enum command_type{
+    UNKNOWN,
     START,
     STOP,
     STOPALL
 };
+
+enum command_type get_commands_by_string(char s[]);
 
 struct FrixiaCTL {
     enum command_type c;
