@@ -58,7 +58,7 @@ void test_parse_ok(char *directory,
     int ret_val = parse_control_strings(test_sample,&fctl);
     fclose(fptr);
     
-    if(ret_val != PARSE_ERROR)
+    if(ret_val != PARSE_OK)
     {
         printf("EXIT_FAILURE %s\n",f);
         exit(EXIT_FAILURE);
