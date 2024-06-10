@@ -75,7 +75,7 @@ void test_parse_ok(char *directory,
 
     enum command_type CMD = get_command_by_string(cmd);
     enum FrixiaFDType TYPE = get_frixiafdtype_by_string(fdtype);
-    int ARGUMENT = atoi(argument);
+    int PORT = atoi(argument);
     if (CMD != fctl.c)
     {
         printf("EXIT_FAILURE CMD %d %s\n", fctl.c, cmd);
@@ -102,7 +102,14 @@ void test_parse_ok(char *directory,
     }
     if (
         (TYPE == TCP || TYPE == UDP) &&
-        (ARGUMENT != fctl.port))
+        (PORT != fctl.port))
+    {
+        printf("EXIT_FAILURE PORT %d %s\n", fctl.port, argument);
+        exit(EXIT_FAILURE);
+    }
+    if (
+        (TYPE == FIFO ) &&
+        (strcmp(fctl.argument,argument))==1 )
     {
         printf("EXIT_FAILURE ARGUMENT %d %s\n", fctl.port, argument);
         exit(EXIT_FAILURE);

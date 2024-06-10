@@ -7,3 +7,4 @@ parse_oks,2.txt,PARSE_OK,START,TCP,8080
 parse_oks,3.txt,PARSE_OK,STOPALL,DC,DC
 parse_oks,4.txt,PARSE_OK,START,TCP,65534
 parse_oks,5.txt,PARSE_OK,START,TCP,1
+parse_oks,6.txt,PARSE_OK,START,FIFO,ctl_fifo
