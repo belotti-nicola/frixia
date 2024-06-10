@@ -27,7 +27,11 @@ void test_parse_error(char *directory,
 
     struct FrixiaCTL fctl;
     char test_sample[MAX_LINE_LENGTH];
-    fgets(test_sample, MAX_LINE_LENGTH, fptr);
+    if(fgets(test_sample, MAX_LINE_LENGTH, fptr) == NULL)
+    {
+        printf("EXIT_FAILURE READING TESTSAMPLE %s\n", test_sample);
+        exit(EXIT_FAILURE);
+    }
     int ret_val = parse_control_strings(test_sample, &fctl);
     fclose(fptr);
 
@@ -55,10 +59,14 @@ void test_parse_ok(char *directory,
 
     struct FrixiaCTL fctl;
     char test_sample[MAX_LINE_LENGTH];
-    fgets(test_sample, MAX_LINE_LENGTH, fptr);
-    int ret_val = parse_control_strings(test_sample, &fctl);
+    if(fgets(test_sample, MAX_LINE_LENGTH, fptr) == NULL)
+    {
+        printf("EXIT_FAILURE READING LINE %s\n", test_sample);
+        exit(EXIT_FAILURE);
+    }
     fclose(fptr);
 
+    int ret_val = parse_control_strings(test_sample, &fctl);
     if (ret_val == PARSE_ERROR)
     {
         printf("EXIT_FAILURE RET CODE %s\n", f);
