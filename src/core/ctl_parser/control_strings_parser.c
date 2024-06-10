@@ -6,6 +6,9 @@
 #include "control_commands.h"
 #include "../frixia_common.h"
 
+#define PARSING_DEBUG() \
+    printf("last parser line before returnin::%d\n", __LINE__);
+
 bool included_in(char c, char less, char more)
 {
     if (c < less)
@@ -19,31 +22,22 @@ bool included_in(char c, char less, char more)
     return true;
 }
 
-int compute_integer(int d[])
+int compute_integer(char s[])
 {
-    int val = 0;
-    int curr_weight = 1;
-    for(int i=0;i<5;i++)
-    {
-        if(d[i]>0 && d[i]<9)
-        {
-            val += d[i] * curr_weight;
-            curr_weight *= 10;
-        }
-    }
-    return val;
+    return atoi(s);
 }
 
 enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
 {
-    if(*s == '\0')
+    if (*s == '\0')
     {
+        PARSING_DEBUG();
         return PARSE_ERROR;
     }
 
     int state = 0;
 
-    int digits[5];
+    char digits[5] = {'\0'};
 
     printf("S: %s\n", s);
     for (; *s != '\0' && *s != '\n' && *s != '\r'; s++)
@@ -54,6 +48,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != 'S')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == 'S')
@@ -66,6 +61,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != 'T')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == 'T')
@@ -76,9 +72,9 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         }
         case 2:
         {
-            if (*s != 'A' &&
-                *s != 'O')
+            if (*s != 'A' && *s != 'O')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == 'A')
@@ -87,7 +83,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
             }
             if (*s == 'O')
             {
-                state = 21;
+                state = 17;
             }
             break;
         }
@@ -95,6 +91,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != 'R')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == 'R')
@@ -107,6 +104,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != 'T')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == 'T')
@@ -120,6 +118,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != ' ')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == ' ')
@@ -132,9 +131,10 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != 'T' &&
                 *s != 'U' &&
-                *s != 'P' &&
+                *s != 'F' &&
                 *s != ' ')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == 'T')
@@ -143,11 +143,11 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
             }
             if (*s == 'U')
             {
-                state = 12;
+                state = 10;
             }
-            if (*s == 'P')
+            if (*s == 'F')
             {
-                state = 15;
+                state = 13;
             }
             if (*s == ' ')
             {
@@ -159,6 +159,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != 'C')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == 'C')
@@ -171,6 +172,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != 'P')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == 'P')
@@ -184,21 +186,23 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         {
             if (*s != ' ')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == ' ')
             {
-                state = 10;
+                state = 23;
             }
             break;
         }
         case 10:
         {
-            if (!isdigit(*s))
+            if (*s != 'D')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (isdigit(*s))
+            if (*s == 'D')
             {
                 state = 11;
             }
@@ -206,174 +210,125 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         }
         case 11:
         {
-            if (!isdigit(*s))
+            if (*s != 'P')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == '0')
+            if (*s == 'P')
             {
-                state = 11;
+                state = 12;
+                f->type = UDP;
             }
-            if (included_in(*s, 1, 6))
-            {
-                state = 27;
-            }
-            if (included_in(*s, 7, 9))
-            {
-                state = 38;
-            }
-            digits[0] = *s - '0';
             break;
         }
         case 12:
         {
-            if (*s != 'D')
+            if (*s != ' ')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == 'D')
+            if (*s == ' ')
             {
-                state = 13;
+                state = 23;
             }
             break;
         }
         case 13:
         {
-            if (*s != 'P')
+            if (*s != 'I')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == 'P')
+            if (*s == 'I')
             {
                 state = 14;
-                f->type = UDP;
             }
             break;
         }
         case 14:
         {
-            if (*s != ' ')
+            if (*s != 'F')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == ' ')
+            if (*s == 'F')
             {
-                state = 10;
+                state = 1;
             }
             break;
         }
         case 15:
         {
-            if (*s != 'F')
+            if (*s != 'O')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == 'F')
+            if (*s == 'O')
             {
                 state = 16;
+                f->type = FIFO;
             }
             break;
         }
         case 16:
         {
-            if (*s != 'I')
-            {
+            if (*s != ' ')
+            { 
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == 'I')
+            if (*s == ' ')
             {
-                state = 17;
+                state = 39;
             }
             break;
         }
         case 17:
         {
-            if (*s != 'O')
+            if (*s != 'P')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == 'O')
+            if (*s == 'P')
             {
                 state = 18;
-                f->type = FIFO;
+                f->c = STOP;
             }
             break;
         }
         case 18:
         {
-            if (*s != ' ')
+            if (*s != ' ' &&
+                *s != 'A')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
             if (*s == ' ')
             {
                 state = 19;
             }
+            if (*s == 'A')
+            {
+                state = 20;
+            }
             break;
         }
         case 19:
         {
-            if (!isalpha(*s))
-            {
-                return PARSE_ERROR;
-            }
-            if (isalpha(*s))
-            {
-                state = 20;
-            }
-            break;
-        }
-        case 20:
-        {
-            if (!isalpha(*s))
-            {
-                return PARSE_ERROR;
-            }
-            if (isalpha(*s))
-            {
-                state = 20;
-                f->port = 8080;
-            }
-            break;
-        }
-        case 21:
-        {
-            if (*s != 'P')
-            {
-                return PARSE_ERROR;
-            }
-            if (*s == 'P')
-            {
-                state = 22;
-                f->c = STOP;
-            }
-            break;
-        }
-        case 22:
-        {
-            if (*s != ' ')
-            {
-                return PARSE_ERROR;
-            }
-            if (*s == ' ')
-            {
-                state = 23;
-            }
-            break;
-        }
-        case 23:
-        {
-            if (*s != ' ' &&
-                *s != 'T' &&
+            if (*s != 'T' &&
                 *s != 'U' &&
                 *s != 'F' &&
                 *s != 'A')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
-            }
-            if (*s == ' ')
-            {
-                state = 23;
             }
             if (*s == 'T')
             {
@@ -381,220 +336,430 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
             }
             if (*s == 'U')
             {
-                state = 12;
+                state = 10;
             }
             if (*s == 'F')
             {
-                state = 15;
+                state = 13;
             }
             if (*s == 'A')
             {
+                state = 20;
+            }
+            break;
+        }
+        case 20:
+        {
+            if (*s != 'L')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            if (*s == 'L')
+            {
+                state = 21;
+            }
+            break;
+        }
+        case 21:
+        {
+            if (*s != 'L')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            if (*s == 'L')
+            {
+                state = 22;
+                f->c = STOPALL;
+            }
+            break;
+        }
+        case 22:
+        {
+            PARSING_DEBUG();
+            return PARSE_ERROR;
+        }
+        case 23:
+        {
+            if (!isdigit(*s))
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            if (*s == 0)
+            {
+                state = 23;
+            }
+            if (included_in(*s, '1', '6'))
+            {
                 state = 24;
+                digits[0] = *s;
+            }
+            if (included_in(*s, '7', '9'))
+            {
+                state = 35;
+                digits[0] = *s;
             }
             break;
         }
         case 24:
         {
-            if (*s != 'L')
+            if (!isdigit(*s))
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == 'L')
+            if (included_in(*s, '0', '5'))
             {
                 state = 25;
             }
+            if (included_in(*s, '6', '9'))
+            {
+                state = 32;
+            }
+            digits[1] = *s;
             break;
         }
         case 25:
         {
-            if (*s != 'L')
+            if (!isdigit(*s))
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s == 'L')
+            if (included_in(*s, '0', '5'))
             {
-                state = 25;
-                f->c = STOPALL;
+                state = 26;
             }
+            if (included_in(*s, '6', '9'))
+            {
+                state = 30;
+            }
+            digits[2] = *s;
             break;
         }
         case 26:
         {
+            if (!isdigit(*s))
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            if (included_in(*s, '0', '3'))
+            {
+                state = 27;
+            }
+            if (included_in(*s, '4', '9'))
+            {
+                state = 29;
+            }
+            digits[3] = *s;
+            break;
         }
         case 27:
         {
             if (!isdigit(*s))
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (included_in(*s, 0, 5))
+            if (included_in(*s, '0', '5'))
             {
                 state = 28;
             }
-            if (included_in(*s, 6, 9))
+            if (included_in(*s, '6', '9'))
             {
-                state = 35;
+                PARSING_DEBUG();
+                return PARSE_ERROR;
             }
-            digits[1] = *s - '0';
+            digits[4] = *s;
             break;
         }
         case 28:
         {
-            if (!isdigit(*s))
-            {
-                return PARSE_ERROR;
-            }
-            if (included_in(*s, 6, 9))
-            {
-                state = 29;
-            }
-            if (included_in(*s, 6, 9))
-            {
-                state = 31;
-            }
-            digits[2] = *s - '0';
-            break;
+            PARSING_DEBUG();
+            return PARSE_ERROR;
         }
         case 29:
         {
-            if (!isdigit(*s))
-            {
-                return PARSE_ERROR;
-            }
-            if (included_in(*s, 6, 9))
-            {
-                state = 32;
-            }
-            digits[3] = *s - '0';
-            break;
+            PARSING_DEBUG();
+            return PARSE_ERROR;
         }
         case 30:
         {
-            digits[4] = *s - '0';
+            if (!isdigit(*s))
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            digits[3] = *s;
+            break;
         }
         case 31:
         {
-            if (!isdigit(*s))
-            {
-                return PARSE_ERROR;
-            }
-            if (included_in(*s, 4, 9))
-            {
-                state = 32;
-            }
-            if (included_in(*s, 0, 3))
-            {
-                state = 33;
-            }
-            digits[3] = *s - '0';
-            break;
+            PARSING_DEBUG();
+            return PARSE_ERROR;
         }
         case 32:
         {
             if (!isdigit(*s))
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (included_in(*s, 4, 9))
-            {
-                state = 32;
-            }
-            if (included_in(*s, 0, 3))
-            {
-                state = 33;
-            }
+            state = 33;
+            digits[2] = *s;
             break;
         }
         case 33:
         {
             if (!isdigit(*s))
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (*s >= '6')
-            {
-                return PARSE_ERROR;
-            }
-            if (included_in(*s, 0, 5))
-            {
-                state = 32;
-            }
-            digits[4] = *s - '0';
+            state = 34;
+            digits[3] = *s;
             break;
         }
         case 34:
         {
+            PARSING_DEBUG();
+            return PARSE_ERROR;
         }
         case 35:
         {
             if (!isdigit(*s))
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (isdigit(*s))
-            {
-                state = 36;
-            }
-            digits[2] = *s - '0';
+            state = 36;
+            digits[1] = *s;
             break;
         }
         case 36:
         {
             if (!isdigit(*s))
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (isdigit(*s))
-            {
-                state = 37;
-            }
-            digits[3] = *s - '0';
+            state = 37;
+            digits[2] = *s;
             break;
         }
         case 37:
         {
+            if (!isdigit(*s))
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 38;
+            digits[3] = *s;
+            break;
         }
         case 38:
         {
-            if (!isdigit(*s))
-            {
-                return PARSE_ERROR;
-            }
-            if (isdigit(*s))
-            {
-                state = 39;
-            }
-            digits[1] = *s - '0';
-            break;
+            PARSING_DEBUG();
+            return PARSE_ERROR;
         }
         case 39:
         {
-            if (!isdigit(*s))
+            if (!isalpha(*s) && *s != '_')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (isdigit(*s))
-            {
-                state = 40;
-            }
-            digits[2] = *s - '0';
+            state = 40;
             break;
         }
         case 40:
         {
-            if (!isdigit(*s))
+            if (!isalpha(*s) && *s != '_')
             {
+                PARSING_DEBUG();
                 return PARSE_ERROR;
             }
-            if (isdigit(*s))
-            {
-                state = 41;
-            }
-            digits[3] = *s - '0';
+            state = 41;
             break;
         }
-        case 41:
+        case 42:
         {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 43;
+            break;
+        }
+        case 43:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 44;
+            break;
+        }
+        case 44:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 45;
+            break;
+        }
+        case 45:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 46;
+            break;
+        }
+        case 46:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 47;
+            break;
+        }
+        case 47:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 48;
+            break;
+        }
+        case 48:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 49;
+            break;
+        }
+        case 49:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 50;
+            break;
+        }
+        case 50:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 51;
+            break;
+        }
+        case 51:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 52;
+            break;
+        }
+        case 52:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 53;
+            break;
+        }
+        case 53:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 54;
+            break;
+        }
+        case 54:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 55;
+            break;
+        }
+        case 55:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 56;
+            break;
+        }
+        case 56:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 57;
+            break;
+        }
+        case 57:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 58;
+            break;
+        }
+        case 58:
+        {
+            if (!isalpha(*s) && *s != '_')
+            {
+                PARSING_DEBUG();
+                return PARSE_ERROR;
+            }
+            state = 59;
+            break;
+        }
+        case 59:
+        {
+            PARSING_DEBUG();
+            return PARSE_ERROR;
         }
         }
     }
@@ -602,10 +767,5 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
     int v = compute_integer(digits);
     f->port = v;
 
-    if (state == 11 ||
-        state == 20 ||
-        state == 25)
-        return PARSE_OK;
-    else
-        return PARSE_ERROR;
+    return PARSE_OK;
 }

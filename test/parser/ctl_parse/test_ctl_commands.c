@@ -4,6 +4,7 @@
 
 #include "../../../src/core/ctl_parser/control_strings_parser.h"
 #include "../../../src/core/ctl_parser/control_commands.h"
+#include "../../../src/core/frixia_common.h"
 
 #define TEST_DATA "test_strings/samples.csv"
 
@@ -14,25 +15,25 @@
 void test_parse_error(char *directory,
                       char *filename)
 {
-    printf("test_parse_error %s %s\n",directory,filename);
-    char f[PATH_MAX]= {'\0'};
-    snprintf(f, sizeof(f), "%s%s%s%s","test_strings/", directory, "/", filename);
+    printf("test_parse_error %s %s\n", directory, filename);
+    char f[PATH_MAX] = {'\0'};
+    snprintf(f, sizeof(f), "%s%s%s%s", "test_strings/", directory, "/", filename);
     FILE *fptr = fopen(f, "r");
     if (fptr == NULL)
     {
-        printf("test_parse_error %s\n",f);
+        printf("test_parse_error %s\n", f);
         exit(EXIT_FAILURE);
     }
 
     struct FrixiaCTL fctl;
     char test_sample[MAX_LINE_LENGTH];
-    fgets(test_sample,MAX_LINE_LENGTH,fptr);
-    int ret_val = parse_control_strings(test_sample,&fctl);
+    fgets(test_sample, MAX_LINE_LENGTH, fptr);
+    int ret_val = parse_control_strings(test_sample, &fctl);
     fclose(fptr);
-    
-    if(ret_val != PARSE_ERROR)
+
+    if (ret_val != PARSE_ERROR)
     {
-        printf("EXIT_FAILURE %s\n",f);
+        printf("EXIT_FAILURE %s\n", f);
         exit(EXIT_FAILURE);
     }
 }
@@ -42,35 +43,62 @@ void test_parse_ok(char *directory,
                    char *fdtype,
                    char *argument)
 {
-    printf("test_parse_ok dir:%s file:%s cmd:%s fdtype:%s arg:%s",directory,filename,cmd,fdtype,argument);
-    char f[PATH_MAX]= {'\0'};
-    snprintf(f, sizeof(f), "%s%s%s%s","test_strings/", directory, "/", filename);
+    printf("test_parse_ok dir:%s file:%s cmd:%s fdtype:%s arg:%s", directory, filename, cmd, fdtype, argument);
+    char f[PATH_MAX] = {'\0'};
+    snprintf(f, sizeof(f), "%s%s%s%s", "test_strings/", directory, "/", filename);
     FILE *fptr = fopen(f, "r");
     if (fptr == NULL)
     {
-        printf("exiting with failure test_parse_error %s\n",f);
+        printf("exiting with failure test_parse_error %s\n", f);
         exit(EXIT_FAILURE);
     }
 
     struct FrixiaCTL fctl;
     char test_sample[MAX_LINE_LENGTH];
-    fgets(test_sample,MAX_LINE_LENGTH,fptr);
-    int ret_val = parse_control_strings(test_sample,&fctl);
+    fgets(test_sample, MAX_LINE_LENGTH, fptr);
+    int ret_val = parse_control_strings(test_sample, &fctl);
     fclose(fptr);
-    
-    if(ret_val == PARSE_ERROR)
+
+    if (ret_val == PARSE_ERROR)
     {
-        printf("EXIT_FAILURE RET CODE %s\n",f);
+        printf("EXIT_FAILURE RET CODE %s\n", f);
         exit(EXIT_FAILURE);
     }
 
-    enum command_type CMD = get_commands_by_string(cmd);
-    if(CMD != fctl.c )
+    enum command_type CMD = get_command_by_string(cmd);
+    enum FrixiaFDType TYPE = get_frixiafdtype_by_string(fdtype);
+    int ARGUMENT = atoi(argument);
+    if (CMD != fctl.c)
     {
-        printf("EXIT_FAILURE CMD %d %s\n",fctl.c,cmd);
+        printf("EXIT_FAILURE CMD %d %s\n", fctl.c, cmd);
         exit(EXIT_FAILURE);
     }
-    printf("%d %d\n",CMD,fctl.c);
+    if (CMD != fctl.c)
+    {
+        printf("EXIT_FAILURE CMD %d %s\n", fctl.c, cmd);
+        exit(EXIT_FAILURE);
+    }
+    if (
+        (TYPE == TCP || TYPE == UDP) &&
+        (TYPE != fctl.type))
+    {
+        printf("EXIT_FAILURE TYPE %d %s\n", fctl.type, fdtype);
+        exit(EXIT_FAILURE);
+    }
+    if (
+        (TYPE == TCP || TYPE == UDP) &&
+        (TYPE != fctl.type))
+    {
+        printf("EXIT_FAILURE TYPE %d %s\n", fctl.type, fdtype);
+        exit(EXIT_FAILURE);
+    }
+    if (
+        (TYPE == TCP || TYPE == UDP) &&
+        (ARGUMENT != fctl.port))
+    {
+        printf("EXIT_FAILURE ARGUMENT %d %s\n", fctl.port, argument);
+        exit(EXIT_FAILURE);
+    }
 }
 
 int main(void)

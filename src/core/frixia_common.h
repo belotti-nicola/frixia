@@ -14,4 +14,6 @@ enum FrixiaFDType
     UNDEFINED
 };
 
+enum FrixiaFDType get_frixiafdtype_by_string(char s[]);
+
 #endif

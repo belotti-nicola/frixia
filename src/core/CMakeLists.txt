@@ -2,6 +2,7 @@ add_library(core
   frixia.c
   frixia.h
   frixia_common.h
+  frixia_common.c
   ../tcp/frixia_tcp.h
   ../tcp/frixia_tcp.c
   ../udp/frixia_udp.h

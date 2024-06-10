@@ -2,7 +2,7 @@
 
 #include "control_commands.h"
 
-enum command_type get_commands_by_string(char* s)
+enum command_type get_command_by_string(char* s)
 {
     if(strcmp("START",s) == 0)
     {

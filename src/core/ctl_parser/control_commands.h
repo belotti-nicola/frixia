@@ -10,7 +10,7 @@ enum command_type{
     STOPALL
 };
 
-enum command_type get_commands_by_string(char s[]);
+enum command_type get_command_by_string(char s[]);
 
 struct FrixiaCTL {
     enum command_type c;
