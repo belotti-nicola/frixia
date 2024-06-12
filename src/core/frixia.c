@@ -39,6 +39,114 @@
 // FD Data Structure size
 #define MAXIMUM_FILEDESCRIPTORS 10
 
+void handle_ctl_command(int epoll_fd,
+                        struct FrixiaFD frixia_fds[],
+                        int frixia_fds_size,
+                        struct FrixiaCTL cmd)
+{
+    switch (cmd.c)
+    {
+    case START:
+    {
+        switch (cmd.type)
+        {
+        case TCP:
+        {
+            int f_tcp = start_tcp_listening(epoll_fd,
+                                            cmd.port);
+            struct FrixiaFD f;
+            f.fd = f_tcp;
+            f.type = TCP;
+            f.port = cmd.port;
+            add_fd_to_pool(f, frixia_fds, frixia_fds_size);
+            break;
+        }
+        case UDP:
+        {
+            int f_udp = start_udp_listening(frixia_fds,
+                                            frixia_fds_size,
+                                            epoll_fd,
+                                            cmd.port);
+            struct FrixiaFD f;
+            f.fd = f_udp;
+            f.type = UDP;
+            f.port = cmd.port;
+            add_fd_to_pool(f, frixia_fds, frixia_fds_size);
+            break;
+        }
+        case FIFO:
+        {
+            int f_fifo = start_fifo_listening(epoll_fd, cmd.argument);
+            struct FrixiaFD f;
+            f.fd = f_fifo;
+            f.type = UDP;
+            f.port = cmd.port;
+            add_fd_to_pool(f, frixia_fds, frixia_fds_size);
+            break;
+        }
+        }
+        break;
+    }
+    case STOP:
+    {
+        switch (cmd.type)
+        {
+        case TCP:
+        {
+            int tcp_index = search_tcp_fd_by_port(8080,
+                                                  frixia_fds,
+                                                  frixia_fds_size);
+            int target_fd = frixia_fds[tcp_index].fd;
+            int ret = stop_tcp_listening(epoll_fd,
+                                         target_fd);
+            remove_fd(target_fd,
+                      frixia_fds,
+                      frixia_fds_size);
+            break;
+        }
+        case UDP:
+        {
+            int udp_index = search_tcp_fd_by_port(cmd.port,
+                                                  frixia_fds,
+                                                  10);
+            int target_fd = frixia_fds[udp_index].fd;
+            stop_udp_listening(target_fd,
+                               frixia_fds,
+                               10,
+                               epoll_fd);
+            remove_fd(target_fd,
+                      frixia_fds,
+                      frixia_fds_size);
+            break;
+        }
+        case FIFO:
+        {
+            int fifo_index = search_tcp_fd_by_port(cmd.port,
+                                                   frixia_fds,
+                                                   10);
+            int target_fd = frixia_fds[fifo_index].fd;
+            stop_udp_listening(target_fd,
+                               frixia_fds,
+                               10,
+                               epoll_fd);
+            remove_fd(target_fd,
+                      frixia_fds,
+                      frixia_fds_size);
+            break;
+        }
+        }
+        break;
+    }
+    case STOPALL:
+    {
+        frixia_stop(epoll_fd,
+                    frixia_fds,
+                    frixia_fds_size);
+        break;
+    }
+    }
+}
+
 int frixia_start()
 {
     struct FrixiaFD f_fds[10];
@@ -47,7 +155,7 @@ int frixia_start()
         f_fds[i].type = UNDEFINED;
         f_fds[i].port = 0;
         f_fds[i].fd = -1;
-        strcpy(f_fds[i].filename,"");
+        strcpy(f_fds[i].filename, "");
     }
 
     // create epoll
@@ -68,7 +176,6 @@ int frixia_start()
     ctl_ffd.fd = change_fd;
     strcpy(ctl_ffd.filename, fname);
     add_fd_to_pool(ctl_ffd, f_fds, 10);
-
 
     // start epoll
     int events_number;
@@ -104,52 +211,12 @@ int frixia_start()
                 {
                     return ERR_READ_FIFO;
                 }
-                struct FrixiaCTL* p_f;
+                struct FrixiaCTL *p_f;
                 struct FrixiaCTL fr;
                 p_f = &fr;
-                int parse_ec = parse_control_strings(buf,p_f);
-                printf("PARSE: %d, CMD::%d %d %d\n",parse_ec,p_f->c,p_f->type,p_f->port);
-                if (strstr(buf, "STOP ALL\n") != NULL)
-                {
-                    keep_looping = false;
-                    frixia_stop(epoll_fd, f_fds, 10);
-                }
-                if (strstr(buf, "START TCP\n") != NULL)
-                {
-                    int f_tcp = start_tcp_listening(epoll_fd,
-                                                    8080);
-                    struct FrixiaFD f;
-                    f.fd = f_tcp;
-                    f.type = TCP;
-                    f.port = 8080;
-                    add_fd_to_pool(f, f_fds, 10);
-                }
-                if (strstr(buf, "STOP TCP\n") != NULL)
-                {
-                    int tcp_index = search_tcp_fd_by_port(8080,
-                                                          f_fds,
-                                                          10);
-                    int target_fd = f_fds[tcp_index].fd;
-                    int ret = stop_tcp_listening(epoll_fd,
-                                                 target_fd);
-                    remove_fd(target_fd,
-                              f_fds,
-                              10);
-                }
-                if (strstr(buf, "START UDP\n") != NULL)
-                {
-                    start_udp_listening(f_fds,
-                                        10,
-                                        epoll_fd,
-                                        8080);
-                }
-                if (strstr(buf, "STOP UDP\n") != NULL)
-                {
-                    stop_udp_listening(detected_event_fd,
-                                       f_fds,
-                                       10,
-                                       epoll_fd);
-                }
+                int parse_ec = parse_control_strings(buf, p_f);
+                printf("PARSE: %d, CMD::%d %d %d\n", parse_ec, p_f->c, p_f->type, p_f->port);
+                handle_ctl_command(epoll_fd,f_fds,10,*p_f);
                 break;
             }
             case TCP:
