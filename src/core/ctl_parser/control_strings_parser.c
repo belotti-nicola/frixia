@@ -10,6 +10,24 @@
 #define PARSING_DEBUG() \
     printf("last parser line before returnin::%d\n", __LINE__);
 
+bool simple_final_state_function(int state)
+{
+    // check finite state automata final state
+    if(state >= 40 && state<=59)
+    {
+        return true;
+    }
+    if(state >= 24 && state<=38)
+    {
+        return true;
+    }
+    if(state == 22)
+    {
+        return true;
+    }
+    return false;
+}
+
 bool included_in(char c, char less, char more)
 {
     if (c < less)
@@ -764,7 +782,11 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
         }
         }
     }
-
+    bool not_final_state = !simple_final_state_function(state);
+    if(not_final_state)
+    {
+        return PARSE_ERROR;
+    }
     int v = compute_integer(digits);
     f->port = v;
 
