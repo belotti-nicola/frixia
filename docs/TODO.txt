@@ -4,16 +4,15 @@ FEAT:
     python integration
     reentrancy check (multiple threads)
     logger
-    automatic testing
 
 FIX:
-    parsing can SUCCED for WRONG STRINGS for very bad combination of strings (STOP ALLLLLL works)
-    parsing integer up to 65535
+    udp starts tcp indeed
 
 TODO
     parser (UDP/TCP) 
     icon
     create library
+    ctl commands can be injected by any supported fd
 
 CHOICES
     C vs C++

@@ -93,7 +93,7 @@ void handle_ctl_command(int epoll_fd,
         {
         case TCP:
         {
-            int tcp_index = search_tcp_fd_by_port(8080,
+            int tcp_index = search_tcp_fd_by_port(cmd.port,
                                                   frixia_fds,
                                                   frixia_fds_size);
             int target_fd = frixia_fds[tcp_index].fd;
@@ -215,7 +215,6 @@ int frixia_start()
                 struct FrixiaCTL fr;
                 p_f = &fr;
                 int parse_ec = parse_control_strings(buf, p_f);
-                printf("PARSE: %d, CMD::%d %d %d\n", parse_ec, p_f->c, p_f->type, p_f->port);
                 handle_ctl_command(epoll_fd,f_fds,10,*p_f);
                 break;
             }
