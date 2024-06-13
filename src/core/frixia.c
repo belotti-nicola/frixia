@@ -54,6 +54,10 @@ void handle_ctl_command(int epoll_fd,
         {
             int f_tcp = start_tcp_listening(epoll_fd,
                                             cmd.port);
+            if(f_tcp < 0)
+            {
+                printf("Error starting TCP on port %d (error: %d)\n",cmd.port,f_tcp);
+            }
             struct FrixiaFD f;
             f.fd = f_tcp;
             f.type = TCP;
@@ -67,6 +71,10 @@ void handle_ctl_command(int epoll_fd,
                                             frixia_fds_size,
                                             epoll_fd,
                                             cmd.port);
+            if(f_udp < 0)
+            {
+                printf("Error starting UDP on port %d (error: %d)\n",cmd.port,f_udp);
+            }
             struct FrixiaFD f;
             f.fd = f_udp;
             f.type = UDP;
@@ -108,11 +116,11 @@ void handle_ctl_command(int epoll_fd,
         {
             int udp_index = search_tcp_fd_by_port(cmd.port,
                                                   frixia_fds,
-                                                  10);
+                                                  MAXIMUM_FILEDESCRIPTORS);
             int target_fd = frixia_fds[udp_index].fd;
             stop_udp_listening(target_fd,
                                frixia_fds,
-                               10,
+                               MAXIMUM_FILEDESCRIPTORS,
                                epoll_fd);
             remove_fd(target_fd,
                       frixia_fds,
@@ -123,11 +131,11 @@ void handle_ctl_command(int epoll_fd,
         {
             int fifo_index = search_tcp_fd_by_port(cmd.port,
                                                    frixia_fds,
-                                                   10);
+                                                   MAXIMUM_FILEDESCRIPTORS);
             int target_fd = frixia_fds[fifo_index].fd;
             stop_udp_listening(target_fd,
                                frixia_fds,
-                               10,
+                               MAXIMUM_FILEDESCRIPTORS,
                                epoll_fd);
             remove_fd(target_fd,
                       frixia_fds,
@@ -149,8 +157,8 @@ void handle_ctl_command(int epoll_fd,
 
 int frixia_start()
 {
-    struct FrixiaFD f_fds[10];
-    for (int i = 0; i < 10; i++)
+    struct FrixiaFD f_fds[MAXIMUM_FILEDESCRIPTORS];
+    for (int i = 0; i < MAXIMUM_FILEDESCRIPTORS; i++)
     {
         f_fds[i].type = UNDEFINED;
         f_fds[i].port = 0;
@@ -175,7 +183,7 @@ int frixia_start()
     ctl_ffd.type = FIFO;
     ctl_ffd.fd = change_fd;
     strcpy(ctl_ffd.filename, fname);
-    add_fd_to_pool(ctl_ffd, f_fds, 10);
+    add_fd_to_pool(ctl_ffd, f_fds, MAXIMUM_FILEDESCRIPTORS);
 
     // start epoll
     int events_number;
@@ -196,7 +204,7 @@ int frixia_start()
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
             printf("event intercepted::%d\n", events[i].data.fd);
             int detected_event_fd = events[i].data.fd;
-            int index = search_fd(detected_event_fd, f_fds, 10);
+            int index = search_fd(detected_event_fd, f_fds, MAXIMUM_FILEDESCRIPTORS);
             printf("index %d f_fds[index].fd %d f_fd type %d filename %s\n", index,
                    f_fds[index].fd,
                    f_fds[index].type,
@@ -214,7 +222,12 @@ int frixia_start()
                 struct FrixiaCTL *p_f;
                 struct FrixiaCTL fr;
                 p_f = &fr;
-                int parse_ec = parse_control_strings(buf, p_f);
+                enum parse_code parse_ec = parse_control_strings(buf, p_f);
+                if(parse_ec == PARSE_ERROR)
+                {
+                    printf("Parsing failed: %s",buf);
+                    break;
+                }
                 handle_ctl_command(epoll_fd,f_fds,10,*p_f);
                 break;
             }
@@ -260,7 +273,7 @@ int frixia_stop(int epoll_fd,
             break;
         case UDP:
             printf("Frixia stopped UDP listening on port:%d\n", (*(f + i)).port);
-            stop_udp_listening(target_fd, f, 10, epoll_fd);
+            stop_udp_listening(target_fd, f, MAXIMUM_FILEDESCRIPTORS, epoll_fd);
             break;
         }
     }

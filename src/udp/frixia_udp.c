@@ -16,6 +16,7 @@ int start_udp_listening(struct FrixiaFD f_fd[],
                         int epoll_fd,
                         int port)
 {
+    printf("start_udp_listening::%d %d\n",epoll_fd,port);
     struct sockaddr_in servaddr, cliaddr;
 
     // Creating socket file descriptor
@@ -24,14 +25,15 @@ int start_udp_listening(struct FrixiaFD f_fd[],
     {
         return ERR_UDP_SOCKET;
     }
-
+    printf("UDP FD %d",udp_fd);
     // Filling server information
     servaddr.sin_family = AF_INET; // IPv4
     servaddr.sin_addr.s_addr = INADDR_ANY;
-    servaddr.sin_port = htons(8080);
+    servaddr.sin_port = htons(port);
     int bind_ret_val = bind(udp_fd, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     if (bind_ret_val == -1)
     {
+        printf("ERR_TCP_BIND :: errno:%d",errno);
         return ERR_TCP_BIND;
     }
 
@@ -44,7 +46,7 @@ int start_udp_listening(struct FrixiaFD f_fd[],
         return ERR_EPOLL_CTL_ADDUDP;
     }
 
-    return OK;
+    return udp_fd;
     
 }
 int stop_udp_listening(int closing_fd,
