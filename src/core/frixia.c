@@ -54,9 +54,9 @@ void handle_ctl_command(int epoll_fd,
         {
             int f_tcp = start_tcp_listening(epoll_fd,
                                             cmd.port);
-            if(f_tcp < 0)
+            if (f_tcp < 0)
             {
-                printf("Error starting TCP on port %d (error: %d)\n",cmd.port,f_tcp);
+                printf("Error starting TCP on port %d (error: %d)\n", cmd.port, f_tcp);
             }
             struct FrixiaFD f;
             f.fd = f_tcp;
@@ -71,9 +71,9 @@ void handle_ctl_command(int epoll_fd,
                                             frixia_fds_size,
                                             epoll_fd,
                                             cmd.port);
-            if(f_udp < 0)
+            if (f_udp < 0)
             {
-                printf("Error starting UDP on port %d (error: %d)\n",cmd.port,f_udp);
+                printf("Error starting UDP on port %d (error: %d)\n", cmd.port, f_udp);
             }
             struct FrixiaFD f;
             f.fd = f_udp;
@@ -202,7 +202,7 @@ int frixia_start()
         for (int i = 0; i < events_number; i++)
         {
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
-            printf("event intercepted::%d\n", events[i].data.fd);
+            printf("event intercepted::%d %d\n", events[i].data.fd,events_number);
             int detected_event_fd = events[i].data.fd;
             int index = search_fd(detected_event_fd, f_fds, MAXIMUM_FILEDESCRIPTORS);
             printf("index %d f_fds[index].fd %d f_fd type %d filename %s\n", index,
@@ -223,12 +223,12 @@ int frixia_start()
                 struct FrixiaCTL fr;
                 p_f = &fr;
                 enum parse_code parse_ec = parse_control_strings(buf, p_f);
-                if(parse_ec == PARSE_ERROR)
+                if (parse_ec == PARSE_ERROR)
                 {
-                    printf("Parsing failed: %s",buf);
+                    printf("Parsing failed: %s", buf);
                     break;
                 }
-                handle_ctl_command(epoll_fd,f_fds,10,*p_f);
+                handle_ctl_command(epoll_fd, f_fds, 10, *p_f);
                 break;
             }
             case TCP:
@@ -267,13 +267,17 @@ int frixia_stop(int epoll_fd,
         switch (type)
         {
         case TCP:
-            printf("Frixia stopped TCP listening on port:%d\n", (*(f + i)).port);
             target_fd = f[i].fd;
             stop_tcp_listening(epoll_fd, target_fd);
+            remove_fd(target_fd,
+                      f,
+                      max_size);
             break;
         case UDP:
-            printf("Frixia stopped UDP listening on port:%d\n", (*(f + i)).port);
-            stop_udp_listening(target_fd, f, MAXIMUM_FILEDESCRIPTORS, epoll_fd);
+            stop_udp_listening(target_fd, f, max_size, epoll_fd);
+            remove_fd(target_fd,
+                      f,
+                      max_size);
             break;
         }
     }
