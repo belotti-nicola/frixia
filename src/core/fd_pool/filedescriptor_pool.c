@@ -90,6 +90,7 @@ int search_tcp_fd_by_port(int port,
 
     if(index == -1)
     {
+        printf("search_tcp_fd_by_port index:-1");
         return TCP_PORT_NOT_FOUND;
     }
 

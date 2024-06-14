@@ -25,7 +25,7 @@ int start_udp_listening(struct FrixiaFD f_fd[],
     {
         return ERR_UDP_SOCKET;
     }
-    printf("UDP FD %d",udp_fd);
+    printf("UDP FD %d\n",udp_fd);
     // Filling server information
     servaddr.sin_family = AF_INET; // IPv4
     servaddr.sin_addr.s_addr = INADDR_ANY;
@@ -33,7 +33,7 @@ int start_udp_listening(struct FrixiaFD f_fd[],
     int bind_ret_val = bind(udp_fd, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     if (bind_ret_val == -1)
     {
-        printf("ERR_TCP_BIND :: errno:%d",errno);
+        printf("ERR_TCP_BIND :: errno:%d\n",errno);
         return ERR_TCP_BIND;
     }
 
