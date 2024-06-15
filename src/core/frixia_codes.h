@@ -34,6 +34,7 @@ enum frixia_code
     ALREADY_LISTENING_ON_TCP_PORT  = -26,
     NO_TCP_ON_SPECIFIED_PORT_FOUND  = -27,
     ERR_READING_FIFO  = -28,
+    ERR_UDP_BIND = -29
 };
 
 

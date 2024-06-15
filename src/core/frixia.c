@@ -56,7 +56,8 @@ void handle_ctl_command(int epoll_fd,
                                             cmd.port);
             if (f_tcp < 0)
             {
-                printf("Error starting TCP on port %d (error: %d)\n", cmd.port, f_tcp);
+                printf("Error starting TCP on port %d (error:%d, errno:%d)\n", cmd.port, f_tcp,errno);
+                break;
             }
             struct FrixiaFD f;
             f.fd = f_tcp;
@@ -67,9 +68,7 @@ void handle_ctl_command(int epoll_fd,
         }
         case UDP:
         {
-            int f_udp = start_udp_listening(frixia_fds,
-                                            frixia_fds_size,
-                                            epoll_fd,
+            int f_udp = start_udp_listening(epoll_fd,
                                             cmd.port);
             if (f_udp < 0)
             {
@@ -118,10 +117,8 @@ void handle_ctl_command(int epoll_fd,
                                                   frixia_fds,
                                                   MAXIMUM_FILEDESCRIPTORS);
             int target_fd = frixia_fds[udp_index].fd;
-            stop_udp_listening(target_fd,
-                               frixia_fds,
-                               MAXIMUM_FILEDESCRIPTORS,
-                               epoll_fd);
+            stop_udp_listening(epoll_fd,
+            target_fd);
             remove_fd(target_fd,
                       frixia_fds,
                       frixia_fds_size);
@@ -133,10 +130,7 @@ void handle_ctl_command(int epoll_fd,
                                                    frixia_fds,
                                                    MAXIMUM_FILEDESCRIPTORS);
             int target_fd = frixia_fds[fifo_index].fd;
-            stop_udp_listening(target_fd,
-                               frixia_fds,
-                               MAXIMUM_FILEDESCRIPTORS,
-                               epoll_fd);
+            stop_udp_listening(epoll_fd,target_fd);
             remove_fd(target_fd,
                       frixia_fds,
                       frixia_fds_size);
@@ -274,11 +268,15 @@ int frixia_stop(int epoll_fd,
                       max_size);
             break;
         case UDP:
-            stop_udp_listening(target_fd, f, max_size, epoll_fd);
+            stop_udp_listening(epoll_fd,target_fd);
             remove_fd(target_fd,
                       f,
                       max_size);
             break;
+        case FIFO:
+           stop_fifo_listening(epoll_fd,target_fd);
+        case UNDEFINED:
+           break;
         }
     }
 

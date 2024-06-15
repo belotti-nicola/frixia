@@ -11,9 +11,7 @@
 #include "frixia_udp.h"
 #include "../core/frixia_codes.h"
 
-int start_udp_listening(struct FrixiaFD f_fd[],
-                        int max_size,
-                        int epoll_fd,
+int start_udp_listening(int epoll_fd,
                         int port)
 {
     printf("start_udp_listening::%d %d\n",epoll_fd,port);
@@ -33,8 +31,8 @@ int start_udp_listening(struct FrixiaFD f_fd[],
     int bind_ret_val = bind(udp_fd, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     if (bind_ret_val == -1)
     {
-        printf("ERR_TCP_BIND :: errno:%d\n",errno);
-        return ERR_TCP_BIND;
+        printf("ERR_UDP_BIND :: errno:%d (%s)\n",errno,strerror(errno));
+        return ERR_UDP_BIND;
     }
 
     struct epoll_event ev_udp;
@@ -49,10 +47,7 @@ int start_udp_listening(struct FrixiaFD f_fd[],
     return udp_fd;
     
 }
-int stop_udp_listening(int closing_fd,
-                       struct FrixiaFD f_fd[],
-                       int max_size,
-                       int epoll_fd)
+int stop_udp_listening(int epoll_fd,int closing_fd)
 {
     printf("STOP UDP %d\n", closing_fd);
     if (closing_fd > 0)

@@ -35,7 +35,7 @@ int start_tcp_listening(int epoll_fd,
     int retVal = bind(tcp_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
     if (retVal < 0)
     {
-        printf("bind error!!%d\n", errno);
+        printf("ERR_TCP_BIND %d (%s)\n", errno,strerror(errno));
         return ERR_TCP_BIND;
     }
 

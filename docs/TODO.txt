@@ -6,8 +6,7 @@ FEAT:
     logger
 
 FIX:
-    udp starts tcp indeed
-
+    if start fails, remove it from fd pool
 TODO
     parser (UDP/TCP) 
     icon
