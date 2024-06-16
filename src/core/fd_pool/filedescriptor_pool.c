@@ -36,7 +36,6 @@ int search_fd(int fd,
 {
     for (int i = 0; i < max_size; i++)
     {
-        printf("fd %d f_fds %d\n",fd,f_fds[i].fd);
         struct FrixiaFD curr_fd = *(f_fds + i);
         if (curr_fd.fd == fd)
         {
@@ -65,12 +64,9 @@ int remove_fd(int fd,
         return FD_NOT_FOUND;
     }
 
-    printf("t %d\n", (*(f_fds + index)).type);
     (*(f_fds + index)).type = UNDEFINED;
     (*(f_fds + index)).fd = -1;
     (*(f_fds + index)).port = -1;
-    printf("index %d\n", index);
-    printf("t %d\n", (*(f_fds + index)).type);
     return REMOVE_OK;
 }
 
@@ -81,8 +77,8 @@ int search_tcp_fd_by_port(int port,
     int index = -1;
     for (int i = 0; i < max_size; i++)
     {
-        if ((*(f_fds+i)).type == TCP &&
-            (*(f_fds+i)).port == port)
+        if (f_fds[i].type == TCP &&
+           (f_fds[i].port == port))
             {
                 index = i;
             }
@@ -90,7 +86,7 @@ int search_tcp_fd_by_port(int port,
 
     if(index == -1)
     {
-        printf("search_tcp_fd_by_port index:-1");
+        printf("TCP_PORT_NOT_FOUND:%d (returning :-1)\n",port);
         return TCP_PORT_NOT_FOUND;
     }
 

@@ -30,7 +30,7 @@ int start_fifo_listening(int epoll_fd,
     }
 
     struct epoll_event ev;
-    ev.events = EPOLLIN | EPOLLET;
+    ev.events = EPOLLET;
     ev.data.fd = change_fd;
     int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, change_fd, &ev);
     if (epoll_ctl_retval == -1)

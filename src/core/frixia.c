@@ -7,7 +7,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
-
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -42,7 +41,8 @@
 void handle_ctl_command(int epoll_fd,
                         struct FrixiaFD frixia_fds[],
                         int frixia_fds_size,
-                        struct FrixiaCTL cmd)
+                        struct FrixiaCTL cmd,
+                        bool* keep_looping)
 {
     switch (cmd.c)
     {
@@ -103,6 +103,11 @@ void handle_ctl_command(int epoll_fd,
             int tcp_index = search_tcp_fd_by_port(cmd.port,
                                                   frixia_fds,
                                                   frixia_fds_size);
+            if(tcp_index < 0)
+            {
+                printf("NO TCP ON PORT %d\n",cmd.port);
+                break;
+            }
             int target_fd = frixia_fds[tcp_index].fd;
             int ret = stop_tcp_listening(epoll_fd,
                                          target_fd);
@@ -144,6 +149,7 @@ void handle_ctl_command(int epoll_fd,
         frixia_stop(epoll_fd,
                     frixia_fds,
                     frixia_fds_size);
+        *keep_looping = false;
         break;
     }
     }
@@ -196,7 +202,7 @@ int frixia_start()
         for (int i = 0; i < events_number; i++)
         {
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
-            printf("event intercepted::%d %d\n", events[i].data.fd,events_number);
+            printf("event intercepted::%d %d %d\n", events[i].data.fd,events_number,events[i].events);
             int detected_event_fd = events[i].data.fd;
             int index = search_fd(detected_event_fd, f_fds, MAXIMUM_FILEDESCRIPTORS);
             printf("index %d f_fds[index].fd %d f_fd type %d filename %s\n", index,
@@ -208,7 +214,7 @@ int frixia_start()
             case FIFO:
             {
                 char buf[FRIXIA_READ_SIZE];
-                fifo_bytes_read = read(f_fds[index].fd, buf, FRIXIA_READ_SIZE);
+                fifo_bytes_read = read(detected_event_fd, buf, FRIXIA_READ_SIZE);
                 if (fifo_bytes_read == -1)
                 {
                     return ERR_READ_FIFO;
@@ -222,7 +228,7 @@ int frixia_start()
                     printf("Parsing failed: %s", buf);
                     break;
                 }
-                handle_ctl_command(epoll_fd, f_fds, 10, *p_f);
+                handle_ctl_command(epoll_fd, f_fds, MAXIMUM_FILEDESCRIPTORS, *p_f,&keep_looping);
                 break;
             }
             case TCP:
@@ -275,6 +281,9 @@ int frixia_stop(int epoll_fd,
             break;
         case FIFO:
            stop_fifo_listening(epoll_fd,target_fd);
+           remove_fd(target_fd,
+                      f,
+                      max_size);
         case UNDEFINED:
            break;
         }

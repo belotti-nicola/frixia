@@ -1,3 +1,6 @@
+ISSUE:
+    FIFO signals 2 events to epoll >>> HIGH PRIORITY (TERMINATION??)
+
 FEAT:
     HTTPS (integrabile)
     dispatchers
