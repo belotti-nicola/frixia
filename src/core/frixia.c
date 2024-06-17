@@ -118,7 +118,7 @@ void handle_ctl_command(int epoll_fd,
         }
         case UDP:
         {
-            int udp_index = search_tcp_fd_by_port(cmd.port,
+            int udp_index = search_udp_fd_by_port(cmd.port,
                                                   frixia_fds,
                                                   MAXIMUM_FILEDESCRIPTORS);
             int target_fd = frixia_fds[udp_index].fd;
@@ -131,11 +131,11 @@ void handle_ctl_command(int epoll_fd,
         }
         case FIFO:
         {
-            int fifo_index = search_tcp_fd_by_port(cmd.port,
+            int fifo_index = search_fifo_fd_by_name(cmd.argument,
                                                    frixia_fds,
                                                    MAXIMUM_FILEDESCRIPTORS);
             int target_fd = frixia_fds[fifo_index].fd;
-            stop_udp_listening(epoll_fd,target_fd);
+            stop_fifo_listening(epoll_fd,target_fd);
             remove_fd(target_fd,
                       frixia_fds,
                       frixia_fds_size);

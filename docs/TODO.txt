@@ -1,5 +1,6 @@
 ISSUE:
     FIFO signals 2 events to epoll >>> HIGH PRIORITY (TERMINATION??)
+    search udp/fifo/tcp
 
 FEAT:
     HTTPS (integrabile)
