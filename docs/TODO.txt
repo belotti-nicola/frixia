@@ -1,5 +1,5 @@
 ISSUE:
-    FIFO signals double events. Fix done, persists?
+    fifo seems controversial (EPOLLET only)
 
 FEAT:
     HTTPS (integrabile)
@@ -10,6 +10,8 @@ FEAT:
 
 FIX:
     if start fails, remove it from fd pool
+    search udp/fifo/tcp unique function
+    
 TODO
     parser (UDP/TCP) 
     icon

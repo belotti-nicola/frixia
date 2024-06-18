@@ -92,3 +92,48 @@ int search_tcp_fd_by_port(int port,
 
     return index;
 }
+
+int search_udp_fd_by_port(int port,
+                          struct FrixiaFD f_fds[],
+                          int max_size)
+{
+    int index = -1;
+    for (int i = 0; i < max_size; i++)
+    {
+        if (f_fds[i].type == UDP &&
+           (f_fds[i].port == port))
+            {
+                index = i;
+            }
+    }
+
+    if(index == -1)
+    {
+        printf("UDP_PORT_NOT_FOUND:%d (returning :-1)\n",port);
+        return UDP_PORT_NOT_FOUND;
+    }
+
+    return index;
+}
+int search_fifo_fd_by_name(char* name,
+                          struct FrixiaFD f_fds[],
+                          int max_size)
+{
+    int index = -1;
+    for (int i = 0; i < max_size; i++)
+    {
+        if (f_fds[i].type == FIFO &&
+           (f_fds[i].filename == name))
+            {
+                index = i;
+            }
+    }
+
+    if(index == -1)
+    {
+        printf("FIFO_NAME_NOT_FOUND:%s (returning :-1)\n",name);
+        return FIFO_NAME_NOT_FOUND;
+    }
+
+    return index;
+}

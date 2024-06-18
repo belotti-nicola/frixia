@@ -19,4 +19,12 @@ int search_tcp_fd_by_port(int port,
                           struct FrixiaFD f_fds[],
                           int max_size);
 
+int search_udp_fd_by_port(int port,
+                          struct FrixiaFD f_fds[],
+                          int max_size);
+
+int search_fifo_fd_by_name(char* name,
+                          struct FrixiaFD f_fds[],
+                          int max_size);
+
 #endif
