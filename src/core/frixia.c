@@ -83,6 +83,7 @@ void handle_ctl_command(int epoll_fd,
         }
         case FIFO:
         {
+            printf("->%s\n",cmd.argument);
             int f_fifo = start_fifo_listening(epoll_fd, cmd.argument);
             struct FrixiaFD f;
             f.fd = f_fifo;
@@ -228,6 +229,7 @@ int frixia_start()
                     printf("Parsing failed: %s", buf);
                     break;
                 }
+                printf("-%s-\n",p_f->argument);
                 handle_ctl_command(epoll_fd, f_fds, MAXIMUM_FILEDESCRIPTORS, *p_f,&keep_looping);
                 break;
             }

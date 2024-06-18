@@ -1,5 +1,5 @@
 ISSUE:
-    FIFO signals 2 events to epoll >>> HIGH PRIORITY (TERMINATION??)
+    FIFO signals double events. Fix done, persists?
 
 FEAT:
     HTTPS (integrabile)

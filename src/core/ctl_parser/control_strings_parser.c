@@ -593,6 +593,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 40;
+            f->argument[0] = *s;
             break;
         }
         case 40:
@@ -603,6 +604,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 41;
+            f->argument[1] = *s;
             break;
         }
         case 42:
@@ -613,6 +615,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 43;
+            f->argument[2] = *s;
             break;
         }
         case 43:
@@ -623,6 +626,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 44;
+            f->argument[3] = *s;
             break;
         }
         case 44:
@@ -633,6 +637,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 45;
+            f->argument[4] = *s;
             break;
         }
         case 45:
@@ -643,6 +648,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 46;
+            f->argument[5] = *s;
             break;
         }
         case 46:
@@ -653,6 +659,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 47;
+            f->argument[6] = *s;
             break;
         }
         case 47:
@@ -663,6 +670,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 48;
+            f->argument[7] = *s;
             break;
         }
         case 48:
@@ -673,6 +681,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 49;
+            f->argument[8] = *s;
             break;
         }
         case 49:
@@ -683,6 +692,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 50;
+            f->argument[9] = *s;
             break;
         }
         case 50:
@@ -693,6 +703,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 51;
+            f->argument[10] = *s;
             break;
         }
         case 51:
@@ -703,6 +714,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 52;
+            f->argument[11] = *s;
             break;
         }
         case 52:
@@ -713,6 +725,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 53;
+            f->argument[12] = *s;
             break;
         }
         case 53:
@@ -723,6 +736,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 54;
+            f->argument[13] = *s;
             break;
         }
         case 54:
@@ -733,6 +747,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 55;
+            f->argument[13] = *s;
             break;
         }
         case 55:
@@ -743,6 +758,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 56;
+            f->argument[14] = *s;
             break;
         }
         case 56:
@@ -753,6 +769,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 57;
+            f->argument[15] = *s;
             break;
         }
         case 57:
@@ -763,6 +780,8 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 58;
+
+            f->argument[16] = *s;
             break;
         }
         case 58:
@@ -773,6 +792,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
                 return PARSE_ERROR;
             }
             state = 59;
+            f->argument[17] = *s;
             break;
         }
         case 59:
@@ -789,6 +809,6 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
     }
     int v = compute_integer(digits);
     f->port = v;
-
+    f->argument[18] = '\0';
     return PARSE_OK;
 }

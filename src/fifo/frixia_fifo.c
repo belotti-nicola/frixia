@@ -19,6 +19,8 @@
 int start_fifo_listening(int epoll_fd,
                          const char *name)
 {
+    printf("Errno:%s",name);
+
     if (mkfifo(name, 0666))
     {
         return ERR_CHANGEFIFO_MKFIFO;

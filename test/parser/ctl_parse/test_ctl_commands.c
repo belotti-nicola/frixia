@@ -109,7 +109,7 @@ void test_parse_ok(char *directory,
     }
     if (
         (TYPE == FIFO ) &&
-        (strcmp(fctl.argument,argument))==1 )
+        (strcmp(fctl.argument,argument)==1) )
     {
         printf("EXIT_FAILURE ARGUMENT %d %s\n", fctl.port, argument);
         exit(EXIT_FAILURE);
