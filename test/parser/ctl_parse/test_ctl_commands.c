@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "../../../src/core/ctl_parser/control_strings_parser.h"
 #include "../../../src/core/ctl_parser/control_commands.h"
@@ -11,6 +12,22 @@
 #define MAX_LINE_LENGTH 1024
 #define CSV_FIELDS 6
 #define PATH_MAX 100
+
+bool check_trailing_new_line(char* test_string)
+{
+    int size = strlen(test_string);
+    if(size == 0)
+    {
+        return false;
+    }
+    if(test_string[size-1] != '\n')
+    {
+        return false;
+    }
+
+    return true;
+}
+
 
 void test_parse_error(char *directory,
                       char *filename)
@@ -53,7 +70,7 @@ void test_parse_ok(char *directory,
     FILE *fptr = fopen(f, "r");
     if (fptr == NULL)
     {
-        printf("exiting with failure test_parse_error %s\n", f);
+        printf("EXIT_FAILURE with failure test_parse_error %s\n", f);
         exit(EXIT_FAILURE);
     }
 
@@ -109,9 +126,9 @@ void test_parse_ok(char *directory,
     }
     if (
         (TYPE == FIFO ) &&
-        (strcmp(fctl.argument,argument)==1) )
+        (strcmp(fctl.argument,argument)!=0) && !check_trailing_new_line(argument) )
     {
-        printf("EXIT_FAILURE ARGUMENT %d %s\n", fctl.port, argument);
+        printf("EXIT_FAILURE ARGUMENT 1:%s 2:%s.", fctl.argument, argument);
         exit(EXIT_FAILURE);
     }
 }
