@@ -822,7 +822,7 @@ enum parse_code parse_control_strings(char *s, struct FrixiaCTL *f)
     f->port = v;
     if(state<=58 && state>=39)
     {
-        int index_of_last_digit = state-39+1;
+        int index_of_last_digit = state-39;
         f->argument[index_of_last_digit] = '\0';
         printf("inde %d %s %d\n",index_of_last_digit,f->argument,state);
     }

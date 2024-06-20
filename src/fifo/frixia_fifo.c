@@ -19,7 +19,7 @@
 int start_fifo_listening(int epoll_fd,
                          const char *name)
 {
-    printf("Errno:%s",name);
+    printf("start_fifo_listening:%s\n",name);
 
     if (mkfifo(name, 0666))
     {

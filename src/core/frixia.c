@@ -87,8 +87,9 @@ void handle_ctl_command(int epoll_fd,
             int f_fifo = start_fifo_listening(epoll_fd, cmd.argument);
             struct FrixiaFD f;
             f.fd = f_fifo;
-            f.type = UDP;
+            f.type = FIFO;
             f.port = cmd.port;
+            strcpy(f.filename,cmd.argument);
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
             break;
         }

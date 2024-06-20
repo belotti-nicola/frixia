@@ -2,9 +2,7 @@ ISSUE:
     fifo seems controversial (EPOLLET only)
 
 FEAT:
-    HTTPS (integrabile)
     dispatchers
-    python integration
     reentrancy check (multiple threads)
     logger
 
@@ -13,10 +11,17 @@ FIX:
     search udp/fifo/tcp unique function
     
 TODO
-    parser (UDP/TCP) 
     icon
-    create library
-    ctl commands can be injected by any supported fd
+    ctl commands can be injected by any supported fd or SW
+    epoll_ctl(fd,ADD/DEL/MOD) -> core library
+    test add / remove frixia fds
 
 CHOICES
     C vs C++
+
+FUTURE DEVELOPMENT
+    python integration
+    HTTPS (integrabile)
+    create library
+    parser (UDP/TCP)
+    error_codes TCP/UDP/FIFO
