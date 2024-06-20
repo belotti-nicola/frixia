@@ -13,18 +13,25 @@
 int start_tcp_listening(int epoll_fd,
                         int port)
 {
+    if (epoll_fd <= 0)
+    {
+        return ERR_FTCP_START_MALFORMED_EPOLL_FD;
+    }
+    if (port < 0 || port > 65535)
+    {
+        return ERR_FTCP_START_MALFORMED_PORT;
+    }
+    
     int tcp_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (tcp_fd == -1)
     {
-        printf("ERROR CREATING SOCKET FILE DESCRIPTOR %d(%s)\n",errno,strerror(errno));
-        return ERR_TCP_SOCKET;
+        return ERR_FTCP_SOCKET;
     }
 
     int reuse = 1;
     if (setsockopt(tcp_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&reuse, sizeof(reuse)) < 0)
     {
-        printf("ERR_TCP_SETSOCKETOPT %d(%s)\n",errno,strerror(errno));
-        return ERR_TCP_SETSOCKETOPT;
+        return ERR_FTCP_SETSOCKETOPT;
     }
 
     struct sockaddr_in serveraddr;
@@ -34,38 +41,44 @@ int start_tcp_listening(int epoll_fd,
     int retVal = bind(tcp_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
     if (retVal < 0)
     {
-        printf("ERR_TCP_BIND %d(%s)\n",errno,strerror(errno));
-        return ERR_TCP_BIND;
+        return ERR_FTCP_BIND;
     }
 
     if (listen(tcp_fd, 10) == -1)
     {
-        printf("ERR_TCP_LISTEN %d(%s)\n",errno,strerror(errno));
-        return ERR_TCP_LISTEN;
+        return ERR_FTCP_LISTEN;
     }
     struct epoll_event ev_tcp;
     ev_tcp.events = EPOLLIN | EPOLLET;
     ev_tcp.data.fd = tcp_fd;
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, tcp_fd, &ev_tcp) < 0)
     {
-        printf("ERR_EPOLL_CTL_ADDTCP %d(%s)\n",errno,strerror(errno));
-        return ERR_EPOLL_CTL_ADDTCP;
+        return ERR_FTCP_START_EPOLLCTL_ADD;
     }
+    
+    
     return tcp_fd;
 }
 
 int stop_tcp_listening(int epoll_fd,
                        int closing_fd)
 {
-    printf("%s %d\n",__func__,closing_fd);
+    if(epoll_fd <= 0)
+    {
+        return ERR_FTCP_STOP_MALFORMED_EPOLL_FD;
+    }
+    if(closing_fd <= 0)
+    {
+        return ERR_FTCP_STOP_MALFORMED_TARGET_FD;
+    }
     int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, closing_fd, NULL);
     if (epoll_ctl_retval == -1)
     {
-        printf("ERR_STOPPING_FRIXIA_TCP %d(%s)\n",errno,strerror(errno));
-        return ERR_STOPPING_FRIXIA_TCP;
+        return ERR_FTCP_STOP_EPOLLCTL_DEL;
     }
     close(closing_fd);
-    return OK;
+    
+    return FTCP_OK;
 }
 
 int read_tcp_socket(int filedescriptor)
@@ -79,25 +92,67 @@ int read_tcp_socket(int filedescriptor)
     client_fd = accept(filedescriptor, &in_addr, &in_len);
     if (client_fd == -1)
     {
-        printf("ERR_ACCEPTING_TCP %d(%s)\n",errno,strerror(errno));
-        return ERR_ACCEPTING_TCP;
+        return ERR_FTCP_ACCEPTING;
     }
     memset(buffer, 0, sizeof(buffer));
     int size = read(client_fd, buffer, sizeof(buffer));
     if (size < 0)
     {
-        printf("ERR_READING_TCP %d(%s)\n",errno,strerror(errno));
         close(client_fd);
-        return ERR_READING_TCP;
+        return ERR_FTCP_READING;
     }
     // TODO: DELETEME
     // DO PROCESSING SOMEWAY AND COMPUTE ANSWER (WHICH IS BUFFER)
-    if (write(client_fd, buffer, size) < 0)
+    //if (write(client_fd, buffer, size) < 0)
+    //{
+        //printf("ERR_WRITING_TCP %d(%s)\n",errno,strerror(errno));
+        //close(client_fd);
+        //return ERR_WRITING_TCP;
+    //}
+    //close(client_fd);
+    return FTCP_OK;
+}
+
+char* get_ftcp_code_string(enum FTCP_CODE c){
+    switch(c)
     {
-        printf("ERR_WRITING_TCP %d(%s)\n",errno,strerror(errno));
-        close(client_fd);
-        return ERR_WRITING_TCP;
+        case FTCP_OK:                           return "FTCP_OK";
+        case ERR_FTCP_SOCKET:                   return "ERR_FTCP_SOCKET";
+        case ERR_FTCP_SETSOCKETOPT:             return "ERR_FTCP_SETSOCKETOPT";
+        case ERR_FTCP_BIND:                     return "ERR_FTCP_BIND";
+        case ERR_FTCP_LISTEN:                   return "ERR_FTCP_LISTEN";
+        case ERR_FTCP_START_EPOLLCTL_ADD:       return "ERR_FTCP_START_EPOLLCTL_ADD";
+        case ERR_FTCP_STOP_EPOLLCTL_DEL:        return "ERR_FTCP_STOP_EPOLLCTL_DEL";
+        case ERR_FTCP_ACCEPTING:                return "ERR_FTCP_ACCEPTING";
+        case ERR_FTCP_READING:                  return "ERR_FTCP_READING";
+        case ERR_FTCP_START_MALFORMED_EPOLL_FD: return "ERR_FTCP_START_MALFORMED_EPOLL_FD";
+        case ERR_FTCP_START_MALFORMED_PORT:     return "ERR_FTCP_START_MALFORMED_PORT";
+        case ERR_FTCP_STOP_MALFORMED_EPOLL_FD:  return "ERR_FTCP_STOP_MALFORMED_EPOLL_FD";
+        case ERR_FTCP_STOP_MALFORMED_TARGET_FD: return "ERR_FTCP_STOP_MALFORMED_TARGET_FD";
+        default: 
+        {
+            printf("get_ftcp_code_string: %d\n",c);
+            return "UNKNOWN CODE";
+        }
     }
-    close(client_fd);
-    return OK;
+}
+int get_ftcp_code_string_from_string(char *s){
+    if(strcmp("FTCP_OK",s) == 0)                                 { return FTCP_OK; }
+    else if(strcmp("ERR_FTCP_SOCKET",s) == 0)                    { return ERR_FTCP_SOCKET;}
+    else if(strcmp("ERR_FTCP_SETSOCKETOPT",s) == 0)              { return ERR_FTCP_SETSOCKETOPT;}
+    else if(strcmp("ERR_FTCP_BIND",s) == 0)                      { return ERR_FTCP_BIND;}
+    else if(strcmp("ERR_FTCP_LISTEN",s) == 0)                    { return ERR_FTCP_LISTEN;}
+    else if(strcmp("ERR_FTCP_START_EPOLLCTL_ADD",s) == 0)        { return ERR_FTCP_START_EPOLLCTL_ADD;}
+    else if(strcmp("ERR_FTCP_STOP_EPOLLCTL_DEL",s) == 0)         { return ERR_FTCP_STOP_EPOLLCTL_DEL;}
+    else if(strcmp("ERR_FTCP_ACCEPTING",s) == 0)                 { return ERR_FTCP_ACCEPTING;}
+    else if(strcmp("ERR_FTCP_READING",s) == 0)                   { return ERR_FTCP_READING;}
+    else if(strcmp("ERR_FTCP_START_MALFORMED_EPOLL_FD",s) == 0)  { return ERR_FTCP_READING;}
+    else if(strcmp("ERR_FTCP_START_MALFORMED_PORT",s) == 0)      { return ERR_FTCP_READING;}
+    else if(strcmp("ERR_FTCP_STOP_MALFORMED_EPOLL_FD",s) == 0)   { return ERR_FTCP_READING;}
+    else if(strcmp("ERR_FTCP_STOP_MALFORMED_TARGET_FD",s) == 0)  { return ERR_FTCP_READING;}
+    else 
+    {
+        printf("get_ftcp_code_string: unknown string %s\n",s);
+        return -1;
+    }
 }

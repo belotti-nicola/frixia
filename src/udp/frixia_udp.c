@@ -9,7 +9,6 @@
 #include <stdio.h>
 
 #include "frixia_udp.h"
-#include "../core/frixia_codes.h"
 
 int start_udp_listening(int epoll_fd,
                         int port)
@@ -21,7 +20,7 @@ int start_udp_listening(int epoll_fd,
     int udp_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (udp_fd == -1)
     {
-        return ERR_UDP_SOCKET;
+        return ERR_FUDP_SOCKET;
     }
     printf("UDP FD %d\n",udp_fd);
     // Filling server information
@@ -32,7 +31,7 @@ int start_udp_listening(int epoll_fd,
     if (bind_ret_val == -1)
     {
         printf("ERR_UDP_BIND :: errno:%d (%s)\n",errno,strerror(errno));
-        return ERR_UDP_BIND;
+        return ERR_FUDP_BIND;
     }
 
     struct epoll_event ev_udp;
@@ -41,7 +40,7 @@ int start_udp_listening(int epoll_fd,
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, udp_fd, &ev_udp) < 0)
     {
         printf("%d\n", errno);
-        return ERR_EPOLL_CTL_ADDUDP;
+        return ERR_FUDP_EPOLL_ADD;
     }
 
     return udp_fd;
@@ -56,8 +55,8 @@ int stop_udp_listening(int epoll_fd,int closing_fd)
         if (epoll_ctl_retval == -1)
         {
             printf("%d\n", errno);
-            return ERR_STOPPING_FRIXIA_UDP;
+            return ERR_FUDP_STOP;
         }
     }
-    return OK;
+    return FUDP_OK;
 }

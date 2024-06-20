@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     }
 	
 	struct epoll_event ev;
-    ev.events = EPOLLIN | EPOLLET;
+    ev.events =  EPOLLET;
     ev.data.fd = socket_fd;
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, socket_fd, &ev) < 0) {
         printf("listen error!!");

@@ -56,7 +56,7 @@ void handle_ctl_command(int epoll_fd,
                                             cmd.port);
             if (f_tcp < 0)
             {
-                printf("Error starting TCP on port %d (error:%d, errno:%d)\n", cmd.port, f_tcp,errno);
+                printf("Error starting TCP on port %d (code:%d,%s, errno:%d)\n",cmd.port,f_tcp,get_ftcp_code_string(f_tcp),errno);
                 break;
             }
             struct FrixiaFD f;

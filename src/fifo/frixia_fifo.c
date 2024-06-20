@@ -19,8 +19,6 @@
 int start_fifo_listening(int epoll_fd,
                          const char *name)
 {
-    printf("start_fifo_listening:%s\n",name);
-
     if (mkfifo(name, 0666))
     {
         return ERR_CHANGEFIFO_MKFIFO;
@@ -32,7 +30,7 @@ int start_fifo_listening(int epoll_fd,
     }
 
     struct epoll_event ev;
-    ev.events = EPOLLET;
+    ev.events = EPOLLET | EPOLLIN;
     ev.data.fd = change_fd;
     int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, change_fd, &ev);
     if (epoll_ctl_retval == -1)
