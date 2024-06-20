@@ -1,3 +1,8 @@
+TODO
+    refactor UDP
+    ctl commands can be injected by any supported fd or SW
+    test add / remove frixia fds
+
 ISSUE:
     fifo seems controversial (EPOLLET only)
 
@@ -10,16 +15,12 @@ FIX:
     if start fails, remove it from fd pool
     search udp/fifo/tcp unique function
     
-TODO
-    icon
-    ctl commands can be injected by any supported fd or SW
-    epoll_ctl(fd,ADD/DEL/MOD) -> core library
-    test add / remove frixia fds
-
 CHOICES
     C vs C++
 
 FUTURE DEVELOPMENT
+    icon
+
     python integration
     HTTPS (integrabile)
     create library
