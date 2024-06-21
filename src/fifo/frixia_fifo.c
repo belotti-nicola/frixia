@@ -24,14 +24,14 @@ int start_fifo_listening(int epoll_fd,
     {
         return ERR_FFIFO_MKFIFO;
     }
-    int change_fd = open(name, O_RDONLY);
+    int change_fd = open(name, O_RDONLY | O_NONBLOCK);
     if (change_fd == -1)
     {
         return ERR_FFIFO_OPEN;
     }
 
     struct epoll_event ev;
-    ev.events = EPOLLET | EPOLLIN;
+    ev.events = EPOLLET;
     ev.data.fd = change_fd;
     int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, change_fd, &ev);
     if (epoll_ctl_retval == -1)

@@ -42,7 +42,7 @@ void handle_ctl_command(int epoll_fd,
                         struct FrixiaFD frixia_fds[],
                         int frixia_fds_size,
                         struct FrixiaCTL cmd,
-                        bool* keep_looping)
+                        bool *keep_looping)
 {
     switch (cmd.c)
     {
@@ -56,7 +56,7 @@ void handle_ctl_command(int epoll_fd,
                                             cmd.port);
             if (f_tcp < 0)
             {
-                printf("Error starting TCP on port %d (code:%d,%s, errno:%d)\n",cmd.port,f_tcp,get_ftcp_code_string(f_tcp),errno);
+                printf("Error starting TCP on port %d (code:%d,%s, errno:%d)\n", cmd.port, f_tcp, get_ftcp_code_string(f_tcp), errno);
                 break;
             }
             struct FrixiaFD f;
@@ -84,12 +84,12 @@ void handle_ctl_command(int epoll_fd,
         case FIFO:
         {
             int f_fifo = start_fifo_listening(epoll_fd, cmd.argument);
-            printf("%d->%s\n",f_fifo,cmd.argument);
+            printf("%d->%s\n", cmd.port, cmd.argument);
             struct FrixiaFD f;
             f.fd = f_fifo;
             f.type = FIFO;
             f.port = cmd.port;
-            strcpy(f.filename,cmd.argument);
+            strcpy(f.filename, cmd.argument);
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
             break;
         }
@@ -105,9 +105,9 @@ void handle_ctl_command(int epoll_fd,
             int tcp_index = search_tcp_fd_by_port(cmd.port,
                                                   frixia_fds,
                                                   frixia_fds_size);
-            if(tcp_index < 0)
+            if (tcp_index < 0)
             {
-                printf("NO TCP ON PORT %d\n",cmd.port);
+                printf("NO TCP ON PORT %d\n", cmd.port);
                 break;
             }
             int target_fd = frixia_fds[tcp_index].fd;
@@ -125,7 +125,7 @@ void handle_ctl_command(int epoll_fd,
                                                   MAXIMUM_FILEDESCRIPTORS);
             int target_fd = frixia_fds[udp_index].fd;
             stop_udp_listening(epoll_fd,
-            target_fd);
+                               target_fd);
             remove_fd(target_fd,
                       frixia_fds,
                       frixia_fds_size);
@@ -134,10 +134,10 @@ void handle_ctl_command(int epoll_fd,
         case FIFO:
         {
             int fifo_index = search_fifo_fd_by_name(cmd.argument,
-                                                   frixia_fds,
-                                                   MAXIMUM_FILEDESCRIPTORS);
+                                                    frixia_fds,
+                                                    MAXIMUM_FILEDESCRIPTORS);
             int target_fd = frixia_fds[fifo_index].fd;
-            stop_fifo_listening(epoll_fd,target_fd);
+            stop_fifo_listening(epoll_fd, target_fd);
             remove_fd(target_fd,
                       frixia_fds,
                       frixia_fds_size);
@@ -160,12 +160,13 @@ void handle_ctl_command(int epoll_fd,
 int frixia_start()
 {
     struct FrixiaFD f_fds[MAXIMUM_FILEDESCRIPTORS];
+    const char *empty = "";
     for (int i = 0; i < MAXIMUM_FILEDESCRIPTORS; i++)
     {
         f_fds[i].type = UNDEFINED;
         f_fds[i].port = 0;
         f_fds[i].fd = -1;
-        strcpy(f_fds[i].filename, "");
+        strcpy(f_fds[i].filename, empty);
     }
 
     // create epoll
@@ -180,11 +181,11 @@ int frixia_start()
     //(which is a FIFO)
     const char *fname = "ctl_fifo";
     int change_fd = start_fifo_listening(epoll_fd, fname);
-    printf("start::%d\n",change_fd);
+
     struct FrixiaFD ctl_ffd;
     ctl_ffd.type = FIFO;
     ctl_ffd.fd = change_fd;
-
+    strcpy(ctl_ffd.filename, fname);
     add_fd_to_pool(ctl_ffd, f_fds, MAXIMUM_FILEDESCRIPTORS);
 
     // start epoll
@@ -204,7 +205,7 @@ int frixia_start()
         for (int i = 0; i < events_number; i++)
         {
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
-            printf("event intercepted::%d %d %d\n", events[i].data.fd,events_number,events[i].events);
+            printf("event intercepted::%d %d %d\n", events[i].data.fd, events_number, events[i].events);
             int detected_event_fd = events[i].data.fd;
             int index = search_fd(detected_event_fd, f_fds, MAXIMUM_FILEDESCRIPTORS);
             printf("index %d f_fds[index].fd %d f_fd type %d filename %s\n", index,
@@ -230,8 +231,8 @@ int frixia_start()
                     printf("Parsing failed: %s", buf);
                     break;
                 }
-                printf("-%s-\n",p_f->argument);
-                handle_ctl_command(epoll_fd, f_fds, MAXIMUM_FILEDESCRIPTORS, *p_f,&keep_looping);
+                printf("-%s-\n", p_f->argument);
+                handle_ctl_command(epoll_fd, f_fds, MAXIMUM_FILEDESCRIPTORS, *p_f, &keep_looping);
                 break;
             }
             case TCP:
@@ -270,25 +271,28 @@ int frixia_stop(int epoll_fd,
         switch (type)
         {
         case TCP:
-            target_fd = f[i].fd;
             stop_tcp_listening(epoll_fd, target_fd);
             remove_fd(target_fd,
                       f,
                       max_size);
+            printf("%d: frixia tcp file descriptor stopped.\n",i);
             break;
         case UDP:
-            stop_udp_listening(epoll_fd,target_fd);
+            stop_udp_listening(epoll_fd, target_fd);
             remove_fd(target_fd,
                       f,
                       max_size);
+            printf("%d: frixia udp file descriptor stopped.\n",i);
             break;
         case FIFO:
-           stop_fifo_listening(epoll_fd,target_fd);
-           remove_fd(target_fd,
+            stop_fifo_listening(epoll_fd, target_fd);
+            remove_fd(target_fd,
                       f,
                       max_size);
+            printf("%d: frixia fifo file descriptor stopped.\n",i);
         case UNDEFINED:
-           break;
+            printf("Unused frixia file descriptor:%d\n",i);
+            break;
         }
     }
 

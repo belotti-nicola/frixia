@@ -1,7 +1,7 @@
 #ifndef FRIXIA_FD_FS_H
 #define FRIXIA_FD_FS_H
 
-#define MAXSTR 10
+#define MAXSTR 20
 
 #include "../frixia_common.h"
 

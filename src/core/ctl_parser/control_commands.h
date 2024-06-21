@@ -16,7 +16,7 @@ struct FrixiaCTL {
     enum command_type c;
     enum FrixiaFDType type;
     int port;
-    char argument[20];
+    char argument[21];
 };
 
 #endif
