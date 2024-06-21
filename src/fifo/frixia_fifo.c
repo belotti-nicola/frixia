@@ -19,14 +19,15 @@
 int start_fifo_listening(int epoll_fd,
                          const char *name)
 {
-    if (mkfifo(name, 0666))
+    printf("start_fifo_listening %d %s\n",epoll_fd,name);
+    if (mkfifo(name, 0666) == -1)
     {
-        return ERR_CHANGEFIFO_MKFIFO;
+        return ERR_FFIFO_MKFIFO;
     }
     int change_fd = open(name, O_RDONLY);
     if (change_fd == -1)
     {
-        return ERR_CHANGEFIFO_OPENINGFD;
+        return ERR_FFIFO_OPEN;
     }
 
     struct epoll_event ev;
@@ -35,7 +36,7 @@ int start_fifo_listening(int epoll_fd,
     int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, change_fd, &ev);
     if (epoll_ctl_retval == -1)
     {
-        return ERR_EPOLL_CTL;
+        return ERR_FFIFO_EPOLLCTL_ADD;
     }
     return change_fd;
 }
@@ -47,7 +48,7 @@ int stop_fifo_listening(int epoll_fd,
     if (epoll_ctl_retval == -1)
     {
         printf("ERR_STOPPING_FRIXIA_FIFO %d\n", errno);
-        return ERR_STOPPING_FRIXIA_FIFO;
+        return ERR_FFIFO_STOP;
     }
     close(closing_fd);
     return OK;
@@ -60,7 +61,7 @@ int read_fifo_fd(int fd,
     int bytes_read = read(fd, buf, size);
     if (bytes_read == -1)
     {
-        return ERR_READING_FIFO;
+        return ERR_FFIFO_READ;
     }
     return bytes_read;
 }

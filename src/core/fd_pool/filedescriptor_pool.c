@@ -1,5 +1,6 @@
 #include "filedescriptor_pool.h"
 #include "filedescriptor_pool_defs.h"
+#include <string.h>
 
 #include <stdio.h>
 
@@ -21,10 +22,11 @@ int add_fd_to_pool(struct FrixiaFD fd,
         printf("NO_AVAILABLE_SPACE_IN_DATASTRUCTURE\n");
         return NO_AVAILABLE_SPACE_IN_DATASTRUCTURE;
     }
-    printf("Adding to index:%d,%d %d %d %s\n",index,fd.fd,fd.type,fd.port,fd.filename);
+    printf("Adding to index:%d,fd:%d type:%d port:%d filename:%s\n",index,fd.fd,fd.type,fd.port,fd.filename);
     f_fds[index].fd   = fd.fd;
     f_fds[index].type = fd.type;
     f_fds[index].port = fd.port;
+    strcpy(f_fds[index].filename,fd.filename);
     return ADD_OK;
 
     

@@ -5,7 +5,6 @@
 
 enum frixia_code
 {
-    OK = 0,
     ERR_EPOLL_CREATE = -1,
     ERR_EPOLL_CTL = -2,
     ERR_CHANGE_FILEDESCRIPTOR = -3,
@@ -16,12 +15,11 @@ enum frixia_code
     ERR_EPOLL_CTL_ADDUDP = -15,
     ERR_STOPPING_FRIXIA_TCP = -19,
     ERR_STOPPING_FRIXIA_UDP = -20,
-    ERR_READ_FIFO = -24,
-    ERR_STOPPING_FRIXIA_FIFO  = -25,
     ALREADY_LISTENING_ON_TCP_PORT  = -26,
     NO_TCP_ON_SPECIFIED_PORT_FOUND  = -27,
     ERR_READING_FIFO  = -28,
-    ERR_UDP_BIND = -29
+    ERR_UDP_BIND = -29,
+    ERR_FRIXIA_READ = -30
 };
 
 

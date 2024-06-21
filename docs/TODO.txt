@@ -2,9 +2,11 @@ TODO
     refactor UDP
     ctl commands can be injected by any supported fd or SW
     test add / remove frixia fds
+    refactor FIFO
 
 ISSUE:
     fifo seems controversial (EPOLLET only)
+    const char for fifo
 
 FEAT:
     dispatchers

@@ -83,8 +83,8 @@ void handle_ctl_command(int epoll_fd,
         }
         case FIFO:
         {
-            printf("->%s\n",cmd.argument);
             int f_fifo = start_fifo_listening(epoll_fd, cmd.argument);
+            printf("%d->%s\n",f_fifo,cmd.argument);
             struct FrixiaFD f;
             f.fd = f_fifo;
             f.type = FIFO;
@@ -180,11 +180,11 @@ int frixia_start()
     //(which is a FIFO)
     const char *fname = "ctl_fifo";
     int change_fd = start_fifo_listening(epoll_fd, fname);
-
+    printf("start::%d\n",change_fd);
     struct FrixiaFD ctl_ffd;
     ctl_ffd.type = FIFO;
     ctl_ffd.fd = change_fd;
-    strcpy(ctl_ffd.filename, fname);
+
     add_fd_to_pool(ctl_ffd, f_fds, MAXIMUM_FILEDESCRIPTORS);
 
     // start epoll
@@ -219,7 +219,7 @@ int frixia_start()
                 fifo_bytes_read = read(detected_event_fd, buf, FRIXIA_READ_SIZE);
                 if (fifo_bytes_read == -1)
                 {
-                    return ERR_READ_FIFO;
+                    return ERR_FRIXIA_READ;
                 }
                 struct FrixiaCTL *p_f;
                 struct FrixiaCTL fr;
