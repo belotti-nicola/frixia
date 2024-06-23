@@ -17,8 +17,7 @@ int main(int argc, char *argv[])
     }
 
     struct FrixiaFD f;
-	f.filedescriptor_type = FIFO;
-	strcpy(f.filename, "ctl_fifo");
+	f.filedescriptor_type = TCP;
 	f.port = 4444;
 	set_engine_event(f,f_fds,10);
 

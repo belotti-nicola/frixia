@@ -26,7 +26,6 @@
 #include "fd_pool/filedescriptor_pool.h"
 #include "ctl_parser/control_commands.h"
 
-
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
 #define FRIXIA_EPOLL_KERNEL_HINT 5
@@ -156,6 +155,30 @@ void handle_ctl_command(int epoll_fd,
     }
 }
 
+void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d, char *buff, int epoll_fd, struct FrixiaFD ffdt[], bool *keep_looping)
+{
+    switch (d)
+    {
+    case PROGRAM:
+    {
+        printf("PROGRAM DATA:'%s'", buff);
+    }
+    case ENGINE:
+    {
+        struct FrixiaCTL *p_f;
+        struct FrixiaCTL fr;
+        p_f = &fr;
+        enum parse_code parse_ec = parse_control_strings(buff, p_f);
+        if (parse_ec == PARSE_ERROR)
+        {
+            printf("Parsing failed: %s", buff);
+            return;
+        }
+        handle_ctl_command(epoll_fd, ffdt, MAXIMUM_FILEDESCRIPTORS, *p_f, keep_looping);
+    }
+    }
+}
+
 int frixia_start(struct FrixiaFD ffd[],
                  int max_size)
 {
@@ -169,20 +192,23 @@ int frixia_start(struct FrixiaFD ffd[],
 
     for (int i = 0; i < MAXIMUM_FILEDESCRIPTORS; i++)
     {
-        int new_fd;
+        int new_fd = -1;
         switch (ffd[i].filedescriptor_type)
         {
         case TCP:
         {
             new_fd = start_tcp_listening(epoll_fd, ffd[i].port);
+            break;
         }
         case UDP:
         {
             new_fd = start_udp_listening(epoll_fd, ffd[i].port);
+            break;
         }
         case FIFO:
         {
             new_fd = start_fifo_listening(epoll_fd, ffd[i].filename);
+            break;
         }
         case UNDEFINED:
         {
@@ -194,8 +220,7 @@ int frixia_start(struct FrixiaFD ffd[],
             remove_fd_by_index(i, ffd, MAXIMUM_FILEDESCRIPTORS);
             break;
         }
-        set_fd_type_by_index(new_fd,i,ffd,MAXIMUM_FILEDESCRIPTORS);
-
+        set_fd_type_by_index(new_fd, i, ffd, MAXIMUM_FILEDESCRIPTORS);
     }
 
     // start epoll
@@ -203,7 +228,7 @@ int frixia_start(struct FrixiaFD ffd[],
     bool keep_looping = true;
     struct epoll_event *events;
     events = calloc(FRIXIA_EPOLL_WAIT_MAX_SIZE, sizeof(struct epoll_event));
-    char read_buffer[FRIXIA_READ_SIZE + 1];
+    char *read_buffer[FRIXIA_READ_SIZE + 1];
     int fifo_bytes_read = 0;
     while (keep_looping)
     {
@@ -215,44 +240,38 @@ int frixia_start(struct FrixiaFD ffd[],
         for (int i = 0; i < events_number; i++)
         {
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
-            printf("event intercepted::%d %d %d\n", events[i].data.fd, events_number, events[i].events);
             int detected_event_fd = events[i].data.fd;
             int index = search_fd(detected_event_fd, ffd, MAXIMUM_FILEDESCRIPTORS);
-            printf("index %d ffd[index].fd %d f_fd type %d filename %s\n", index,
+            printf("index %d ffd[index].fd %d f_fd type %d filename '%s'\n", index,
                    ffd[index].fd,
                    ffd[index].filedescriptor_type,
                    ffd[index].filename);
+            if (index < 0)
+            {
+                printf("NEGATIVE INDEX\n");
+                break;
+            }
             switch ((enum FrixiaFDType)ffd[index].filedescriptor_type)
             {
+                char buf[FRIXIA_READ_SIZE + 1];
+                buf[0] = '\0';
             case FIFO:
             {
-                char buf[FRIXIA_READ_SIZE];
-                fifo_bytes_read = read(detected_event_fd, buf, FRIXIA_READ_SIZE);
-                if (fifo_bytes_read == -1)
-                {
-                    return ERR_FRIXIA_READ;
-                }
-                struct FrixiaCTL *p_f;
-                struct FrixiaCTL fr;
-                p_f = &fr;
-                enum parse_code parse_ec = parse_control_strings(buf, p_f);
-                if (parse_ec == PARSE_ERROR)
-                {
-                    printf("Parsing failed: %s", buf);
-                    break;
-                }
-                printf("-%s-\n", p_f->argument);
-                handle_ctl_command(epoll_fd, ffd, MAXIMUM_FILEDESCRIPTORS, *p_f, &keep_looping);
+                printf("reading: '%s'", buf);
+                read_fifo(detected_event_fd, &buf, FRIXIA_READ_SIZE);
                 break;
             }
             case TCP:
             {
-                printf("SWITCH to tcp\n");
+                printf("SWITCH to TCP\n");
+                int val = read_tcp_socket(detected_event_fd, &buf, FRIXIA_READ_SIZE + 1);
+                printf("'%s'", buf);
                 break;
             }
             case UDP:
             {
                 printf("SWITCH to UDP\n");
+                read_udp_socket(detected_event_fd, &buf, FRIXIA_READ_SIZE);
                 break;
             }
             case UNDEFINED:
@@ -263,7 +282,14 @@ int frixia_start(struct FrixiaFD ffd[],
             default:
             {
                 printf("defaulting::");
+                break;
             }
+
+            handle_frixia_message(ffd[index].dispatcher,
+                buf,
+                epoll_fd,
+                ffd,
+                &keep_looping);
             }
         }
     }

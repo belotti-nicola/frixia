@@ -13,6 +13,7 @@
 int start_tcp_listening(int epoll_fd,
                         int port)
 {
+    printf("start_tcp_listening %d %d\n",epoll_fd,port);
     if (epoll_fd <= 0)
     {
         return ERR_FTCP_START_MALFORMED_EPOLL_FD;
@@ -81,9 +82,8 @@ int stop_tcp_listening(int epoll_fd,
     return FTCP_OK;
 }
 
-int read_tcp_socket(int filedescriptor)
+int read_tcp_socket(int filedescriptor,char* buf, int size)
 {
-    char buffer[2048] = {0};
     struct sockaddr in_addr;
     socklen_t in_len;
     int client_fd;
@@ -94,22 +94,13 @@ int read_tcp_socket(int filedescriptor)
     {
         return ERR_FTCP_ACCEPTING;
     }
-    memset(buffer, 0, sizeof(buffer));
-    int size = read(client_fd, buffer, sizeof(buffer));
-    if (size < 0)
+    int read_bytes = read(client_fd, buf, size);
+    if (read_bytes < 0)
     {
         close(client_fd);
         return ERR_FTCP_READING;
     }
-    // TODO: DELETEME
-    // DO PROCESSING SOMEWAY AND COMPUTE ANSWER (WHICH IS BUFFER)
-    //if (write(client_fd, buffer, size) < 0)
-    //{
-        //printf("ERR_WRITING_TCP %d(%s)\n",errno,strerror(errno));
-        //close(client_fd);
-        //return ERR_WRITING_TCP;
-    //}
-    //close(client_fd);
+
     return FTCP_OK;
 }
 

@@ -19,7 +19,7 @@
 int start_fifo_listening(int epoll_fd,
                          const char *name)
 {
-    printf("start_fifo_listening %d %s\n",epoll_fd,name);
+    printf("start_fifo_listening %d '%s'\n",epoll_fd,name);
     if (mkfifo(name, 0666) == -1)
     {
         return ERR_FFIFO_MKFIFO;
@@ -54,7 +54,7 @@ int stop_fifo_listening(int epoll_fd,
     return OK;
 }
 
-int read_fifo_fd(int fd,
+int read_fifo(int fd,
                  char *buf,
                  int size)
 {
