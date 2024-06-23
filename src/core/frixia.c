@@ -16,6 +16,7 @@
 #include <sys/epoll.h>
 
 #include "frixia.h"
+#include "frixia_common.h"
 #include "../tcp/frixia_tcp.h"
 #include "../udp/frixia_udp.h"
 #include "../fifo/frixia_fifo.h"
@@ -24,6 +25,7 @@
 #include "fd_pool/filedescriptor_pool_defs.h"
 #include "fd_pool/filedescriptor_pool.h"
 #include "ctl_parser/control_commands.h"
+
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -34,9 +36,6 @@
 
 // COMMAND LENGTH READING THE FIFO
 #define FRIXIA_READ_SIZE 64
-
-// FD Data Structure size
-#define MAXIMUM_FILEDESCRIPTORS 10
 
 void handle_ctl_command(int epoll_fd,
                         struct FrixiaFD frixia_fds[],
@@ -61,7 +60,7 @@ void handle_ctl_command(int epoll_fd,
             }
             struct FrixiaFD f;
             f.fd = f_tcp;
-            f.type = TCP;
+            f.filedescriptor_type = TCP;
             f.port = cmd.port;
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
             break;
@@ -76,7 +75,7 @@ void handle_ctl_command(int epoll_fd,
             }
             struct FrixiaFD f;
             f.fd = f_udp;
-            f.type = UDP;
+            f.filedescriptor_type = UDP;
             f.port = cmd.port;
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
             break;
@@ -87,7 +86,7 @@ void handle_ctl_command(int epoll_fd,
             printf("%d->%s\n", cmd.port, cmd.argument);
             struct FrixiaFD f;
             f.fd = f_fifo;
-            f.type = FIFO;
+            f.filedescriptor_type = FIFO;
             f.port = cmd.port;
             strcpy(f.filename, cmd.argument);
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
@@ -157,18 +156,9 @@ void handle_ctl_command(int epoll_fd,
     }
 }
 
-int frixia_start()
+int frixia_start(struct FrixiaFD ffd[],
+                 int max_size)
 {
-    struct FrixiaFD f_fds[MAXIMUM_FILEDESCRIPTORS];
-    const char *empty = "";
-    for (int i = 0; i < MAXIMUM_FILEDESCRIPTORS; i++)
-    {
-        f_fds[i].type = UNDEFINED;
-        f_fds[i].port = 0;
-        f_fds[i].fd = -1;
-        strcpy(f_fds[i].filename, empty);
-    }
-
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
     if (epoll_fd < 0)
@@ -177,16 +167,36 @@ int frixia_start()
     }
     printf("EPOLL FILE DESCRIPTOR:: %d\n", epoll_fd);
 
-    // create the change epoll filedescriptor
-    //(which is a FIFO)
-    const char *fname = "ctl_fifo";
-    int change_fd = start_fifo_listening(epoll_fd, fname);
+    for (int i = 0; i < MAXIMUM_FILEDESCRIPTORS; i++)
+    {
+        int new_fd;
+        switch (ffd[i].filedescriptor_type)
+        {
+        case TCP:
+        {
+            new_fd = start_tcp_listening(epoll_fd, ffd[i].port);
+        }
+        case UDP:
+        {
+            new_fd = start_udp_listening(epoll_fd, ffd[i].port);
+        }
+        case FIFO:
+        {
+            new_fd = start_fifo_listening(epoll_fd, ffd[i].filename);
+        }
+        case UNDEFINED:
+        {
+            break;
+        }
+        }
+        if (new_fd < 0)
+        {
+            remove_fd_by_index(i, ffd, MAXIMUM_FILEDESCRIPTORS);
+            break;
+        }
+        set_fd_type_by_index(new_fd,i,ffd,MAXIMUM_FILEDESCRIPTORS);
 
-    struct FrixiaFD ctl_ffd;
-    ctl_ffd.type = FIFO;
-    ctl_ffd.fd = change_fd;
-    strcpy(ctl_ffd.filename, fname);
-    add_fd_to_pool(ctl_ffd, f_fds, MAXIMUM_FILEDESCRIPTORS);
+    }
 
     // start epoll
     int events_number;
@@ -207,12 +217,12 @@ int frixia_start()
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
             printf("event intercepted::%d %d %d\n", events[i].data.fd, events_number, events[i].events);
             int detected_event_fd = events[i].data.fd;
-            int index = search_fd(detected_event_fd, f_fds, MAXIMUM_FILEDESCRIPTORS);
-            printf("index %d f_fds[index].fd %d f_fd type %d filename %s\n", index,
-                   f_fds[index].fd,
-                   f_fds[index].type,
-                   f_fds[index].filename);
-            switch ((enum FrixiaFDType)f_fds[index].type)
+            int index = search_fd(detected_event_fd, ffd, MAXIMUM_FILEDESCRIPTORS);
+            printf("index %d ffd[index].fd %d f_fd type %d filename %s\n", index,
+                   ffd[index].fd,
+                   ffd[index].filedescriptor_type,
+                   ffd[index].filename);
+            switch ((enum FrixiaFDType)ffd[index].filedescriptor_type)
             {
             case FIFO:
             {
@@ -232,7 +242,7 @@ int frixia_start()
                     break;
                 }
                 printf("-%s-\n", p_f->argument);
-                handle_ctl_command(epoll_fd, f_fds, MAXIMUM_FILEDESCRIPTORS, *p_f, &keep_looping);
+                handle_ctl_command(epoll_fd, ffd, MAXIMUM_FILEDESCRIPTORS, *p_f, &keep_looping);
                 break;
             }
             case TCP:
@@ -267,7 +277,7 @@ int frixia_stop(int epoll_fd,
     for (int i = 0; i < max_size; i++)
     {
         target_fd = f[i].fd;
-        type = f[i].type;
+        type = f[i].filedescriptor_type;
         switch (type)
         {
         case TCP:
@@ -275,26 +285,58 @@ int frixia_stop(int epoll_fd,
             remove_fd(target_fd,
                       f,
                       max_size);
-            printf("%d: frixia tcp file descriptor stopped.\n",i);
+            printf("%d: frixia tcp file descriptor stopped.\n", i);
             break;
         case UDP:
             stop_udp_listening(epoll_fd, target_fd);
             remove_fd(target_fd,
                       f,
                       max_size);
-            printf("%d: frixia udp file descriptor stopped.\n",i);
+            printf("%d: frixia udp file descriptor stopped.\n", i);
             break;
         case FIFO:
             stop_fifo_listening(epoll_fd, target_fd);
             remove_fd(target_fd,
                       f,
                       max_size);
-            printf("%d: frixia fifo file descriptor stopped.\n",i);
+            printf("%d: frixia fifo file descriptor stopped.\n", i);
         case UNDEFINED:
-            printf("Unused frixia file descriptor:%d\n",i);
+            printf("Unused frixia file descriptor:%d\n", i);
             break;
         }
     }
 
+    return OK;
+}
+
+int set_engine_event(struct FrixiaFD protoffd,
+                     struct FrixiaFD *ffds,
+                     int size)
+{
+    struct FrixiaFD ffd;
+    ffd.dispatcher = ENGINE;
+    ffd.filedescriptor_type = protoffd.filedescriptor_type;
+    strcpy(ffd.filename, protoffd.filename);
+    ffd.port = protoffd.port;
+
+    add_fd_to_pool(ffd,
+                   ffds,
+                   size);
+    return OK;
+}
+
+int set_program_event(struct FrixiaFD protoffd,
+                      struct FrixiaFD *ffds,
+                      int size)
+{
+    struct FrixiaFD ffd;
+    ffd.dispatcher = PROGRAM;
+    ffd.filedescriptor_type = protoffd.filedescriptor_type;
+    strcpy(ffd.filename, protoffd.filename);
+    ffd.port = protoffd.port;
+
+    add_fd_to_pool(ffd,
+                   ffds,
+                   size);
     return OK;
 }

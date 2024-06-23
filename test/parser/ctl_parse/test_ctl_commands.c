@@ -90,7 +90,7 @@ void test_parse_ok(char *directory,
         exit(EXIT_FAILURE);
     }
 
-    enum command_type CMD = get_command_by_string(cmd);
+    enum COMMAND_TYPE CMD = get_command_by_string(cmd);
     enum FrixiaFDType TYPE = get_frixiafdtype_by_string(fdtype);
     int PORT = atoi(argument);
     if (CMD != fctl.c)

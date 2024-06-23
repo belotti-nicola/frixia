@@ -1,8 +1,6 @@
 TODO
-    refactor UDP
     ctl commands can be injected by any supported fd or SW
     test add / remove frixia fds
-    refactor FIFO
 
 ISSUE:
     fifo seems controversial (EPOLLET only)
@@ -17,12 +15,16 @@ FIX:
     if start fails, remove it from fd pool
     search udp/fifo/tcp unique function
     
+REFACTORING
+    enum UPPERCASES
+    name ENGINE_EVENT / PROGRAM_EVENT (1.ENUM 2.START_<t>_EVENT)
+    proto = frixiafd meno roba
+
 CHOICES
     C vs C++
 
 FUTURE DEVELOPMENT
     icon
-
     python integration
     HTTPS (integrabile)
     create library

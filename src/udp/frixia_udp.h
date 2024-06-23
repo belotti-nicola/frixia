@@ -17,3 +17,6 @@ int start_udp_listening(int epoll_fd,
 
 int stop_udp_listening(int epoll_fd,
                        int target_fd);
+
+char* get_fudp_code_string(enum FUDP_CODE c);
+int get_fudp_code_string_from_string(char *s);

@@ -3,17 +3,17 @@
 
 #include "../frixia_common.h"
 
-enum command_type{
+enum COMMAND_TYPE{
     UNKNOWN,
     START,
     STOP,
     STOPALL
 };
 
-enum command_type get_command_by_string(char s[]);
+enum COMMAND_TYPE get_command_by_string(char s[]);
 
 struct FrixiaCTL {
-    enum command_type c;
+    enum COMMAND_TYPE c;
     enum FrixiaFDType type;
     int port;
     char argument[21];

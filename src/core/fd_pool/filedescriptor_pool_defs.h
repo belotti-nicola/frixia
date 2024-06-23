@@ -5,6 +5,11 @@
 
 #include "../frixia_common.h"
 
+enum FRIXIA_EVENT_DISPATCHER{
+    NONE,       //DEFAULT
+    PROGRAM,    //COMUNICATE WITH PROGRAM
+    ENGINE      //MANIPULATE ENGINE TYPE
+};
 
 enum FD_POOL_EXIT_CODES{
     ADD_OK=1,
@@ -21,10 +26,11 @@ enum FD_POOL_EXIT_CODES{
 
 struct FrixiaFD
 {
-    int fd;                     // filedescriptor
-    enum FrixiaFDType type;       // filedescriptor type
-    char filename[MAXSTR + 1]; //
-    int port;                   //
+    int fd;                                 // filedescriptor
+    enum FRIXIA_EVENT_DISPATCHER dispatcher;// parse or read
+    enum FrixiaFDType filedescriptor_type;  // filedescriptor type : IF UNDEFINED IS NOT USED
+    char filename[MAXSTR + 1];              // fifos
+    int port;                               // tcp/udp
 };
 
 #endif

@@ -11,7 +11,7 @@ int add_fd_to_pool(struct FrixiaFD fd,
     int index = -1;
     for (int i = 0; i < max_size; i++)
     {
-        if (f_fds[i].type == UNDEFINED)
+        if (f_fds[i].filedescriptor_type == UNDEFINED)
         {
             index = i;
             break;
@@ -22,9 +22,9 @@ int add_fd_to_pool(struct FrixiaFD fd,
         printf("NO_AVAILABLE_SPACE_IN_DATASTRUCTURE\n");
         return NO_AVAILABLE_SPACE_IN_DATASTRUCTURE;
     }
-    printf("Adding to index:%d,fd:%d type:%d port:%d filename:%s\n",index,fd.fd,fd.type,fd.port,fd.filename);
+    printf("Adding to index:%d,fd:%d type:%d port:%d filename:%s\n",index,fd.fd,fd.filedescriptor_type,fd.port,fd.filename);
     f_fds[index].fd   = fd.fd;
-    f_fds[index].type = fd.type;
+    f_fds[index].filedescriptor_type = fd.filedescriptor_type;
     f_fds[index].port = fd.port;
     strcpy(f_fds[index].filename,fd.filename);
     return ADD_OK;
@@ -66,7 +66,7 @@ int remove_fd(int fd,
         return FD_NOT_FOUND;
     }
 
-    (*(f_fds + index)).type = UNDEFINED;
+    (*(f_fds + index)).filedescriptor_type = UNDEFINED;
     (*(f_fds + index)).fd = -1;
     (*(f_fds + index)).port = -1;
     return REMOVE_OK;
@@ -79,7 +79,7 @@ int search_tcp_fd_by_port(int port,
     int index = -1;
     for (int i = 0; i < max_size; i++)
     {
-        if (f_fds[i].type == TCP &&
+        if (f_fds[i].filedescriptor_type == TCP &&
            (f_fds[i].port == port))
             {
                 index = i;
@@ -102,7 +102,7 @@ int search_udp_fd_by_port(int port,
     int index = -1;
     for (int i = 0; i < max_size; i++)
     {
-        if (f_fds[i].type == UDP &&
+        if (f_fds[i].filedescriptor_type == UDP &&
            (f_fds[i].port == port))
             {
                 index = i;
@@ -124,7 +124,7 @@ int search_fifo_fd_by_name(char* name,
     int index = -1;
     for (int i = 0; i < max_size; i++)
     {
-        if (f_fds[i].type == FIFO &&
+        if (f_fds[i].filedescriptor_type == FIFO &&
            (f_fds[i].filename == name))
             {
                 index = i;
@@ -138,4 +138,35 @@ int search_fifo_fd_by_name(char* name,
     }
 
     return index;
+}
+
+int remove_fd_by_index(int index, struct FrixiaFD ffd[], int ffd_size)
+{
+    if(index < 0)
+    {
+        return -1;
+    }
+    if(index > MAXIMUM_FILEDESCRIPTORS)
+    {
+        return -1;
+    }
+    ffd[index].filedescriptor_type = UNDEFINED;
+    return 0;
+}        
+int set_fd_type_by_index(int fd,int index, struct FrixiaFD ffd[], int ffd_size)
+{
+    if(ffd_size < 0)
+    {
+        return -1;
+    }
+    if(ffd_size > MAXIMUM_FILEDESCRIPTORS)
+    {
+        return -1;
+    }
+    if(fd < 0)
+    {
+        return -1;
+    }
+    ffd[index].fd = fd;
+    return 0;
 }
