@@ -82,7 +82,7 @@ int stop_tcp_listening(int epoll_fd,
     return FTCP_OK;
 }
 
-int read_tcp_socket(int filedescriptor,char* buf, int size)
+int read_tcp_socket(int filedescriptor,char* buf[], int size)
 {
     struct sockaddr in_addr;
     socklen_t in_len;

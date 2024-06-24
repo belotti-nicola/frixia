@@ -155,23 +155,27 @@ void handle_ctl_command(int epoll_fd,
     }
 }
 
-void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d, char *buff, int epoll_fd, struct FrixiaFD ffdt[], bool *keep_looping)
+void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
+                           char *buff[],
+                           int epoll_fd,
+                           struct FrixiaFD ffdt[],
+                           bool *keep_looping)
 {
     switch (d)
     {
     case PROGRAM:
     {
-        printf("PROGRAM DATA:'%s'", buff);
+        printf("PROGRAM DATA:'%s'", *buff);
     }
     case ENGINE:
     {
         struct FrixiaCTL *p_f;
         struct FrixiaCTL fr;
         p_f = &fr;
-        enum parse_code parse_ec = parse_control_strings(buff, p_f);
+        enum parse_code parse_ec = parse_control_strings(buff[0], p_f);
         if (parse_ec == PARSE_ERROR)
         {
-            printf("Parsing failed: %s", buff);
+            printf("Parsing failed: %s", *buff);
             return;
         }
         handle_ctl_command(epoll_fd, ffdt, MAXIMUM_FILEDESCRIPTORS, *p_f, keep_looping);
@@ -251,27 +255,27 @@ int frixia_start(struct FrixiaFD ffd[],
                 printf("NEGATIVE INDEX\n");
                 break;
             }
+            char *buf[FRIXIA_READ_SIZE + 1];
+            *buf[0] = '\0';
             switch ((enum FrixiaFDType)ffd[index].filedescriptor_type)
             {
-                char buf[FRIXIA_READ_SIZE + 1];
-                buf[0] = '\0';
             case FIFO:
             {
-                printf("reading: '%s'", buf);
-                read_fifo(detected_event_fd, &buf, FRIXIA_READ_SIZE);
+                printf("reading: '%s'", *buf);
+                read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
                 break;
             }
             case TCP:
             {
                 printf("SWITCH to TCP\n");
-                int val = read_tcp_socket(detected_event_fd, &buf, FRIXIA_READ_SIZE + 1);
-                printf("'%s'", buf);
+                int val = read_tcp_socket(detected_event_fd, buf, FRIXIA_READ_SIZE + 1);
+                printf("'%s'", *buf);
                 break;
             }
             case UDP:
             {
                 printf("SWITCH to UDP\n");
-                read_udp_socket(detected_event_fd, &buf, FRIXIA_READ_SIZE);
+                read_udp_socket(detected_event_fd, *buf, FRIXIA_READ_SIZE);
                 break;
             }
             case UNDEFINED:
@@ -285,11 +289,11 @@ int frixia_start(struct FrixiaFD ffd[],
                 break;
             }
 
-            handle_frixia_message(ffd[index].dispatcher,
-                buf,
-                epoll_fd,
-                ffd,
-                &keep_looping);
+                handle_frixia_message(ffd[index].dispatcher,
+                                      buf,
+                                      epoll_fd,
+                                      ffd,
+                                      &keep_looping);
             }
         }
     }
