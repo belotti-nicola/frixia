@@ -19,3 +19,14 @@ enum COMMAND_TYPE get_command_by_string(char* s)
 
     return UNKNOWN;
 };
+
+char* get_command_string(enum COMMAND_TYPE c)
+{
+    switch(c)
+    {
+        case START: return "START";
+        case STOP: return "STOP";
+        case STOPALL: return "STOPALL";
+        default: return UNKNOWN;
+    }
+}

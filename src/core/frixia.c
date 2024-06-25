@@ -42,6 +42,7 @@ void handle_ctl_command(int epoll_fd,
                         struct FrixiaCTL cmd,
                         bool *keep_looping)
 {
+    printf("Executing CTL command:%d(%s)",cmd.c,get_command_string(cmd.c));
     switch (cmd.c)
     {
     case START:
@@ -255,7 +256,7 @@ int frixia_start(struct FrixiaFD ffd[],
                 printf("NEGATIVE INDEX\n");
                 break;
             }
-            char buf[FRIXIA_READ_SIZE + 1];
+            char buf[FRIXIA_READ_SIZE + 1] = {'\0'};
             switch ((enum FrixiaFDType)ffd[index].filedescriptor_type)
             {
             case FIFO:
@@ -287,13 +288,12 @@ int frixia_start(struct FrixiaFD ffd[],
                 printf("defaulting::");
                 break;
             }
-
-                handle_frixia_message(ffd[index].dispatcher,
-                                      buf,
-                                      epoll_fd,
-                                      ffd,
-                                      &keep_looping);
             }
+            handle_frixia_message(ffd[index].dispatcher,
+                                  buf,
+                                  epoll_fd,
+                                  ffd,
+                                  &keep_looping);
         }
     }
     return OK;

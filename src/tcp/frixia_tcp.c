@@ -100,7 +100,7 @@ int read_tcp_socket(int filedescriptor,char buf[], int size)
         close(client_fd);
         return ERR_FTCP_READING;
     }
-
+    close(client_fd);
     return FTCP_OK;
 }
 
