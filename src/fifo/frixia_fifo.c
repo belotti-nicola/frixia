@@ -55,7 +55,7 @@ int stop_fifo_listening(int epoll_fd,
 }
 
 int read_fifo(int fd,
-              char* buf[],
+              char buf[],
               int size)
 {
     int bytes_read = read(fd, buf, size);
