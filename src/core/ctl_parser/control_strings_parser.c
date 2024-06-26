@@ -50,7 +50,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
 {
     if (*s == '\0')
     {
-        PARSING_DEBUG();
+        printf("EMPTY parse_control_strings!\n");
         return PARSE_ERROR;
     }
 

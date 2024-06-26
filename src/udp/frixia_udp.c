@@ -159,7 +159,7 @@ int get_fudp_code_string_from_string(char *s)
     }
 }
 
-int read_udp_socket(int fd, char buf[], int size)
+int read_udp(int fd, char buf[], int size)
 {
     int read_bytes = read(fd, buf, size);
     if (read_bytes < 0)

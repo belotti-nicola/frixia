@@ -7,9 +7,9 @@ int frixia_stop(int epoll_fd,
                 int max_size);
 
 int set_engine_event(struct FrixiaFD fd,
-                     struct FrixiaFD *ffds,
+                     struct FrixiaFD ffds[],
                      int size);
 
 int set_program_event(struct FrixiaFD fd,
-                     struct FrixiaFD *ffds,
+                     struct FrixiaFD ffds[],
                      int size);

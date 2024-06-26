@@ -42,7 +42,7 @@ void handle_ctl_command(int epoll_fd,
                         struct FrixiaCTL cmd,
                         bool *keep_looping)
 {
-    printf("Executing CTL command:%d(%s)",cmd.c,get_command_string(cmd.c));
+    printf("Executing CTL command:%d(%s)\n", cmd.c, get_command_string(cmd.c));
     switch (cmd.c)
     {
     case START:
@@ -62,6 +62,8 @@ void handle_ctl_command(int epoll_fd,
             f.fd = f_tcp;
             f.filedescriptor_type = TCP;
             f.port = cmd.port;
+            f.dispatcher = PROGRAM;
+            strcpy(f.filename,"");
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
             break;
         }
@@ -77,6 +79,7 @@ void handle_ctl_command(int epoll_fd,
             f.fd = f_udp;
             f.filedescriptor_type = UDP;
             f.port = cmd.port;
+            strcpy(f.filename,"");
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
             break;
         }
@@ -247,8 +250,9 @@ int frixia_start(struct FrixiaFD ffd[],
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
             int detected_event_fd = events[i].data.fd;
             int index = search_fd(detected_event_fd, ffd, MAXIMUM_FILEDESCRIPTORS);
-            printf("index %d ffd[index].fd %d f_fd type %d filename '%s'\n", index,
+            printf("index %d ffd[index].fd %d dispatcher %d f_fd type %d filename '%s'\n", index,
                    ffd[index].fd,
+                   ffd[index].dispatcher,
                    ffd[index].filedescriptor_type,
                    ffd[index].filename);
             if (index < 0)
@@ -256,44 +260,64 @@ int frixia_start(struct FrixiaFD ffd[],
                 printf("NEGATIVE INDEX\n");
                 break;
             }
-            char buf[FRIXIA_READ_SIZE + 1] = {'\0'};
-            switch ((enum FrixiaFDType)ffd[index].filedescriptor_type)
+
+            int switch_selector = KEY(ffd[index].dispatcher,
+                                      ffd[index].filedescriptor_type);
+            switch (switch_selector)
             {
-            case FIFO:
+            case KEY(ENGINE,FIFO):
             {
-                printf("reading: '%s'", buf);
+                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                handle_frixia_message(ffd[index].dispatcher,
+                                      buf,
+                                      epoll_fd,
+                                      ffd,
+                                      &keep_looping);
                 break;
             }
-            case TCP:
+            case KEY(ENGINE,TCP):
             {
-                printf("SWITCH to TCP\n");
-                int val = read_tcp_socket(detected_event_fd, buf, FRIXIA_READ_SIZE + 1);
-                printf("'%s'\n", buf);
+                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
+                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                handle_frixia_message(ffd[index].dispatcher,
+                                      buf,
+                                      epoll_fd,
+                                      ffd,
+                                      &keep_looping);
                 break;
             }
-            case UDP:
+            case KEY(ENGINE,UDP):
             {
-                printf("SWITCH to UDP\n");
-                read_udp_socket(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
+                read_udp(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                handle_frixia_message(ffd[index].dispatcher,
+                                      buf,
+                                      epoll_fd,
+                                      ffd,
+                                      &keep_looping);
                 break;
             }
-            case UNDEFINED:
+            case KEY(PROGRAM,FIFO):
             {
-                printf("SWITCH to UNDEFINED\n");
+                break;
+            }
+            case KEY(PROGRAM,TCP):
+            {
+                break;
+            }
+            case KEY(PROGRAM,UDP):
+            {
                 break;
             }
             default:
             {
-                printf("defaulting::");
+                printf("UNKNOWN KEY(%d,%d): %d\n", ffd[index].dispatcher,
+                       ffd[index].filedescriptor_type,
+                       switch_selector);
                 break;
             }
             }
-            handle_frixia_message(ffd[index].dispatcher,
-                                  buf,
-                                  epoll_fd,
-                                  ffd,
-                                  &keep_looping);
         }
     }
     return OK;
@@ -339,7 +363,7 @@ int frixia_stop(int epoll_fd,
 }
 
 int set_engine_event(struct FrixiaFD protoffd,
-                     struct FrixiaFD *ffds,
+                     struct FrixiaFD ffds[],
                      int size)
 {
     struct FrixiaFD ffd;
@@ -355,7 +379,7 @@ int set_engine_event(struct FrixiaFD protoffd,
 }
 
 int set_program_event(struct FrixiaFD protoffd,
-                      struct FrixiaFD *ffds,
+                      struct FrixiaFD ffds[],
                       int size)
 {
     struct FrixiaFD ffd;

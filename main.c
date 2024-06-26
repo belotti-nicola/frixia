@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     struct FrixiaFD f;
 	f.filedescriptor_type = TCP;
 	f.port = 4444;
+    strcpy(f.filename,"");
 	set_engine_event(f,f_fds,10);
 
     return frixia_start(f_fds,10);
