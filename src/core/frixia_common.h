@@ -4,6 +4,8 @@
 // FD Data Structure size
 #define MAXIMUM_FILEDESCRIPTORS 10
 
+// FRIXIA COMMAND 
+#define MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH 40
 
 enum FrixiaFDType
 {

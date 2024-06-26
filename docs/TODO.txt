@@ -1,6 +1,7 @@
 TODO
     ctl commands can be injected by any supported fd or SW
     test add / remove frixia fds
+    FIRST: CTL_TYPE THEN: SUPPORTED SOCKET (DIFFERENT SIZE) -> switch unique
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

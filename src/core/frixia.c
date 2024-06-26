@@ -269,7 +269,7 @@ int frixia_start(struct FrixiaFD ffd[],
             {
                 printf("SWITCH to TCP\n");
                 int val = read_tcp_socket(detected_event_fd, buf, FRIXIA_READ_SIZE + 1);
-                printf("'%s'", buf);
+                printf("'%s'\n", buf);
                 break;
             }
             case UDP:
