@@ -7,6 +7,9 @@
 // FRIXIA COMMAND 
 #define MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH 40
 
+
+#define FRIXIA_THREAD_POOL 1
+
 // take first argument
 // multiply by 2^8
 // add b

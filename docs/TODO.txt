@@ -1,8 +1,8 @@
 TODO
     ctl commands can be injected by any supported fd or SW
     test add / remove frixia fds
-    FIRST: CTL_TYPE THEN: SUPPORTED SOCKET (DIFFERENT SIZE) -> switch unique
-
+    better naming to frixia safe queue
+    
 ISSUE:
     fifo seems controversial (EPOLLET only)
     const char for fifo
@@ -20,6 +20,7 @@ REFACTORING
     enum UPPERCASES
     name ENGINE_EVENT / PROGRAM_EVENT (1.ENUM 2.START_<t>_EVENT)
     proto = frixiafd meno roba
+    STOPALL: no need to call functions? check
 
 CHOICES
     C vs C++

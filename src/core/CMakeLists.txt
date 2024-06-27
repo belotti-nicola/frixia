@@ -14,6 +14,7 @@ add_library(core
 
 add_subdirectory(ctl_parser)
 add_subdirectory(fd_pool)
+add_subdirectory(fqueue)
 
 
 target_link_libraries(core 

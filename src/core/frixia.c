@@ -25,6 +25,7 @@
 #include "fd_pool/filedescriptor_pool_defs.h"
 #include "fd_pool/filedescriptor_pool.h"
 #include "ctl_parser/control_commands.h"
+#include "fqueue/frixia_queue.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -190,6 +191,9 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(struct FrixiaFD ffd[],
                  int max_size)
 {
+    
+    StsHeader *q_handle = StsQueue.create();
+
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
     if (epoll_fd < 0)
@@ -320,6 +324,7 @@ int frixia_start(struct FrixiaFD ffd[],
             }
         }
     }
+    StsQueue.destroy(q_handle);
     return OK;
 }
 int frixia_stop(int epoll_fd,
@@ -359,6 +364,7 @@ int frixia_stop(int epoll_fd,
         }
     }
 
+    
     return OK;
 }
 
