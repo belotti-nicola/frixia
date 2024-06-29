@@ -304,14 +304,20 @@ int frixia_start(struct FrixiaFD ffd[],
             }
             case KEY(PROGRAM,FIFO):
             {
+                int a = 1;
+                StsQueue.push(q_handle,&a);
                 break;
             }
             case KEY(PROGRAM,TCP):
             {
+                int a = 2;
+                StsQueue.push(q_handle,&a);
                 break;
             }
             case KEY(PROGRAM,UDP):
             {
+                int a = 3;
+                StsQueue.push(q_handle,&a);
                 break;
             }
             default:
