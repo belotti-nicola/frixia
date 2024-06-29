@@ -1,3 +1,5 @@
+find_package(Threads REQUIRED)
+
 add_library(core
   frixia.c
   frixia.h
@@ -21,4 +23,5 @@ target_link_libraries(core
   ctl_parser
   fd_pool
   fqueue
+  Threads::Threads
 )

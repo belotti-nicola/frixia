@@ -14,7 +14,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/epoll.h>
-
+#include <pthread.h> 
 #include "frixia.h"
 #include "frixia_common.h"
 #include "../tcp/frixia_tcp.h"
@@ -36,6 +36,28 @@
 
 // COMMAND LENGTH READING THE FIFO
 #define FRIXIA_READ_SIZE 64
+
+void *q_debugging(void *i)
+{
+    StsHeader* q;
+    q = (StsHeader*)i;
+    void* popped;
+    for(int i=0;i<15;i++)
+    {
+        sleep(2);
+        popped = StsQueue.pop(q);
+        if(popped == NULL)
+        {
+            printf("EMPTY Q %d\n",i);
+        }
+        else 
+        {   
+            printf("Q:%d %d\n",i,*((int*)popped));
+        }
+    }
+    printf("Thread end\n");
+}
+
 
 void handle_ctl_command(int epoll_fd,
                         struct FrixiaFD frixia_fds[],
@@ -191,8 +213,11 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(struct FrixiaFD ffd[],
                  int max_size)
 {
+
     
     StsHeader *q_handle = StsQueue.create();
+    pthread_t thread_id; 
+    pthread_create(&thread_id, NULL, q_debugging, q_handle); 
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
