@@ -21,6 +21,7 @@ REFACTORING
     name ENGINE_EVENT / PROGRAM_EVENT (1.ENUM 2.START_<t>_EVENT)
     proto = frixiafd meno roba
     STOPALL: no need to call functions? check
+    struct tpool typedef tpool_t
 
 CHOICES
     C vs C++
@@ -28,7 +29,7 @@ CHOICES
 FUTURE DEVELOPMENT
     icon
     python integration
-    HTTPS (integrabile)
+    HTTP / HTTPS
+    CUSTOM PROTOCOLO
     create library
     parser (UDP/TCP)
-    error_codes TCP/UDP/FIFO
