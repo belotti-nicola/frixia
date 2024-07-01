@@ -1,1 +1,2 @@
 add_subdirectory(simple_queue)
+add_subdirectory(simple_thread_pool)
