@@ -19,13 +19,7 @@ void *work(void *p)
 
 int main()
 {
-  thread_safe_queue_t *q = create_q();
-  for(int i=0;i<TASKS;i++)
-  { 
-    push_q(q,i);
-  }
-
-  thread_pool_t *tp = thread_pool_create(WORKERS,work,q);
-
+  thread_pool_t *tp = thread_pool_create(WORKERS,work);
+  sleep(10);
   return 0;
 }

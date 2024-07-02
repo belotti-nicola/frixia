@@ -5,4 +5,5 @@ add_library(simple_thread_pool
 
 target_link_libraries(simple_thread_pool
     Threads::Threads
+    simple_queue
     )
