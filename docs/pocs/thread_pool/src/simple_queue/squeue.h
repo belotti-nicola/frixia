@@ -12,11 +12,12 @@ typedef struct q_elem
 
 typedef struct thread_safe_queue 
 {
-    size_t           size;
+    int              size;
     q_elem_t*        first;
     q_elem_t*        last;
 
     pthread_mutex_t *mutex;
+    pthread_cond_t  *empty;
 
 } thread_safe_queue_t;
 

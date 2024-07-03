@@ -6,20 +6,19 @@
 #include <stdlib.h>
 #include <stdbool.h> 
 
-#define WORKERS 10
-#define TASKS 10
+#define WORKERS 20
+#define TASKS   20
 
 void *work(void *arg)
 {
-  sleep(3);
   thread_safe_queue_t *casted_arg = (thread_safe_queue_t*)arg;
-  //TODO:: CHECK EMPTY Q
-  while( casted_arg->size > 0)
+
+  while( true )
   {
     int t = rand() % 5;
     sleep(t);
     int popped_el = pop_q(casted_arg);
-    printf("popped:%d (%d)\n",popped_el,t);
+    printf("popped:%d (%d)\n",popped_el,casted_arg->size);
   }
   printf("Thread ended\n");
 }
@@ -27,11 +26,20 @@ void *work(void *arg)
 
 int main()
 {
-  thread_pool_t *tp = thread_pool_create(WORKERS,&work);
+  thread_safe_queue_t* q = create_q();
   for(int i=0;i<TASKS;i++)
   {
-    thread_pool_add_job(tp,&i);
+    push_q(q,i);
   }
-  thread_pool_join(tp);
+  
+  thread_pool_t *tp = thread_pool_create(WORKERS,&work,q);
+  sleep(5);
+  printf("Sleep\n");
+  thread_pool_add_job(tp,1);
+  thread_pool_add_job(tp,2);
+  thread_pool_add_job(tp,3);
+  thread_pool_add_job(tp,4);
+  sleep(5);
+
   return 0;
 }

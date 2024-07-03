@@ -15,14 +15,22 @@ thread_safe_queue_t* create_q()
     {
         exit(EXIT_FAILURE);
     }
-    pthread_mutex_init(mutex,NULL);
+
+    pthread_cond_t *cond = malloc(sizeof(pthread_cond_t));
+    pthread_cond_init(cond,NULL);
+
 
     qptr->mutex = mutex;
+    qptr->empty = cond;
     return qptr;
 }
 int pop_q(thread_safe_queue_t* q)
 {
     pthread_mutex_lock(q->mutex);
+    while( q->size == 0 ) 
+    {
+        pthread_cond_wait(q->empty,q->mutex);
+    }
     if(q->first == NULL)
     {
         pthread_mutex_unlock(q->mutex);
@@ -48,6 +56,7 @@ void push_q(thread_safe_queue_t* q,int v)
     pthread_mutex_lock(q->mutex);
     if(q->first == NULL)
     {
+        pthread_cond_broadcast(q->empty);
         q->first = el;
         q->last  = el;
         pthread_mutex_unlock(q->mutex);
