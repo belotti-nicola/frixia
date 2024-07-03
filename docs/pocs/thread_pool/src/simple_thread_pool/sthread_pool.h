@@ -13,7 +13,7 @@ typedef struct thread_pool
 } thread_pool_t;
 
 
-thread_pool_t *thread_pool_create(int n,void *(*f)(void*));
-void thread_pool_add_job();
+thread_pool_t *thread_pool_create(int n,void *(*f)(void *));
+void thread_pool_add_job(thread_pool_t *t, void *arg);
 void thread_pool_join(thread_pool_t *t);
 #endif

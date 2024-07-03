@@ -8,18 +8,22 @@
 #define WORKERS 1
 #define TASKS 100
 
-void *work(void *p)
+void *work(void *arg)
 {
-  int s = rand()%5;
+  int s = 1 + rand()%4;
   sleep(s);
-  int* popped = (int *)p;
-  printf("A %d\n",*popped);
+  int* casted_arg = (int*)arg;
+  printf("END %d\n",*casted_arg);
 }
 
 
 int main()
 {
-  thread_pool_t *tp = thread_pool_create(WORKERS,work);
-  sleep(10);
+  thread_pool_t *tp = thread_pool_create(WORKERS,&work);
+  for(int i=0;i<TASKS;i++)
+  {
+    thread_pool_add_job(tp,&i);
+  }
+  thread_pool_join(tp);
   return 0;
 }
