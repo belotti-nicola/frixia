@@ -28,8 +28,14 @@ void thread_pool_add_job(thread_pool_t *tm, void *arg)
 {
     int* casted_arg = (int*)arg;
     push_q(tm->q,*casted_arg);
+    return;
 }
 void thread_pool_join(thread_pool_t *t)
 {
     sleep(100);
+}
+
+void thread_pool_destroy(thread_pool_t *t)
+{
+    destroy_q(t->q);
 }

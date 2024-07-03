@@ -3,17 +3,25 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <stdlib.h> 
+#include <stdlib.h>
+#include <stdbool.h> 
 
-#define WORKERS 1
-#define TASKS 100
+#define WORKERS 10
+#define TASKS 10
 
 void *work(void *arg)
 {
-  int s = 1 + rand()%4;
-  sleep(s);
-  int* casted_arg = (int*)arg;
-  printf("END %d\n",*casted_arg);
+  sleep(3);
+  thread_safe_queue_t *casted_arg = (thread_safe_queue_t*)arg;
+  //TODO:: CHECK EMPTY Q
+  while( casted_arg->size > 0)
+  {
+    int t = rand() % 5;
+    sleep(t);
+    int popped_el = pop_q(casted_arg);
+    printf("popped:%d (%d)\n",popped_el,t);
+  }
+  printf("Thread ended\n");
 }
 
 
