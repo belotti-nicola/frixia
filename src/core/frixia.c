@@ -27,6 +27,7 @@
 #include "ctl_parser/control_commands.h"
 #include "fqueue/frixia_queue.h"
 #include "thread_pool/fthread_pool.h"
+#include "fevent/frixia_event.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -37,6 +38,18 @@
 
 // COMMAND LENGTH READING THE FIFO
 #define FRIXIA_READ_SIZE 64
+
+// TODO DESTROY
+void *POC_FUN(void *arg)
+{
+    thread_safe_queue_t *c_arg = (thread_safe_queue_t *)arg;
+    while (true)
+    {
+        frixia_event_t *fe = pop_q(c_arg);
+        printf("THREAD: %d\n", fe->type);
+    }
+    printf("Thread ended\n");
+}
 
 void handle_ctl_command(int epoll_fd,
                         struct FrixiaFD frixia_fds[],
@@ -65,7 +78,7 @@ void handle_ctl_command(int epoll_fd,
             f.filedescriptor_type = TCP;
             f.port = cmd.port;
             f.dispatcher = PROGRAM;
-            strcpy(f.filename,"");
+            strcpy(f.filename, "");
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
             break;
         }
@@ -81,7 +94,7 @@ void handle_ctl_command(int epoll_fd,
             f.fd = f_udp;
             f.filedescriptor_type = UDP;
             f.port = cmd.port;
-            strcpy(f.filename,"");
+            strcpy(f.filename, "");
             add_fd_to_pool(f, frixia_fds, frixia_fds_size);
             break;
         }
@@ -192,8 +205,7 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(struct FrixiaFD ffd[],
                  int max_size)
 {
-    
-    thread_pool_t *tp = create_thread_pool(1,NULL);
+    thread_pool_t *tp = create_thread_pool(1, POC_FUN);
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -209,27 +221,28 @@ int frixia_start(struct FrixiaFD ffd[],
         switch (ffd[i].filedescriptor_type)
         {
         case TCP:
-        {
+
             new_fd = start_tcp_listening(epoll_fd, ffd[i].port);
             break;
-        }
+
         case UDP:
-        {
+
             new_fd = start_udp_listening(epoll_fd, ffd[i].port);
             break;
-        }
+
         case FIFO:
-        {
+
             new_fd = start_fifo_listening(epoll_fd, ffd[i].filename);
             break;
-        }
+
         case UNDEFINED:
-        {
+
+            printf("UNDEFINED CASE\n");
             break;
-        }
         }
         if (new_fd < 0)
         {
+            printf("new fd::%d", new_fd);
             remove_fd_by_index(i, ffd, MAXIMUM_FILEDESCRIPTORS);
             break;
         }
@@ -243,6 +256,7 @@ int frixia_start(struct FrixiaFD ffd[],
     events = calloc(FRIXIA_EPOLL_WAIT_MAX_SIZE, sizeof(struct epoll_event));
     char *read_buffer[FRIXIA_READ_SIZE + 1];
     int fifo_bytes_read = 0;
+
     while (keep_looping)
     {
         events_number = epoll_wait(epoll_fd, events, FRIXIA_EPOLL_WAIT_MAX_SIZE, -1);
@@ -270,7 +284,7 @@ int frixia_start(struct FrixiaFD ffd[],
                                       ffd[index].filedescriptor_type);
             switch (switch_selector)
             {
-            case KEY(ENGINE,FIFO):
+            case KEY(ENGINE, FIFO):
             {
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
@@ -281,7 +295,7 @@ int frixia_start(struct FrixiaFD ffd[],
                                       &keep_looping);
                 break;
             }
-            case KEY(ENGINE,TCP):
+            case KEY(ENGINE, TCP):
             {
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE);
@@ -292,7 +306,7 @@ int frixia_start(struct FrixiaFD ffd[],
                                       &keep_looping);
                 break;
             }
-            case KEY(ENGINE,UDP):
+            case KEY(ENGINE, UDP):
             {
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_udp(detected_event_fd, buf, FRIXIA_READ_SIZE);
@@ -303,22 +317,33 @@ int frixia_start(struct FrixiaFD ffd[],
                                       &keep_looping);
                 break;
             }
-            case KEY(PROGRAM,FIFO):
+            case KEY(PROGRAM, FIFO):
             {
-                int a = 1;
-                //StsQueue.push(q_handle,&a);
+                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
+                read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                frixia_event_t *fe = create_event(FIFO, 0);
+                thread_pool_add_job(tp, fe);
                 break;
             }
-            case KEY(PROGRAM,TCP):
+            case KEY(PROGRAM, TCP):
             {
-                int a = 2;
-                //StsQueue.push(q_handle,&a);
+                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
+                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                frixia_event_t *fe = create_event(TCP, 0);
+                if(fe == NULL)
+                {
+                    printf("Breaking\n");
+                    break;
+                }
+                thread_pool_add_job(tp, (void *)fe);
                 break;
             }
-            case KEY(PROGRAM,UDP):
+            case KEY(PROGRAM, UDP):
             {
-                int a = 3;
-                //StsQueue.push(q_handle,&a);
+                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
+                read_udp(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                frixia_event_t *fe = create_event(UDP, 0);
+                thread_pool_add_job(tp, fe);
                 break;
             }
             default:
@@ -331,7 +356,7 @@ int frixia_start(struct FrixiaFD ffd[],
             }
         }
     }
-    //StsQueue.destroy(q_handle);
+
     return OK;
 }
 int frixia_stop(int epoll_fd,
@@ -371,7 +396,6 @@ int frixia_stop(int epoll_fd,
         }
     }
 
-    
     return OK;
 }
 

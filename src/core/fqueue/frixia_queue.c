@@ -11,12 +11,13 @@ thread_safe_queue_t *create_q()
     exit(EXIT_FAILURE);
   }
   qptr->size = 0;
-  pthread_mutex_t *mutex = malloc(sizeof(*mutex));
+  pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
   if (mutex == NULL)
   {
     printf("thread_safe_queue_t* mutex is null!\n");
     exit(EXIT_FAILURE);
   }
+  pthread_mutex_init(mutex,NULL);
 
   pthread_cond_t *cond = malloc(sizeof(pthread_cond_t));
   if (cond == NULL)
@@ -66,6 +67,7 @@ void push_q(thread_safe_queue_t *q, void *v)
     pthread_cond_broadcast(q->empty);
     q->first = el;
     q->last = el;
+    q->size += 1;
     pthread_mutex_unlock(q->mutex);
     return;
   }

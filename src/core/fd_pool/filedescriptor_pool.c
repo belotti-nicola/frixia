@@ -158,14 +158,17 @@ int set_fd_type_by_index(int fd,int index, struct FrixiaFD ffd[], int ffd_size)
 {
     if(ffd_size < 0)
     {
+        printf("set_fd_type_by_index:ffd_size < 1\n");
         return -1;
     }
     if(ffd_size > MAXIMUM_FILEDESCRIPTORS)
     {
+        printf("set_fd_type_by_index:ffd_size > MAXIMUM_FILEDESCRIPTORS\n");
         return -1;
     }
     if(fd < 0)
     {
+        printf("set_fd_type_by_index:fd < 0\n");
         return -1;
     }
     ffd[index].fd = fd;

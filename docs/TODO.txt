@@ -1,6 +1,8 @@
 TODO
     test add / remove frixia fds
     better naming to frixia safe queue
+    POC_FUN //TODO MARKED
+    frixia_zombie
     
 ISSUE:
     fifo seems controversial (EPOLLET only)

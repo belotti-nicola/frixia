@@ -4,14 +4,16 @@
 
 thread_pool_t *create_thread_pool(int threads_number, void* (*dispatcher_fun)(void *))
 {
-    thread_safe_queue_t *q = (thread_safe_queue_t*)malloc(sizeof(thread_safe_queue_t*));
+    thread_safe_queue_t *q = create_q();
     if (q == NULL)
     {
+        printf("ERROR CREATING thread_safe_queue_t");
         return NULL;
     }
     thread_pool_t *t = (thread_pool_t*)malloc(sizeof(thread_pool_t));
     if (t == NULL)
     {
+        printf("ERROR CREATING thread_pool_t");
         return NULL;
     }
 
@@ -23,12 +25,19 @@ thread_pool_t *create_thread_pool(int threads_number, void* (*dispatcher_fun)(vo
         if(exit_code != 0) { exit(EXIT_FAILURE);}
         pthread_detach(th);
     }
+    return t;
 }
 void thread_pool_add_job(thread_pool_t *t, void* job)
 {
-    push_q(t->q,job);
+    if( job == NULL )
+    {
+        printf("Job pointer is null.\n");
+        return;
+    }
+    thread_safe_queue_t *tsq = t->q;
+    push_q(tsq,job);
 }
 void thread_pool_join(thread_pool_t *t)
 {
-
+    
 }
