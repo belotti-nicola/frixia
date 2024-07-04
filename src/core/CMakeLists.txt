@@ -21,4 +21,5 @@ target_link_libraries(core
   ctl_parser
   fd_pool
   fqueue
+  thread_pool
 )

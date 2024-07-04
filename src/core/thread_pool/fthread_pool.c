@@ -24,3 +24,11 @@ thread_pool_t *create_thread_pool(int threads_number, void* (*dispatcher_fun)(vo
         pthread_detach(th);
     }
 }
+void thread_pool_add_job(thread_pool_t *t, void* job)
+{
+    push_q(t->q,job);
+}
+void thread_pool_join(thread_pool_t *t)
+{
+
+}

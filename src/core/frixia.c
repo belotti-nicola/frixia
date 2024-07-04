@@ -26,6 +26,7 @@
 #include "fd_pool/filedescriptor_pool.h"
 #include "ctl_parser/control_commands.h"
 #include "fqueue/frixia_queue.h"
+#include "thread_pool/fthread_pool.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -192,7 +193,7 @@ int frixia_start(struct FrixiaFD ffd[],
                  int max_size)
 {
     
-    //thread_pool_t *tp = create_thread_pool();
+    thread_pool_t *tp = create_thread_pool(1,NULL);
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
