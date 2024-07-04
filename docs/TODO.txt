@@ -1,5 +1,4 @@
 TODO
-    ctl commands can be injected by any supported fd or SW
     test add / remove frixia fds
     better naming to frixia safe queue
     
@@ -19,8 +18,8 @@ FIX:
 REFACTORING
     enum UPPERCASES
     name ENGINE_EVENT / PROGRAM_EVENT (1.ENUM 2.START_<t>_EVENT)
-    proto = frixiafd meno roba
     STOPALL: no need to call functions? check
+    frixia_fd can be designed better 
 
 CHOICES
     C vs C++
@@ -30,5 +29,3 @@ FUTURE DEVELOPMENT
     python integration
     HTTPS (integrabile)
     create library
-    parser (UDP/TCP)
-    error_codes TCP/UDP/FIFO

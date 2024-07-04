@@ -1,24 +1,30 @@
-#ifndef FRIXIA_QUEUE_H
-#define FRIXIA_QUEUE_H
+#ifndef SQUEUE_H
+#define SQUEUE_H
 
-/*
- * Simple thread safe queue (StsQueue) is just an experiment with
- * simulated "namespaces" in C.
- *
- * The idea is simple, just return the functions in a struct.
- * Leak exactly the information that is needed, meaning no special
- * types, structs or other things.
- */
+#include <stdio.h>
+#include <pthread.h>
 
-typedef struct StsHeader StsHeader;
+typedef struct q_elem 
+{
+    void              *val;
+    struct q_elem     *next;
+} q_elem_t;
 
-typedef struct {
-  StsHeader* (* const create)();
-  void (* const destroy)(StsHeader *handle);
-  void (* const push)(StsHeader *handle, void *elem);
-  void* (* const pop)(StsHeader *handle);
-} _StsQueue;
+typedef struct thread_safe_queue 
+{
+    int                size;
+    q_elem_t*          first;
+    q_elem_t*          last;
 
-extern _StsQueue const StsQueue;
+    pthread_mutex_t    *mutex;
+    pthread_cond_t     *empty;
+
+} thread_safe_queue_t;
+
+thread_safe_queue_t*   create_q();
+q_elem_t*              create_el(void *el);
+void*                  pop_q(thread_safe_queue_t* q);
+void                   push_q(thread_safe_queue_t* q,void *el);
+void                   destroy_q(thread_safe_queue_t *t);
 
 #endif

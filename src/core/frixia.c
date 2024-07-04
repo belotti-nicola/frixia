@@ -192,7 +192,7 @@ int frixia_start(struct FrixiaFD ffd[],
                  int max_size)
 {
     
-    StsHeader *q_handle = StsQueue.create();
+    //StsHeader *q_handle = StsQueue.create();
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -305,19 +305,19 @@ int frixia_start(struct FrixiaFD ffd[],
             case KEY(PROGRAM,FIFO):
             {
                 int a = 1;
-                StsQueue.push(q_handle,&a);
+                //StsQueue.push(q_handle,&a);
                 break;
             }
             case KEY(PROGRAM,TCP):
             {
                 int a = 2;
-                StsQueue.push(q_handle,&a);
+                //StsQueue.push(q_handle,&a);
                 break;
             }
             case KEY(PROGRAM,UDP):
             {
                 int a = 3;
-                StsQueue.push(q_handle,&a);
+                //StsQueue.push(q_handle,&a);
                 break;
             }
             default:
@@ -330,7 +330,7 @@ int frixia_start(struct FrixiaFD ffd[],
             }
         }
     }
-    StsQueue.destroy(q_handle);
+    //StsQueue.destroy(q_handle);
     return OK;
 }
 int frixia_stop(int epoll_fd,
