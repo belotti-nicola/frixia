@@ -192,7 +192,7 @@ int frixia_start(struct FrixiaFD ffd[],
                  int max_size)
 {
     
-    //StsHeader *q_handle = StsQueue.create();
+    //thread_pool_t *tp = create_thread_pool();
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);

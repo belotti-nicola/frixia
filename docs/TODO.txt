@@ -20,6 +20,7 @@ REFACTORING
     name ENGINE_EVENT / PROGRAM_EVENT (1.ENUM 2.START_<t>_EVENT)
     STOPALL: no need to call functions? check
     frixia_fd can be designed better 
+    Q -> Q + mutex = SHARED_Q
 
 CHOICES
     C vs C++
