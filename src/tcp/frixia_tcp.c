@@ -89,14 +89,14 @@ int read_tcp(int filedescriptor,char buf[], int size, int* reply_fd)
 
     in_len = sizeof(in_addr);
     *reply_fd = accept(filedescriptor, &in_addr, &in_len);
-    if (reply_fd == -1)
+    if (*reply_fd == -1)
     {
         return ERR_FTCP_ACCEPTING;
     }
-    int read_bytes = read(reply_fd, buf, size);
+    int read_bytes = read(*reply_fd, buf, size);
     if (read_bytes < 0)
     {
-        close(reply_fd);
+        close(*reply_fd);
         return ERR_FTCP_READING;
     }
     return FTCP_OK;

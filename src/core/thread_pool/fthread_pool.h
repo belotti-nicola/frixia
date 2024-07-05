@@ -7,8 +7,9 @@
 
 typedef struct thread_pool
 {
-    pthread_t *th;
-    thread_safe_queue_t *q;
+    int                      size;
+    thread_safe_queue_t     *q;
+    pthread_t               *threads;
       
 } thread_pool_t;
 
