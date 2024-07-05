@@ -82,25 +82,36 @@ int stop_tcp_listening(int epoll_fd,
     return FTCP_OK;
 }
 
-int read_tcp(int filedescriptor,char buf[], int size)
+int read_tcp(int filedescriptor,char buf[], int size, int* reply_fd)
 {
     struct sockaddr in_addr;
     socklen_t in_len;
-    int client_fd;
 
     in_len = sizeof(in_addr);
-    client_fd = accept(filedescriptor, &in_addr, &in_len);
-    if (client_fd == -1)
+    *reply_fd = accept(filedescriptor, &in_addr, &in_len);
+    if (reply_fd == -1)
     {
         return ERR_FTCP_ACCEPTING;
     }
-    int read_bytes = read(client_fd, buf, size);
+    int read_bytes = read(reply_fd, buf, size);
     if (read_bytes < 0)
     {
-        close(client_fd);
+        close(reply_fd);
         return ERR_FTCP_READING;
     }
-    close(client_fd);
+    return FTCP_OK;
+}
+
+int write_tcp( int reply_fd,char buffer[],int size )
+{
+    int ret_code = write(reply_fd, buffer, size);
+    printf("PORCHIDDIO::%d(%d)\n",ret_code,reply_fd);
+    if(ret_code == -1)
+    {
+        close(reply_fd);
+        return ERR_FTCP_WRITE;
+    }
+    close(reply_fd);
     return FTCP_OK;
 }
 
@@ -120,6 +131,7 @@ char* get_ftcp_code_string(enum FTCP_CODE c){
         case ERR_FTCP_START_MALFORMED_PORT:     return "ERR_FTCP_START_MALFORMED_PORT";
         case ERR_FTCP_STOP_MALFORMED_EPOLL_FD:  return "ERR_FTCP_STOP_MALFORMED_EPOLL_FD";
         case ERR_FTCP_STOP_MALFORMED_TARGET_FD: return "ERR_FTCP_STOP_MALFORMED_TARGET_FD";
+        case ERR_FTCP_WRITE:                    return "ERR_FTCP_WRITE";
         default: 
         {
             printf("get_ftcp_code_string: %d\n",c);
@@ -141,6 +153,7 @@ int get_ftcp_code_string_from_string(char *s){
     else if(strcmp("ERR_FTCP_START_MALFORMED_PORT",s) == 0)      { return ERR_FTCP_READING;}
     else if(strcmp("ERR_FTCP_STOP_MALFORMED_EPOLL_FD",s) == 0)   { return ERR_FTCP_READING;}
     else if(strcmp("ERR_FTCP_STOP_MALFORMED_TARGET_FD",s) == 0)  { return ERR_FTCP_READING;}
+    else if(strcmp("ERR_FTCP_WRITE",s)==0)                       { return ERR_FTCP_WRITE; }
     else 
     {
         printf("get_ftcp_code_string: unknown string %s\n",s);

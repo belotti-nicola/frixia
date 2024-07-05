@@ -11,14 +11,17 @@ enum FTCP_CODE {
     ERR_FTCP_START_MALFORMED_EPOLL_FD = -9,
     ERR_FTCP_START_MALFORMED_PORT = -10,
     ERR_FTCP_STOP_MALFORMED_EPOLL_FD = -11,
-    ERR_FTCP_STOP_MALFORMED_TARGET_FD = -12
+    ERR_FTCP_STOP_MALFORMED_TARGET_FD = -12,
+    ERR_FTCP_WRITE = -13
 };
 
 int start_tcp_listening(int epoll_fd,
                         int port);
 int stop_tcp_listening(int epoll_fd,
                        int fd);
-int read_tcp(int fd,char buf[], int size);
+int read_tcp(int fd,char buf[], int size, int* reply_fd);
+
+int write_tcp( int client_fd,char buffer[],int size);
 
 char* get_ftcp_code_string(enum FTCP_CODE);
 int get_ftcp_code_string_from_string(char *s);

@@ -221,17 +221,14 @@ int frixia_start(struct FrixiaFD ffd[],
         switch (ffd[i].filedescriptor_type)
         {
         case TCP:
-
             new_fd = start_tcp_listening(epoll_fd, ffd[i].port);
             break;
 
         case UDP:
-
             new_fd = start_udp_listening(epoll_fd, ffd[i].port);
             break;
 
         case FIFO:
-
             new_fd = start_fifo_listening(epoll_fd, ffd[i].filename);
             break;
 
@@ -297,14 +294,17 @@ int frixia_start(struct FrixiaFD ffd[],
             }
             case KEY(ENGINE, TCP):
             {
+                int reply_fd;
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE,&reply_fd);
                 handle_frixia_message(ffd[index].dispatcher,
                                       buf,
                                       epoll_fd,
                                       ffd,
                                       &keep_looping);
-                break;
+                char s[] ="OK";
+                write_tcp(reply_fd,s,2);
+			    break;
             }
             case KEY(ENGINE, UDP):
             {
@@ -327,9 +327,10 @@ int frixia_start(struct FrixiaFD ffd[],
             }
             case KEY(PROGRAM, TCP):
             {
+                int reply_fd;
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE);
-                frixia_event_t *fe = create_event(TCP, 0);
+                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE,&reply_fd);
+                frixia_event_t *fe = create_event(TCP, reply_fd);
                 if(fe == NULL)
                 {
                     printf("Breaking\n");
@@ -349,8 +350,8 @@ int frixia_start(struct FrixiaFD ffd[],
             default:
             {
                 printf("UNKNOWN KEY(%d,%d): %d\n", ffd[index].dispatcher,
-                       ffd[index].filedescriptor_type,
-                       switch_selector);
+                ffd[index].filedescriptor_type,
+                switch_selector);
                 break;
             }
             }
