@@ -444,3 +444,11 @@ int set_program_event(struct FrixiaFD protoffd,
                    size);
     return OK;
 }
+
+
+void register_tcp_callback(enum FrixiaFDType fdtype,
+                      int port,
+                      void *(f)(void *))
+{
+    
+}

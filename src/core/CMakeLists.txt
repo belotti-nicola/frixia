@@ -17,6 +17,7 @@ add_subdirectory(fd_pool)
 add_subdirectory(fqueue)
 add_subdirectory(thread_pool)
 add_subdirectory(fevent)
+add_subdirectory(setup)
 
 
 target_link_libraries(core 
@@ -25,4 +26,5 @@ target_link_libraries(core
   fqueue
   thread_pool
   fevent
+  setup
 )

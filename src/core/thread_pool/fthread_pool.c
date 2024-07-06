@@ -29,7 +29,6 @@ thread_pool_t *create_thread_pool(int threads_number, void* (*dispatcher_fun)(vo
         int exit_code = pthread_create(&th,NULL,dispatcher_fun,t->args);
         if(exit_code != 0) { exit(EXIT_FAILURE);}
         threads[i] = th;
-        printf("%d\n",th);
     }
     t->threads = threads;
     t->threads_number = threads_number;

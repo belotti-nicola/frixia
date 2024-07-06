@@ -1,8 +1,6 @@
 #ifndef FRIXIA_FD_FS_H
 #define FRIXIA_FD_FS_H
 
-#define MAXSTR 20
-
 #include "../frixia_common.h"
 
 enum FRIXIA_EVENT_DISPATCHER{
