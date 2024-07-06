@@ -33,4 +33,7 @@ struct FrixiaFD
     int port;                               // tcp/udp
 };
 
+char* get_frixia_event_dispatcher_type(int d);
+
 #endif
+

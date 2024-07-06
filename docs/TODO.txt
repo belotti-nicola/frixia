@@ -1,15 +1,15 @@
 TODO
-    test add / remove frixia fds
-    better naming to frixia safe queue
+    test add / remove frixia fds -> refactor this
     POC_FUN //TODO MARKED
-    frixia_zombie
+    frixia_zombie -> ctrl termination / kill -9
     
 ISSUE:
     fifo seems controversial (EPOLLET only)
     const char for fifo
+    CMake and parent directory
+    frixia_zombie that remain binded to <ADDRESS>:<PORT>
 
 FEAT:
-    dispatchers
     reentrancy check (multiple threads)
     logger
 
@@ -23,6 +23,8 @@ REFACTORING
     STOPALL: no need to call functions? check
     frixia_fd can be designed better 
     Q -> Q + mutex = SHARED_Q
+    thread pool -> many Q to inject in threads Qs (dispatcher that delivers LOCAL DATA!)
+    thread pool termination is by killing 
 
 CHOICES
     C vs C++

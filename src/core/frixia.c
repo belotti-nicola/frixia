@@ -42,11 +42,16 @@
 // TODO DESTROY
 void *POC_FUN(void *arg)
 {
-    thread_safe_queue_t *c_arg = (thread_safe_queue_t *)arg;
-    while (true)
+    thread_pool_data_t *c_arg = (thread_pool_data_t *)arg;
+    while ( true )
     {
-        frixia_event_t *fe = pop_q(c_arg);
-        printf("THREAD: %d\n", fe->type);
+        
+        frixia_event_t *fe = pop_q(c_arg->q);
+        if( fe == NULL)
+        {
+            continue;
+        }
+        printf("THREAD: type:%d reply:%d\n", fe->type,fe->reply_fd);
     }
     printf("Thread ended\n");
 }
@@ -205,7 +210,10 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(struct FrixiaFD ffd[],
                  int max_size)
 {
-    thread_pool_t *tp = create_thread_pool(1, POC_FUN);
+    bool keep_looping = true;
+
+    thread_pool_t *tp = create_thread_pool(FRIXIA_THREAD_POOL,
+                                           POC_FUN);
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -233,22 +241,22 @@ int frixia_start(struct FrixiaFD ffd[],
             break;
 
         case UNDEFINED:
-
             printf("UNDEFINED CASE\n");
             break;
         }
         if (new_fd < 0)
         {
-            printf("new fd::%d", new_fd);
+            printf("new fd::%d\n", new_fd);
             remove_fd_by_index(i, ffd, MAXIMUM_FILEDESCRIPTORS);
-            break;
         }
-        set_fd_type_by_index(new_fd, i, ffd, MAXIMUM_FILEDESCRIPTORS);
+        else {
+            printf("set fd type::%d\n", new_fd);
+            set_fd_type_by_index(new_fd, i, ffd, MAXIMUM_FILEDESCRIPTORS);
+        }
     }
 
     // start epoll
     int events_number;
-    bool keep_looping = true;
     struct epoll_event *events;
     events = calloc(FRIXIA_EPOLL_WAIT_MAX_SIZE, sizeof(struct epoll_event));
     char *read_buffer[FRIXIA_READ_SIZE + 1];
@@ -357,6 +365,9 @@ int frixia_start(struct FrixiaFD ffd[],
             }
         }
     }
+
+
+    thread_pool_join(tp);
 
     return OK;
 }

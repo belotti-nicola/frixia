@@ -8,7 +8,7 @@
 #define MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH 40
 
 
-#define FRIXIA_THREAD_POOL 1
+#define FRIXIA_THREAD_POOL 5
 
 // take first argument
 // multiply by 2^8
@@ -28,5 +28,5 @@ enum FrixiaFDType
 };
 
 enum FrixiaFDType get_frixiafdtype_by_string(char s[]);
-
+char* get_frixiafdtype(int t);
 #endif

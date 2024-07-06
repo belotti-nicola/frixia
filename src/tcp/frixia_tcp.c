@@ -105,7 +105,6 @@ int read_tcp(int filedescriptor,char buf[], int size, int* reply_fd)
 int write_tcp( int reply_fd,char buffer[],int size )
 {
     int ret_code = write(reply_fd, buffer, size);
-    printf("PORCHIDDIO::%d(%d)\n",ret_code,reply_fd);
     if(ret_code == -1)
     {
         close(reply_fd);

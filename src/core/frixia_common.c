@@ -18,3 +18,18 @@ enum FrixiaFDType get_frixiafdtype_by_string(char s[])
 
     return UNDEFINED;
 }
+
+char* get_frixiafdtype(int t)
+{
+    switch(t)
+    {
+        case STD_INPUT:          {  return "STD_INPUT";  }
+        case STD_OUTPUT:         {  return "STD_OUTPUT"; }
+        case STD_ERR:            {  return "STD_ERR";    }
+        case TCP:                {  return "TCP";        }
+        case UDP:                {  return "UDP";        }
+        case FIFO:               {  return "FIFO";       }
+        case UNDEFINED:          {  return "UNDEFINED";  }
+        default:                 {  return "UNDEFINED";  }
+    }
+}

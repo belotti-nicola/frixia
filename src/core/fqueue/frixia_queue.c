@@ -34,9 +34,11 @@ thread_safe_queue_t *create_q()
 void* pop_q(thread_safe_queue_t *q)
 {
   pthread_mutex_lock(q->mutex);
-  while (q->size == 0)
+  if (q->size == 0)
   {
     pthread_cond_wait(q->empty, q->mutex);
+    pthread_mutex_unlock(q->mutex);
+    return NULL;
   }
   if (q->first == NULL)
   {
