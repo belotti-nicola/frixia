@@ -17,9 +17,12 @@ void goo()
 
 int main(int argc, char *argv[])
 {
+    //ADD HERE PROTOCOL...
+    
     proto_frixia_fd_queue_t *proto_fds_q = create_proto_frixia_fd_queue();
-    add_proto_fd(proto_fds_q,TCP,"",4444,PROGRAM);
-    add_proto_fd(proto_fds_q,TCP,"",8888,PROGRAM);
+    add_proto_fd(proto_fds_q,TCP,"",4444,PROGRAM,NONE);
+    add_proto_fd(proto_fds_q,TCP,"",8888,PROGRAM,HTTP);
+    
 
     return frixia_start(proto_fds_q);
 }

@@ -5,15 +5,18 @@
 proto_frixia_fd_t *create_proto_frixia_fd(enum FrixiaFDType filedescriptor_type,
                                           char filename[],
                                           int port,
-                                          enum FRIXIA_EVENT_DISPATCHER d)
+                                          enum FRIXIA_EVENT_DISPATCHER d,
+                                          FRIXIA_SUPPORTED_PROTOCOL_T p
+                                          )
 {
-    proto_frixia_fd_t* p     = malloc(sizeof(proto_frixia_fd_t));
-    p->filedescriptor_type   = filedescriptor_type;
-    p->port                  = port;
-    p->d                     = d;
+    proto_frixia_fd_t* ptr     = malloc(sizeof(proto_frixia_fd_t));
+    ptr->filedescriptor_type   = filedescriptor_type;
+    ptr->port                  = port;
+    ptr->dispatcher            = d;
+    ptr->protocol              = p;
 
-    strcpy(p->filename,filename);
-    return p;
+    strcpy(ptr->filename,filename);
+    return ptr;
 }
 void destroy_proto_frixia_fd(proto_frixia_fd_t* t)
 {

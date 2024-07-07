@@ -1,6 +1,7 @@
 #include "proto_fds.h"
 #include "string.h"
 
+#include "../../protocols/frixia_supported_protocols.h"
 #include "../../fd_pool/filedescriptor_pool_defs.h"
 #include "../../fqueue/frixia_queue.h"
 #include "proto_fds_queue.h"
@@ -33,8 +34,9 @@ void add_proto_fd(proto_frixia_fd_queue_t *pff,
                   enum FrixiaFDType filedescriptor_type,
                   char filename[],
                   int port,
-                  enum FRIXIA_EVENT_DISPATCHER dispatcher)
+                  enum FRIXIA_EVENT_DISPATCHER dispatcher,
+                  FRIXIA_SUPPORTED_PROTOCOL_T p)
 {
-    proto_frixia_fd_t* el = create_proto_frixia_fd(filedescriptor_type,filename,port,dispatcher);
+    proto_frixia_fd_t* el = create_proto_frixia_fd(filedescriptor_type,filename,port,dispatcher,p);
     push_q(pff->fd_q,(void*)el);
 }

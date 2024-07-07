@@ -10,3 +10,7 @@ add_library(setup
   ../../fd_pool/filedescriptor_pool_defs.h
   ../../fd_pool/filedescriptor_pool_defs.c
 )
+
+target_link_libraries(setup
+  protocols
+)

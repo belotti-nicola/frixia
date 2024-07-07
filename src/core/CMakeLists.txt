@@ -28,5 +28,5 @@ target_link_libraries(core
   thread_pool
   fevent
   setup
-  http
+  protocols
 )

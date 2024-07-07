@@ -30,6 +30,7 @@
 #include "fevent/frixia_event.h"
 #include "setup/proto_filedescriptor/proto_fds.h"
 #include "setup/proto_filedescriptor/proto_fds_queue.h"
+#include "protocols/frixia_supported_protocols.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -275,7 +276,7 @@ int frixia_start(proto_frixia_fd_queue_t *proto_fds_q)
             continue;
         }
         struct FrixiaFD tmp;
-        tmp.dispatcher = pffd->d;
+        tmp.dispatcher = pffd->dispatcher;
         tmp.filedescriptor_type = pffd->filedescriptor_type;
         tmp.port = pffd->port;
         tmp.fd = new_fd;
@@ -460,7 +461,8 @@ int set_engine_event(struct FrixiaFD protoffd,
 
 int set_program_event(struct FrixiaFD protoffd,
                       struct FrixiaFD ffds[],
-                      int size)
+                      int size,
+                      FRIXIA_SUPPORTED_PROTOCOL_T p)
 {
     struct FrixiaFD ffd;
     ffd.dispatcher = PROGRAM;
@@ -478,4 +480,5 @@ void register_tcp_callback(enum FrixiaFDType fdtype,
                            int port,
                            void *(f)(void *))
 {
+
 }

@@ -1,6 +1,7 @@
 #ifndef FRIXIA_FD_FS_H
 #define FRIXIA_FD_FS_H
 
+#include "../protocols/frixia_supported_protocols.h"
 #include "../frixia_common.h"
 
 enum FRIXIA_EVENT_DISPATCHER{
@@ -24,11 +25,13 @@ enum FD_POOL_EXIT_CODES{
 
 struct FrixiaFD
 {
-    int fd;                                 // filedescriptor
-    enum FRIXIA_EVENT_DISPATCHER dispatcher;// parse or read
-    enum FrixiaFDType filedescriptor_type;  // filedescriptor type : IF UNDEFINED IS NOT USED
-    char filename[MAXSTR + 1];              // fifos
-    int port;                               // tcp/udp
+    int                                        fd;                      // filedescriptor
+    enum FRIXIA_EVENT_DISPATCHER               dispatcher;              // parse or read
+    enum FrixiaFDType                          filedescriptor_type;     // filedescriptor type : IF UNDEFINED IS NOT USED
+    char                                       filename[MAXSTR + 1];    // fifos
+    int                                        port;                    // tcp/udp
+    FRIXIA_SUPPORTED_PROTOCOL_T                p;                       // PROTOCOL
+    
 };
 
 char* get_frixia_event_dispatcher_type(int d);
