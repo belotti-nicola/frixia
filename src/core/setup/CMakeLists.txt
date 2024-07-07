@@ -1,1 +1,2 @@
 add_subdirectory(proto_filedescriptor)
+add_subdirectory(proto_callbacks)
