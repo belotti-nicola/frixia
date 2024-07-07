@@ -4,10 +4,11 @@
 #include "../../fd_pool/filedescriptor_pool_defs.h"
 #include "../../fqueue/frixia_queue.h"
 #include "proto_fds_queue.h"
+#include <stdlib.h>
 
 proto_frixia_fd_queue_t *create_proto_frixia_fd_queue()
 {
-    thread_safe_queue_t *fd_q = create_proto_frixia_fd_queue();
+    thread_safe_queue_t *fd_q = create_q();
     if (fd_q == NULL)
     {
         return NULL;
@@ -25,6 +26,7 @@ void destroy_proto_frixia_fd_queue(proto_frixia_fd_queue_t *t)
 {
     free(t->fd_q);
     free(t);
+    printf("Destroyed.");
 }
 
 void add_proto_fd(proto_frixia_fd_queue_t *pff,
@@ -34,5 +36,5 @@ void add_proto_fd(proto_frixia_fd_queue_t *pff,
                   enum FRIXIA_EVENT_DISPATCHER dispatcher)
 {
     proto_frixia_fd_t* el = create_proto_frixia_fd(filedescriptor_type,filename,port,dispatcher);
-    push_q(pff,(void*)el);
+    push_q(pff->fd_q,(void*)el);
 }

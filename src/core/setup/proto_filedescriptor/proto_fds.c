@@ -1,5 +1,6 @@
 #include "proto_fds.h"
 #include "string.h"
+#include <stdlib.h>
 
 proto_frixia_fd_t *create_proto_frixia_fd(enum FrixiaFDType filedescriptor_type,
                                           char filename[],

@@ -28,6 +28,8 @@
 #include "fqueue/frixia_queue.h"
 #include "thread_pool/fthread_pool.h"
 #include "fevent/frixia_event.h"
+#include "setup/proto_filedescriptor/proto_fds.h"
+#include "setup/proto_filedescriptor/proto_fds_queue.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -43,15 +45,15 @@
 void *POC_FUN(void *arg)
 {
     thread_pool_data_t *c_arg = (thread_pool_data_t *)arg;
-    while ( true )
+    while (true)
     {
-        
+
         frixia_event_t *fe = pop_q(c_arg->q);
-        if( fe == NULL)
+        if (fe == NULL)
         {
             continue;
         }
-        printf("THREAD: type:%d reply:%d\n", fe->type,fe->reply_fd);
+        printf("THREAD: type:%d reply:%d\n", fe->type, fe->reply_fd);
     }
     printf("Thread ended\n");
 }
@@ -207,13 +209,18 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
     }
 }
 
-int frixia_start(struct FrixiaFD ffd[],
-                 int max_size)
+int frixia_start(proto_frixia_fd_queue_t *proto_fds_q)
 {
-    bool keep_looping = true;
-
-    thread_pool_t *tp = create_thread_pool(FRIXIA_THREAD_POOL,
-                                           POC_FUN);
+    struct FrixiaFD ffd[MAXIMUM_FILEDESCRIPTORS];
+    const char *empty = "";
+    for (int i = 0; i < MAXIMUM_FILEDESCRIPTORS; i++)
+    {
+        ffd[i].dispatcher = NONE;
+        ffd[i].filedescriptor_type = UNDEFINED;
+        ffd[i].port = 0;
+        ffd[i].fd = -1;
+        strcpy(ffd[i].filename, empty);
+    }
 
     // create epoll
     int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
@@ -223,21 +230,35 @@ int frixia_start(struct FrixiaFD ffd[],
     }
     printf("EPOLL FILE DESCRIPTOR:: %d\n", epoll_fd);
 
-    for (int i = 0; i < MAXIMUM_FILEDESCRIPTORS; i++)
+    while (proto_fds_q->fd_q->size > 0)
     {
+        proto_frixia_fd_t *pffd = (proto_frixia_fd_t *)pop_q(proto_fds_q->fd_q);
         int new_fd = -1;
-        switch (ffd[i].filedescriptor_type)
+        char *error_feedback;
+        switch (pffd->filedescriptor_type)
         {
         case TCP:
-            new_fd = start_tcp_listening(epoll_fd, ffd[i].port);
+            new_fd = start_tcp_listening(epoll_fd, pffd->port);
+            if (new_fd < 0)
+            {
+                error_feedback = get_ftcp_code_string(new_fd);
+            }
             break;
 
         case UDP:
-            new_fd = start_udp_listening(epoll_fd, ffd[i].port);
+            new_fd = start_udp_listening(epoll_fd, pffd->port);
+            if (new_fd < 0)
+            {
+                error_feedback = get_fudp_code_string(new_fd);
+            }
             break;
 
         case FIFO:
-            new_fd = start_fifo_listening(epoll_fd, ffd[i].filename);
+            new_fd = start_fifo_listening(epoll_fd, pffd->filename);
+            if (new_fd < 0)
+            {
+                error_feedback = "Not currently supported feedback";
+            }
             break;
 
         case UNDEFINED:
@@ -246,14 +267,25 @@ int frixia_start(struct FrixiaFD ffd[],
         }
         if (new_fd < 0)
         {
-            printf("new fd::%d\n", new_fd);
-            remove_fd_by_index(i, ffd, MAXIMUM_FILEDESCRIPTORS);
+            printf("ERROR STARTING PROTO_FRIXIA_FILEDESCRIPTOR: error:%s, for type %s, port %d filename %s!\n",
+                   error_feedback,
+                   get_frixiafdtype(pffd->filedescriptor_type),
+                   pffd->port,
+                   pffd->filename);
+            continue;
         }
-        else {
-            printf("set fd type::%d\n", new_fd);
-            set_fd_type_by_index(new_fd, i, ffd, MAXIMUM_FILEDESCRIPTORS);
-        }
+        struct FrixiaFD tmp;
+        tmp.dispatcher = pffd->d;
+        tmp.filedescriptor_type = pffd->filedescriptor_type;
+        tmp.port = pffd->port;
+        tmp.fd = new_fd;
+        strcpy(tmp.filename, pffd->filename);
+        add_fd_to_pool(tmp, ffd, MAXIMUM_FILEDESCRIPTORS);
     }
+    destroy_proto_frixia_fd_queue(proto_fds_q);
+
+    thread_pool_t *tp = create_thread_pool(FRIXIA_THREAD_POOL,
+                                           POC_FUN);
 
     // start epoll
     int events_number;
@@ -261,7 +293,7 @@ int frixia_start(struct FrixiaFD ffd[],
     events = calloc(FRIXIA_EPOLL_WAIT_MAX_SIZE, sizeof(struct epoll_event));
     char *read_buffer[FRIXIA_READ_SIZE + 1];
     int fifo_bytes_read = 0;
-
+    bool keep_looping = true;
     while (keep_looping)
     {
         events_number = epoll_wait(epoll_fd, events, FRIXIA_EPOLL_WAIT_MAX_SIZE, -1);
@@ -304,15 +336,15 @@ int frixia_start(struct FrixiaFD ffd[],
             {
                 int reply_fd;
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE,&reply_fd);
+                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE, &reply_fd);
                 handle_frixia_message(ffd[index].dispatcher,
                                       buf,
                                       epoll_fd,
                                       ffd,
                                       &keep_looping);
-                char s[] ="OK";
-                write_tcp(reply_fd,s,2);
-			    break;
+                char s[] = "OK";
+                write_tcp(reply_fd, s, 2);
+                break;
             }
             case KEY(ENGINE, UDP):
             {
@@ -337,9 +369,9 @@ int frixia_start(struct FrixiaFD ffd[],
             {
                 int reply_fd;
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE,&reply_fd);
+                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE, &reply_fd);
                 frixia_event_t *fe = create_event(TCP, reply_fd);
-                if(fe == NULL)
+                if (fe == NULL)
                 {
                     printf("Breaking\n");
                     break;
@@ -358,14 +390,13 @@ int frixia_start(struct FrixiaFD ffd[],
             default:
             {
                 printf("UNKNOWN KEY(%d,%d): %d\n", ffd[index].dispatcher,
-                ffd[index].filedescriptor_type,
-                switch_selector);
+                       ffd[index].filedescriptor_type,
+                       switch_selector);
                 break;
             }
             }
         }
     }
-
 
     thread_pool_join(tp);
 
@@ -408,8 +439,6 @@ int frixia_stop(int epoll_fd,
         }
     }
 
-    
-
     return OK;
 }
 
@@ -445,10 +474,8 @@ int set_program_event(struct FrixiaFD protoffd,
     return OK;
 }
 
-
 void register_tcp_callback(enum FrixiaFDType fdtype,
-                      int port,
-                      void *(f)(void *))
+                           int port,
+                           void *(f)(void *))
 {
-    
 }

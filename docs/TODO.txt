@@ -2,6 +2,7 @@ TODO
     test add / remove frixia fds -> refactor this
     POC_FUN //TODO MARKED
     frixia_zombie -> ctrl termination / kill -9
+    fifo error codes missing
     
 ISSUE:
     fifo seems controversial (EPOLLET only)
