@@ -1,4 +1,4 @@
-add_library(setup
+add_library(proto_filedescriptor
   proto_fds_queue.h
   proto_fds_queue.c
   proto_fds.c
@@ -11,6 +11,6 @@ add_library(setup
   ../../fd_pool/filedescriptor_pool_defs.c
 )
 
-target_link_libraries(setup
+target_link_libraries(proto_filedescriptor
   protocols
 )

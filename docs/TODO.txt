@@ -3,6 +3,8 @@ TODO
     POC_FUN //TODO MARKED
     frixia_zombie -> ctrl termination / kill -9
     fifo error codes missing
+    logger
+    signal handling
     
 ISSUE:
     fifo seems controversial (EPOLLET only)

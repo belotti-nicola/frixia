@@ -15,3 +15,4 @@ int set_program_event(struct FrixiaFD fd,
                       struct FrixiaFD ffds[],
                       int size,
                       FRIXIA_SUPPORTED_PROTOCOL_T protocol);
+

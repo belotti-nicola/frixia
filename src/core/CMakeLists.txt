@@ -27,6 +27,7 @@ target_link_libraries(core
   fqueue
   thread_pool
   fevent
-  setup
+  proto_callbacks
+  proto_filedescriptor
   protocols
 )
