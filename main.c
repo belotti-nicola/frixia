@@ -22,9 +22,10 @@ int main(int argc, char *argv[])
     add_proto_fd(proto_fds_q,TCP,"",4444,PROGRAM,NONE);
     add_proto_fd(proto_fds_q,TCP,"",8888,PROGRAM,HTTP);
     
-    proto_frixia_callbacks_q_t *proto_callbacks_q = create_proto_frixia_callbacks_q();
-    add_proto_callback(proto_callbacks_q,TCP,4444,&goo,NULL);
-    add_proto_callback(proto_callbacks_q,TCP,8888,&foo,NULL);
+    proto_frixia_callbacks_queue_t *proto_callbacks_q = create_proto_frixia_callbacks_queu();
+    add_proto_callback(proto_callbacks_q,TCP,4444,&foo,NULL);
+    add_proto_callback(proto_callbacks_q,TCP,8888,&goo,NULL);
 
-    return frixia_start(proto_fds_q);
+    return frixia_start(proto_fds_q,
+                        proto_callbacks_q);
 }

@@ -210,7 +210,8 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
     }
 }
 
-int frixia_start(proto_frixia_fd_queue_t *proto_fds_q)
+int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
+                 proto_frixia_callbacks_queue_t  *proto_callbacks_q)
 {
     struct FrixiaFD ffd[MAXIMUM_FILEDESCRIPTORS];
     const char *empty = "";
