@@ -3,16 +3,10 @@
 
 typedef struct proto_frixia_callbacks
 {
-    void* (*foo)(void*);
-    void*   arg;  
+    void *(*fun)(void *);
+    void *arg;
+
 } proto_frixia_callbacks_t;
 
-
-
-proto_frixia_callbacks_t* create_proto_callbacks_q();
-void                      destroy_proto_callbacks_q();
-void                      add_proto_callback(
-                            proto_frixia_callbacks_t* cbs,
-                            FRIXIA_SUPPORTED_PROTOCOL_T t,
-                            int port,
-                            void (*f)(void*));
+proto_frixia_callbacks_t *create_proto_callbacks();
+void                      destroy_proto_callbacks();

@@ -1,17 +1,25 @@
-#include "../../fqueue/frixia_queue.h"
-#include "../../protocols/frixia_supported_protocols.h"
+#include "proto_cb.h"
+#include "proto_callbacks_queue.h"
 
-#include <stdlib.h>
-
-typedef struct proto_frixia_callbacks_q
+proto_frixia_callbacks_q_t *create_proto_frixia_callbacks_q()
 {
-    thread_safe_queue_t *q;
+    proto_frixia_callbacks_q_t* fcbs = malloc(sizeof(proto_frixia_callbacks_q_t));
+    if(NULL == fcbs)
+    {
+        return NULL;
+    }
 
-} proto_frixia_callbacks_q_t;
+    return fcbs;
+}
+void destroy_proto_frixia_callbacks_q(proto_frixia_callbacks_q_t *t)
+{
 
-proto_frixia_callbacks_q_t *create_proto_frixia_callbacks_q();
-void destroy_proto_frixia_callbacks_q(proto_frixia_callbacks_q_t *t);
-void add_proto_cb(proto_frixia_callbacks_q_t *q,
-                  FRIXIA_SUPPORTED_PROTOCOL_T p,
-                  void *(*foo)(void *),
-                  void *arg);
+}
+void add_proto_callback( proto_frixia_callbacks_q_t* cbs,
+                         FRIXIA_SUPPORTED_PROTOCOL_T t,
+                         int port,
+                         void (*f)(void*),
+                         void* arg)
+{
+
+}
