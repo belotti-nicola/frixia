@@ -7,6 +7,7 @@
 typedef struct thread_pool_data
 {
     thread_safe_queue_t     *q;
+    void                   (*callbacks)(void*);
 
 } thread_pool_data_t;
 
