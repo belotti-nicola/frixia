@@ -5,14 +5,14 @@
 #include "../../fqueue/frixia_queue.h"
 #include "../../protocols/frixia_supported_protocols.h"
 
-typedef struct proto_frixia_callbacks
+typedef struct proto_frixia_callback
 {
     void *(*fun)(void *);
     void *arg;
 
-} proto_frixia_callbacks_t;
+} proto_frixia_callback_t;
 
-proto_frixia_callbacks_t* create_proto_callbacks(void (*f)(void*),
+proto_frixia_callback_t* create_proto_callbacks(void (*f)(void*),
                                                  void* arg);
 void                      destroy_proto_callbacks();
 

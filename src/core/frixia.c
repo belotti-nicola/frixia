@@ -30,6 +30,8 @@
 #include "fevent/frixia_event.h"
 #include "setup/proto_filedescriptor/proto_fds.h"
 #include "setup/proto_filedescriptor/proto_fds_queue.h"
+#include "setup/proto_callbacks/proto_cb.h"
+#include "setup/proto_callbacks/proto_callbacks_queue.h"
 #include "protocols/frixia_supported_protocols.h"
 
 // expected fds to monitor. Just a kernel hint
@@ -232,7 +234,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
     }
     printf("EPOLL FILE DESCRIPTOR:: %d\n", epoll_fd);
 
-    while (proto_fds_q->fd_q->size > 0)
+    while (proto_fds_q->fd_q->size > 0 )
     {
         proto_frixia_fd_t *pffd = (proto_frixia_fd_t *)pop_q(proto_fds_q->fd_q);
         int new_fd = -1;
@@ -285,10 +287,18 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
         add_fd_to_pool(tmp, ffd, MAXIMUM_FILEDESCRIPTORS);
     }
     destroy_proto_frixia_fd_queue(proto_fds_q);
+    printf("destroy_proto_frixia_fd_queue.\n");
+
+
+    while( proto_callbacks_q->q->size > 0 )
+    {
+        pop_q(proto_callbacks_q->q);
+    }
+    destroy_proto_frixia_callbacks_queue(proto_callbacks_q);
+    printf("destroy_proto_frixia_callbacks_queue.\n");
 
     thread_pool_t *tp = create_thread_pool(FRIXIA_THREAD_POOL,
                                            POC_FUN);
-
     // start epoll
     int events_number;
     struct epoll_event *events;
