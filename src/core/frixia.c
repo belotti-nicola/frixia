@@ -292,13 +292,15 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
 
     while( proto_callbacks_q->q->size > 0 )
     {
+        // TODO :: ADD CALLBACKS 
         pop_q(proto_callbacks_q->q);
     }
     destroy_proto_frixia_callbacks_queue(proto_callbacks_q);
     printf("destroy_proto_frixia_callbacks_queue.\n");
 
     thread_pool_t *tp = create_thread_pool(FRIXIA_THREAD_POOL,
-                                           POC_FUN);
+                                           proto_callbacks_q);
+
     // start epoll
     int events_number;
     struct epoll_event *events;
@@ -373,7 +375,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
             {
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
-                frixia_event_t *fe = create_event(FIFO, 0);
+                frixia_event_t *fe = create_event(FIFO,buf, -1);
                 thread_pool_add_job(tp, fe);
                 break;
             }
@@ -382,7 +384,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
                 int reply_fd;
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE, &reply_fd);
-                frixia_event_t *fe = create_event(TCP, reply_fd);
+                frixia_event_t *fe = create_event(TCP,buf,reply_fd);
                 if (fe == NULL)
                 {
                     printf("Breaking\n");
