@@ -12,7 +12,7 @@ add_subdirectory(thread_pool)
 add_subdirectory(fevent)
 add_subdirectory(setup)
 add_subdirectory(protocols)
-
+add_subdirectory(cb_data_structure)
 
 target_link_libraries(core 
   ctl_parser
@@ -26,4 +26,5 @@ target_link_libraries(core
   tcp
   fifo
   udp
+  cb_data_structure
 )

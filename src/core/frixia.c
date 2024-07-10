@@ -397,7 +397,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
             {
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_udp(detected_event_fd, buf, FRIXIA_READ_SIZE);
-                frixia_event_t *fe = create_event(UDP, 0);
+                frixia_event_t *fe = create_event(UDP, buf,0);
                 thread_pool_add_job(tp, fe);
                 break;
             }
