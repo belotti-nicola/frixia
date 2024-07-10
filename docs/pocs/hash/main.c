@@ -40,5 +40,4 @@ HashMap* create_hash_map()
 int main()
 {
     HashMap* hm = create_hash_map();
-    hm.insert();
 }
