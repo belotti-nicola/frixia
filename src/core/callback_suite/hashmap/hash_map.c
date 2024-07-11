@@ -12,16 +12,11 @@ HashMap_t* create_hash_map()
     hm->size = 0;
     hm->entries = NULL;
 }
-void       destroy_hash_map(HashMap_t *t);
+void destroy_hash_map(HashMap_t *t)
 {
-    for(int i=0;i<hm->size;i++)
-    {
-        free(hm->entries[i]);
-        hm->size -= 1;
-    }
-    free(t);
+
 }
-void       add_entry(void *entry)
+void add_entry(void *entry)
 {
     int hm_value = 1;
 

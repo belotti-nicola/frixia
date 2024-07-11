@@ -33,6 +33,9 @@
 #include "setup/proto_callbacks/proto_cb.h"
 #include "setup/proto_callbacks/proto_callbacks_queue.h"
 #include "protocols/frixia_supported_protocols.h"
+#include "callback_suite/frixia_cb_hashmap.h"
+#include "callback_suite/frixia_cb_data.h"
+
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -290,16 +293,21 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
     printf("destroy_proto_frixia_fd_queue.\n");
 
 
+    proto_frixia_callback_t*  cb_data;
+    frixia_callbacks_suite_t* cb_suite = create_frixia_callbacks_suite(15);
     while( proto_callbacks_q->q->size > 0 )
     {
-        // TODO :: ADD CALLBACKS 
-        pop_q(proto_callbacks_q->q);
+        cb_data = (proto_frixia_callback_t*)pop_q(proto_callbacks_q->q);
+        frixia_callbacks_suite_add(cb_suite,
+                                   cb_data->arg,
+                                   cb_data->fun);
+        
     }
     destroy_proto_frixia_callbacks_queue(proto_callbacks_q);
     printf("destroy_proto_frixia_callbacks_queue.\n");
 
     thread_pool_t *tp = create_thread_pool(FRIXIA_THREAD_POOL,
-                                           proto_callbacks_q);
+                                           NULL);
 
     // start epoll
     int events_number;

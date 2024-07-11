@@ -17,7 +17,4 @@ void         destroy_hash_entry(HashEntry_t *he)
 {
     free(he);
 }
-bool         compare_hash_entry_key(HashEntry_t *he1, HashEntry_t *he2)
-{
 
-}
