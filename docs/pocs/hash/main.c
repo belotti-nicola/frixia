@@ -2,42 +2,67 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TABLE_SIZE 100
+#define TABLE_SIZE 14
 
 typedef struct Entry {
-    char* key;
-    void (*foo)(void *);
-    void  *arg;
-    struct Entry* next;
+    char *key;
+    void *value;
 } Entry;
 
-typedef struct HashMap {
-    Entry** table;
-} HashMap;
-
-unsigned int hash(char* key) {
-    unsigned int hash = 0;
-    while (*key) {
-        hash = (hash << 5) + *key++;
-    }
-    return hash % TABLE_SIZE;
+Entry *create_entry(void *k, void *v)
+{
+    Entry *t = malloc(sizeof(Entry));
+    t->key = k;
+    t->value = v;
+    return t;
+}
+void destroy_entry(Entry *e)
+{
+    free(e);
 }
 
-enum PROTOCOLS 
-{
-    HTTP,
-    UDP,
-    FINS
-};
+typedef struct HashMap {
+    Entry **buckets;
+} HashMap;
 
-HashMap* create_hash_map()
+unsigned long hash(unsigned char *str)
+{
+    unsigned long hash = 5381;
+    int c;
+
+    while (c = *str++)
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+    return hash;
+}
+
+HashMap* create_hash_map(int buckets_size)
 {
     HashMap* hm = malloc(sizeof(HashMap));
+    hm->buckets = malloc(buckets_size * sizeof(Entry));
     return hm;
 }
 
+void add_entry(HashMap *hm,char *key, void *value)
+{
+    int i = hash(key);
+    if( (hm->buckets+i)  == NULL )
+    {
+        hm->buckets = create_entry(key,value);
+    }
+}
+Entry *get_entry(char *s)
+{
+    int index = hash(*s);
+    return *(hm->buckets+index);
+}
 
 int main()
 {
-    HashMap* hm = create_hash_map();
+    HashMap* hm = create_hash_map(TABLE_SIZE);
+    add_entry(hm,"foo","1");
+    add_entry(hm,"goo","2");
+    add_entry(hm,"doo","3");
+    add_entry(hm,"too","4");
+
 }

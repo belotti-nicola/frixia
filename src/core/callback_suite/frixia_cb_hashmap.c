@@ -4,7 +4,7 @@
 
 frixia_callbacks_suite_t *create_frixia_callbacks_suite(int size)
 {
-    frixia_callbacks_suite_t *fsuite = malloc(size * sizeof(frixia_callbacks_suite_t));
+    frixia_callbacks_suite_t *fsuite = malloc(sizeof(frixia_callbacks_suite_t));
     if (fsuite == NULL)
     {
         return NULL;

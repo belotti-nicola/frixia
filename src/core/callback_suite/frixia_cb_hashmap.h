@@ -1,12 +1,13 @@
 #ifndef FRIXIA_CB_HASHMAP_H
 #define FRIXIA_CB_HASHMAP_H
 
+#include "hashmap/hash_map.h"
 #include "frixia_cb_data.h"
 
 typedef struct frixia_callbacks_suite
 {
     int                     size;
-    frixia_callback_data_t *callback_data;
+    HashMap_t               *cb_data;
 
 } frixia_callbacks_suite_t;
 
