@@ -25,9 +25,5 @@ void frixia_callbacks_suite_add(frixia_callbacks_suite_t *suite,
 void destroy_frixia_callbacks_suite(frixia_callbacks_suite_t *t)
 {   
     int dim = t->size;
-    for(int i=0;i<dim;i++)
-    {
-        destroy_frixia_callback_data(t->callback_data+i);
-    }
     free(t);
 }

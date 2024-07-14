@@ -7,7 +7,7 @@
 typedef struct frixia_callbacks_suite
 {
     int                     size;
-    HashMap_t               *cb_data;
+    HashMap_t              *cb_data;
 
 } frixia_callbacks_suite_t;
 

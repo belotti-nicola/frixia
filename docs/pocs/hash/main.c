@@ -50,7 +50,6 @@ HashMap *create_hash_map(int buckets_size)
 }
 void destroy_hash_map(HashMap *hm)
 {
-    int dim = hm->maximum_size;
     free(hm->buckets);
     free(hm);
 }
@@ -126,6 +125,6 @@ int main()
     printf("doo -> %s\n", get_value(hm, "doo"));
     printf("too -> %s\n", get_value(hm, "too"));
     printf("moo -> %s\n", get_value(hm, "moo"));
-    
+
     destroy_hash_map(hm);
 }
