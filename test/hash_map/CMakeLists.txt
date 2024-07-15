@@ -1,0 +1,4 @@
+add_executable(TestInstantiatorHashMap test_hash_map.c)
+target_link_libraries(TestInstantiatorHashMap core)
+add_test(NAME TestInstantiatorHashMap
+    COMMAND TestInstantiatorHashMap)
