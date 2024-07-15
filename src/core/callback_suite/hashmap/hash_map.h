@@ -6,14 +6,15 @@
 
 typedef struct HashMap 
 {
-    HashEntry_t *entries;
+    HashEntry_t *buckets;
     size_t       size;
+    size_t       maximum_size;
 
 } HashMap_t;
 
-HashMap_t* create_hash_map(int size);
+HashMap_t* create_hash_map(int maximum_size);
 void       destroy_hash_map(HashMap_t *t);
-void       add_entry(HashEntry_t *entry);
+void       add_entry(HashMap_t *hm, HashEntry_t *entry);
 
 
 #endif
