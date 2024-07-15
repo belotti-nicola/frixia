@@ -1,7 +1,8 @@
 #include "hash_entry.h"
 #include <stdlib.h>
+#include <string.h>
 
-HashEntry_t* create_hash_entry(void *key,
+HashEntry_t* create_hash_entry(char *key,
                                void *value)
 {
     HashEntry_t *he = malloc(sizeof(HashEntry_t));
@@ -9,7 +10,7 @@ HashEntry_t* create_hash_entry(void *key,
     {
         return NULL;
     }
-    he->key   = key;
+    he->key = key;
     he->value = value;
     return he;
 }

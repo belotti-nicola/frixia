@@ -12,9 +12,10 @@ typedef struct HashMap
 
 } HashMap_t;
 
-HashMap_t* create_hash_map(int maximum_size);
-void       destroy_hash_map(HashMap_t *t);
-void       add_entry(HashMap_t *hm, HashEntry_t *entry);
+HashMap_t   *create_hash_map(int maximum_size);
+void         destroy_hash_map(HashMap_t *t);
+void         add_entry(HashMap_t *hm, HashEntry_t *entry);
+HashEntry_t *get_entry_value(HashMap_t *hm, char *key);
 
 
 #endif

@@ -10,7 +10,7 @@ typedef struct HashEntry
 
 } HashEntry_t;
 
-HashEntry_t* create_hash_entry(void *value, void *key);
+HashEntry_t* create_hash_entry(char *value, void *key);
 void         destroy_hash_entry(HashEntry_t *he);
 
 
