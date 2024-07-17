@@ -46,12 +46,12 @@ int compute_integer(char s[])
     return atoi(s);
 }
 
-enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
+enum ctl_parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
 {
     if (*s == '\0')
     {
         printf("EMPTY parse_control_strings!\n");
-        return PARSE_ERROR;
+        return CTL_PARSE_ERROR;
     }
 
     int state = 0;
@@ -68,7 +68,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'S')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'S')
             {
@@ -81,7 +81,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'T')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'T')
             {
@@ -94,7 +94,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'A' && *s != 'O')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'A')
             {
@@ -111,7 +111,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'R')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'R')
             {
@@ -124,7 +124,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'T')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'T')
             {
@@ -138,7 +138,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != ' ')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == ' ')
             {
@@ -154,7 +154,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
                 *s != ' ')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'T')
             {
@@ -179,7 +179,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'C')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'C')
             {
@@ -192,7 +192,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'P')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'P')
             {
@@ -206,7 +206,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != ' ')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == ' ')
             {
@@ -219,7 +219,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'D')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'D')
             {
@@ -232,7 +232,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'P')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'P')
             {
@@ -246,7 +246,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != ' ')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == ' ')
             {
@@ -259,7 +259,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'I')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'I')
             {
@@ -272,7 +272,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'F')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'F')
             {
@@ -285,7 +285,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'O')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'O')
             {
@@ -299,7 +299,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != ' ')
             { 
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == ' ')
             {
@@ -312,7 +312,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'P')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'P')
             {
@@ -327,7 +327,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
                 *s != 'A')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == ' ')
             {
@@ -347,7 +347,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
                 *s != 'A')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'T')
             {
@@ -372,7 +372,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'L')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'L')
             {
@@ -385,7 +385,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (*s != 'L')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 'L')
             {
@@ -397,14 +397,14 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
         case 22:
         {
             PARSING_DEBUG();
-            return PARSE_ERROR;
+            return CTL_PARSE_ERROR;
         }
         case 23:
         {
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (*s == 0)
             {
@@ -427,7 +427,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (included_in(*s, '0', '5'))
             {
@@ -445,7 +445,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (included_in(*s, '0', '5'))
             {
@@ -463,7 +463,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (included_in(*s, '0', '3'))
             {
@@ -481,7 +481,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             if (included_in(*s, '0', '5'))
             {
@@ -490,7 +490,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (included_in(*s, '6', '9'))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             digits[4] = *s;
             break;
@@ -498,19 +498,19 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
         case 28:
         {
             PARSING_DEBUG();
-            return PARSE_ERROR;
+            return CTL_PARSE_ERROR;
         }
         case 29:
         {
             PARSING_DEBUG();
-            return PARSE_ERROR;
+            return CTL_PARSE_ERROR;
         }
         case 30:
         {
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             digits[3] = *s;
             break;
@@ -518,14 +518,14 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
         case 31:
         {
             PARSING_DEBUG();
-            return PARSE_ERROR;
+            return CTL_PARSE_ERROR;
         }
         case 32:
         {
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 33;
             digits[2] = *s;
@@ -536,7 +536,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 34;
             digits[3] = *s;
@@ -545,14 +545,14 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
         case 34:
         {
             PARSING_DEBUG();
-            return PARSE_ERROR;
+            return CTL_PARSE_ERROR;
         }
         case 35:
         {
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 36;
             digits[1] = *s;
@@ -563,7 +563,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 37;
             digits[2] = *s;
@@ -574,7 +574,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isdigit(*s))
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 38;
             digits[3] = *s;
@@ -583,14 +583,14 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
         case 38:
         {
             PARSING_DEBUG();
-            return PARSE_ERROR;
+            return CTL_PARSE_ERROR;
         }
         case 39:
         {
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 40;
             f->argument[0] = *s;
@@ -601,7 +601,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 41;
             f->argument[1] = *s;
@@ -612,7 +612,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 42;
             f->argument[2] = *s;
@@ -623,7 +623,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 43;
             f->argument[3] = *s;
@@ -634,7 +634,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 44;
             f->argument[4] = *s;
@@ -645,7 +645,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 45;
             f->argument[5] = *s;
@@ -656,7 +656,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 46;
             f->argument[6] = *s;
@@ -667,7 +667,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 47;
             f->argument[7] = *s;
@@ -678,7 +678,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 48;
             f->argument[8] = *s;
@@ -689,7 +689,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 49;
             f->argument[9] = *s;
@@ -700,7 +700,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 50;
             f->argument[10] = *s;
@@ -711,7 +711,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 51;
             f->argument[11] = *s;
@@ -722,7 +722,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 52;
             f->argument[12] = *s;
@@ -733,7 +733,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 53;
             f->argument[13] = *s;
@@ -744,7 +744,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 54;
             f->argument[14] = *s;
@@ -755,7 +755,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 55;
             f->argument[15] = *s;
@@ -766,7 +766,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 56;
             f->argument[16] = *s;
@@ -777,7 +777,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 57;
             f->argument[17] = *s;
@@ -788,7 +788,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 58;
 
@@ -800,7 +800,7 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
             if (!isalpha(*s) && *s != '_')
             {
                 PARSING_DEBUG();
-                return PARSE_ERROR;
+                return CTL_PARSE_ERROR;
             }
             state = 59;
             f->argument[19] = *s;
@@ -809,14 +809,14 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
         case 59:
         {
             PARSING_DEBUG();
-            return PARSE_ERROR;
+            return CTL_PARSE_ERROR;
         }
         }
     }
     bool not_final_state = !simple_final_state_function(state);
     if(not_final_state)
     {
-        return PARSE_ERROR;
+        return CTL_PARSE_ERROR;
     }
     int v = compute_integer(digits);
     f->port = v;
@@ -826,5 +826,5 @@ enum parse_code parse_control_strings(char s[], struct FrixiaCTL *f)
         f->argument[index_of_last_digit] = '\0';
         printf("inde %d %s %d\n",index_of_last_digit,f->argument,state);
     }
-    return PARSE_OK;
+    return CTL_PARSE_OK;
 }

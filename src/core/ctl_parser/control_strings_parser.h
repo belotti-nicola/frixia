@@ -3,11 +3,11 @@
 
 #include "control_commands.h"
 
-enum parse_code {
-    PARSE_OK,
-    PARSE_ERROR
+enum ctl_parse_code {
+    CTL_PARSE_OK,
+    CTL_PARSE_ERROR
 };
 
-enum parse_code parse_control_strings(char s[], struct FrixiaCTL* f);
+enum ctl_parse_code parse_control_strings(char s[], struct FrixiaCTL* f);
 
 #endif

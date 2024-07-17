@@ -204,8 +204,8 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
         struct FrixiaCTL *p_f;
         struct FrixiaCTL fr;
         p_f = &fr;
-        enum parse_code parse_ec = parse_control_strings(buff, p_f);
-        if (parse_ec == PARSE_ERROR)
+        enum ctl_parse_code parse_ec = parse_control_strings(buff, p_f);
+        if (parse_ec == CTL_PARSE_ERROR)
         {
             printf("Parsing failed: %s", buff);
             return;

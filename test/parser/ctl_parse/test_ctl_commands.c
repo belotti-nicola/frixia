@@ -52,7 +52,7 @@ void test_parse_error(char *directory,
     int ret_val = parse_control_strings(test_sample, &fctl);
     fclose(fptr);
 
-    if (ret_val != PARSE_ERROR)
+    if (ret_val != CTL_PARSE_ERROR)
     {
         printf("EXIT_FAILURE %s\n", f);
         exit(EXIT_FAILURE);
@@ -84,7 +84,7 @@ void test_parse_ok(char *directory,
     fclose(fptr);
 
     int ret_val = parse_control_strings(test_sample, &fctl);
-    if (ret_val == PARSE_ERROR)
+    if (ret_val == CTL_PARSE_ERROR)
     {
         printf("EXIT_FAILURE RET CODE %s\n", f);
         exit(EXIT_FAILURE);
@@ -163,12 +163,12 @@ int main(void)
             fprintf(stderr, "Error: Expected %d fields but got %d %s\n", CSV_FIELDS, field_count, line);
             continue;
         }
-        if (strcmp(fields[2], "PARSE_ERROR") == 0)
+        if (strcmp(fields[2], "CTL_PARSE_ERROR") == 0)
         {
             test_parse_error(fields[0],
                              fields[1]);
         }
-        if (strcmp(fields[2], "PARSE_OK") == 0)
+        if (strcmp(fields[2], "CTL_PARSE_OK") == 0)
         {
             test_parse_ok(fields[0],
                           fields[1],

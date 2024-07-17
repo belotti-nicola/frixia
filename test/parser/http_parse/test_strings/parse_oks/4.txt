@@ -1,0 +1,2 @@
+GET /search?q=openai HTTP/1.1
+Host: example.com
