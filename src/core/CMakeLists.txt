@@ -27,4 +27,5 @@ target_link_libraries(core
   fifo
   udp
   callback_suite
+  picohttpparser
 )

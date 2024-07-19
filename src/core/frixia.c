@@ -35,7 +35,7 @@
 #include "protocols/frixia_supported_protocols.h"
 #include "callback_suite/frixia_cb_hashmap.h"
 #include "callback_suite/frixia_cb_data.h"
-
+#include "../../deps/picohttpparser/picohttpparser.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -384,6 +384,26 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
                 frixia_event_t *fe = create_event(FIFO,buf, -1);
+                
+                //TODO COMPILE IT
+                char TMP[4096], *method, *path;
+                int pret, minor_version;
+                struct phr_header headers[100];
+                size_t buflen = 0, prevbuflen = 0, method_len, path_len, num_headers;
+                ssize_t rret;
+                
+                phr_parse_request(
+                    buf,
+                    buflen,
+                    method,
+                    &method_len,
+                    &path,
+                    &path_len,
+                    &minor_version,
+                    headers,
+                    &num_headers,
+                    prevbuflen);
+                //#################################################################
                 thread_pool_add_job(tp, fe);
                 break;
             }
