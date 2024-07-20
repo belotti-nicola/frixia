@@ -1,11 +1,54 @@
 #include "frixia_http_parser.h"
+#include "../../../../deps/picohttpparser/picohttpparser.h"
 #include <stdlib.h>
 
-FHTTP_t parse_string(char *s)
+FHTTP_t frixia_parse_request(char *s)
 {
-    FHTTP_t r;
-    r.type = GET;
-    r.url = "fooooo";
-    r.version = "1.0";
-    return r;
+    char *method, *path;
+    int pret, minor_version;
+    struct phr_header headers[100];
+    size_t buflen = 0, prevbuflen = 0, method_len, path_len, num_headers;
+
+    prevbuflen = buflen;
+    buflen += strlen(s);
+
+    num_headers = sizeof(headers) / sizeof(headers[0]);
+    pret = phr_parse_request(s,
+                             buflen,
+                             &method,
+                             &method_len,
+                             &path,
+                             &path_len,
+                             &minor_version,
+                             &headers,
+                             &num_headers,
+                             prevbuflen);
+
+    
+    if (pret > 0)
+    {
+        FHTTP_t fhttp;
+        fhttp.method = method;
+        fhttp.method_len = method_len;
+        fhttp.path = path;
+        fhttp.path_len = path_len;
+        fhttp.minor_version = minor_version;
+        fhttp.headers = headers;
+        fhttp.num_headers = num_headers;
+        return fhttp;
+    }
+
+    FHTTP_t fhttp;
+    fhttp.method = "UNKNOWN";
+    return fhttp;
+
+}
+FHTTP_t frixia_parse_response(char *s)
+{
+}
+FHTTP_t frixia_parse_headers(char *s)
+{
+}
+FHTTP_t frixia_decode_chunked(char *s)
+{
 }
