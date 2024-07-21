@@ -11,3 +11,5 @@ parse_oks,6.txt,FHTTP_PARSE_OK,GET
 parse_errors,4.txt,FHTTP_PARSE_ERROR,DC
 parse_errors,5.txt,FHTTP_PARSE_ERROR,DC
 parse_errors,6.txt,FHTTP_PARSE_ERROR,DC
+parse_oks,7.txt,FHTTP_PARSE_OK,GET
+parse_oks,8.txt,FHTTP_PARSE_OK,GET

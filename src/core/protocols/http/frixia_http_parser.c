@@ -2,7 +2,7 @@
 #include "../../../../deps/picohttpparser/picohttpparser.h"
 #include <stdlib.h>
 
-FHTTP_t frixia_parse_request(char *s)
+FHTTP_t frixia_parse_request(char *s,int bytesRead)
 {
     char *method, *path;
     int pret, minor_version;
@@ -10,7 +10,7 @@ FHTTP_t frixia_parse_request(char *s)
     size_t buflen = 0, prevbuflen = 0, method_len, path_len, num_headers;
 
     prevbuflen = buflen;
-    buflen += strlen(s);
+    buflen += bytesRead;
 
     num_headers = sizeof(headers) / sizeof(headers[0]);
     pret = phr_parse_request(s,
@@ -20,7 +20,7 @@ FHTTP_t frixia_parse_request(char *s)
                              &path,
                              &path_len,
                              &minor_version,
-                             &headers,
+                             headers,
                              &num_headers,
                              prevbuflen);
 

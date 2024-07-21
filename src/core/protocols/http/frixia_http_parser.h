@@ -13,7 +13,7 @@ typedef struct FHTTP
 
 } FHTTP_t;
 
-FHTTP_t frixia_parse_request(char *s);
+FHTTP_t frixia_parse_request(char *s, int bytesRead);
 FHTTP_t frixia_parse_response(char *s);
 FHTTP_t frixia_parse_headers(char *s);
 FHTTP_t frixia_decode_chunked(char *s);

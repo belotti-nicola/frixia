@@ -32,15 +32,16 @@ int test_http_parse(char *dir, char *file, char *method)
     }
     test_sample[bytesRead] = '\0'; 
 
-    FHTTP_t parsed = frixia_parse_request(test_sample);
-    if (strcmp(parsed.method, "GET\n") == method)
+    FHTTP_t parsed = frixia_parse_request(test_sample,bytesRead);
+    if (parsed.method[0] == 'G' &&
+        parsed.method[1] == 'E' &&
+        parsed.method[2] == 'T')
     {
-        printf("SUCCESS!(%s == %s)\n", parsed.method, method);
+        printf("SUCCESS!\n");
     }
     else
     {
-        printf("failure!(%s != %s)\n", parsed.method, method);
-        printf("%s\n", test_sample);
+        printf("%.*s\n", (int)parsed.method_len, parsed.method,(int)parsed.method_len);
     }
 }
 
