@@ -11,7 +11,7 @@
 #define PATH_MAX 100
 #define FILE_LENGTH 500
 
-int test_http_parse(char *dir, char *file, char *method)
+int test_http_parse_oks(char *dir, char *file, char *method)
 {
     char f[PATH_MAX] = {'\0'};
     snprintf(f, sizeof(f), "%s%s%s%s", "test_strings/", dir, "/", file);
@@ -33,16 +33,19 @@ int test_http_parse(char *dir, char *file, char *method)
     test_sample[bytesRead] = '\0'; 
 
     FHTTP_t parsed = frixia_parse_request(test_sample,bytesRead);
-    if (parsed.method[0] == 'G' &&
-        parsed.method[1] == 'E' &&
-        parsed.method[2] == 'T')
+    if (strncmp(parsed.method,method,parsed.method_len) == 0)
     {
         printf("SUCCESS!\n");
     }
     else
     {
-        printf("%.*s\n", (int)parsed.method_len, parsed.method,(int)parsed.method_len);
+        printf("ERROR");
     }
+}
+
+int test_http_parse_errors()
+{
+
 }
 
 int main()
@@ -71,6 +74,10 @@ int main()
             fields[field_count++] = token;
             token = strtok(NULL, ",");
         }
+        char *tmp = fields[field_count-1];
+        int dim = strlen(tmp);
+        tmp[dim-1] = '\0';
+        fields[field_count-1] = tmp;
 
         if (field_count != CSV_FIELDS)
         {
@@ -80,10 +87,14 @@ int main()
 
         if (strcmp(fields[2], "FHTTP_PARSE_OK") == 0)
         {
-            test_http_parse(fields[0], fields[1], fields[3]);
+            test_http_parse_oks(fields[0], fields[1], fields[3]);
+        }
+        if (strcmp(fields[2], "FHTTP_PARSE_OK") == 0)
+        {
+            test_http_parse_errors();
         }
     }
 
-    close(fptr);
+    pclose(fptr);
     return 0;
 }
