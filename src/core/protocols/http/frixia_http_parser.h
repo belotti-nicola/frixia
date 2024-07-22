@@ -1,15 +1,17 @@
 #ifndef FRIXIA_HTTP_PARSER_H
 #define FRIXIA_HTTP_PARSER_H
 
+#include "../../../../deps/picohttpparser/picohttpparser.h"
+
 typedef struct FHTTP
 {
-    char *method;
-    int   method_len;
-    char *path;
-    int   path_len;
-    int   minor_version;
-    char* headers;
-    int   num_headers;
+    char              *method;
+    int                method_len;
+    char              *path;
+    int                path_len;
+    int                minor_version;
+    struct phr_header *headers;
+    int                num_headers;
 
 } FHTTP_t;
 

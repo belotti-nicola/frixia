@@ -4,7 +4,6 @@ TODO
     frixia_zombie -> ctrl termination / kill -9
     fifo error codes missing
     logger
-    signal handling
     
 ISSUE:
     fifo seems controversial (EPOLLET only)
@@ -28,6 +27,7 @@ REFACTORING
     Q -> Q + mutex = SHARED_Q
     thread pool -> many Q to inject in threads Qs (dispatcher that delivers LOCAL DATA!)
     thread pool termination is by killing 
+    test -> 1. refactor with common functions (CSV handling) 2. insert header_numbers as test sample
 
 CHOICES
     C vs C++

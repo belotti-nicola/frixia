@@ -6,14 +6,16 @@
 #include <stdbool.h>
 
 #define TEST_SET_FILE "test_strings/samples.csv"
-#define MAX_LINE_LENGTH 64
-#define CSV_FIELDS 5
+#define MAX_LINE_LENGTH 200
+#define CSV_FIELDS 6
 #define PATH_MAX 100
 #define FILE_LENGTH 500
 
 bool test_http_parse_oks(char *dir, char *file,
                          char *method,
-                         char *path)
+                         char *path,
+                         char *minor_version,
+                         char *headers)
 {
     bool retVal = true;
     char f[PATH_MAX] = {'\0'};
@@ -33,35 +35,63 @@ bool test_http_parse_oks(char *dir, char *file,
         fclose(fptr);
         return EXIT_FAILURE;
     }
-    test_sample[bytesRead] = '\0'; 
+    test_sample[bytesRead] = '\0';
 
-    FHTTP_t parsed = frixia_parse_request(test_sample,bytesRead);
-    if (strncmp(parsed.method,method,parsed.method_len) == 0)
+    FHTTP_t parsed = frixia_parse_request(test_sample, bytesRead);
+    if (strncmp(parsed.method, method, parsed.method_len) == 0)
     {
         printf("method SUCCESS!\n");
     }
     else
     {
-        printf("method ERROR");
+        printf("method ERROR\n");
         retVal = false;
     }
 
-    if (strncmp(parsed.path,path,parsed.path_len) == 0)
+    if (strncmp(parsed.path, path, parsed.path_len) == 0)
     {
         printf("path SUCCESS!\n");
     }
     else
     {
-        printf("path ERROR");
+        printf("path ERROR\n");
         retVal = false;
     }
 
+    if (parsed.minor_version, atoi(minor_version) == 0)
+    {
+        printf("minor_version SUCCESS!\n");
+    }
+    else
+    {
+        printf("minor_version ERROR\n");
+        retVal = false;
+    }
+
+    for (int i = 0; i < parsed.num_headers; i++)
+    {
+        if (strncmp(parsed.headers[i].name,
+                    *(headers + 2 * i),
+                    parsed.headers[i].name_len) == 0)
+        {
+        }
+        else
+        {
+        }
+        if (strncmp(parsed.headers[i].value,
+                    *(headers + 2 * i + 1),
+                    parsed.headers[i].value_len) == 0)
+        {
+        }
+        else
+        {
+        }
+    }
     return retVal;
 }
 
 int test_http_parse_errors()
 {
-
 }
 
 int main()
@@ -90,10 +120,10 @@ int main()
             fields[field_count++] = token;
             token = strtok(NULL, ",");
         }
-        char *tmp = fields[field_count-1];
+        char *tmp = fields[field_count - 1];
         int dim = strlen(tmp);
-        tmp[dim-1] = '\0';
-        fields[field_count-1] = tmp;
+        tmp[dim - 1] = '\0';
+        fields[field_count - 1] = tmp;
 
         if (field_count != CSV_FIELDS)
         {
@@ -104,7 +134,12 @@ int main()
         bool global_bool = true;
         if (strcmp(fields[2], "FHTTP_PARSE_OK") == 0)
         {
-            bool tmp = test_http_parse_oks(fields[0], fields[1], fields[3],fields[4]);
+            bool tmp = test_http_parse_oks(fields[0],
+                                           fields[1],
+                                           fields[3],
+                                           fields[4],
+                                           fields[5],
+                                           fields[6]);
             global_bool = global_bool && tmp;
         }
         if (strcmp(fields[2], "FHTTP_PARSE_OK") == 0)
