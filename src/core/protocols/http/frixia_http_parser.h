@@ -10,7 +10,7 @@ typedef struct FHTTP
     char              *path;
     int                path_len;
     int                minor_version;
-    struct phr_header *headers;
+    struct phr_header  headers[100];
     int                num_headers;
 
 } FHTTP_t;

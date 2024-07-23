@@ -6,8 +6,8 @@
 #include <stdbool.h>
 
 #define TEST_SET_FILE "test_strings/samples.csv"
-#define MAX_LINE_LENGTH 200
-#define CSV_FIELDS 6
+#define MAX_LINE_LENGTH 300
+#define CSV_FIELDS 20
 #define PATH_MAX 100
 #define FILE_LENGTH 500
 
@@ -15,7 +15,8 @@ bool test_http_parse_oks(char *dir, char *file,
                          char *method,
                          char *path,
                          char *minor_version,
-                         char *headers)
+                         char **headers,
+                         int dim)
 {
     bool retVal = true;
     char f[PATH_MAX] = {'\0'};
@@ -58,7 +59,7 @@ bool test_http_parse_oks(char *dir, char *file,
         retVal = false;
     }
 
-    if (parsed.minor_version, atoi(minor_version) == 0)
+    if (parsed.minor_version == atoi(minor_version))
     {
         printf("minor_version SUCCESS!\n");
     }
@@ -68,25 +69,51 @@ bool test_http_parse_oks(char *dir, char *file,
         retVal = false;
     }
 
-    for (int i = 0; i < parsed.num_headers; i++)
+    for (int i = 0; i < dim - 6; i++)
     {
-        if (strncmp(parsed.headers[i].name,
-                    *(headers + 2 * i),
-                    parsed.headers[i].name_len) == 0)
+        int i_switch = i % 2;
+        int index_headers = i / 2;
+        switch (i_switch)
         {
+        case 0:
+        {
+            if (strncmp(parsed.headers[index_headers].name,
+                        headers[i],
+                        parsed.headers[index_headers].name_len) == 0)
+            {
+                printf("OK %.*s - %.*s\n",
+                    parsed.headers[index_headers].name_len, parsed.headers[index_headers].name,
+                    parsed.headers[index_headers].name_len, headers[i]);
+            }
+            else
+            {
+                printf("KO %.*s - %.*s\n",
+                    parsed.headers[index_headers].name_len, parsed.headers[index_headers].name,
+                    parsed.headers[index_headers].name_len, headers[i]);
+            }
+            break;
         }
-        else
+        case 2:
         {
+            if (strncmp(parsed.headers[index_headers].value,
+                        headers[i],
+                        parsed.headers[index_headers].value_len) == 0)
+            {
+                printf("OK %.*s - %.*s\n",
+                    parsed.headers[index_headers].value_len, parsed.headers[index_headers].value,
+                    parsed.headers[index_headers].value_len, headers[i]);
+            }
+            else
+            {
+                printf("KO %.*s - %.*s\n",
+                        parsed.headers[index_headers].value_len, parsed.headers[index_headers].value,
+                        parsed.headers[index_headers].value_len, headers[i]);
+            }
+            break;
         }
-        if (strncmp(parsed.headers[i].value,
-                    *(headers + 2 * i + 1),
-                    parsed.headers[i].value_len) == 0)
-        {
-        }
-        else
-        {
         }
     }
+
     return retVal;
 }
 
@@ -115,7 +142,7 @@ int main()
         char *fields[CSV_FIELDS];
         int field_count = 0;
         char *token = strtok(line, ",");
-        while (token && field_count < CSV_FIELDS)
+        while (token)
         {
             fields[field_count++] = token;
             token = strtok(NULL, ",");
@@ -125,12 +152,7 @@ int main()
         tmp[dim - 1] = '\0';
         fields[field_count - 1] = tmp;
 
-        if (field_count != CSV_FIELDS)
-        {
-            fprintf(stderr, "Error: Expected %d fields but got %d (line:%s)\n", CSV_FIELDS, field_count, line);
-            return 1;
-        }
-
+        printf("fields_count %d\n", field_count);
         bool global_bool = true;
         if (strcmp(fields[2], "FHTTP_PARSE_OK") == 0)
         {
@@ -139,7 +161,8 @@ int main()
                                            fields[3],
                                            fields[4],
                                            fields[5],
-                                           fields[6]);
+                                           &fields[6],
+                                           field_count - 1);
             global_bool = global_bool && tmp;
         }
         if (strcmp(fields[2], "FHTTP_PARSE_OK") == 0)

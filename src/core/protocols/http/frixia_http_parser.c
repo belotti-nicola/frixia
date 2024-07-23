@@ -33,8 +33,11 @@ FHTTP_t frixia_parse_request(char *s,int bytesRead)
         fhttp.path = path;
         fhttp.path_len = path_len;
         fhttp.minor_version = minor_version;
-        fhttp.headers = headers;
         fhttp.num_headers = num_headers;
+        for(int i=0;i<100;i++)
+        {
+            fhttp.headers[i] = headers[i];
+        }
         return fhttp;
     }
 
