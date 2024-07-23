@@ -11,5 +11,5 @@ parse_oks,6.txt,FHTTP_PARSE_OK,GET,/docs/index.html,1,Host,example.com,Connectio
 parse_errors,4.txt,FHTTP_PARSE_ERROR,DC,DC,DC,DC
 parse_errors,5.txt,FHTTP_PARSE_ERROR,DC,DC,DC,DC
 parse_errors,6.txt,FHTTP_PARSE_ERROR,DC,DC,DC,DC
-parse_oks,7.txt,FHTTP_PARSE_OK,GET,/hello.htm,1,Host,www.tutorialspoint.com,Accept-Language,en-us,Accept-Encoding,gzip,deflate,Connection,Keep-Alive
+parse_oks,7.txt,FHTTP_PARSE_OK,GET,/hello.htm,1,User-Agent,Mozilla/4.0,Host,www.tutorialspoint.com,Accept-Language,en-us,Accept-Encoding,gzip,Connection,Keep-Alive
 parse_oks,8.txt,FHTTP_PARSE_OK,GET,/get_info,1,Host,127.0.0.1:8080,User-Agent,curl/7.68.0,Accept,*/*

@@ -93,7 +93,7 @@ bool test_http_parse_oks(char *dir, char *file,
             }
             break;
         }
-        case 2:
+        case 1:
         {
             if (strncmp(parsed.headers[index_headers].value,
                         headers[i],
