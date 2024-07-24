@@ -11,7 +11,7 @@
 
 #define MAX_LINE_LENGTH 1024
 #define CSV_FIELDS 6
-#define PATH_MAX 100
+#define PATH_MAX_DIMENSION 100
 
 bool check_trailing_new_line(char* test_string)
 {
@@ -33,7 +33,7 @@ void test_parse_error(char *directory,
                       char *filename)
 {
     printf("test_parse_error %s %s\n", directory, filename);
-    char f[PATH_MAX] = {'\0'};
+    char f[PATH_MAX_DIMENSION] = {'\0'};
     snprintf(f, sizeof(f), "%s%s%s%s", "test_strings/", directory, "/", filename);
     FILE *fptr = fopen(f, "r");
     if (fptr == NULL)
@@ -65,7 +65,7 @@ void test_parse_ok(char *directory,
                    char *argument)
 {
     printf("test_parse_ok dir:%s file:%s cmd:%s fdtype:%s arg:%s", directory, filename, cmd, fdtype, argument);
-    char f[PATH_MAX] = {'\0'};
+    char f[PATH_MAX_DIMENSION] = {'\0'};
     snprintf(f, sizeof(f), "%s%s%s%s", "test_strings/", directory, "/", filename);
     FILE *fptr = fopen(f, "r");
     if (fptr == NULL)

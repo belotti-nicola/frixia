@@ -8,7 +8,7 @@
 #define TEST_SET_FILE "test_strings/samples.csv"
 #define MAX_LINE_LENGTH 300
 #define CSV_FIELDS 20
-#define PATH_MAX 100
+#define TEST_PATH_MAX_LENGTH 100
 #define FILE_LENGTH 500
 
 bool test_http_parse_oks(char *dir, char *file,
@@ -19,7 +19,7 @@ bool test_http_parse_oks(char *dir, char *file,
                          int dim)
 {
     bool retVal = true;
-    char f[PATH_MAX] = {'\0'};
+    char f[TEST_PATH_MAX_LENGTH] = {'\0'};
     snprintf(f, sizeof(f), "%s%s%s%s", "test_strings/", dir, "/", file);
     FILE *fptr = fopen(f, "r");
     if (fptr == NULL)
@@ -82,14 +82,14 @@ bool test_http_parse_oks(char *dir, char *file,
                         parsed.headers[index_headers].name_len) == 0)
             {
                 printf("OK %.*s - %.*s\n",
-                    parsed.headers[index_headers].name_len, parsed.headers[index_headers].name,
-                    parsed.headers[index_headers].name_len, headers[i]);
+                    (int)parsed.headers[index_headers].name_len, parsed.headers[index_headers].name,
+                    (int)parsed.headers[index_headers].name_len, headers[i]);
             }
             else
             {
                 printf("KO %.*s - %.*s\n",
-                    parsed.headers[index_headers].name_len, parsed.headers[index_headers].name,
-                    parsed.headers[index_headers].name_len, headers[i]);
+                    (int)parsed.headers[index_headers].name_len, parsed.headers[index_headers].name,
+                    (int)parsed.headers[index_headers].name_len, headers[i]);
             }
             break;
         }
@@ -100,14 +100,14 @@ bool test_http_parse_oks(char *dir, char *file,
                         parsed.headers[index_headers].value_len) == 0)
             {
                 printf("OK %.*s - %.*s\n",
-                    parsed.headers[index_headers].value_len, parsed.headers[index_headers].value,
-                    parsed.headers[index_headers].value_len, headers[i]);
+                    (int)parsed.headers[index_headers].value_len, parsed.headers[index_headers].value,
+                    (int)parsed.headers[index_headers].value_len, headers[i]);
             }
             else
             {
                 printf("KO %.*s - %.*s\n",
-                        parsed.headers[index_headers].value_len, parsed.headers[index_headers].value,
-                        parsed.headers[index_headers].value_len, headers[i]);
+                        (int)parsed.headers[index_headers].value_len, parsed.headers[index_headers].value,
+                        (int)parsed.headers[index_headers].value_len, headers[i]);
             }
             break;
         }

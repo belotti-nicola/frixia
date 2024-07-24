@@ -28,6 +28,7 @@ REFACTORING
     thread pool -> many Q to inject in threads Qs (dispatcher that delivers LOCAL DATA!)
     thread pool termination is by killing 
     test -> 1. refactor with common functions (CSV handling) 2. insert header_numbers as test sample
+    test::csv with free schema (load data, no DCs)
 
 CHOICES
     C vs C++
