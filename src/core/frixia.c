@@ -396,7 +396,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
             {
                 int reply_fd;
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE, &reply_fd);
+                int bytes_read = read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE, &reply_fd);
                 frixia_parse_request(buf,bytes_read);
                 frixia_event_t *fe = create_event(TCP,buf,reply_fd);
                 if (fe == NULL)
