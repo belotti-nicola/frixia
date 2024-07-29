@@ -4,7 +4,7 @@
 
 FHTTP_t frixia_parse_request(char *s,int bytesRead)
 {
-    char *method, *path;
+    const char *method, *path;
     int pret, minor_version;
     struct phr_header headers[100];
     size_t buflen = 0, prevbuflen = 0, method_len, path_len, num_headers;
@@ -28,9 +28,9 @@ FHTTP_t frixia_parse_request(char *s,int bytesRead)
     if (pret > 0)
     {
         FHTTP_t fhttp;
-        fhttp.method = method;
+        *fhttp.method = *method;
         fhttp.method_len = method_len;
-        fhttp.path = path;
+        *fhttp.path = *path;
         fhttp.path_len = path_len;
         fhttp.minor_version = minor_version;
         fhttp.num_headers = num_headers;

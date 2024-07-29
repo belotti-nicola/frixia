@@ -33,6 +33,7 @@
 #include "setup/proto_callbacks/proto_cb.h"
 #include "setup/proto_callbacks/proto_callbacks_queue.h"
 #include "protocols/frixia_supported_protocols.h"
+#include "protocols/http/frixia_http_parser.h"
 #include "callback_suite/frixia_cb_hashmap.h"
 #include "callback_suite/frixia_cb_data.h"
 #include "../../deps/picohttpparser/picohttpparser.h"
@@ -382,28 +383,14 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
             case KEY(PROGRAM, FIFO):
             {
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                int bytes_read = read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
+                if(bytes_read < 0)
+                {
+                    break;
+                }
                 frixia_event_t *fe = create_event(FIFO,buf, -1);
-                
-                //TODO COMPILE IT
-                char TMP[4096], *method, *path;
-                int pret, minor_version;
-                struct phr_header headers[100];
-                size_t buflen = 0, prevbuflen = 0, method_len, path_len, num_headers;
-                ssize_t rret;
-                
-                phr_parse_request(
-                    buf,
-                    buflen,
-                    method,
-                    &method_len,
-                    &path,
-                    &path_len,
-                    &minor_version,
-                    headers,
-                    &num_headers,
-                    prevbuflen);
-                //#################################################################
+                frixia_parse_request(buf,bytes_read);
+
                 thread_pool_add_job(tp, fe);
                 break;
             }
