@@ -308,7 +308,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
     printf("destroy_proto_frixia_callbacks_queue.\n");
 
     thread_pool_t *tp = create_thread_pool(FRIXIA_THREAD_POOL,
-                                           NULL);
+                                           POC_FUN);
 
     // start epoll
     int events_number;
@@ -397,6 +397,11 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
                 int reply_fd;
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 int bytes_read = read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE, &reply_fd);
+                if( bytes_read <= 0 )
+                {
+                    printf("read_tcp bytes_read = %d\n",bytes_read);
+                    break;
+                }
                 frixia_parse_request(buf,bytes_read);
                 frixia_event_t *fe = create_event(TCP,buf,reply_fd);
                 if (fe == NULL)

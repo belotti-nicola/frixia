@@ -99,7 +99,7 @@ int read_tcp(int filedescriptor,char buf[], int size, int* reply_fd)
         close(*reply_fd);
         return ERR_FTCP_READING;
     }
-    return FTCP_OK;
+    return read_bytes;
 }
 
 int write_tcp( int reply_fd,char buffer[],int size )

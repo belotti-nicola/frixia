@@ -29,6 +29,7 @@ REFACTORING
     thread pool termination is by killing 
     test -> 1. refactor with common functions (CSV handling) 2. insert header_numbers as test sample
     test::csv with free schema (load data, no DCs)
+    pico -> read_headers first.
 
 CHOICES
     C vs C++
@@ -36,5 +37,5 @@ CHOICES
 FUTURE DEVELOPMENT
     icon
     python integration
-    HTTPS (integrabile)
+    HTTPS (integrabile->2.0.0)
     create library
