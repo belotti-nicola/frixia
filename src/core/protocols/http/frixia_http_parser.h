@@ -5,9 +5,9 @@
 
 typedef struct FHTTP
 {
-    char              *method;
+    const char        *method;
     int                method_len;
-    char              *path;
+    const char        *path;
     int                path_len;
     int                minor_version;
     struct phr_header  headers[100];

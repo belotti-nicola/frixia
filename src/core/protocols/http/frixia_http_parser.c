@@ -2,6 +2,7 @@
 #include "../../../../deps/picohttpparser/picohttpparser.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 FHTTP_t frixia_parse_request(char *s,int bytesRead)
 {
@@ -25,13 +26,13 @@ FHTTP_t frixia_parse_request(char *s,int bytesRead)
                              &num_headers,
                              prevbuflen);
 
-    
     if (pret > 0)
     {
         FHTTP_t fhttp;
-        strncpy(*method,*fhttp.method,method_len);
+        const char *a = method;
+        fhttp.method = method;
         fhttp.method_len = method_len;
-        strncpy(*path,fhttp.path,path_len);
+        fhttp.path = path;
         fhttp.path_len = path_len;
         fhttp.minor_version = minor_version;
         fhttp.num_headers = num_headers;
