@@ -30,7 +30,7 @@ struct FrixiaFD
     enum FrixiaFDType                          filedescriptor_type;     // filedescriptor type : IF UNDEFINED IS NOT USED
     char                                       filename[MAXSTR + 1];    // fifos
     int                                        port;                    // tcp/udp
-    FRIXIA_SUPPORTED_PROTOCOL_T                p;                       // PROTOCOL
+    FRIXIA_SUPPORTED_PROTOCOL_T                protocol;                // PROTOCOL
     
 };
 

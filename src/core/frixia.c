@@ -37,6 +37,7 @@
 #include "callback_suite/frixia_cb_hashmap.h"
 #include "callback_suite/frixia_cb_data.h"
 #include "../../deps/picohttpparser/picohttpparser.h"
+#include "protocols/frixia_supported_protocols.h"
 
 // expected fds to monitor. Just a kernel hint
 // define it as positive non null
@@ -60,7 +61,24 @@ void *POC_FUN(void *arg)
         {
             continue;
         }
-        printf("THREAD: type:%d reply:%d\n", fe->type, fe->reply_fd);
+        //TODO 
+        int rep = -1;
+        char buf[1000 + 1] = {'\0'};
+        int bytes = read_tcp(fe->fd,buf,1000,&rep);
+        FHTTP_t fhttp = frixia_parse_request(buf,bytes);
+        char reply[3];
+        if(fhttp.exit_code)
+        {
+            reply[0] = 'O';
+            reply[1] = 'K';
+        }
+        else
+        { 
+            reply[0] = 'K';
+            reply[1] = 'O';
+        }
+        reply[2] = '\0';
+        write_tcp(rep,reply,2);
     }
     printf("Thread ended\n");
 }
@@ -388,35 +406,23 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
                 {
                     break;
                 }
-                frixia_event_t *fe = create_event(FIFO,buf, -1);
-                thread_pool_add_job(tp, fe);
+                frixia_event_t *fe = create_event(detected_event_fd,FIFO,NO_PROTOCOL);
                 break;
             }
             case KEY(PROGRAM, TCP):
             {
-                int reply_fd;
-                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                int bytes_read = read_tcp(detected_event_fd, buf, FRIXIA_READ_SIZE, &reply_fd);
-                if( bytes_read <= 0 )
-                {
-                    printf("read_tcp bytes_read = %d\n",bytes_read);
-                    break;
-                }
-                frixia_parse_request(buf,bytes_read);
-                frixia_event_t *fe = create_event(TCP,buf,reply_fd);
-                if (fe == NULL)
-                {
-                    printf("Breaking\n");
-                    break;
-                }
-                thread_pool_add_job(tp, (void *)fe);
+                FRIXIA_SUPPORTED_PROTOCOL_T protocol = ffd[index].protocol;
+                frixia_event_t* e = create_event(detected_event_fd,
+                                                 TCP,
+                                                 protocol);
+                thread_pool_add_job(tp, (void *)e);
                 break;
             }
             case KEY(PROGRAM, UDP):
             {
                 char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
                 read_udp(detected_event_fd, buf, FRIXIA_READ_SIZE);
-                frixia_event_t *fe = create_event(UDP, buf,0);
+                frixia_event_t *fe = create_event(detected_event_fd,UDP, NO_PROTOCOL);
                 thread_pool_add_job(tp, fe);
                 break;
             }

@@ -1,10 +1,13 @@
 #ifndef FRIXIA_HTTP_PARSER_H
 #define FRIXIA_HTTP_PARSER_H
 
+#include <stdbool.h>
+
 #include "../../../../deps/picohttpparser/picohttpparser.h"
 
 typedef struct FHTTP
 {
+    bool               exit_code;
     const char        *method;
     int                method_len;
     const char        *path;

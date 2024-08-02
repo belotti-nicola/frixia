@@ -2,18 +2,18 @@
 #define FRIXIA_FEVENT_H
 
 #include "../frixia_common.h"
+#include "../protocols/frixia_supported_protocols.h"
 
 typedef struct frixia_event
 {
-    char *data;
-    enum FrixiaFDType type;
-    int reply_fd;
-
+    int                         fd;
+    enum FrixiaFDType           fd_type;
+    FRIXIA_SUPPORTED_PROTOCOL_T protocol;
 } frixia_event_t;
 
-frixia_event_t *create_event(enum FrixiaFDType t,
-                             char *data,
-                             int reply);
+frixia_event_t *create_event(int                         fd,
+                             enum FrixiaFDType           fd_type,
+                             FRIXIA_SUPPORTED_PROTOCOL_T protocol);
 void destroy_event(frixia_event_t *e);
 
 #endif

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 FHTTP_t frixia_parse_request(char *s,int bytesRead)
 {
@@ -29,6 +30,7 @@ FHTTP_t frixia_parse_request(char *s,int bytesRead)
     if (pret > 0)
     {
         FHTTP_t fhttp;
+        fhttp.exit_code = true;
         const char *a = method;
         fhttp.method = method;
         fhttp.method_len = method_len;
@@ -44,7 +46,7 @@ FHTTP_t frixia_parse_request(char *s,int bytesRead)
     }
 
     FHTTP_t fhttp;
-    fhttp.method = "UNKNOWN";
+    fhttp.exit_code = false;
     return fhttp;
 
 }

@@ -34,15 +34,15 @@ thread_pool_t *create_thread_pool(int threads_number, void* (*dispatcher_fun)(vo
     t->threads_number = threads_number;
     return t;
 }
-void thread_pool_add_job(thread_pool_t *t, void* job)
+void thread_pool_add_job(thread_pool_t *t, void* event)
 {
-    if( job == NULL )
+    if( event == NULL )
     {
         printf("Job pointer is null.\n");
         return;
     }
     thread_safe_queue_t *tsq = t->args->q;
-    push_q(tsq,job);
+    push_q(tsq,event);
 }
 void thread_pool_join(thread_pool_t *t)
 {
