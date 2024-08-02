@@ -1,7 +1,7 @@
 #include "proto_cb.h"
 #include "proto_callbacks_queue.h"
 
-proto_frixia_callbacks_queue_t *create_proto_frixia_callbacks_queu()
+proto_frixia_callbacks_queue_t *create_proto_frixia_callbacks_queue()
 {
     thread_safe_queue_t* q = create_q();
     if(NULL == q)

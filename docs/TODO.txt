@@ -1,4 +1,8 @@
 TODO
+    1.read_http -> means parse it;
+    2.read_https -> decode it;
+    3.once correctly decoded, link callbacks.
+    
     test add / remove frixia fds -> refactor this
     POC_FUN //TODO MARKED
     frixia_zombie -> ctrl termination / kill -9

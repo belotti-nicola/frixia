@@ -65,7 +65,11 @@ void *POC_FUN(void *arg)
         int rep = -1;
         char buf[1000 + 1] = {'\0'};
         int bytes = read_tcp(fe->fd,buf,1000,&rep);
-        FHTTP_t fhttp = frixia_parse_request(buf,bytes);
+        if(bytes < 0)
+        {
+            continue;
+        }
+        FHTTP_t fhttp = frixia_parse_request(buf,bytes);       
         char reply[3];
         if(fhttp.exit_code)
         {
