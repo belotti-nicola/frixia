@@ -70,19 +70,6 @@ void *POC_FUN(void *arg)
             continue;
         }
         FHTTP_t fhttp = frixia_parse_request(buf,bytes);       
-        char reply[3];
-        if(fhttp.exit_code)
-        {
-            reply[0] = 'O';
-            reply[1] = 'K';
-        }
-        else
-        { 
-            reply[0] = 'K';
-            reply[1] = 'O';
-        }
-        reply[2] = '\0';
-        write_tcp(rep,reply,2);
     }
     printf("Thread ended\n");
 }

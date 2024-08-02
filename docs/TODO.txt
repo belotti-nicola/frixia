@@ -1,4 +1,5 @@
 TODO
+    0.read buf -> thread "main function"
     1.read_http -> means parse it;
     2.read_https -> decode it;
     3.once correctly decoded, link callbacks.
@@ -34,6 +35,7 @@ REFACTORING
     test -> 1. refactor with common functions (CSV handling) 2. insert header_numbers as test sample
     test::csv with free schema (load data, no DCs)
     pico -> read_headers first.
+    setup -> src/setup
 
 CHOICES
     C vs C++
