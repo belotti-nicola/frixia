@@ -310,7 +310,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
         cb_data = (proto_frixia_callback_t*)pop_q(proto_callbacks_q->q);
         frixia_callbacks_suite_add(cb_suite,
                                    cb_data->arg,
-                                   cb_data->fun);
+                                   cb_data->f);
         
     }
     destroy_proto_frixia_callbacks_queue(proto_callbacks_q);

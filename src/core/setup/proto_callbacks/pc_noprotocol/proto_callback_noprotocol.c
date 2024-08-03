@@ -2,14 +2,14 @@
 #include "proto_callback_noprotocol.h"
 #include <stdlib.h>
 
-proto_callback_noprotocol_t *create_protocallback_noprotocol(int port,
-                                                            char *filename,
-                                                            enum FrixiaFDType fd,
-                                                            void *(*fun)(void *),
-                                                            void *arg)
+proto_callback_noprotocol_t *create_proto_callback_noprotocol(enum FrixiaFDType fd,
+                                                              int port,
+                                                              char *filename,
+                                                              void (*fun)(void *),
+                                                              void *arg)
 {
     proto_callback_noprotocol_t *p = malloc(1 * sizeof(proto_callback_noprotocol_t));
-    if(p == NULL)
+    if (p == NULL)
     {
         return NULL;
     }
@@ -19,7 +19,7 @@ proto_callback_noprotocol_t *create_protocallback_noprotocol(int port,
     return p;
 }
 
-void destroy_protocallback_http(proto_callback_noprotocol_t *p)
+void destroy_protocallback_noprotocol(proto_callback_noprotocol_t *p)
 {
     free(p);
 }

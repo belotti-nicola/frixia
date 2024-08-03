@@ -11,4 +11,6 @@ add_library( proto_callbacks
 target_link_libraries(proto_callbacks
     fqueue
     protocols
-)
+    proto_callbacks_http
+    proto_callbacks_noprotocol
+    )

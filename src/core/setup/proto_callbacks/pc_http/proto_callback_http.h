@@ -1,18 +1,18 @@
 #include "../../proto_callbacks/proto_cb.h"
 
-typedef struct protocallback_http
+typedef struct proto_callback_http
 {
-    int         port;
+    int port;
     const char *method;
     const char *path;
     proto_frixia_callback_t pc;
 
-} protocallback_http_t;
+} proto_callback_http_t;
 
-
-protocallback_http_t *create_protocallback_http(int port,
-                                                   const char *method,
-                                                   const char *path,
-                                                   void       *(*fun)(void *),
-                                                   void       *arg);
-void destroy_protocallback_http(protocallback_http_t *pc);
+proto_callback_http_t *create_proto_callback_http(enum FrixiaFDType f,
+                                                  int port,
+                                                  const char *method,
+                                                  const char *path,
+                                                  void (*fun)(void *),
+                                                  void *arg);
+void destroy_proto_callback_http(proto_callback_http_t *pc);

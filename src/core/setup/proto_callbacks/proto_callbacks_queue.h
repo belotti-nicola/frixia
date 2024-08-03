@@ -14,17 +14,20 @@ typedef struct proto_frixia_callbacks_queue_t
 } proto_frixia_callbacks_queue_t;
 
 proto_frixia_callbacks_queue_t *create_proto_frixia_callbacks_queue();
-void                        destroy_proto_frixia_callbacks_queue(proto_frixia_callbacks_queue_t *t);
+void destroy_proto_frixia_callbacks_queue(proto_frixia_callbacks_queue_t *t);
 
-void                        add_proto_callback_no_protocol(proto_frixia_callbacks_queue_t *cbs,
-                                                           enum FrixiaFDType fd_type,
-                                                           int port,
-                                                           void (*f)(void *),
-                                                           void *arg);
-void                        add_proto_callback_http( proto_frixia_callbacks_queue_t* cbs,
-                                                enum FrixiaFDType fd_type,
-                                                int port,
-                                                void (*f)(void*),
-                                                void* arg);
+void add_proto_callback_no_protocol(proto_frixia_callbacks_queue_t *cbs,
+                                    enum FrixiaFDType fd_type,
+                                    int port,
+                                    char *filename,
+                                    void (*f)(void *),
+                                    void *arg);
+void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
+                             enum FrixiaFDType fd_type,
+                             int port,
+                             const char *method,
+                             const char *path,
+                             void (*f)(void *),
+                             void *arg);
 
 #endif

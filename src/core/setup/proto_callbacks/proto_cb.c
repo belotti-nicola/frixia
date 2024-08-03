@@ -2,19 +2,28 @@
 #include "../../protocols/frixia_supported_protocols.h"
 #include "proto_cb.h"
 
-proto_frixia_callback_t* create_proto_callbacks(void (*f)(void*),
-                                                 void* arg)
+proto_frixia_callback_t *create_proto_callback(enum FrixiaFDType read_fd,
+                                               FRIXIA_SUPPORTED_PROTOCOL_T protocol,
+                                               void (*f)(void *),
+                                               void *arg)
 {
-    proto_frixia_callback_t* cq = malloc(sizeof(proto_frixia_callback_t));
-    if(cq == NULL)
+    if( read_fd < 0 )
     {
         return NULL;
     }
-    return cq;
+    
+    proto_frixia_callback_t* cb = malloc(sizeof(proto_frixia_callback_t));
+    if(cb == NULL)
+    {
+        return NULL;
+    }
+    cb->read_fd = read_fd;
+    cb->protocol = protocol;
+    cb->f = f;
+    cb->arg = arg;
+    return cb;
 }
-void                      destroy_proto_callbacks_q(proto_frixia_callback_t* c)
+void destroy_proto_callbacks_q(proto_frixia_callback_t* c)
 {
-    free(c->arg);
-    free(c->fun);
     free(c);
 }
