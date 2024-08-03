@@ -35,7 +35,6 @@
 #include "protocols/frixia_supported_protocols.h"
 #include "protocols/http/frixia_http_parser.h"
 #include "callback_suite/frixia_cb_hashmap.h"
-#include "callback_suite/frixia_cb_data.h"
 #include "../../deps/picohttpparser/picohttpparser.h"
 #include "protocols/frixia_supported_protocols.h"
 
@@ -304,13 +303,12 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
 
 
     proto_frixia_callback_t*  cb_data;
-    frixia_callbacks_suite_t* cb_suite = create_frixia_callbacks_suite(15);
+    frixia_callbacks_suite_t* cb_suite = create_frixia_callbacks_suite(MAXIMUM_FILEDESCRIPTORS);
     while( proto_callbacks_q->q->size > 0 )
     {
         cb_data = (proto_frixia_callback_t*)pop_q(proto_callbacks_q->q);
         frixia_callbacks_suite_add(cb_suite,
-                                   cb_data->arg,
-                                   cb_data->f);
+                                   cb_data);
         
     }
     destroy_proto_frixia_callbacks_queue(proto_callbacks_q);

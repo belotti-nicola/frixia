@@ -45,3 +45,6 @@ FUTURE DEVELOPMENT
     python integration
     HTTPS (integrabile->2.0.0)
     create library
+
+CHECK
+    filedescriptor of epoll and threads
