@@ -389,29 +389,18 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
             }
             case KEY(PROGRAM, FIFO):
             {
-                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                int bytes_read = read_fifo(detected_event_fd, buf, FRIXIA_READ_SIZE);
-                if(bytes_read < 0)
-                {
-                    break;
-                }
-                frixia_event_t *fe = create_event(detected_event_fd,FIFO,NO_PROTOCOL);
+                frixia_event_t *fe = create_event(detected_event_fd);
                 break;
             }
             case KEY(PROGRAM, TCP):
             {
-                FRIXIA_SUPPORTED_PROTOCOL_T protocol = ffd[index].protocol;
-                frixia_event_t* e = create_event(detected_event_fd,
-                                                 TCP,
-                                                 protocol);
+                frixia_event_t* e = create_event(detected_event_fd);
                 thread_pool_add_job(tp, (void *)e);
                 break;
             }
             case KEY(PROGRAM, UDP):
             {
-                char buf[MAXIMUM_FRIXIA_ENGINE_COMMAND_LENGTH + 1] = {'\0'};
-                read_udp(detected_event_fd, buf, FRIXIA_READ_SIZE);
-                frixia_event_t *fe = create_event(detected_event_fd,UDP, NO_PROTOCOL);
+                frixia_event_t *fe = create_event(detected_event_fd);
                 thread_pool_add_job(tp, fe);
                 break;
             }

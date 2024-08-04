@@ -3,9 +3,7 @@
 #include "../protocols/frixia_supported_protocols.h"
 #include <stdlib.h>
 
-frixia_event_t* create_event(int                         fd,
-                             enum FrixiaFDType           type,
-                             FRIXIA_SUPPORTED_PROTOCOL_T protocol)
+frixia_event_t* create_event(int fd)
 {
     if(fd < 0)
     {
@@ -16,9 +14,7 @@ frixia_event_t* create_event(int                         fd,
     {
         return NULL;
     }
-    fe->fd        =   fd;
-    fe->fd_type   =   type;
-    fe->protocol  =   protocol;
+    fe->fd = fd;
     return fe;
 }
 

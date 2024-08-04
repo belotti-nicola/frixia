@@ -11,9 +11,7 @@ typedef struct frixia_event
     FRIXIA_SUPPORTED_PROTOCOL_T protocol;
 } frixia_event_t;
 
-frixia_event_t *create_event(int                         fd,
-                             enum FrixiaFDType           fd_type,
-                             FRIXIA_SUPPORTED_PROTOCOL_T protocol);
+frixia_event_t *create_event(int fd);
 void destroy_event(frixia_event_t *e);
 
 #endif
