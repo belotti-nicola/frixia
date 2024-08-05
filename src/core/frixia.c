@@ -60,15 +60,8 @@ void *POC_FUN(void *arg)
         {
             continue;
         }
-        //TODO 
-        int rep = -1;
-        char buf[1000 + 1] = {'\0'};
-        int bytes = read_tcp(fe->fd,buf,1000,&rep);
-        if(bytes < 0)
-        {
-            continue;
-        }
-        FHTTP_t fhttp = frixia_parse_request(buf,bytes);       
+        char message[1024]; // THIS MIGHT DIFFER BASED ON FD
+        int bytes_read = frixia_read_event_data(fe, message, c_arg);
     }
     printf("Thread ended\n");
 }
@@ -224,8 +217,8 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
     }
 }
 
-int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
-                 proto_frixia_callbacks_queue_t  *proto_callbacks_q)
+int frixia_start(proto_frixia_fd_queue_t *proto_fds_q,
+                 proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {
     struct FrixiaFD ffd[MAXIMUM_FILEDESCRIPTORS];
     const char *empty = "";
@@ -246,7 +239,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
     }
     printf("EPOLL FILE DESCRIPTOR:: %d\n", epoll_fd);
 
-    while (proto_fds_q->fd_q->size > 0 )
+    while (proto_fds_q->fd_q->size > 0)
     {
         proto_frixia_fd_t *pffd = (proto_frixia_fd_t *)pop_q(proto_fds_q->fd_q);
         int new_fd = -1;
@@ -301,20 +294,18 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
     destroy_proto_frixia_fd_queue(proto_fds_q);
     printf("destroy_proto_frixia_fd_queue.\n");
 
-
-    proto_frixia_callback_t*  cb_data;
-    frixia_callbacks_suite_t* cb_suite = create_frixia_callbacks_suite(MAXIMUM_FILEDESCRIPTORS);
-    while( proto_callbacks_q->q->size > 0 )
+    proto_frixia_callback_t *cb_data;
+    frixia_callbacks_suite_t *cb_suite = create_frixia_callbacks_suite(MAXIMUM_FILEDESCRIPTORS);
+    while (proto_callbacks_q->q->size > 0)
     {
-        cb_data = (proto_frixia_callback_t*)pop_q(proto_callbacks_q->q);
+        cb_data = (proto_frixia_callback_t *)pop_q(proto_callbacks_q->q);
         frixia_callbacks_suite_add(cb_suite,
                                    cb_data);
-        
     }
     destroy_proto_frixia_callbacks_queue(proto_callbacks_q);
     printf("destroy_proto_frixia_callbacks_queue.\n");
 
-    thread_pool_t *tp = create_thread_pool(FRIXIA_THREAD_POOL,
+    thread_pool_t *tp = create_thread_pool(FRIXIA_WORKERS,
                                            POC_FUN);
 
     // start epoll
@@ -394,7 +385,7 @@ int frixia_start(proto_frixia_fd_queue_t         *proto_fds_q,
             }
             case KEY(PROGRAM, TCP):
             {
-                frixia_event_t* e = create_event(detected_event_fd);
+                frixia_event_t *e = create_event(detected_event_fd);
                 thread_pool_add_job(tp, (void *)e);
                 break;
             }
@@ -490,4 +481,39 @@ int set_program_event(struct FrixiaFD protoffd,
                    ffds,
                    size);
     return OK;
+}
+
+int frixia_read_event_data(frixia_event_t *fe,
+                           char *message,
+                           thread_pool_data_t *c_arg)
+{
+    int fd = fe->fd;
+    if (fd < 0)
+    {
+        return -1;
+    }
+
+    int TODO_FD_TYPE = TCP;
+    int accepted_socket = -1;
+    switch(TODO_FD_TYPE )
+    {
+        case TCP:
+        {
+            int bytes_read = read_tcp(fd,message,1024,&accepted_socket);
+            return bytes_read;
+        }
+        case UDP:
+        {
+            int bytes_read = read_udp(fd,message,1024);
+            return bytes_read;
+        }
+        case FIFO:
+        {
+            int bytes_read = read_fifo(fd,message,1024);
+            return bytes_read;
+        }
+        default: 
+        {}
+    }
+
 }

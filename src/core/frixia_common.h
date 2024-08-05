@@ -10,8 +10,8 @@
 //STRING FOR PIPES
 #define MAXSTR 20
 
-
-#define FRIXIA_THREAD_POOL 5
+//THREAD POOL SIZE
+#define FRIXIA_WORKERS 5
 
 // take first argument
 // multiply by 2^8
