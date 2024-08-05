@@ -54,14 +54,15 @@ void *POC_FUN(void *arg)
     thread_pool_data_t *c_arg = (thread_pool_data_t *)arg;
     while (true)
     {
-
         frixia_event_t *fe = pop_q(c_arg->q);
         if (fe == NULL)
         {
             continue;
         }
         char message[1024]; // THIS MIGHT DIFFER BASED ON FD
-        int bytes_read = frixia_read_event_data(fe, message, c_arg);
+        int reply;
+        int bytes_read = frixia_read_event_data(fe, message, c_arg,&reply);
+        write_tcp(reply,"OK",2);
     }
     printf("Thread ended\n");
 }
@@ -485,7 +486,8 @@ int set_program_event(struct FrixiaFD protoffd,
 
 int frixia_read_event_data(frixia_event_t *fe,
                            char *message,
-                           thread_pool_data_t *c_arg)
+                           thread_pool_data_t *c_arg,
+                           int *reply)
 {
     int fd = fe->fd;
     if (fd < 0)
@@ -494,12 +496,11 @@ int frixia_read_event_data(frixia_event_t *fe,
     }
 
     int TODO_FD_TYPE = TCP;
-    int accepted_socket = -1;
     switch(TODO_FD_TYPE )
     {
         case TCP:
         {
-            int bytes_read = read_tcp(fd,message,1024,&accepted_socket);
+            int bytes_read = read_tcp(fd,message,1024,reply);
             return bytes_read;
         }
         case UDP:

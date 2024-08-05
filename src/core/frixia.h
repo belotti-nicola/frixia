@@ -23,5 +23,6 @@ int set_program_event(struct FrixiaFD fd,
 
 int frixia_read_event_data(frixia_event_t *fe,
                            char *message,
-                           thread_pool_data_t *c_arg);
+                           thread_pool_data_t *c_arg,
+                           int *r);
 
