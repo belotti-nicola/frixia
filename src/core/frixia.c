@@ -62,7 +62,19 @@ void *POC_FUN(void *arg)
         char message[1024]; // THIS MIGHT DIFFER BASED ON FD
         int reply;
         int bytes_read = frixia_read_event_data(fe, message, c_arg,&reply);
-        write_tcp(reply,"OK",2);
+        if( reply < 0 )
+        {
+            continue;
+        }
+        if( bytes_read > 0 )
+        {
+            write_tcp(reply,"OK",2);
+        }
+        else
+        {
+            write_tcp(reply,"KO",2);
+        } 
+        
     }
     printf("Thread ended\n");
 }

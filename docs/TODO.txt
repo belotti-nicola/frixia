@@ -19,6 +19,7 @@ ISSUE:
 FEAT:
     reentrancy check (multiple threads)
     logger
+    HTTP protocol utility to form responses strings
 
 FIX:
     if start fails, remove it from fd pool
