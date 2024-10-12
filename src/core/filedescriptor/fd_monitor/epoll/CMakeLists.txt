@@ -1,0 +1,5 @@
+add_library(frixia_epoll
+    fepoll.c
+    fepoll.h
+    fepoll_codes.h  
+)

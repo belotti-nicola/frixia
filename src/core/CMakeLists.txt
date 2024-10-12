@@ -13,6 +13,8 @@ add_subdirectory(fevent)
 add_subdirectory(setup)
 add_subdirectory(protocols)
 add_subdirectory(callback_suite)
+add_subdirectory(filedescriptor)
+
 
 target_link_libraries(core 
   ctl_parser
