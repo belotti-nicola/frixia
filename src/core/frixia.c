@@ -38,9 +38,6 @@
 #include "../../deps/picohttpparser/picohttpparser.h"
 #include "protocols/frixia_supported_protocols.h"
 
-// expected fds to monitor. Just a kernel hint
-// define it as positive non null
-#define FRIXIA_EPOLL_KERNEL_HINT 5
 
 // max events definition for epoll_wait
 #define FRIXIA_EPOLL_WAIT_MAX_SIZE 10
@@ -167,7 +164,7 @@ void handle_ctl_command(int epoll_fd,
         {
             int udp_index = search_udp_fd_by_port(cmd.port,
                                                   frixia_fds,
-                                                  MAXIMUM_FILEDESCRIPTORS);
+                                                  10);
             int target_fd = frixia_fds[udp_index].fd;
             stop_udp_listening(epoll_fd,
                                target_fd);
@@ -180,7 +177,7 @@ void handle_ctl_command(int epoll_fd,
         {
             int fifo_index = search_fifo_fd_by_name(cmd.argument,
                                                     frixia_fds,
-                                                    MAXIMUM_FILEDESCRIPTORS);
+                                                    10);
             int target_fd = frixia_fds[fifo_index].fd;
             stop_fifo_listening(epoll_fd, target_fd);
             remove_fd(target_fd,
@@ -225,7 +222,7 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
             printf("Parsing failed: %s", buff);
             return;
         }
-        handle_ctl_command(epoll_fd, ffdt, MAXIMUM_FILEDESCRIPTORS, *p_f, keep_looping);
+        handle_ctl_command(epoll_fd, ffdt, 10, *p_f, keep_looping);
     }
     }
 }
@@ -233,9 +230,9 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(proto_frixia_fd_queue_t *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {
-    struct FrixiaFD ffd[MAXIMUM_FILEDESCRIPTORS];
+    struct FrixiaFD ffd[10];
     const char *empty = "";
-    for (int i = 0; i < MAXIMUM_FILEDESCRIPTORS; i++)
+    for (int i = 0; i < 10; i++)
     {
         ffd[i].dispatcher = NONE;
         ffd[i].filedescriptor_type = UNDEFINED;
@@ -245,7 +242,7 @@ int frixia_start(proto_frixia_fd_queue_t *proto_fds_q,
     }
 
     // create epoll
-    int epoll_fd = epoll_create(FRIXIA_EPOLL_KERNEL_HINT);
+    int epoll_fd = epoll_create(5);
     if (epoll_fd < 0)
     {
         return ERR_EPOLL_CREATE;
@@ -302,13 +299,13 @@ int frixia_start(proto_frixia_fd_queue_t *proto_fds_q,
         tmp.port = pffd->port;
         tmp.fd = new_fd;
         strcpy(tmp.filename, pffd->filename);
-        add_fd_to_pool(tmp, ffd, MAXIMUM_FILEDESCRIPTORS);
+        add_fd_to_pool(tmp, ffd, 10);
     }
     destroy_proto_frixia_fd_queue(proto_fds_q);
     printf("destroy_proto_frixia_fd_queue.\n");
 
     proto_frixia_callback_t *cb_data;
-    frixia_callbacks_suite_t *cb_suite = create_frixia_callbacks_suite(MAXIMUM_FILEDESCRIPTORS);
+    frixia_callbacks_suite_t *cb_suite = create_frixia_callbacks_suite(10);
     while (proto_callbacks_q->q->size > 0)
     {
         cb_data = (proto_frixia_callback_t *)pop_q(proto_callbacks_q->q);
@@ -339,7 +336,7 @@ int frixia_start(proto_frixia_fd_queue_t *proto_fds_q,
         {
             // CHANGE EPOLL POLICY (ADD/DEL/MOD)
             int detected_event_fd = events[i].data.fd;
-            int index = search_fd(detected_event_fd, ffd, MAXIMUM_FILEDESCRIPTORS);
+            int index = search_fd(detected_event_fd, ffd, 10);
             printf("index %d ffd[index].fd %d dispatcher %d f_fd type %d filename '%s'\n", index,
                    ffd[index].fd,
                    ffd[index].dispatcher,

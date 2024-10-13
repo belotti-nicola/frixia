@@ -152,7 +152,7 @@ int remove_fd_by_index(int index, struct FrixiaFD ffd[], int ffd_size)
     {
         return -1;
     }
-    if(index > MAXIMUM_FILEDESCRIPTORS)
+    if(index > 10)
     {
         return -1;
     }
@@ -166,9 +166,9 @@ int set_fd_type_by_index(int fd,int index, struct FrixiaFD ffd[], int ffd_size)
         printf("set_fd_type_by_index:ffd_size < 1\n");
         return -1;
     }
-    if(ffd_size > MAXIMUM_FILEDESCRIPTORS)
+    if(ffd_size > 10)
     {
-        printf("set_fd_type_by_index:ffd_size > MAXIMUM_FILEDESCRIPTORS\n");
+        printf("set_fd_type_by_index:ffd_size > 10\n");
         return -1;
     }
     if(fd < 0)
