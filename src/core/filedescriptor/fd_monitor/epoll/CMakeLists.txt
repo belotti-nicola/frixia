@@ -3,4 +3,6 @@ add_library(frixia_epoll
     fepoll.h
     fepoll_codes.h
     fepoll_defs.h
+    epoll.c
+    epoll.h
 )
