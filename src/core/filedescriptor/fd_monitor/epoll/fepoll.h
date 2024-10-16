@@ -8,10 +8,9 @@ typedef struct FRIXIA_EPOLL
 
 } FRIXIA_EPOLL_T;
 
-FRIXIA_EPOLL_CODE_T create_frixia_epoll(FRIXIA_EPOLL_T *fepoll);
+FRIXIA_EPOLL_CODE_T create_frixia_epoll();
 FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(FRIXIA_EPOLL_T *fepoll);
 
-FRIXIA_EPOLL_CODE_T start_epoll(FRIXIA_EPOLL_T fe);
-FRIXIA_EPOLL_CODE_T stop_epoll(FRIXIA_EPOLL_T fe);
-FRIXIA_EPOLL_CODE_T add_tcp_listener(FRIXIA_EPOLL_T fe);
-FRIXIA_EPOLL_CODE_T stop_tcp_listener(FRIXIA_EPOLL_T fe);
+FRIXIA_EPOLL_CODE_T stop_fepoll(FRIXIA_EPOLL_T *fe);
+FRIXIA_EPOLL_CODE_T add_tcp_listener(FRIXIA_EPOLL_T *fe);
+FRIXIA_EPOLL_CODE_T stop_tcp_listener(FRIXIA_EPOLL_T *fe);

@@ -1,4 +1,4 @@
-add_library(epoll
+add_library(fepoll
     fepoll.c
     fepoll.h
     fepoll_codes.h

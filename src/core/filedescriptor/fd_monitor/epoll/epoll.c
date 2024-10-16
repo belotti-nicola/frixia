@@ -30,15 +30,15 @@ int stop_epoll(int fd)
     }
     return 0;
 }
-int add_fd_listener(int epollfd,
+int add_fd_listener(int epoll,
+                    int fd,
                     struct epoll_event *ev)
 {
-    if( epollfd < 0)
+    if( epoll < 0)
     {
         return -1;
     }
-    int fd = start_tcp_listening();
-    if (epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, ev) < 0)
+    if (epoll_ctl(epoll, EPOLL_CTL_ADD, fd, &ev) < 0)
     {
         return errno;
     }    
