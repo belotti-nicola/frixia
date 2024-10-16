@@ -1,7 +1,6 @@
 #include "fepoll_codes.h"
 
-int create_frixia_epoll();
-int destroy_frixia_epoll();
+#define KERNEL_HINT 5
 
 int start_epoll();
 int stop_epoll();
