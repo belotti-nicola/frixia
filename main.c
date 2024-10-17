@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "src/core/frixia.h"
-#include "src/core/setup/proto_filedescriptor/proto_fds_queue.h"
-#include "src/core/setup/proto_callbacks/proto_callbacks_queue.h"
+#include "src/setup/proto_filedescriptor/proto_fds_queue.h"
+#include "src/setup/proto_callbacks/proto_callbacks_queue.h"
 #include "src/core/protocols/http/frixia_http_parser.h"
 
 

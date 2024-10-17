@@ -1,6 +1,6 @@
 #include "fd_pool/filedescriptor_pool_defs.h"
-#include "setup/proto_filedescriptor/proto_fds_queue.h"
-#include "setup/proto_callbacks/proto_callbacks_queue.h"
+#include "../setup/proto_filedescriptor/proto_fds_queue.h"
+#include "../setup/proto_callbacks/proto_callbacks_queue.h"
 #include "protocols/frixia_supported_protocols.h"
 
 #include "fevent/frixia_event.h"
