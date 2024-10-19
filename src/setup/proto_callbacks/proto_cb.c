@@ -1,6 +1,6 @@
-#include "../../fqueue/frixia_queue.h"
-#include "../../protocols/frixia_supported_protocols.h"
-#include "../../frixia_common.h"
+#include "../../core/fqueue/frixia_queue.h"
+#include "../../core/protocols/frixia_supported_protocols.h"
+#include "../../core/frixia_common.h"
 #include <stdlib.h>
 
 #include "proto_cb.h"

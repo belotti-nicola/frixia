@@ -20,14 +20,7 @@ int start_epoll()
 int stop_epoll(int fd)
 {
     if( fd < 0)
-    {
-        return -1;
-    }
-    int ret_code = close(fd);
-    if( ret_code == -1 )
-    {
-        return errno;
-    }
+    {src/core/filedescriptor/fd_monitor/fdmonitor.c
     return 0;
 }
 int add_fd_listener(int epoll,

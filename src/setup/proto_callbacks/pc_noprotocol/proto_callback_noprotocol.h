@@ -1,5 +1,4 @@
-#include "../../proto_callbacks/proto_cb.h"
-#include "../../../frixia_common.h"
+#include "../proto_cb.h"
 
 typedef struct proto_callback_noprotocol
 {

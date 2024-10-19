@@ -1,4 +1,4 @@
-#include "../../proto_callbacks/proto_cb.h"
+#include "../proto_cb.h"
 
 typedef struct proto_callback_http
 {

@@ -232,8 +232,8 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {
-    detached_start_epoll(proto_fds_q);
-
+    frixia_detached_start_monitor(proto_fds_q);
+    
     return OK;
 }
 int frixia_stop(int epoll_fd,
