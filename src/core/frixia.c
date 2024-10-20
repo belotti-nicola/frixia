@@ -40,6 +40,7 @@
 
 #include "filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "filedescriptor/fd_monitor/detached_epoll_monitor.h"
+#include "../setup/setup_utility.h"
 
 // max events definition for epoll_wait
 #define FRIXIA_EPOLL_WAIT_MAX_SIZE 10
@@ -232,8 +233,11 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {
-    frixia_detached_start_monitor();
-    
+    setup_frixia_monitoring();
+    setup_frixia_callbacks();
+
+    //frixia_run_engine();
+
     return OK;
 }
 int frixia_stop(int epoll_fd,

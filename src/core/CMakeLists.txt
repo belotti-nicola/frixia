@@ -30,4 +30,5 @@ target_link_libraries(core
   callback_suite
   picohttpparser
   frixia_monitor
+  fsetup
 )
