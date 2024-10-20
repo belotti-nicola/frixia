@@ -2,6 +2,7 @@
 #define EPOLL_H
 
 #include "fepoll_codes.h"
+#include "sys/epoll.h"
 
 #define KERNEL_HINT 5
 

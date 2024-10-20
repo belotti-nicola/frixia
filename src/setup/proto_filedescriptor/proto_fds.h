@@ -1,8 +1,8 @@
 #ifndef PROTO_FDS_H
 #define PROTO_FDS_H
 
-#include "../../fd_pool/filedescriptor_pool_defs.h"
-#include "../../frixia_common.h"
+#include "../../core/fd_pool/filedescriptor_pool_defs.h"
+#include "../../core/frixia_common.h"
 
 typedef struct proto_frixia_fd
 {

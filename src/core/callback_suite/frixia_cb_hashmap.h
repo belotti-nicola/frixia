@@ -2,7 +2,7 @@
 #define FRIXIA_CB_HASHMAP_H
 
 #include "callback_data/callback_data_structure.h"
-#include "../setup/proto_callbacks/proto_cb.h"
+#include "../../setup/proto_callbacks/proto_cb.h"
 typedef struct frixia_callbacks_suite
 {
     int                     size;

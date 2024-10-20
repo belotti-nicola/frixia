@@ -1,9 +1,9 @@
 #include "proto_fds.h"
 #include "string.h"
 
-#include "../../protocols/frixia_supported_protocols.h"
-#include "../../fd_pool/filedescriptor_pool_defs.h"
-#include "../../fqueue/frixia_queue.h"
+#include "../../core/protocols/frixia_supported_protocols.h"
+#include "../../core/fd_pool/filedescriptor_pool_defs.h"
+#include "../../core/fqueue/frixia_queue.h"
 #include "proto_fds_queue.h"
 #include <stdlib.h>
 

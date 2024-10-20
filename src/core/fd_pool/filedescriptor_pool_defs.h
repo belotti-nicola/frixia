@@ -2,7 +2,7 @@
 #define FRIXIA_FD_FS_H
 
 #include "../protocols/frixia_supported_protocols.h"
-#include "../frixia_common.h"
+#include "../../core/frixia_common.h"
 
 enum FRIXIA_EVENT_DISPATCHER{
     NONE,       //DEFAULT

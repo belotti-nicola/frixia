@@ -20,8 +20,9 @@ int start_epoll()
 int stop_epoll(int fd)
 {
     if( fd < 0)
-    {src/core/filedescriptor/fd_monitor/fdmonitor.c
-    return 0;
+    {
+        return 0;
+    }
 }
 int add_fd_listener(int epoll,
                     int fd,
@@ -31,7 +32,7 @@ int add_fd_listener(int epoll,
     {
         return -1;
     }
-    if (epoll_ctl(epoll, EPOLL_CTL_ADD, fd, &ev) < 0)
+    if (epoll_ctl(epoll, EPOLL_CTL_ADD, fd, ev) < 0)
     {
         return errno;
     }    

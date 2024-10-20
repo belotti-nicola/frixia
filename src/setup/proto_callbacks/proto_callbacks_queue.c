@@ -1,7 +1,7 @@
 #include "proto_cb.h"
 #include "proto_callbacks_queue.h"
 
-#include "../../frixia_common.h"
+#include "../../core/frixia_common.h"
 #include "pc_http/proto_callback_http.h"
 #include "pc_noprotocol/proto_callback_noprotocol.h"
 

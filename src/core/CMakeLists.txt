@@ -29,5 +29,5 @@ target_link_libraries(core
   udp
   callback_suite
   picohttpparser
-  epoll
+  frixia_monitor
 )

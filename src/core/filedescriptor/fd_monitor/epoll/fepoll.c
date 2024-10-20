@@ -33,8 +33,8 @@ FRIXIA_EPOLL_CODE_T start_fepoll(FRIXIA_EPOLL_T *fe)
     {
         return -1;
     }
-    FRIXIA_EPOLL_T *fe;
-    create_frixia_epoll(fe);
+    FRIXIA_EPOLL_T *fe_1;
+    create_frixia_epoll(fe_1);
 
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(FRIXIA_EPOLL_T *fe)

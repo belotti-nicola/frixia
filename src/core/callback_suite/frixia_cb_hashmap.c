@@ -1,10 +1,10 @@
 #include <stdlib.h>
 
 #include "frixia_cb_hashmap.h"
-#include "../setup/proto_callbacks/proto_cb.h"
 #include "hashmap/hash_map.h"
-#include "../setup/proto_callbacks/pc_http/proto_callback_http.h"
-#include "../setup/proto_callbacks/pc_noprotocol/proto_callback_noprotocol.h"
+#include "../../setup/proto_callbacks/proto_cb.h"
+#include "../../setup/proto_callbacks/pc_http/proto_callback_http.h"
+#include "../../setup/proto_callbacks/pc_noprotocol/proto_callback_noprotocol.h"
 
 frixia_callbacks_suite_t *create_frixia_callbacks_suite(int max_size)
 {

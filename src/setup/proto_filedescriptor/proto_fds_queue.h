@@ -1,10 +1,10 @@
 #ifndef PROTO_FDS_QUEUE_H
 #define PROTO_FDS_QUEUE_H
 
-#include "../../protocols/frixia_supported_protocols.h"
-#include "../../fd_pool/filedescriptor_pool_defs.h"
-#include "../../fqueue/frixia_queue.h"
-#include "../../frixia_common.h"
+#include "../../core/protocols/frixia_supported_protocols.h"
+#include "../../core/fd_pool/filedescriptor_pool_defs.h"
+#include "../../core/fqueue/frixia_queue.h"
+#include "../../core/frixia_common.h"
 #include "proto_fds.h"
 
 typedef struct proto_fds_frixia
