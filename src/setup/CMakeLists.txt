@@ -9,4 +9,5 @@ add_library(fsetup
 target_link_libraries(fsetup
     proto_callbacks
     proto_filedescriptor
+    core
 )
