@@ -7,7 +7,6 @@ int frixia_detached_start_monitor()
 {
     pthread_t epoll_thread;
     int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, NULL);
-    pthread_join(epoll_thread,NULL);
     return 0;
 }
 int frixia_detached_stop_monitor()
