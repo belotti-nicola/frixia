@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "simple_queue.h"
 
-simple_queue_t *create_q()
+simple_queue_t *create_simple_queue()
 {
   simple_queue_t *qptr = malloc(sizeof(simple_queue_t));
   if (qptr == NULL)
@@ -25,7 +25,7 @@ void* pop_simple_queue(simple_queue_t *q)
 }
 void push_simple_queue(simple_queue_t *q, void *v)
 {
-  queue_elem_t *el = create_el(v);
+  queue_elem_t *el = create_element(v);
   if (el == NULL)
   {
     printf("push_q element is null!\n");
@@ -34,19 +34,20 @@ void push_simple_queue(simple_queue_t *q, void *v)
 
   if (q->first == NULL)
   {
+    printf("push_q first element is null, adding!\n");
     q->first = el;
     q->last = el;
     q->size += 1;
     return;
   }
-
+  printf("push_q add!\n");
   q->last->next = el;
   q->last = el;
   q->size += 1;
   return;
 }
 
-queue_elem_t *create_el(void *p)
+queue_elem_t *create_element(void *p)
 {
   queue_elem_t *ptr = malloc(sizeof(queue_elem_t));
   if (ptr == NULL)
@@ -60,7 +61,7 @@ queue_elem_t *create_el(void *p)
   return ptr;
 }
 
-void destroy_q(simple_queue_t *q)
+void destroy_simple_queue(simple_queue_t *q)
 {
   free(q);
   q = NULL;

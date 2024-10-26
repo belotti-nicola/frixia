@@ -3,18 +3,18 @@
 
 #include "../../core/protocols/frixia_supported_protocols.h"
 #include "../../core/fd_pool/filedescriptor_pool_defs.h"
-#include "../../core/fqueue/frixia_queue.h"
+#include "../../utils/datastructures/simple_queue/simple_queue.h"
 #include "proto_fds_queue.h"
 #include <stdlib.h>
 
 proto_frixia_fd_queue_t *create_proto_frixia_fd_queue()
 {
-    thread_safe_queue_t *fd_q = create_q();
+    simple_queue_t *fd_q = create_simple_queue();
     if (fd_q == NULL)
     {
         return NULL;
     }
-    proto_frixia_fd_queue_t *proto_frixia_fd = malloc(sizeof(thread_safe_queue_t));
+    proto_frixia_fd_queue_t *proto_frixia_fd = malloc(sizeof(proto_frixia_fd_queue_t));
     if (proto_frixia_fd == NULL)
     {
         return NULL;
@@ -25,9 +25,14 @@ proto_frixia_fd_queue_t *create_proto_frixia_fd_queue()
 }
 void destroy_proto_frixia_fd_queue(proto_frixia_fd_queue_t *t)
 {
-    free(t->fd_q);
+    destroy_simple_queue(t->fd_q);
     free(t);
-    printf("Destroyed.");
+    printf("Destroyed.\n");
+}
+
+bool proto_fd_is_empty(proto_frixia_fd_queue_t *q)
+{
+    return q->fd_q->size == 0;
 }
 
 void add_proto_fd(proto_frixia_fd_queue_t *pff,
@@ -38,5 +43,12 @@ void add_proto_fd(proto_frixia_fd_queue_t *pff,
                   FRIXIA_SUPPORTED_PROTOCOL_T p)
 {
     proto_frixia_fd_t* el = create_proto_frixia_fd(filedescriptor_type,filename,port,dispatcher,p);
-    push_q(pff->fd_q,(void*)el);
+    push_simple_queue(pff->fd_q,(void*)el);
+}
+
+proto_frixia_fd_t *pop_proto_fd(proto_frixia_fd_queue_t *q)
+{
+    simple_queue_t *sq = q->fd_q;
+    proto_frixia_fd_t *retVal = (proto_frixia_fd_t *)pop_simple_queue(sq);
+    return retVal;
 }

@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     proto_frixia_callbacks_queue_t *proto_callbacks_q = create_proto_frixia_callbacks_queue();
     add_proto_callback_http(proto_callbacks_q,TCP,4444,"GET","/foo",&foo,NULL);
     add_proto_callback_no_protocol(proto_callbacks_q,TCP,8888,"",&goo,NULL);
-
+    
     return frixia_start(proto_fds_q,
                         proto_callbacks_q);
 }

@@ -7,4 +7,5 @@ add_library(proto_filedescriptor
 
 target_link_libraries(proto_filedescriptor
   protocols
+  simple_queue
 )

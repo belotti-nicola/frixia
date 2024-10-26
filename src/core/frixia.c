@@ -233,10 +233,17 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {
-    setup_frixia_monitoring(proto_fds_q);
+    while(!proto_fd_is_empty(proto_fds_q))
+    {
+        proto_frixia_fd_t *el = pop_proto_fd(proto_fds_q);
+        printf("%d\n",el->filedescriptor_type);
+        
+    }
+    
+    //setup_frixia_monitoring(proto_fds_q);
     //setup_frixia_callbacks();
     //frixia_run_engine();
-
+    destroy_proto_frixia_fd_queue(proto_fds_q);
     return OK;
 }
 int frixia_stop(int epoll_fd,
