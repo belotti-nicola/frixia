@@ -1,3 +1,6 @@
+#ifndef FRIXIA_TCP_H
+#define FRIXIA_TCP_H
+
 enum FUDP_CODE {
     FUDP_OK,
     ERR_FUDP_START_SOCKET=-1,
@@ -22,3 +25,5 @@ int read_udp(int fd, char buf[], int buf_size);
 
 char* get_fudp_code_string(enum FUDP_CODE c);
 int get_fudp_code_string_from_string(char *s);
+
+#endif

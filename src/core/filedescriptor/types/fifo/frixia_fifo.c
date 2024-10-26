@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 #include "frixia_fifo.h"
-#include "../core/frixia_codes.h"
+#include "../../../../core/frixia_codes.h"
 
 int start_fifo_listening(int epoll_fd,
                          const char *name)

@@ -1,3 +1,6 @@
+#ifndef FRIXIA_TCP_H
+#define FRIXIA_TCP_H
+
 enum FTCP_CODE {
     FTCP_OK,
     ERR_FTCP_SOCKET=-1,
@@ -25,3 +28,6 @@ int write_tcp( int client_fd,char buffer[],int size);
 
 char* get_ftcp_code_string(enum FTCP_CODE);
 int get_ftcp_code_string_from_string(char *s);
+
+
+#endif

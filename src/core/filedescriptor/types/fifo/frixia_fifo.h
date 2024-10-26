@@ -1,3 +1,6 @@
+#ifndef FRIXIA_FIFO_H
+#define FRIXIA_FIFO_H
+
 enum FFIFO_CODE
 {
     OK,
@@ -16,3 +19,5 @@ int stop_fifo_listening(int epoll_fd,
 int read_fifo(int fd,
               char buf[],
               int size);
+
+#endif

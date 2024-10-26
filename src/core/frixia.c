@@ -17,9 +17,9 @@
 
 #include "frixia.h"
 #include "frixia_common.h"
-#include "../tcp/frixia_tcp.h"
-#include "../udp/frixia_udp.h"
-#include "../fifo/frixia_fifo.h"
+#include "../core/filedescriptor/types/tcp/frixia_tcp.h"
+#include "../core/filedescriptor/types/udp/frixia_udp.h"
+#include "../core/filedescriptor/types/fifo/frixia_fifo.h"
 #include "ctl_parser/control_strings_parser.h"
 #include "frixia_codes.h"
 #include "fd_pool/filedescriptor_pool_defs.h"
