@@ -8,6 +8,8 @@
 #include "../../../filedescriptor/types/tcp/frixia_tcp.h"
 #include "../../../filedescriptor/types/udp/frixia_udp.h"
 #include "../../../filedescriptor/types/fifo/frixia_fifo.h"
+#include "../../../../setup/proto_filedescriptor/proto_fds_queue.h"
+
 
 
 FRIXIA_EPOLL_T* create_frixia_epoll()
@@ -26,15 +28,40 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(FRIXIA_EPOLL_T *fepoll)
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T start_fepoll(FRIXIA_EPOLL_T *fe)
+FRIXIA_EPOLL_CODE_T start_fepoll(proto_frixia_queue_t *q)
 {
-    int rc = start_epoll();
-    if (rc < 0)
+    FRIXIA_EPOLL_T *fep = create_frixia_epoll();
+    
+    while(!proto_fd_is_empty(q))
     {
-        return -1;
+        proto_frixia_fd_t *el = pop_proto_fd(q);
+        enum FrixiaFDType   t = el->filedescriptor_type;
+        switch(t)
+        {
+            case TCP:
+            {
+                start_tcp_listening(fep->fd,el->port);
+                break;
+            }
+            case UDP:
+            {
+                start_udp_listening(fep->fd,el->port);
+                break;
+            }
+            case FIFO:
+            {
+                start_fifo_listening(fep->fd,el->filename);
+                break;
+            }
+            default:
+            {
+                printf("Unknown FD.\n");
+                break;
+            }
+
+        }
+        
     }
-    FRIXIA_EPOLL_T *fe_1;
-    create_frixia_epoll(fe_1);
 
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(FRIXIA_EPOLL_T *fe)
