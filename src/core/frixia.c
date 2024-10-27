@@ -233,16 +233,43 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {
+    FRIXIA_EPOLL_T *fepoll = create_frixia_epoll();
+    
     while(!proto_fd_is_empty(proto_fds_q))
     {
         proto_frixia_fd_t *el = pop_proto_fd(proto_fds_q);
-        printf("%d\n",el->filedescriptor_type);
+        enum FrixiaFDType   t = el->filedescriptor_type;
+        switch(t)
+        {
+            case TCP:
+            {
+                start_tcp_listening(fepoll->fd,el->port);
+                break;
+            }
+            case UDP:
+            {
+                start_udp_listening(fepoll->fd,el->port);
+                break;
+            }
+            case FIFO:
+            {
+                start_fifo_listening(fepoll->fd,el->filename);
+                break;
+            }
+            default:
+            {
+                printf("Unknown FD.\n");
+                break;
+            }
+
+        }
         
     }
     
     //setup_frixia_monitoring(proto_fds_q);
     //setup_frixia_callbacks();
     //frixia_run_engine();
+    stop_fepoll(fepoll);
     destroy_proto_frixia_fd_queue(proto_fds_q);
     return OK;
 }
