@@ -2,6 +2,7 @@
 #define SIMPLE_QUEUE_H
 
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct queue_elem 
 {
@@ -22,5 +23,6 @@ queue_elem_t*          create_element(void *el);
 void*                  pop_simple_queue(simple_queue_t* q);
 void                   push_simple_queue(simple_queue_t* q,void *el);
 void                   destroy_simple_queue(simple_queue_t *t);
+bool                   simple_queue_is_empty(simple_queue_t *t);
 
 #endif

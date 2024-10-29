@@ -66,3 +66,9 @@ void destroy_simple_queue(simple_queue_t *q)
   free(q);
   q = NULL;
 }
+
+bool simple_queue_is_empty(simple_queue_t *t)
+{
+  int queue_size = t->size;
+  return queue_size == 0;
+}

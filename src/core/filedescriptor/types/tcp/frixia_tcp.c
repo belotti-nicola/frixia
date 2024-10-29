@@ -10,14 +10,8 @@
 #include "frixia_tcp.h"
 #include "../../../../core/frixia_codes.h"
 
-int start_tcp_listening(int epoll_fd,
-                        int port)
+int start_tcp_listening(int port)
 {
-    printf("start_tcp_listening %d %d\n",epoll_fd,port);
-    if (epoll_fd <= 0)
-    {
-        return ERR_FTCP_START_MALFORMED_EPOLL_FD;
-    }
     if (port < 0 || port > 65535)
     {
         return ERR_FTCP_START_MALFORMED_PORT;
@@ -48,37 +42,13 @@ int start_tcp_listening(int epoll_fd,
     if (listen(tcp_fd, 10) == -1)
     {
         return ERR_FTCP_LISTEN;
-    }
-    struct epoll_event ev_tcp;
-    ev_tcp.events = EPOLLIN | EPOLLET;
-    ev_tcp.data.fd = tcp_fd;
-    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, tcp_fd, &ev_tcp) < 0)
-    {
-        return ERR_FTCP_START_EPOLLCTL_ADD;
-    }
-    
-    
+    }   
     return tcp_fd;
 }
 
-int stop_tcp_listening(int epoll_fd,
-                       int closing_fd)
+int stop_tcp_listening(int closing_fd)
 {
-    if(epoll_fd <= 0)
-    {
-        return ERR_FTCP_STOP_MALFORMED_EPOLL_FD;
-    }
-    if(closing_fd <= 0)
-    {
-        return ERR_FTCP_STOP_MALFORMED_TARGET_FD;
-    }
-    int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, closing_fd, NULL);
-    if (epoll_ctl_retval == -1)
-    {
-        return ERR_FTCP_STOP_EPOLLCTL_DEL;
-    }
     close(closing_fd);
-    
     return FTCP_OK;
 }
 

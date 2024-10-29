@@ -18,10 +18,8 @@ enum FTCP_CODE {
     ERR_FTCP_WRITE = -13
 };
 
-int start_tcp_listening(int epoll_fd,
-                        int port);
-int stop_tcp_listening(int epoll_fd,
-                       int fd);
+int start_tcp_listening(int port);
+int stop_tcp_listening(int fd);
 int read_tcp(int fd,char buf[], int size, int* reply_fd);
 
 int write_tcp( int client_fd,char buffer[],int size);
