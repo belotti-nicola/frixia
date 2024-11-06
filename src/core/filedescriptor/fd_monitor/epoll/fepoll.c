@@ -12,9 +12,9 @@
 
 
 
-FRIXIA_EPOLL_T* create_frixia_epoll()
+frixia_epoll_t* create_frixia_epoll()
 {
-    FRIXIA_EPOLL_T *frixia_epoll = (FRIXIA_EPOLL_T *)malloc(sizeof(FRIXIA_EPOLL_T));
+    frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));
     if(frixia_epoll == NULL)
     {
         return FERR_EPOLL_CREATE;
@@ -22,7 +22,7 @@ FRIXIA_EPOLL_T* create_frixia_epoll()
     
     return frixia_epoll;
 }
-FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(FRIXIA_EPOLL_T *fepoll)
+FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
 {
     free(fepoll);
     return FEPOLL_OK;
@@ -30,7 +30,7 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(FRIXIA_EPOLL_T *fepoll)
 
 FRIXIA_EPOLL_CODE_T start_fepoll(proto_frixia_queue_t *q)
 {
-    FRIXIA_EPOLL_T *fep = create_frixia_epoll();
+    frixia_epoll_t *fep = create_frixia_epoll();
     
     while(!proto_fd_is_empty(q))
     {
@@ -64,12 +64,12 @@ FRIXIA_EPOLL_CODE_T start_fepoll(proto_frixia_queue_t *q)
     }
 
 }
-FRIXIA_EPOLL_CODE_T stop_fepoll(FRIXIA_EPOLL_T *fe)
+FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 {
     stop_epoll(fe->fd);
     destroy_frixia_epoll(fe);
 }
-FRIXIA_EPOLL_CODE_T add_tcp_listener(FRIXIA_EPOLL_T *fe,int port)
+FRIXIA_EPOLL_CODE_T add_tcp_listener(frixia_epoll_t *fe,int port)
 {
     int epoll_fd = fe->fd;
     int rc = start_tcp_listening(epoll_fd,port);
@@ -80,11 +80,11 @@ FRIXIA_EPOLL_CODE_T add_tcp_listener(FRIXIA_EPOLL_T *fe,int port)
     
     return FEPOLL_OK;
 }
-FRIXIA_EPOLL_CODE_T stop_tcp_listener(FRIXIA_EPOLL_T *fe,int port)
+FRIXIA_EPOLL_CODE_T stop_tcp_listener(frixia_epoll_t *fe,int port)
 {
     return FEPOLL_OK;
 }
-FRIXIA_EPOLL_CODE_T add_udp_listener(FRIXIA_EPOLL_T *fe,int port)
+FRIXIA_EPOLL_CODE_T add_udp_listener(frixia_epoll_t *fe,int port)
 {
     int epoll_fd = fe->fd;
     int rc = start_udp_listening(epoll_fd,port);
@@ -95,7 +95,7 @@ FRIXIA_EPOLL_CODE_T add_udp_listener(FRIXIA_EPOLL_T *fe,int port)
     
     return FEPOLL_OK;
 }
-FRIXIA_EPOLL_CODE_T stop_udp_listener(FRIXIA_EPOLL_T *fe,int port)
+FRIXIA_EPOLL_CODE_T stop_udp_listener(frixia_epoll_t *fe,int port)
 {
     return FEPOLL_OK;
 }
