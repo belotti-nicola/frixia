@@ -79,129 +79,7 @@ void *POC_FUN(void *arg)
     printf("Thread ended\n");
 }
 
-void handle_ctl_command(int epoll_fd,
-                        struct FrixiaFD frixia_fds[],
-                        int frixia_fds_size,
-                        struct FrixiaCTL cmd,
-                        bool *keep_looping)
-{
-    printf("Executing CTL command:%d(%s)\n", cmd.c, get_command_string(cmd.c));
-    switch (cmd.c)
-    {
-    case START:
-    {
-        switch (cmd.type)
-        {
-        case TCP:
-        {
-            int f_tcp = start_tcp_listening(epoll_fd,
-                                            cmd.port);
-            if (f_tcp < 0)
-            {
-                printf("Error starting TCP on port %d (code:%d,%s, errno:%d)\n", cmd.port, f_tcp, get_ftcp_code_string(f_tcp), errno);
-                break;
-            }
-            struct FrixiaFD f;
-            f.fd = f_tcp;
-            f.filedescriptor_type = TCP;
-            f.port = cmd.port;
-            f.dispatcher = PROGRAM;
-            strcpy(f.filename, "");
-            add_fd_to_pool(f, frixia_fds, frixia_fds_size);
-            break;
-        }
-        case UDP:
-        {
-            int f_udp = start_udp_listening(epoll_fd,
-                                            cmd.port);
-            if (f_udp < 0)
-            {
-                printf("Error starting UDP on port %d (error: %d)\n", cmd.port, f_udp);
-            }
-            struct FrixiaFD f;
-            f.fd = f_udp;
-            f.filedescriptor_type = UDP;
-            f.port = cmd.port;
-            strcpy(f.filename, "");
-            add_fd_to_pool(f, frixia_fds, frixia_fds_size);
-            break;
-        }
-        case FIFO:
-        {
-            int f_fifo = start_fifo_listening(epoll_fd, cmd.argument);
-            printf("%d->%s\n", cmd.port, cmd.argument);
-            struct FrixiaFD f;
-            f.fd = f_fifo;
-            f.filedescriptor_type = FIFO;
-            f.port = cmd.port;
-            strcpy(f.filename, cmd.argument);
-            add_fd_to_pool(f, frixia_fds, frixia_fds_size);
-            break;
-        }
-        }
-        break;
-    }
-    case STOP:
-    {
-        switch (cmd.type)
-        {
-        case TCP:
-        {
-            int tcp_index = search_tcp_fd_by_port(cmd.port,
-                                                  frixia_fds,
-                                                  frixia_fds_size);
-            if (tcp_index < 0)
-            {
-                printf("NO TCP ON PORT %d\n", cmd.port);
-                break;
-            }
-            int target_fd = frixia_fds[tcp_index].fd;
-            int ret = stop_tcp_listening(epoll_fd,
-                                         target_fd);
-            remove_fd(target_fd,
-                      frixia_fds,
-                      frixia_fds_size);
-            break;
-        }
-        case UDP:
-        {
-            int udp_index = search_udp_fd_by_port(cmd.port,
-                                                  frixia_fds,
-                                                  10);
-            int target_fd = frixia_fds[udp_index].fd;
-            stop_udp_listening(epoll_fd,
-                               target_fd);
-            remove_fd(target_fd,
-                      frixia_fds,
-                      frixia_fds_size);
-            break;
-        }
-        case FIFO:
-        {
-            int fifo_index = search_fifo_fd_by_name(cmd.argument,
-                                                    frixia_fds,
-                                                    10);
-            int target_fd = frixia_fds[fifo_index].fd;
-            stop_fifo_listening(epoll_fd, target_fd);
-            remove_fd(target_fd,
-                      frixia_fds,
-                      frixia_fds_size);
-            break;
-        }
-        }
-        break;
-    }
-    case STOPALL:
-    {
-        frixia_stop(epoll_fd,
-                    frixia_fds,
-                    frixia_fds_size);
-        *keep_looping = false;
-        break;
-    }
-    }
-}
-
+/*
 void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
                            char buff[],
                            int epoll_fd,
@@ -229,7 +107,7 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
     }
     }
 }
-
+*/
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {   
@@ -252,21 +130,21 @@ int frixia_stop(int epoll_fd,
         switch (type)
         {
         case TCP:
-            stop_tcp_listening(epoll_fd, target_fd);
+            stop_tcp_listening(target_fd);
             remove_fd(target_fd,
                       f,
                       max_size);
             printf("%d: frixia tcp file descriptor stopped.\n", i);
             break;
         case UDP:
-            stop_udp_listening(epoll_fd, target_fd);
+            stop_udp_listening(target_fd);
             remove_fd(target_fd,
                       f,
                       max_size);
             printf("%d: frixia udp file descriptor stopped.\n", i);
             break;
         case FIFO:
-            stop_fifo_listening(epoll_fd, target_fd);
+            stop_fifo_listening(target_fd);
             remove_fd(target_fd,
                       f,
                       max_size);

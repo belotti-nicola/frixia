@@ -1,9 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "fepoll.h"
-#include "fepoll_codes.h"
-#include "fepoll_defs.h"
 #include "epoll.h"
 #include "../../../filedescriptor/types/tcp/frixia_tcp.h"
 #include "../../../filedescriptor/types/udp/frixia_udp.h"
@@ -11,15 +8,13 @@
 #include "../../../../setup/proto_filedescriptor/proto_fds_queue.h"
 
 
+#include "fepoll.h"
+#include "fepoll_codes.h"
+#include "fepoll_defs.h"
 
 frixia_epoll_t* create_frixia_epoll()
 {
-    frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));
-    if(frixia_epoll == NULL)
-    {
-        return FERR_EPOLL_CREATE;
-    }
-    
+    frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));   
     return frixia_epoll;
 }
 FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
@@ -28,41 +23,9 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T start_fepoll(proto_frixia_queue_t *q)
+FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fe)
 {
-    frixia_epoll_t *fep = create_frixia_epoll();
-    
-    while(!proto_fd_is_empty(q))
-    {
-        proto_frixia_fd_t *el = pop_proto_fd(q);
-        enum FrixiaFDType   t = el->filedescriptor_type;
-        switch(t)
-        {
-            case TCP:
-            {
-                start_tcp_listening(fep->fd,el->port);
-                break;
-            }
-            case UDP:
-            {
-                start_udp_listening(fep->fd,el->port);
-                break;
-            }
-            case FIFO:
-            {
-                start_fifo_listening(fep->fd,el->filename);
-                break;
-            }
-            default:
-            {
-                printf("Unknown FD.\n");
-                break;
-            }
-
-        }
-        
-    }
-
+    return OK;
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 {
@@ -72,7 +35,7 @@ FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 FRIXIA_EPOLL_CODE_T add_tcp_listener(frixia_epoll_t *fe,int port)
 {
     int epoll_fd = fe->fd;
-    int rc = start_tcp_listening(epoll_fd,port);
+    int rc = start_tcp_listening(port);
     if(rc < 0)
     {
         return rc;
@@ -87,7 +50,7 @@ FRIXIA_EPOLL_CODE_T stop_tcp_listener(frixia_epoll_t *fe,int port)
 FRIXIA_EPOLL_CODE_T add_udp_listener(frixia_epoll_t *fe,int port)
 {
     int epoll_fd = fe->fd;
-    int rc = start_udp_listening(epoll_fd,port);
+    int rc = start_udp_listening(epoll_fd);
     if(rc < 0)
     {
         return rc;

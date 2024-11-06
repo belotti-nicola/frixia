@@ -1,5 +1,5 @@
-#ifndef FRIXIA_TCP_H
-#define FRIXIA_TCP_H
+#ifndef FRIXIA_UDP_H
+#define FRIXIA_UDP_H
 
 enum FUDP_CODE {
     FUDP_OK,
@@ -15,11 +15,9 @@ enum FUDP_CODE {
     ERR_FUDP_STOP_MALFORMED_EPOLL_FD = -11,
     ERR_FUDP_STOP_MALFORMED_TARGET_FD = -12
 };
-int start_udp_listening(int epoll_fd,
-                        int port);
+int start_udp_listening(int port);
 
-int stop_udp_listening(int epoll_fd,
-                       int target_fd);
+int stop_udp_listening(int target_fd);
 
 int read_udp(int fd, char buf[], int buf_size);
 

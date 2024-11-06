@@ -10,13 +10,8 @@
 
 #include "frixia_udp.h"
 
-int start_udp_listening(int epoll_fd,
-                        int port)
+int start_udp_listening(int port)
 {
-    if (epoll_fd <= 0)
-    {
-        return ERR_FUDP_START_MALFORMED_EPOLL_FD;
-    }
     if (port < 0 || port > 65535)
     {
         return ERR_FUDP_START_MALFORMED_PORT;
@@ -38,36 +33,15 @@ int start_udp_listening(int epoll_fd,
     {
         return ERR_FUDP_START_BIND;
     }
-
-    struct epoll_event ev_udp;
-    ev_udp.events = EPOLLIN | EPOLLET;
-    ev_udp.data.fd = udp_fd;
-    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, udp_fd, &ev_udp) < 0)
-    {
-        return ERR_FUDP_START_EPOLL_ADD;
-    }
-
     return udp_fd;
 }
-int stop_udp_listening(int epoll_fd, int closing_fd)
+int stop_udp_listening(int closing_fd)
 {
-    if (epoll_fd <= 0)
-    {
-        return ERR_FUDP_STOP_MALFORMED_EPOLL_FD;
-    }
     if (closing_fd <= 0)
     {
         return ERR_FUDP_STOP_MALFORMED_TARGET_FD;
     }
-
-    if (closing_fd > 0)
-    {
-        int epoll_ctl_retval = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, closing_fd, NULL);
-        if (epoll_ctl_retval == -1)
-        {
-            return ERR_FUDP_STOP_EPOLLCTL_DEL;
-        }
-    }
+    close(closing_fd);
     return FUDP_OK;
 }
 
