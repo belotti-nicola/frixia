@@ -91,13 +91,9 @@ list_elem_t *previous(simple_list_t *l,int target_i)
   }
   list_elem_t *retVal;
   list_elem_t *current = l->first;
-  for(int i=0;i<target_i;i++)
-  {
-    retVal  = current;
-    current = current->next;
-  }
 
-  return retVal;
+  return get_item(l,target_i+1)
+;
 }
 list_elem_t *next(simple_list_t *l,int target_i)
 {
@@ -106,10 +102,7 @@ list_elem_t *next(simple_list_t *l,int target_i)
     return NULL;
   }
   list_elem_t *current;
-  for(int i=0;i<target_i;i++)
-  {
-    current = get_item(l,i);
-  }
-  list_elem_t *retVal = current->previous;
-  return retVal;
+  
+  current = get_item(l,target_i);
+  return current->next;
 }
