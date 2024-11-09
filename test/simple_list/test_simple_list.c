@@ -27,29 +27,6 @@ int main()
     }
 
 
-    list_elem_t *e;
-    e = get_item(l,0);
-    int* get_item_v0 = (int*)e->val;
-    if(*get_item_v0 != 1)
-    {
-        printf("ERROR:%d instead of 1\n",*get_item_v0);
-        return 1;
-    }
-    e = get_item(l,1);
-    int* get_item_v1 = (int*)e->val;
-    if(*get_item_v1 != 2)
-    {
-        printf("ERROR:%d instead of 2\n",*get_item_v1);
-        return 1;
-    }
-
-    e = get_item(l,2);
-    int* get_item_v2 = (int*)e->val;
-    if(*get_item_v2 != 3)
-    {
-        printf("ERROR:%d instead of 3\n",*get_item_v2);
-        return 1;
-    }
-    destroy_simple_list(l);
+    //destroy_simple_list(l);
     return 0;
 }   

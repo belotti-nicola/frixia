@@ -10,7 +10,7 @@ typedef struct simple_list_elem
 } simple_list_elem_t;
 
 simple_list_elem_t *create_simple_list_elem(void *v);
-void                destroy_simple_list_elem(simple_list_t *l);
+void                destroy_simple_list_elem(simple_list_elem_t *l);
 
 
 #endif

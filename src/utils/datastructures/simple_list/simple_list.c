@@ -1,5 +1,10 @@
 #include "simple_list.h"
 
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+
 simple_list_t *create_simple_list()
 {
   simple_list_t *ptr = malloc(sizeof(simple_list_t));
@@ -18,9 +23,9 @@ void destroy_simple_list(simple_list_t *l)
 {
   free(l);
 }
-list_elem_t *create_list_element(void *v)
+simple_list_elem_t *create_list_element(void *v)
 {
-  list_elem_t *ptr = malloc(sizeof(list_elem_t));
+  simple_list_elem_t *ptr = malloc(sizeof(simple_list_elem_t));
   if(ptr == NULL)
   {
     printf("list_elem_t* pointer is null!\n");
@@ -37,72 +42,28 @@ void remove_item(simple_list_t *l,int index)
 {}
 void insert_item(simple_list_t *l,int index)
 {}
-void add_item(simple_list_t *l,void *el)
+
+void add_item(simple_list_t *l,void *p)
 {
-  list_elem_t *new_el = create_list_element(el);
-  if(new_el == NULL)
+  simple_list_elem_t *el = create_simple_list_elem(p);
+  if(el == NULL)
   {
-    printf("ERROR ADD_ITEM");
+    printf("ERROR ADDING ITEM");
     return;
   }
-  if(l->size == 0)
+
+  if(l->first == NULL)
   {
-    l->first = new_el;
-    l->last  = new_el;
-    l->size  = 1;
+    l->first =  el;
+    l->last  =  el;
+    l->size  =+ 1;
     return;
   }
-  l->last->next    = new_el;
-  new_el->previous = l->last;
-  l->last = new_el;
-  l->size++;
+
+  simple_list_elem_t *old_last = l->last;
+  old_last->next               = el;
+  l->last                      = el;
+  l->size                     += 1;
   return;
 }
-list_elem_t *get_item(simple_list_t *l,int index)
-{
-  if(index > l->size)
-  {
-    return NULL;
-  }
-  if(index == 0)
-  {
-    return l->first;
-  }
-  if(index == l->size)
-  {
-    return l->last;
-  }
 
-  list_elem_t *current = l->first;
-  for(int i=0;i<index;i++)
-  {
-    current = current->next;
-  }
-  
-  list_elem_t *retVal;
-  retVal = current;
-  return retVal;
-}
-list_elem_t *previous(simple_list_t *l,int target_i)
-{
-  if(target_i <= 0)
-  {
-    return NULL;
-  }
-  list_elem_t *retVal;
-  list_elem_t *current = l->first;
-
-  return get_item(l,target_i+1)
-;
-}
-list_elem_t *next(simple_list_t *l,int target_i)
-{
-  if(target_i > l->size)
-  {
-    return NULL;
-  }
-  list_elem_t *current;
-  
-  current = get_item(l,target_i);
-  return current->next;
-}
