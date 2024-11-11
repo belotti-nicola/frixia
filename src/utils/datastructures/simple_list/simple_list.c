@@ -62,6 +62,7 @@ void add_item(simple_list_t *l,void *p)
 
   simple_list_elem_t *old_last = l->last;
   old_last->next               = el;
+  el->previous                 = old_last;
   l->last                      = el;
   l->size                     += 1;
   return;
