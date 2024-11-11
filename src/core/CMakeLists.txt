@@ -31,4 +31,5 @@ target_link_libraries(core
   picohttpparser
   frixia_monitor
   fsetup
+  simple_list
 )

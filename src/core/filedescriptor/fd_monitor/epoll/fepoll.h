@@ -1,14 +1,16 @@
 #ifndef FRIXIA_EPOLL_H
 #define FRIXIA_EPOLL_H
 
+#include "../../../../../src/utils/datastructures/simple_list/simple_list.h"
 
 #include "fepoll_codes.h"
 
 typedef struct frixia_epoll 
 {
-    int fd;
-    int maximum_filedescriptors;
-    int filedescriptors_number;
+    int                  fd;
+    int                  maximum_filedescriptors;
+    int                  filedescriptors_number;
+    simple_list_elem_t  *fd_pool;
 
 } frixia_epoll_t;
 

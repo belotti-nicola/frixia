@@ -24,6 +24,7 @@ int main()
             return 1;
         }
     }
+    destroy_simple_list(l);
 
     return 0;
 }   

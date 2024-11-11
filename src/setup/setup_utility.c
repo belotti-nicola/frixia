@@ -56,5 +56,4 @@ int setup_frixia_monitoring(frixia_epoll_t *fepoll,
         printf("FD::%d\n",fd);
     }
     return OK;
-    //frixia_detached_startx_monitor(q);
 }

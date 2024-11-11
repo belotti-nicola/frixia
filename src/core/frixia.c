@@ -117,9 +117,6 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     //frixia_run_engine();
     //stop_fepoll(fepoll);
     destroy_proto_frixia_fd_queue(proto_fds_q);
-
-
-
     return OK;
 }
 int frixia_stop(int epoll_fd,

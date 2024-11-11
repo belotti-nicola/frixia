@@ -6,3 +6,6 @@ add_library(fepoll
     epoll.c
     epoll.h
 )
+
+target_link_libraries(fepoll
+    simple_list)
