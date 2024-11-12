@@ -39,16 +39,9 @@ FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 }
 FRIXIA_EPOLL_CODE_T add_tcp_listener(frixia_epoll_t *fe,int filedescriptor)
 {
-    simple_list_t *l = fe->fd_pool;
-    struct FrixiaFD *ffd;
-    ffd->fd = filedescriptor;
-    ffd->dispatcher = NONE;
-    ffd->filedescriptor_type;
-    ffd->filename[MAXSTR + 1];
-    ffd->port = 9000;
-    ffd->protocol = 19191919;            
-    add_item(l,&filedescriptor);
-    return FEPOLL_OK;
+    frixia_fepoll_data_t *d = create_fepoll_data(filedescriptor);
+    add_item(fe->fd_pool,d);
+    return rc;
 }
 FRIXIA_EPOLL_CODE_T stop_tcp_listener(frixia_epoll_t *fe,int filedescriptor)
 {
