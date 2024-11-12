@@ -40,7 +40,7 @@ FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 FRIXIA_EPOLL_CODE_T add_tcp_listener(frixia_epoll_t *fe,int filedescriptor)
 {
     frixia_fepoll_data_t *d = create_fepoll_data(filedescriptor);
-    add_item(fe->fd_pool,d);
+    int rc = add_item(fe->fd_pool,d);
     return rc;
 }
 FRIXIA_EPOLL_CODE_T stop_tcp_listener(frixia_epoll_t *fe,int filedescriptor)

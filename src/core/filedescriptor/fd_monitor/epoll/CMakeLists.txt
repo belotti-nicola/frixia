@@ -5,6 +5,10 @@ add_library(fepoll
     fepoll_defs.h
     epoll.c
     epoll.h
+    fepoll_pool.c
+    fepoll_pool.h
+    fepoll_pool_data.c
+    fepoll_pool_data.h
 )
 
 target_link_libraries(fepoll
