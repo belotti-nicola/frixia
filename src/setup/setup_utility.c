@@ -5,11 +5,13 @@
 #include "../core/filedescriptor/types/tcp/frixia_tcp.h"
 #include "../core/filedescriptor/types/udp/frixia_udp.h"
 #include "../core/filedescriptor/types/fifo/frixia_fifo.h"
+#include "../core/filedescriptor/fd_monitor/epoll/fepoll.h"
 
 #include "setup_utility.h"
 
-int setup_frixia_monitoring(frixia_epoll_t *fepoll,
-                            proto_frixia_fd_queue_t *pffd_q)
+int start_filedescriptors_monitoring(frixia_epoll_t            *fepoll,
+                                     proto_frixia_fd_queue_t   *pffd_q,
+                                     simple_list_t             *active_fds)
 {    
     int fd = -1;
     simple_queue_t *q = pffd_q->fd_q;
@@ -27,7 +29,6 @@ int setup_frixia_monitoring(frixia_epoll_t *fepoll,
                     printf("ERROR: ERRNO::%d",errno);
                     continue;
                 }
-                add_tcp_listener(fepoll,fd);
                 break;
             }
             case UDP:
@@ -38,7 +39,6 @@ int setup_frixia_monitoring(frixia_epoll_t *fepoll,
                     printf("ERROR: ERRNO::%d",errno);
                     continue;
                 }
-                add_udp_listener(fepoll,fd);
                 break;
             }
             case FIFO:
@@ -49,11 +49,11 @@ int setup_frixia_monitoring(frixia_epoll_t *fepoll,
                     printf("ERROR: ERRNO::%d",errno);
                     continue;
                 }
-                add_fifo_listener(fepoll,fd);
                 break;
             }
         }
-        printf("FD::%d\n",fd);
+        add_item(active_fds,fd);
     }
+    
     return OK;
 }

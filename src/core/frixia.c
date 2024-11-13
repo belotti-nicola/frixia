@@ -111,10 +111,22 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {   
+    simple_list_t *fds = create_simple_list();
     frixia_epoll_t *fepoll = create_frixia_epoll();
-    setup_frixia_monitoring(fepoll,proto_fds_q);
+    
+    start_filedescriptors_monitoring(fepoll,proto_fds_q,fds);
+    simple_list_elem_t *curr = fds->first;
+    while(curr != NULL)
+    {
+        int add_this = (int)curr->val;
+        insert_into_pool(fepoll,add_this);
+        curr = curr->next;
+    }
+    destroy_simple_list(fds);
+    
     //setup_frixia_callbacks();
-    //frixia_run_engine();
+    
+    frixia_detached_start_monitor(fepoll);
     //stop_fepoll(fepoll);
     destroy_proto_frixia_fd_queue(proto_fds_q);
     return OK;

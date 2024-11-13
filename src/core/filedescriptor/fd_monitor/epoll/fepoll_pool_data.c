@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "../../../../utils/datastructures/simple_list/simple_list.h"
+
 #include "fepoll_pool_data.h"
 
 fepoll_data_t *create_fepoll_data(int fd)
@@ -9,10 +14,10 @@ fepoll_data_t *create_fepoll_data(int fd)
         return NULL;
     }
     p->fd = fd;
-    return fd;
+    return p;
 }
 
-void destroy_fepoll_data(fepoll_fd_t *p)
+void destroy_fepoll_data(fepoll_data_t *p)
 {
     free(p);
 }

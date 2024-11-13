@@ -12,24 +12,38 @@
 #include "fepoll.h"
 #include "fepoll_codes.h"
 #include "fepoll_defs.h"
+#include "fepoll_pool.h"
+#include "fepoll_pool.h"
 
 frixia_epoll_t* create_frixia_epoll()
 {
+    fepoll_pool_t *l = create_fepoll_pool();
+    if( l == NULL)
+    {
+        printf("ERROR frixia_epoll_t :: fepoll_pool_t IS NULL, RETURNING NULL OBJECT\n");
+        return NULL;
+    }
+    
     frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));
-    simple_list_elem_t *l = create_simple_list();
-
     frixia_epoll->fd_pool = l;   
     return frixia_epoll;
 }
 FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
 {
-    destroy_simple_list(fepoll->fd_pool);
+    destroy_fepoll_pool(fepoll->fd_pool);
     free(fepoll);
     return FEPOLL_OK;
 }
 
 FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fe)
 {
+    simple_list_t    *pool = fe->fd_pool;
+    simple_list_el_t *curr = pool->first;
+    while(curr != NULL)
+    {
+        start_monitoring_fd();
+    }
+    
     return OK;
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
@@ -37,25 +51,7 @@ FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
     stop_epoll(fe->fd);
     destroy_frixia_epoll(fe);
 }
-FRIXIA_EPOLL_CODE_T add_tcp_listener(frixia_epoll_t *fe,int filedescriptor)
-{
-    frixia_fepoll_data_t *d = create_fepoll_data(filedescriptor);
-    int rc = add_item(fe->fd_pool,d);
-    return rc;
-}
-FRIXIA_EPOLL_CODE_T stop_tcp_listener(frixia_epoll_t *fe,int filedescriptor)
-{
-    return FEPOLL_OK;
-}
-FRIXIA_EPOLL_CODE_T add_udp_listener(frixia_epoll_t *fe,int filedescriptor)
-{
-    return FEPOLL_OK;
-}
-FRIXIA_EPOLL_CODE_T stop_udp_listener(frixia_epoll_t *fe,int filedescriptor)
-{
-    return FEPOLL_OK;
-}
-FRIXIA_EPOLL_CODE_T add_fifo_listener(frixia_epoll_t *fe,int filedescriptor)
+FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
 {
     return FEPOLL_OK;
 }

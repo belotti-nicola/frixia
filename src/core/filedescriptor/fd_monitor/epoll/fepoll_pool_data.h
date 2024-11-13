@@ -9,6 +9,6 @@ typedef struct fepoll_data
 
 
 fepoll_data_t *create_fepoll_data(int fd);
-void           destroy_fepoll_data(fepoll_fd_t *p);
+void           destroy_fepoll_data(fepoll_data_t *p);
 
 #endif

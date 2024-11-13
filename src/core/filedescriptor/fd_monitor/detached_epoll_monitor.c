@@ -5,11 +5,11 @@
 #include "../../../setup/proto_filedescriptor/proto_fds_queue.h"
 
 
-int frixia_detached_start_monitor(proto_frixia_fd_queue_t *q)
+int frixia_detached_start_monitor(frixia_epoll_t *fe)
 {   
     
     pthread_t epoll_thread;
-    int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, q);
+    int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, fe);
     return 0;
 }
 int frixia_detached_stop_monitor()
