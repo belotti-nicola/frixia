@@ -52,7 +52,7 @@ int start_filedescriptors_monitoring(frixia_epoll_t            *fepoll,
                 break;
             }
         }
-        add_item(active_fds,fd);
+        add_item(active_fds,&fd);
     }
     
     return OK;

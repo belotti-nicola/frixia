@@ -118,8 +118,8 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     simple_list_elem_t *curr = fds->first;
     while(curr != NULL)
     {
-        int add_this = (int)curr->val;
-        insert_into_pool(fepoll,add_this);
+        int *add_this = (int*)curr->val;
+        insert_into_pool(fepoll,*add_this);
         curr = curr->next;
     }
     destroy_simple_list(fds);

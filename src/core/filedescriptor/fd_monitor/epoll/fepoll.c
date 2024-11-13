@@ -37,11 +37,11 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
 
 FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fe)
 {
-    simple_list_t    *pool = fe->fd_pool;
-    simple_list_el_t *curr = pool->first;
+    fepoll_pool_t      *pool = fe->fd_pool;
+    simple_list_elem_t *curr = pool->l->first;
     while(curr != NULL)
     {
-        start_monitoring_fd();
+        //start_monitoring_fd();
     }
     
     return OK;
