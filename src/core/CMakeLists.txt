@@ -13,6 +13,7 @@ add_subdirectory(fevent)
 add_subdirectory(protocols)
 add_subdirectory(callback_suite)
 add_subdirectory(filedescriptor)
+add_subdirectory(fsuite)
 
 
 target_link_libraries(core 
@@ -32,4 +33,5 @@ target_link_libraries(core
   frixia_monitor
   fsetup
   simple_list
+  fsuite
 )

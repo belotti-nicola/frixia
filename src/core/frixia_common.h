@@ -15,6 +15,8 @@
 // add b
 #define KEY(a, b) ((a << 8 | b))
 
+#define MAXIMUM_FD_NUMBER 10
+
 enum FrixiaFDType
 {
     UNDEFINED,
@@ -24,7 +26,7 @@ enum FrixiaFDType
     STD_ERR,
     TCP,
     UDP,
-    FIFO
+    FIFO,
 
 };
 

@@ -42,6 +42,8 @@
 #include "filedescriptor/fd_monitor/detached_epoll_monitor.h"
 #include "../setup/setup_utility.h"
 
+#include "fsuite/frixia_suite.h"
+
 // max events definition for epoll_wait
 #define FRIXIA_EPOLL_WAIT_MAX_SIZE 10
 
@@ -111,6 +113,18 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {   
+    frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
+    proto_frixia_fd *p_fd = pop_proto_fd(proto_fds_q);
+    while(proto_fd != NULL)
+    {
+        
+        frixia_suite_insert_filedescriptor(fsuite,
+            p_fd->filedescriptor_type,
+            p_fd->port,
+            p_fd->filename,
+        )
+    }
+    /*
     simple_list_t *fds = create_simple_list();
     frixia_epoll_t *fepoll = create_frixia_epoll();
     
@@ -123,12 +137,13 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
         curr = curr->next;
     }
     destroy_simple_list(fds);
-    
+    */
+
     //setup_frixia_callbacks();
     
-    frixia_detached_start_monitor(fepoll);
+    //frixia_detached_start_monitor(fepoll);
     //stop_fepoll(fepoll);
-    destroy_proto_frixia_fd_queue(proto_fds_q);
+    //destroy_proto_frixia_fd_queue(proto_fds_q);
     return OK;
 }
 int frixia_stop(int epoll_fd,
