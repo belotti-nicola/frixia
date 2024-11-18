@@ -16,6 +16,10 @@ simple_queue_t *create_simple_queue()
 }
 void* pop_simple_queue(simple_queue_t *q)
 {
+  if(q->size == 0)
+  {
+    return NULL;
+  }
   queue_elem_t *pop_this = q->first;
   q->first = pop_this->next;
   void* retVal = pop_this->val;
