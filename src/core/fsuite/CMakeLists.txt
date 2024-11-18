@@ -7,4 +7,5 @@ add_library(fsuite
 
 target_link_libraries(fsuite
   simple_list
+  fstarter
 )

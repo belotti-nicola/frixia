@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "frixia_suite.h"
+#include "../filedescriptor/starter/frixia_starter.h"
 
 
 frixia_suite_t *create_frixia_suite(int max_dimension)
@@ -27,7 +28,7 @@ frixia_suite_t *create_frixia_suite(int max_dimension)
 }
 
 void frixia_suite_insert_filedescriptor(frixia_suite_t *s,
-                                        enum FrixiaFDType t,
+                                        enum FrixiaFDType fd_type,
                                         int port,
                                         char *filename,
                                         int read_dimension)
@@ -39,7 +40,17 @@ void frixia_suite_insert_filedescriptor(frixia_suite_t *s,
     {
         return;
     }
-    int fd = -1; //TODO
-    frixia_fd_t *fd_info = create_frixia_fd(fd,t,port,filename,read_dimension);
+
+    frixia_fd_arg_t tmp;
+    tmp.filename = filename;
+    tmp.port = port;
+    int fd = start_appropriate_fd(fd_type,tmp); 
+    if( fd < 0)
+    {
+        printf("Error starting fd");
+        return;
+    }
+    frixia_fd_t *fd_info = create_frixia_fd(fd,fd_type,port,filename,read_dimension);
+
     add_item(l,fd_info);
 }

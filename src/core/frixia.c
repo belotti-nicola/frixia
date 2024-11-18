@@ -123,6 +123,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
             p_fd->filename,
             1024
         );
+        p_fd = pop_proto_fd(proto_fds_q);
     }
     /*
     simple_list_t *fds = create_simple_list();
