@@ -114,15 +114,15 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {   
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
-    proto_frixia_fd *p_fd = pop_proto_fd(proto_fds_q);
-    while(proto_fd != NULL)
+    proto_frixia_fd_t *p_fd = pop_proto_fd(proto_fds_q);
+    while(p_fd != NULL)
     {
-        
         frixia_suite_insert_filedescriptor(fsuite,
             p_fd->filedescriptor_type,
             p_fd->port,
             p_fd->filename,
-        )
+            1024
+        );
     }
     /*
     simple_list_t *fds = create_simple_list();

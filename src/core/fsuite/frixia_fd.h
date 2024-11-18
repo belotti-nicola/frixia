@@ -14,13 +14,13 @@ typedef union frixia_fd_arg
 typedef struct frixia_fd
 {
     int                 fd;
-    enum FrixiaFD       type;
+    enum FrixiaFDType   type;
     frixia_fd_arg_t     arg; 
     int                 read_dim;
 
 } frixia_fd_t;
 
-frixia_fd_t *create_frixia_fd(int fd, enum FrixiaFd, int port, char *filename, int read_dim);
+frixia_fd_t *create_frixia_fd(int fd, enum FrixiaFDType t, int port, char *filename, int read_dim);
 void         destroy_frixia_fd(frixia_fd_t *p);
 
 #endif

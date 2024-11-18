@@ -14,7 +14,7 @@ typedef struct frixia_suite
 
 frixia_suite_t *create_frixia_suite(int max_dimension);
 void            frixia_suite_insert_filedescriptor(frixia_suite_t *s,
-                                                   struct FrixiaFDType t,
+                                                   enum FrixiaFDType t,
                                                    int port,
                                                    char *filename,
                                                    int read_dimension);
