@@ -7,13 +7,12 @@
 #include "../../../filedescriptor/types/fifo/frixia_fifo.h"
 #include "../../../../setup/proto_filedescriptor/proto_fds_queue.h"
 #include "../../../frixia_common.h"
-
-
-#include "fepoll.h"
 #include "fepoll_codes.h"
 #include "fepoll_defs.h"
 #include "fepoll_pool.h"
 #include "fepoll_pool.h"
+
+#include "fepoll.h"
 
 frixia_epoll_t* create_frixia_epoll()
 {
@@ -35,10 +34,10 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fe)
+FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *suite)
 {
-    printf("FEPOLL STARTED\n");
-    return OK;
+    int fd_epoll = start_epoll();
+    return fd_epoll;
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 {

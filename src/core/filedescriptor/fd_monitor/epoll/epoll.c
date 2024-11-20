@@ -15,7 +15,7 @@ int start_epoll()
     {
 		return errno;
 	}
-    return 0;
+    return epoll_fd;
 }
 int stop_epoll(int fd)
 {
