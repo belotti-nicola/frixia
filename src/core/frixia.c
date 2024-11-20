@@ -112,7 +112,7 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 */
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
-{    
+{        
     
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
     
@@ -131,10 +131,9 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     //TODO CALLBACK 
     //CALLBACK SETUP
 
-    frixia_detached_start_monitor(fsuite->fd_pool);
-    //frixia_detached_join(fe->join_here);
-    //frixia_stop();
-
+    frixia_detached_start_monitor(fsuite);
+    frixia_detached_wait_threads(fsuite);
+    
     return OK;
 }
 int frixia_stop(int epoll_fd,

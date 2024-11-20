@@ -1,13 +1,9 @@
 #ifndef DETACHED_EPOLL_MONITOR
 #define DETACHED_EPOLL_MONITOR
 
-#include "../../../setup/proto_filedescriptor/proto_fds_queue.h"
-#include "epoll/fepoll.h"
+#include "../../fsuite/frixia_suite.h"
 
-int frixia_detached_start_monitor(simple_list_t *l);
-int frixia_detached_stop_monitor();
-int add_frixia_listener();
-int stop_frixia_listener();
-
+int frixia_detached_start_monitor(frixia_suite_t *suite);
+int frixia_detached_wait_threads(frixia_suite_t *suite);
 
 #endif

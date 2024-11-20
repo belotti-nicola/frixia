@@ -1,26 +1,22 @@
-#include "detached_epoll_monitor.h"
 #include "pthread.h"
-
 #include "epoll/fepoll.h"
-#include "../../../setup/proto_filedescriptor/proto_fds_queue.h"
+#include <stdio.h>
 
+#include "detached_epoll_monitor.h"
 
-int frixia_detached_start_monitor(simple_list_t *l)
+int frixia_detached_start_monitor(frixia_suite_t *suite)
 {   
     
     pthread_t epoll_thread;
-    int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, l);
+    int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, suite);
+    if(rc != 0) { printf("ERRORCODE::%d\n",rc);}
+    suite->th = epoll_thread;
     return 0;
 }
-int frixia_detached_stop_monitor()
+
+int frixia_detached_wait_threads(frixia_suite_t *suite)
 {
-    return 0;
+    return pthread_join(suite->th,NULL);
 }
-int add_frixia_listener()
-{
-    return 0;
-}
-int stop_frixia_listener()
-{
-    return 0;
-}
+
+

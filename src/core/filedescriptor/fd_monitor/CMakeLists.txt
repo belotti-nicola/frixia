@@ -7,6 +7,6 @@ add_library(frixia_monitor
 
 target_link_libraries(frixia_monitor
     Threads::Threads
+    fsuite
     fepoll
-    simple_list
 )
