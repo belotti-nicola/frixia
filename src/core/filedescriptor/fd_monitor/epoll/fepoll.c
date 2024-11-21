@@ -11,6 +11,11 @@
 #include "fepoll_defs.h"
 #include "fepoll_pool.h"
 #include "fepoll_pool.h"
+#include "../../../../core/frixia_common.h"
+#include <stdio.h>
+#include "../../../../core/fsuite/frixia_fd.h"
+#include <sys/eventfd.h>
+#include "../../../fsuite/frixia_fd.h"
 
 #include "fepoll.h"
 
@@ -24,7 +29,15 @@ frixia_epoll_t* create_frixia_epoll()
     }
     
     frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));
-    frixia_epoll->fd_pool = l;   
+    frixia_epoll->fd_pool = l;
+
+    int efd = eventfd(0, EFD_NONBLOCK);
+    if (efd == -1) {
+        perror("eventfd");
+        return NULL;
+    }
+    frixia_epoll->stop_fd = efd;
+    
     return frixia_epoll;
 }
 FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
@@ -34,17 +47,48 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *suite)
+FRIXIA_EPOLL_CODE_T start_fepoll(frixia_suite_t *suite)
 {
-    int fd_epoll = start_epoll();
+    int fd_epoll = create_epoll();
+    
+    int monitored_fd_size = ;
+    for(int i=0;i<monitored_fd_size;i++)
+    {
+        frixia_fd_t *fd_info =(frixia_fd_t *)pop_simple_queue(suite->fd_pool->l);
+        insert_event(suite,*fd_info);
+    }
+
+    struct epoll_event event;
+    event.events = EPOLLIN;
+    event.data.fd = suite->stop_fd;
+    if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, suite->stop_fd, &event) == -1) {
+        perror("epoll_ctl\n");
+        return 1;
+    }
+    printf("EFD %d\n",suite->stop_fd);
+
+    start_epoll(fd_epoll);
     return fd_epoll;
 }
-FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
+FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_suite_t *fe)
 {
-    stop_epoll(fe->fd);
-    destroy_frixia_epoll(fe);
+    uint64_t value = 1;
+    int fd = fe->stop_fd;
+    ssize_t n = write(fd, &value, sizeof(value));
+    if (n == -1) {
+        perror("write");
+        return 1;
+    }
+
+    return FEPOLL_OK;    
 }
 FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
 {
+    return FEPOLL_OK;
+}
+
+FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f)
+{
+    printf("AAA %d\n",f.fd);
     return FEPOLL_OK;
 }

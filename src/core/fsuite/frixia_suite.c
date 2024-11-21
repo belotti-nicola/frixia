@@ -47,7 +47,7 @@ void frixia_suite_insert_filedescriptor(frixia_suite_t *s,
     int fd = start_appropriate_fd(fd_type,tmp); 
     if( fd < 0)
     {
-        printf("Error starting fd");
+        printf("Error starting fd %d type %d\n",fd,fd_type);
         return;
     }
     frixia_fd_t *fd_info = create_frixia_fd(fd,fd_type,port,filename,read_dimension);

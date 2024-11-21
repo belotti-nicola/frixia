@@ -2,7 +2,7 @@
 #define FRIXIA_EPOLL_H
 
 #include "fepoll_pool.h"
-
+#include "../../../../core/fsuite/frixia_fd.h"
 #include "fepoll_codes.h"
 
 typedef struct frixia_epoll 
@@ -11,6 +11,7 @@ typedef struct frixia_epoll
     int                  maximum_filedescriptors;
     int                  filedescriptors_number;
     fepoll_pool_t       *fd_pool;
+    int                  stop_fd;
 
 } frixia_epoll_t;
 
@@ -19,6 +20,6 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fepoll,int fd);
-
+FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f);
 
 #endif

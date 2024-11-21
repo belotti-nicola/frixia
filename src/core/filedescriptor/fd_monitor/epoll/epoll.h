@@ -6,7 +6,8 @@
 
 #define KERNEL_HINT 5
 
-int start_epoll();
+int create_epoll();
+int start_epoll(int epoll);
 int stop_epoll(int fd);
 int add_fd_listener(int epoll,
                     int fd,
