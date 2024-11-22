@@ -24,14 +24,6 @@ int create_epoll()
 int start_epoll(int fd)
 {
     struct epoll_event event, events[10];
-    event.events = EPOLLIN;
-	event.data.fd = 0;
-
-    if (epoll_ctl(fd, EPOLL_CTL_ADD, 0, &event)) {
-		printf("Failed to add file descriptor to epoll\n");
-		close(fd);
-		return 1;
-	}
 
     char *read_buffer[64 + 1];
     int events_number = -1;

@@ -1,17 +1,19 @@
 #include "pthread.h"
 #include "epoll/fepoll.h"
 #include <stdio.h>
+#include <unistd.h>
 
 #include "detached_epoll_monitor.h"
 
 int frixia_detached_start_monitor(frixia_suite_t *suite)
 {   
     pthread_t epoll_thread;
-    int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, suite);
+    frixia_epoll_t *fepoll = suite->fepoll;
+    int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, fepoll);
     if(rc != 0) { printf("ERRORCODE::%d\n",rc);}
     suite->th = epoll_thread;
     sleep(5);
-    stop_fepoll(suite);
+    stop_fepoll(fepoll);
     return 0;
 }
 

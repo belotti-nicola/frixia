@@ -5,12 +5,14 @@
 
 #include "../../utils/datastructures/simple_list/simple_list.h"
 #include "pthread.h"
+#include "../filedescriptor/fd_monitor/epoll/fepoll.h"
 
 typedef struct frixia_suite
 {
     int max_filedescriptors;
     simple_list_t *fd_pool;
     pthread_t th; 
+    frixia_epoll_t *fepoll;
 
 } frixia_suite_t;
 

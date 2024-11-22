@@ -1,9 +1,9 @@
-#ifndef FRIXIA_EPOLL_H
-#define FRIXIA_EPOLL_H
+#ifndef FEPOLL_H
+#define FEPOLL_H
 
-#include "fepoll_pool.h"
 #include "../../../../core/fsuite/frixia_fd.h"
 #include "fepoll_codes.h"
+#include "fepoll_pool.h"
 
 typedef struct frixia_epoll 
 {
@@ -23,3 +23,4 @@ FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fepoll,int fd);
 FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f);
 
 #endif
+

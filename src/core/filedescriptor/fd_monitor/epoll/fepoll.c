@@ -16,6 +16,7 @@
 #include "../../../../core/fsuite/frixia_fd.h"
 #include <sys/eventfd.h>
 #include "../../../fsuite/frixia_fd.h"
+#include <unistd.h>
 
 #include "fepoll.h"
 
@@ -47,30 +48,31 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T start_fepoll(frixia_suite_t *suite)
+FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
 {
     int fd_epoll = create_epoll();
-    
-    int monitored_fd_size = ;
-    for(int i=0;i<monitored_fd_size;i++)
+
+    simple_list_elem_t *curr = fepoll->fd_pool->l->first;    
+    while(curr != NULL)
     {
-        frixia_fd_t *fd_info =(frixia_fd_t *)pop_simple_queue(suite->fd_pool->l);
-        insert_event(suite,*fd_info);
+        frixia_fd_t *tmp = (frixia_fd_t *)curr;
+        insert_event(fepoll->fd,*tmp);
+        curr = curr->next;
     }
 
     struct epoll_event event;
-    event.events = EPOLLIN;
-    event.data.fd = suite->stop_fd;
-    if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, suite->stop_fd, &event) == -1) {
-        perror("epoll_ctl\n");
+    event.events = EPOLLIN | EPOLLONESHOT;
+    event.data.fd = fepoll->stop_fd;
+    if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fepoll->stop_fd, &event) == -1) {
+        perror("epoll_ctl ADD stop fd\n");
         return 1;
     }
-    printf("EFD %d\n",suite->stop_fd);
+    printf("EFD %d\n",fepoll->stop_fd);
 
     start_epoll(fd_epoll);
     return fd_epoll;
 }
-FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_suite_t *fe)
+FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 {
     uint64_t value = 1;
     int fd = fe->stop_fd;
