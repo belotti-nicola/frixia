@@ -25,6 +25,7 @@ frixia_suite_t *create_frixia_suite(int max_dimension)
 
     retVal->fd_pool = l;
     retVal->fepoll = create_frixia_epoll();
+    retVal->events_q = create_simple_queue();
     return retVal;
 }
 

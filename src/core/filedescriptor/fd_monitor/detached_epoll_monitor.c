@@ -12,7 +12,7 @@ int frixia_detached_start_monitor(frixia_suite_t *suite)
     int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, fepoll);
     if(rc != 0) { printf("ERRORCODE::%d\n",rc);}
     suite->th = epoll_thread;
-    sleep(5);
+    sleep(2);
     stop_fepoll(fepoll);
     return 0;
 }

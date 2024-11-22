@@ -70,10 +70,25 @@ FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
     printf("EFD %d\n",fepoll->stop_fd);
 
     start_epoll(fd_epoll);
+
+    bool keep_looping = true;
+    while(keep_looping)
+    {
+        int events_number = epoll_wait(fd_epoll,events);
+        for(int i=0;i<events_number;i++)
+        {
+            int fd = events[i].fd;
+            push_simple_queue(fepoll->events_q,
+                              fd,
+                              &keep_looping);
+        }
+    }
+
+    stop_fepoll(fepoll);
     return fd_epoll;
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
-{
+{    
     uint64_t value = 1;
     int fd = fe->stop_fd;
     ssize_t n = write(fd, &value, sizeof(value));
