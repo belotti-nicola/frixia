@@ -9,6 +9,8 @@ add_library(fepoll
     fepoll_pool.h
     fepoll_pool_data.c
     fepoll_pool_data.h
+    fepoll_loop_function.h
+    fepoll_loop_function.c
 )
 
 target_link_libraries(fepoll

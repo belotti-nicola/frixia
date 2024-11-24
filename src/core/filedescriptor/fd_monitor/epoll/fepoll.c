@@ -32,12 +32,8 @@ frixia_epoll_t* create_frixia_epoll()
     frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));
     frixia_epoll->fd_pool = l;
 
-    int efd = eventfd(0, EFD_NONBLOCK);
-    if (efd == -1) {
-        perror("eventfd");
-        return NULL;
-    }
-    frixia_epoll->stop_fd = efd;
+    
+    frixia_epoll->stop_fd = -1;
     
     return frixia_epoll;
 }
@@ -45,6 +41,28 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
 {
     destroy_fepoll_pool(fepoll->fd_pool);
     free(fepoll);
+    return FEPOLL_OK;
+}
+
+FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t fepoll)
+{
+    const int INITIAL_VALUE = 0;
+    int efd = eventfd(INITIAL_VALUE, EFD_NONBLOCK);
+    if (efd == -1) {
+        perror("eventfd");
+        return FERR_CREATING_STOP_FILEDESCRIPTOR;
+    }
+    
+    struct epoll_event event;
+    event.events = EPOLLIN | EPOLLONESHOT;
+    event.data.fd = efd;
+    if (epoll_ctl(fepoll, EPOLL_CTL_ADD, fepoll->stop_fd, &event) == -1) {
+        perror("epoll_ctl ADD stop fd\n");
+        return FERR_ADD_STOP_FILEDESCRIPTOR;
+    }
+    printf("EFD %d\n",fepoll->stop_fd);
+
+    fepoll->stop_fd = efd;
     return FEPOLL_OK;
 }
 

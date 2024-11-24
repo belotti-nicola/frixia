@@ -1,5 +1,5 @@
 #include "pthread.h"
-#include "epoll/fepoll.h"
+#include "epoll/fepoll_loop_function.h"
 #include <stdio.h>
 #include <unistd.h>
 
@@ -8,12 +8,11 @@
 int frixia_detached_start_monitor(frixia_suite_t *suite)
 {   
     pthread_t epoll_thread;
-    frixia_epoll_t *fepoll = suite->fepoll;
-    int rc = pthread_create( &epoll_thread, NULL, (void *)&start_fepoll, fepoll);
+    int rc = pthread_create( &epoll_thread,
+                             NULL,
+                             (void *)&fepoll_loop_function,
+                             suite);
     if(rc != 0) { printf("ERRORCODE::%d\n",rc);}
-    suite->th = epoll_thread;
-    sleep(2);
-    stop_fepoll(fepoll);
     return 0;
 }
 
