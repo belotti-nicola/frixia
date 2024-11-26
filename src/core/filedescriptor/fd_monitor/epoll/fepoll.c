@@ -127,3 +127,19 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f)
     printf("AAA %d\n",f.fd);
     return FEPOLL_OK;
 }
+
+
+int frixia_epoll_wait(int epoll, frixia_epoll_event_t *fevents)
+{
+    struct epoll_event *events;
+    int events_number = epoll_wait(epoll,events,MAXIMUM_FD_NUMBER,-1);
+    if(events_number <0)
+    {
+        return -1;
+    }
+    for(int i=0;i<events_number;i++)
+    {
+        fevents[i].fd = events[i].data.fd;
+    }
+    return events_number;
+}

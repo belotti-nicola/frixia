@@ -5,6 +5,13 @@
 #include "fepoll_codes.h"
 #include "fepoll_pool.h"
 
+
+typedef struct frixia_epoll_event
+{
+    int fd;
+    
+} frixia_epoll_event_t;
+
 typedef struct frixia_epoll 
 {
     int                  fd;
@@ -22,6 +29,8 @@ FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fepoll,int fd);
 FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f);
+int                 frixia_epoll_wait(int epoll, frixia_epoll_event_t *fevents)
+
 
 #endif
 

@@ -22,13 +22,11 @@ int fepoll_loop_function(frixia_suite_t fsuite)
     bool keep_looping = true;
     while(keep_looping)
     {
-        int events_number = epoll_wait(fd_epoll,events);
+        frixia_epoll_event_t *fevents[10];
+        int events_number = frixia_epoll_wait(fepoll->fd,fevents);
         for(int i=0;i<events_number;i++)
         {
-            int fd = events[i].fd;
-            push_simple_queue(fepoll->events_q,
-                              fd,
-                              &keep_looping);
+            printf("%d\n",fevents[i]->fd);
         }
     }
 
