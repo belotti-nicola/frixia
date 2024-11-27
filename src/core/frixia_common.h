@@ -17,6 +17,9 @@
 
 #define MAXIMUM_FD_NUMBER 10
 
+//epoll_wait size
+#define FRIXIA_EPOLL_MAXIMUM_EVENTS 10
+
 enum FrixiaFDType
 {
     UNDEFINED,

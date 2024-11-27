@@ -17,6 +17,7 @@
 #include <sys/eventfd.h>
 #include "../../../fsuite/frixia_fd.h"
 #include <unistd.h>
+#include "../../../frixia_common.h"
 
 #include "fepoll.h"
 
@@ -132,7 +133,7 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f)
 int frixia_epoll_wait(int epoll, frixia_epoll_event_t *fevents)
 {
     struct epoll_event *events;
-    int events_number = epoll_wait(epoll,events,MAXIMUM_FD_NUMBER,-1);
+    int events_number = epoll_wait(epoll,events,FRIXIA_EPOLL_MAXIMUM_EVENTS,-1);
     if(events_number <0)
     {
         return -1;

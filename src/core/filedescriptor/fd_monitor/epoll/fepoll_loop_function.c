@@ -1,5 +1,6 @@
 #include "fepoll.h"
 #include "../fsuite/frixia_suite.h"
+#include "../frixia_common.h"
 
 #include "fepoll_loop_function.h"
 
@@ -22,7 +23,7 @@ int fepoll_loop_function(frixia_suite_t fsuite)
     bool keep_looping = true;
     while(keep_looping)
     {
-        frixia_epoll_event_t *fevents[10];
+        frixia_epoll_event_t *fevents[FRIXIA_EPOLL_WAIT_MAX_SIZE];
         int events_number = frixia_epoll_wait(fepoll->fd,fevents);
         for(int i=0;i<events_number;i++)
         {

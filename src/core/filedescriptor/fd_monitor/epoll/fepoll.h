@@ -19,6 +19,7 @@ typedef struct frixia_epoll
     int                  filedescriptors_number;
     fepoll_pool_t       *fd_pool;
     int                  stop_fd;
+    frixia_events_q     *q;
 
 } frixia_epoll_t;
 
