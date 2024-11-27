@@ -6,7 +6,8 @@
 
 typedef struct frixia_event
 {
-    int                         fd;
+    int fd;
+
 } frixia_event_t;
 
 frixia_event_t *create_event(int fd);

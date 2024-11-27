@@ -18,6 +18,7 @@
 #include "../../../fsuite/frixia_fd.h"
 #include <unistd.h>
 #include "../../../frixia_common.h"
+#include "../../../fevent/frixia_events_queue.h"
 
 #include "fepoll.h"
 
@@ -45,7 +46,7 @@ FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t fepoll)
+FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
 {
     const int INITIAL_VALUE = 0;
     int efd = eventfd(INITIAL_VALUE, EFD_NONBLOCK);
@@ -57,7 +58,7 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t fepoll)
     struct epoll_event event;
     event.events = EPOLLIN | EPOLLONESHOT;
     event.data.fd = efd;
-    if (epoll_ctl(fepoll, EPOLL_CTL_ADD, fepoll->stop_fd, &event) == -1) {
+    if (epoll_ctl(fepoll->fd, EPOLL_CTL_ADD, fepoll->stop_fd, &event) == -1) {
         perror("epoll_ctl ADD stop fd\n");
         return FERR_ADD_STOP_FILEDESCRIPTOR;
     }
@@ -91,15 +92,19 @@ FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
     start_epoll(fd_epoll);
 
     bool keep_looping = true;
+    struct epoll_event events[10];
     while(keep_looping)
     {
-        int events_number = epoll_wait(fd_epoll,events);
+        int events_number = epoll_wait(fd_epoll,events,10,-1);
         for(int i=0;i<events_number;i++)
         {
-            int fd = events[i].fd;
-            push_simple_queue(fepoll->events_q,
-                              fd,
-                              &keep_looping);
+            int fd = events[i].data.fd;
+            frixia_event_t e;
+            e.fd = fd;
+            frixia_events_queue_push(
+                fepoll->events_queue,
+                &e
+            );
         }
     }
 
@@ -130,17 +135,19 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f)
 }
 
 
-int frixia_epoll_wait(int epoll, frixia_epoll_event_t *fevents)
+int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_events_queue_t *fevents)
 {
     struct epoll_event *events;
-    int events_number = epoll_wait(epoll,events,FRIXIA_EPOLL_MAXIMUM_EVENTS,-1);
-    if(events_number <0)
+    int events_number = epoll_wait(fepoll->fd,events,FRIXIA_EPOLL_MAXIMUM_EVENTS,-1);
+    if( events_number < 0)
     {
         return -1;
     }
     for(int i=0;i<events_number;i++)
     {
-        fevents[i].fd = events[i].data.fd;
+        frixia_event_t *e;
+        e->fd = events[i].data.fd;
+        frixia_events_queue_push(fepoll->events_queue,e);
     }
     return events_number;
 }

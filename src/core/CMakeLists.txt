@@ -34,4 +34,5 @@ target_link_libraries(core
   fsetup
   simple_list
   fsuite
+  threadsafe_simple_queue
 )
