@@ -4,7 +4,7 @@
 #include "../frixia_common.h"
 
 #include "../../utils/datastructures/simple_list/simple_list.h"
-#include "../../utils/datastructures/simple_queue/simple_queue.h"
+#include "../../core/fevent/frixia_events_queue.h"
 #include "pthread.h"
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
 
@@ -14,7 +14,7 @@ typedef struct frixia_suite
     simple_list_t *fd_pool;
     pthread_t th; 
     frixia_epoll_t *fepoll;
-    simple_queue_t *events_q;
+    frixia_events_queue_t *events_q;
 
 } frixia_suite_t;
 

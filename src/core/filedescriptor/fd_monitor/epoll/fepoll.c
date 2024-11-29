@@ -135,7 +135,7 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f)
 }
 
 
-int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_events_queue_t *fevents)
+int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents)
 {
     struct epoll_event *events;
     int events_number = epoll_wait(fepoll->fd,events,FRIXIA_EPOLL_MAXIMUM_EVENTS,-1);
@@ -145,9 +145,7 @@ int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_events_queue_t *fevents)
     }
     for(int i=0;i<events_number;i++)
     {
-        frixia_event_t *e;
-        e->fd = events[i].data.fd;
-        frixia_events_queue_push(fepoll->events_queue,e);
+        fevents[i].fd = events[i].data.fd;
     }
     return events_number;
 }

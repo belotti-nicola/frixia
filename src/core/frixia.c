@@ -116,24 +116,30 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
     
-    proto_frixia_fd_t *p_fd = pop_proto_fd(proto_fds_q);
-    while(p_fd != NULL)
+    proto_frixia_fd_t *protofd = pop_proto_fd(proto_fds_q);
+    while(protofd != NULL)
     {
         frixia_suite_insert_filedescriptor(fsuite,
-            p_fd->filedescriptor_type,
-            p_fd->port,
-            p_fd->filename,
+            protofd->filedescriptor_type,
+            protofd->port,
+            protofd->filename,
             1024
         );
-        p_fd = pop_proto_fd(proto_fds_q);
+        protofd = pop_proto_fd(proto_fds_q);
     }
+
 
     //TODO CALLBACK 
     //CALLBACK SETUP
 
+    frixia_events_queue_t *events = frixia_events_queue_create();
+    fsuite->events_q = events;
+
+
     frixia_detached_start_monitor(fsuite);
     frixia_detached_wait_threads(fsuite);
-    
+
+    frixia_events_queue_destroy(events);
     return OK;
 }
 int frixia_stop(int epoll_fd,

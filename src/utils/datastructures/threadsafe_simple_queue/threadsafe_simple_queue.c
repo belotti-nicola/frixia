@@ -14,6 +14,8 @@ threadsafe_simple_queue_t* create_threadsafe_simple_queue()
         return NULL;
     }
     q->size = 0;
+    pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
+    q->mutex = mutex;
     pthread_mutex_init(q->mutex, NULL);
     return q;
 }

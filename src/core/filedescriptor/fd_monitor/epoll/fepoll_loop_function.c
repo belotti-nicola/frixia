@@ -18,15 +18,16 @@ int fepoll_loop_function(frixia_suite_t *fsuite)
 
     fadd_stop_filedescriptor(fepoll);
 
-
+    
     bool keep_looping = true;
     while(keep_looping)
     {
-        frixia_event_t *fevents[10];
-        int events_number = frixia_epoll_wait(fepoll->fd,fevents);
+        frixia_event_t ev_q[10];
+        int events_number = frixia_epoll_wait(fepoll,ev_q);
         for(int i=0;i<events_number;i++)
         {
-            printf("%d\n",fevents[i]->fd);
+            printf("%d\n",ev_q->fd);
+            //frixia_events_queue_push();
         }
     }
 
