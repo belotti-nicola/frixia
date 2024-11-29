@@ -58,11 +58,10 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
     struct epoll_event event;
     event.events = EPOLLIN | EPOLLONESHOT;
     event.data.fd = efd;
-    if (epoll_ctl(fepoll->fd, EPOLL_CTL_ADD, fepoll->stop_fd, &event) == -1) {
+    if (epoll_ctl(fepoll->fd, EPOLL_CTL_ADD, efd, &event) == -1) {
         perror("epoll_ctl ADD stop fd\n");
         return FERR_ADD_STOP_FILEDESCRIPTOR;
     }
-    printf("EFD %d\n",fepoll->stop_fd);
 
     fepoll->stop_fd = efd;
     return FEPOLL_OK;
@@ -141,6 +140,7 @@ int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents)
     int events_number = epoll_wait(fepoll->fd,events,FRIXIA_EPOLL_MAXIMUM_EVENTS,-1);
     if( events_number < 0)
     {
+        printf("ERROR\n");
         return -1;
     }
     for(int i=0;i<events_number;i++)

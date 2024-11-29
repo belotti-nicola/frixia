@@ -10,7 +10,7 @@ fepoll_data_t *create_fepoll_data(int fd)
     fepoll_data_t *p = malloc(sizeof(fepoll_data_t));
     if(p == NULL)
     {
-        printf("ERROR");
+        printf("ERROR1\n");
         return NULL;
     }
     p->fd = fd;

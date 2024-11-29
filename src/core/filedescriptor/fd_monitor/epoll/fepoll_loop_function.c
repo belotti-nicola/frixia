@@ -1,6 +1,7 @@
 #include "fepoll.h"
 #include "../../../fsuite/frixia_suite.h"
 #include "../../../frixia_common.h"
+#include "epoll.h"
 
 #include "fepoll_loop_function.h"
 
@@ -15,6 +16,9 @@ int fepoll_loop_function(frixia_suite_t *fsuite)
         insert_event(fepoll->fd,*tmp);
         curr = curr->next;
     }
+
+    int epoll_fd = create_epoll();
+    fepoll->fd = epoll_fd;
 
     fadd_stop_filedescriptor(fepoll);
 

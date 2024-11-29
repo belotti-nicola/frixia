@@ -12,14 +12,15 @@ int frixia_detached_start_monitor(frixia_suite_t *suite)
                              NULL,
                              (void *)&fepoll_loop_function,
                              suite);
-    if(rc != 0) { printf("ERRORCODE::%d\n",rc);}
+    suite->th = epoll_thread;
+    if(rc != 0) { printf("ERRORCODE1::%d\n",rc);}
     return 0;
 }
 
 int frixia_detached_wait_threads(frixia_suite_t *suite)
 {
     int rc = pthread_join(suite->th,NULL);
-    printf("frixia_detached_wait_threads:: %d\n",rc);
+    if(rc != 0) { printf("ERRORCODE2::%d\n",rc);}
     return 0;
 }
 
