@@ -24,7 +24,7 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fepoll,int fd);
-FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f);
+FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f);
 int                 frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents);
 
 #endif

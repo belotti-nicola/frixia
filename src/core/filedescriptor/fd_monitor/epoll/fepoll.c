@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include "../../../frixia_common.h"
 #include "../../../fevent/frixia_events_queue.h"
+#include <errno.h>
 
 #include "fepoll.h"
 
@@ -70,45 +71,9 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
 FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
 {
     int fd_epoll = create_epoll();
+    fepoll->fd = fd_epoll;
 
-    simple_list_elem_t *curr = fepoll->fd_pool->l->first;    
-    while(curr != NULL)
-    {
-        frixia_fd_t *tmp = (frixia_fd_t *)curr;
-        insert_event(fepoll->fd,*tmp);
-        curr = curr->next;
-    }
-
-    struct epoll_event event;
-    event.events = EPOLLIN | EPOLLONESHOT;
-    event.data.fd = fepoll->stop_fd;
-    if (epoll_ctl(fd_epoll, EPOLL_CTL_ADD, fepoll->stop_fd, &event) == -1) {
-        perror("epoll_ctl ADD stop fd\n");
-        return 1;
-    }
-    printf("EFD %d\n",fepoll->stop_fd);
-
-    start_epoll(fd_epoll);
-
-    bool keep_looping = true;
-    struct epoll_event events[10];
-    while(keep_looping)
-    {
-        int events_number = epoll_wait(fd_epoll,events,10,-1);
-        for(int i=0;i<events_number;i++)
-        {
-            int fd = events[i].data.fd;
-            frixia_event_t e;
-            e.fd = fd;
-            frixia_events_queue_push(
-                fepoll->events_queue,
-                &e
-            );
-        }
-    }
-
-    stop_fepoll(fepoll);
-    return fd_epoll;
+    return 0;
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 {    
@@ -127,19 +92,20 @@ FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f)
+FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f)
 {
-    if( f.type != TCP)
+    printf("INSERT EVENT %d %d\n",epoll,f->fd);
+    if( f->type != TCP)
     {
-        printf("Exiting::TCP");
+        printf("Exiting::TCP (%d)\n",f->type);
         return -1;
     }
 
     struct epoll_event ev;
     ev.events =  EPOLLET;
-    ev.data.fd = f.fd;
-    if (epoll_ctl(epoll, EPOLL_CTL_ADD, f.fd, &ev) < 0) {
-        printf("Add error!!");
+    ev.data.fd = f->fd;
+    if (epoll_ctl(epoll, EPOLL_CTL_ADD, f->fd, &ev) < 0) {
+        printf("Add error!! (%d) %d %d\n",errno,epoll,f->fd);
 		return -1;
     }
     

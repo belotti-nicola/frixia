@@ -115,7 +115,8 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
 {        
     
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
-    
+    start_fepoll(fsuite->fepoll);
+
     proto_frixia_fd_t *protofd = pop_proto_fd(proto_fds_q);
     while(protofd != NULL)
     {
@@ -135,7 +136,6 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
 
     frixia_events_queue_t *events = frixia_events_queue_create();
     fsuite->events_q = events;
-
 
     frixia_detached_start_monitor(fsuite);
     frixia_detached_wait_threads(fsuite);

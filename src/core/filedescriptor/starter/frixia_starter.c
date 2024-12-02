@@ -22,6 +22,7 @@ int start_appropriate_fd(enum FrixiaFDType t, frixia_fd_arg_t arg)
     }
     default:
     {
+        printf("start_appropriate_fd::error:: %d\n",t);
         return -1;
     }
    }
