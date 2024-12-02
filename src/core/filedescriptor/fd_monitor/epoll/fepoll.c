@@ -129,6 +129,20 @@ FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
 
 FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f)
 {
+    if( f.type != TCP)
+    {
+        printf("Exiting::TCP");
+        return -1;
+    }
+
+    struct epoll_event ev;
+    ev.events =  EPOLLET;
+    ev.data.fd = f.fd;
+    if (epoll_ctl(epoll, EPOLL_CTL_ADD, f.fd, &ev) < 0) {
+        printf("Add error!!");
+		return -1;
+    }
+    
     return FEPOLL_OK;
 }
 

@@ -7,7 +7,7 @@
 
 int fepoll_loop_function(frixia_suite_t *fsuite)
 {
-    frixia_epoll_t *fepoll = create_frixia_epoll();
+    frixia_epoll_t *fepoll = fsuite->fepoll;
 
     simple_list_elem_t *curr = fsuite->fepoll->fd_pool->l->first;
     while(curr != NULL)
