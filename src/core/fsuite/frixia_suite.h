@@ -11,7 +11,6 @@
 typedef struct frixia_suite
 {
     int max_filedescriptors;
-    simple_list_t *fd_pool;
     pthread_t th; 
     frixia_epoll_t *fepoll;
     frixia_events_queue_t *events_q;

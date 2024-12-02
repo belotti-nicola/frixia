@@ -129,7 +129,6 @@ FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
 
 FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t f)
 {
-    printf("AAA %d\n",f.fd);
     return FEPOLL_OK;
 }
 

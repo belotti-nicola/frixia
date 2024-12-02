@@ -127,6 +127,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
         );
         protofd = pop_proto_fd(proto_fds_q);
     }
+    destroy_proto_frixia_fd_queue(proto_fds_q);
 
 
     //TODO CALLBACK 
