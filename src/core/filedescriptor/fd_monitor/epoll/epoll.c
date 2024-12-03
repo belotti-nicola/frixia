@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "../../../fevent/frixia_event.h"
 
 #include "epoll.h"
 
@@ -50,6 +51,33 @@ int stop_epoll(int fd)
         return 0;
     }
 }
+int wait_epoll_events(int epoll_fd, int max, frixia_event_t *fevents)
+{
+    if(epoll_fd<=0)
+    {
+        printf("Error::wait_epoll_events:: epoll filedescriptor %d (<=0)\n",epoll_fd);
+        return -1;
+    }
+    if(max<=0)
+    {
+        printf("Error::wait_epoll_events:: epoll events number %d (<=0)\n",max);
+        return -1;
+    }
+    struct epoll_event events[max];
+    int events_number = epoll_wait(epoll_fd, events, max, -1);
+    if(events_number <= 0)
+    {
+        printf("Error::wait_epoll_events:: epoll events waited number %d (<=0)\n",max);
+        return -1;
+    }
+    for(int i=0;i<events_number;i++)
+    {
+        fevents[i].fd = events[i].data.fd;
+    }
+
+    return events_number;
+}
+
 int add_fd_listener(int epoll,
                     int fd,
                     struct epoll_event *ev)

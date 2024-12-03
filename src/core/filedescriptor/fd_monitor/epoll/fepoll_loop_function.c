@@ -14,7 +14,7 @@ int fepoll_loop_function(frixia_suite_t *fsuite)
     bool keep_looping = true;
     while(keep_looping)
     {
-        frixia_event_t ev_q[10];
+        frixia_event_t ev_q[FRIXIA_EPOLL_MAXIMUM_EVENTS];
         int events_number = frixia_epoll_wait(fepoll,ev_q);
         printf("events_number :: %d\n",events_number);
         for(int i=0;i<events_number;i++)
