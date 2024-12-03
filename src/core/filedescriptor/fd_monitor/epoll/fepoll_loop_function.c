@@ -2,6 +2,7 @@
 #include "../../../fsuite/frixia_suite.h"
 #include "../../../frixia_common.h"
 #include "epoll.h"
+#include "../../../fevent/frixia_event.h"
 
 #include "fepoll_loop_function.h"
 
@@ -20,10 +21,13 @@ int fepoll_loop_function(frixia_suite_t *fsuite)
         for(int i=0;i<events_number;i++)
         {
             printf("%d\n",ev_q->fd);
-            //frixia_events_queue_push();
+            int event_fd = ev_q->fd;
+            frixia_event_t *e = create_event(event_fd);
+            frixia_events_queue_push(fsuite->events_q,e);
         }
     }
 
+    printf("fsuite->events_q->dim %d\n",fsuite->events_q->queue->size);
     stop_fepoll(fepoll);
     return 0;
 }

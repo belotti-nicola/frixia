@@ -6,13 +6,21 @@
 #include "threadsafe_simple_queue.h"
 
 threadsafe_simple_queue_t* create_threadsafe_simple_queue()
-{
+{  
     threadsafe_simple_queue_t *q = malloc(sizeof(threadsafe_simple_queue_t));
     if( q == NULL)
     {
-        printf("ERROR CREATING threadsafe_simple_queue_t");
+        printf("ERROR CREATING threadsafe_simple_queue_t\n");
         return NULL;
     }
+    simple_queue_t *squeu = create_simple_queue();
+    if( squeu == NULL )
+    {
+        printf("ERROR CREATING simple_queue\n");
+        return NULL;
+    }
+    q->queue = squeu;
+    
     q->size = 0;
     pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
     q->mutex = mutex;
