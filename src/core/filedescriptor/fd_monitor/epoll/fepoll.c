@@ -71,8 +71,12 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
 FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
 {
     int fd_epoll = create_epoll();
+    if(fd_epoll < 0)
+    {
+        return FERR_EPOLL_CREATE;
+    }
     fepoll->fd = fd_epoll;
-
+    printf("EPOLL CREATE :: %d\n",fd_epoll);
     return 0;
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
@@ -102,24 +106,26 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f)
     }
 
     struct epoll_event ev;
-    ev.events =  EPOLLET;
+    ev.events =  EPOLLIN | EPOLLET;
     ev.data.fd = f->fd;
-    if (epoll_ctl(epoll, EPOLL_CTL_ADD, f->fd, &ev) < 0) {
-        printf("Add error!! (%d) %d %d\n",errno,epoll,f->fd);
+    int return_code = epoll_ctl(epoll, EPOLL_CTL_ADD, f->fd, &ev);
+    if( return_code != 0) 
+    {
+        printf("Add error!! (%d errno::%d) %d %d\n",return_code, errno,epoll,f->fd);
 		return -1;
     }
-    
+    printf("Epoll_ctl :: %d (fd added: %d)",epoll,f->fd);
     return FEPOLL_OK;
 }
 
 
 int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents)
 {
-    struct epoll_event *events;
+    struct epoll_event events[FRIXIA_EPOLL_MAXIMUM_EVENTS];
     int events_number = epoll_wait(fepoll->fd,events,FRIXIA_EPOLL_MAXIMUM_EVENTS,-1);
     if( events_number < 0)
     {
-        printf("ERROR\n");
+        printf("ERROR %d\n",errno);
         return -1;
     }
     for(int i=0;i<events_number;i++)

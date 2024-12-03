@@ -9,12 +9,12 @@
 
 void foo()
 {
-    printf("AAAAAAA");
+    printf("foo function called\n");
 }
 
 void goo()
 {
-    printf("BBBBBB");
+    printf("goo function called\n");
 }
 
 int main(int argc, char *argv[])

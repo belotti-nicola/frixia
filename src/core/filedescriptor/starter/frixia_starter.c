@@ -1,6 +1,7 @@
 #include "../types/tcp/frixia_tcp.h"
 #include "../types/udp/frixia_udp.h"
 #include "../types/fifo/frixia_fifo.h"
+#include <stdio.h>
 
 #include "frixia_starter.h"
 

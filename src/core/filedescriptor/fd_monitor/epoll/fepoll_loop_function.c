@@ -16,12 +16,12 @@ int fepoll_loop_function(frixia_suite_t *fsuite)
     {
         frixia_event_t ev_q[10];
         int events_number = frixia_epoll_wait(fepoll,ev_q);
+        printf("events_number :: %d\n",events_number);
         for(int i=0;i<events_number;i++)
         {
             printf("%d\n",ev_q->fd);
             //frixia_events_queue_push();
         }
-        printf("AAAAAAAA");
     }
 
     stop_fepoll(fepoll);
