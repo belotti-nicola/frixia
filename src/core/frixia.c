@@ -37,7 +37,7 @@
 #include "callback_suite/frixia_cb_hashmap.h"
 #include "../../deps/picohttpparser/picohttpparser.h"
 #include "protocols/frixia_supported_protocols.h"
-
+#include "fdispatcher/detached_frixia_dispatcher.h"
 #include "filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "filedescriptor/fd_monitor/detached_epoll_monitor.h"
 #include "../setup/setup_utility.h"
@@ -117,6 +117,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
     start_fepoll(fsuite->fepoll);
 
+
     proto_frixia_fd_t *protofd = pop_proto_fd(proto_fds_q);
     while(protofd != NULL)
     {
@@ -137,7 +138,13 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     frixia_events_queue_t *events = frixia_events_queue_create();
     fsuite->events_q = events;
 
+    waitable_frixia_dispatcher_t *dispatcher;
+    create_waitable_frixia_dispatcher(dispatcher, FRIXIA_WORKERS);
+    
+    dispatcher->dispatcher->tasks = events;
+
     frixia_detached_start_monitor(fsuite);
+    detached_start_frixia_dispatcher(dispatcher);
     frixia_detached_wait_threads(fsuite);
 
     frixia_events_queue_destroy(events);

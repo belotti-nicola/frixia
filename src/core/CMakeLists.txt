@@ -14,6 +14,7 @@ add_subdirectory(protocols)
 add_subdirectory(callback_suite)
 add_subdirectory(filedescriptor)
 add_subdirectory(fsuite)
+add_subdirectory(fdispatcher)
 
 
 target_link_libraries(core 
@@ -35,4 +36,5 @@ target_link_libraries(core
   simple_list
   fsuite
   threadsafe_simple_queue
+  fdispatcher
 )
