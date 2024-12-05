@@ -6,7 +6,7 @@
 int frixia_dispatcher_loop_function(void *arg)
 {
     printf("frixia_dispatcher_loop_function started\n");
-    frixia_dispatcher_t   *dispatcher = (frixia_dispatcher_t *)arg;
+    frixia_dispatcher_t   *dispatcher   = (frixia_dispatcher_t *)arg;
     frixia_events_queue_t *events_queue = dispatcher->tasks;
     frixia_event_t        *event;
     
@@ -21,6 +21,7 @@ int frixia_dispatcher_loop_function(void *arg)
             continue;
         }
         printf("EVENT POPPED BY DISPATCHER::fd::%d\n",event->fd);
+        dispatch_event_to_workers(dispatcher,event);
     }
 
     destroy_frixia_dispatcher(dispatcher);

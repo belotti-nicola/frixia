@@ -15,7 +15,7 @@ add_subdirectory(callback_suite)
 add_subdirectory(filedescriptor)
 add_subdirectory(fsuite)
 add_subdirectory(fdispatcher)
-
+add_subdirectory(fthread_pool)
 
 target_link_libraries(core 
   ctl_parser
@@ -37,4 +37,5 @@ target_link_libraries(core
   fsuite
   threadsafe_simple_queue
   fdispatcher
+  fthread_pool
 )

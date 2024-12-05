@@ -134,12 +134,17 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
 
     //TODO CALLBACK 
     //CALLBACK SETUP
+    frixia_thread_pool_t *th_pool = create_frixia_thread_pool(FRIXIA_WORKERS);
+
 
     frixia_events_queue_t *events = frixia_events_queue_create();
     fsuite->events_q = events;
+    
 
     waitable_frixia_dispatcher_t *dispatcher = create_waitable_frixia_dispatcher(FRIXIA_WORKERS);
     dispatcher->dispatcher->tasks = events;
+
+    set_frixia_dispatcher_thread_pool(dispatcher->dispatcher,th_pool);
     
     frixia_detached_start_monitor(fsuite);
     detached_start_frixia_dispatcher(dispatcher);

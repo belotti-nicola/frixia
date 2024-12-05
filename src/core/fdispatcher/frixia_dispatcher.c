@@ -13,6 +13,7 @@ frixia_dispatcher_t *create_frixia_distpatcher(int workers_number)
     ptr->workers = workers_number;
     return ptr;
 }
+
 void destroy_frixia_dispatcher(frixia_dispatcher_t *p)
 {
     free(p);
@@ -26,4 +27,19 @@ void set_frixia_dispatcher_tasks(frixia_dispatcher_t *fd, frixia_events_queue_t 
         return;
     }
     fd->tasks = fq;
+}
+
+void set_frixia_dispatcher_thread_pool(frixia_dispatcher_t *fd, frixia_thread_pool_t *tp)
+{
+    fd->thread_pool = tp;
+}
+
+void dispatch_event_to_workers(frixia_dispatcher_t *dispatcher,frixia_event_t *event)
+{
+    int task_index = dispatcher->task_index;
+    int dim = dispatcher->workers;
+    frixia_events_queue_t **q = dispatcher->thread_pool->threads_tasks;
+    frixia_events_queue_t  *q_i = *(q+task_index);
+    frixia_events_queue_push(q_i,event);
+    dispatcher->task_index = (task_index + 1)%dim;
 }
