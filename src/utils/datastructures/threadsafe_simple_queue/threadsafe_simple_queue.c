@@ -22,9 +22,15 @@ threadsafe_simple_queue_t* create_threadsafe_simple_queue()
     q->queue = squeu;
     
     q->size = 0;
+    
     pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
+    pthread_mutex_init(mutex, NULL);
     q->mutex = mutex;
-    pthread_mutex_init(q->mutex, NULL);
+
+    pthread_cond_t *m_empty = malloc(sizeof(pthread_cond_t));
+    pthread_cond_init(m_empty,NULL);
+    q->empty = m_empty;
+
     return q;
 }
 
@@ -33,9 +39,9 @@ void* pop_threadsafe_simple_queue(threadsafe_simple_queue_t* q)
     void *el;
     pthread_mutex_lock(q->mutex);
     simple_queue_t *concrete_q = q->queue;
-    if( concrete_q->size == 0)
+    while( concrete_q->size == 0)
     {
-        return NULL;
+        pthread_cond_wait(q->empty,q->mutex);
     }
     
     el = pop_simple_queue(concrete_q);
@@ -48,6 +54,11 @@ void push_threadsafe_simple_queue(threadsafe_simple_queue_t* q,void *el)
     pthread_mutex_lock(q->mutex);
     simple_queue_t *concrete_q = q->queue;
     push_simple_queue(concrete_q,el);
+    q->size++;
+    if(q->queue->size == 1)
+    {
+        pthread_cond_signal(q->empty);
+    }
     pthread_mutex_unlock(q->mutex);
 }
 void destroy_threadsafe_simple_queue(threadsafe_simple_queue_t *t)

@@ -9,6 +9,7 @@ typedef struct threadsafe_simple_queue
     int                size;
     simple_queue_t    *queue;
     pthread_mutex_t   *mutex;
+    pthread_cond_t    *empty;
 
 } threadsafe_simple_queue_t;
 
