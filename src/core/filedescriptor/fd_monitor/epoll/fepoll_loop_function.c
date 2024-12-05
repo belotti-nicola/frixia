@@ -20,7 +20,7 @@ int fepoll_loop_function(frixia_suite_t *fsuite)
         printf("events_number :: %d\n",events_number);
         for(int i=0;i<events_number;i++)
         {
-            printf("%d\n",ev_q->fd);
+            printf("event %d of %d, pushing to events_queue\n",ev_q->fd,events_number);
             int event_fd = ev_q->fd;
             frixia_event_t *e = create_event(event_fd);
             frixia_events_queue_push(fsuite->events_q,e);

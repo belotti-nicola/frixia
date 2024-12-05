@@ -1,21 +1,32 @@
-#include <pthread.h>
-#include "detached_frixia_dispatcher.h"
 #include "frixia_dispatcher.h"
-
+#include <stdlib.h>
 #include "frixia_dispatcher_loop_function.h"
 
-void create_waitable_frixia_dispatcher(waitable_frixia_dispatcher_t *d,int workers)
+#include "detached_frixia_dispatcher.h"
+
+waitable_frixia_dispatcher_t *create_waitable_frixia_dispatcher(int workers)
 {
-    d->dispatcher->workers = workers;
+    waitable_frixia_dispatcher_t *wfd = malloc(sizeof(waitable_frixia_dispatcher_t));
+    if(wfd == NULL)
+    {
+        printf("ERROR CREATING WAITABLE FRIXIA DISPATCHER\n");
+        return NULL;
+    }
+
+    frixia_dispatcher_t *disp = create_frixia_distpatcher(workers);
+    wfd->dispatcher = disp;
+
+    return wfd;
 }
 
 int detached_start_frixia_dispatcher(waitable_frixia_dispatcher_t *dispatcher)
 {
-    int rc = pthread_create( dispatcher->thread,
-                             NULL,
-                             (void *)&frixia_dispatcher_loop_function,
-                             dispatcher
-                            );
+    pthread_t th;
+    int rc = pthread_create(&th,
+                            NULL,
+                            (void *)&frixia_dispatcher_loop_function,
+                            dispatcher->dispatcher);
+    dispatcher->thread = &th;
     if(rc != 0) { printf("ERRORCODE1::%d\n",rc);}
     return 0;
 }

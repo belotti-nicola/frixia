@@ -138,11 +138,9 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     frixia_events_queue_t *events = frixia_events_queue_create();
     fsuite->events_q = events;
 
-    waitable_frixia_dispatcher_t *dispatcher;
-    create_waitable_frixia_dispatcher(dispatcher, FRIXIA_WORKERS);
-    
+    waitable_frixia_dispatcher_t *dispatcher = create_waitable_frixia_dispatcher(FRIXIA_WORKERS);
     dispatcher->dispatcher->tasks = events;
-
+    
     frixia_detached_start_monitor(fsuite);
     detached_start_frixia_dispatcher(dispatcher);
     frixia_detached_wait_threads(fsuite);
