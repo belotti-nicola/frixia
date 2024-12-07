@@ -125,3 +125,18 @@ int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents)
     int events_number = wait_epoll_events(fepoll->fd,FRIXIA_EPOLL_MAXIMUM_EVENTS,fevents);
     return events_number;
 }
+
+int search_fepoll_read_size(frixia_epoll_t *fepoll,int search_fd)
+{
+    simple_list_elem_t *curr = fepoll->fd_pool->l->first;
+    while(curr != NULL)
+    {
+        frixia_fd_t *fd =(frixia_fd_t *)curr->val;
+        curr = curr->next;
+        if(fd->fd == search_fd)
+        {
+            return fd->read_dim;
+        }
+    }
+    return -1;
+}

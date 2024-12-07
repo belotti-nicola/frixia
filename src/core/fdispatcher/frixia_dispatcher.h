@@ -14,7 +14,7 @@ typedef struct frixia_dispatcher
 
 } frixia_dispatcher_t;
 
-frixia_dispatcher_t *create_frixia_distpatcher(int workers);
+frixia_dispatcher_t *create_frixia_dispatcher(int workers);
 void                 destroy_frixia_dispatcher(frixia_dispatcher_t *p);
 void                 set_frixia_dispatcher_tasks(frixia_dispatcher_t *disp, frixia_events_queue_t *fqueue);
 void                 set_frixia_dispatcher_thread_pool(frixia_dispatcher_t *fd, frixia_thread_pool_t *tp);

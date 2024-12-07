@@ -11,12 +11,15 @@ typedef struct proto_frixia_fd
     int                                 port;                   // tcp/udp
     enum FRIXIA_EVENT_DISPATCHER        dispatcher;             // dispatcher
     FRIXIA_SUPPORTED_PROTOCOL_T         protocol;               // protocol
+    int                                 read_size;              // read_size
+    
 } proto_frixia_fd_t;
 
 proto_frixia_fd_t *create_proto_frixia_fd(enum FrixiaFDType filedescriptor_type,
                                           char filename[],
                                           int port,
                                           enum FRIXIA_EVENT_DISPATCHER d,
-                                          FRIXIA_SUPPORTED_PROTOCOL_T p);
+                                          FRIXIA_SUPPORTED_PROTOCOL_T p,
+                                          int r);
 
 #endif

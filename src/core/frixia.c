@@ -125,20 +125,19 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
             protofd->filedescriptor_type,
             protofd->port,
             protofd->filename,
-            1024
+            protofd->read_size
         );
         protofd = pop_proto_fd(proto_fds_q);
     }
     destroy_proto_frixia_fd_queue(proto_fds_q);
 
-
-    //TODO CALLBACK 
-    //CALLBACK SETUP
-    frixia_thread_pool_t *th_pool = create_frixia_thread_pool(FRIXIA_WORKERS);
-
-
+    // FRIXIA EVENTS SETUP
     frixia_events_queue_t *events = frixia_events_queue_create();
     fsuite->events_q = events;
+
+
+    frixia_thread_pool_t *th_pool = create_frixia_thread_pool(FRIXIA_WORKERS,fsuite->fepoll,events);
+    set_frixia_thread_pool_tasks(th_pool,events);
     
 
     waitable_frixia_dispatcher_t *dispatcher = create_waitable_frixia_dispatcher(FRIXIA_WORKERS);

@@ -23,7 +23,8 @@ void add_proto_fd(proto_frixia_fd_queue_t *q,
                   char filename[],
                   int port,
                   enum FRIXIA_EVENT_DISPATCHER d,
-                  FRIXIA_SUPPORTED_PROTOCOL_T p);
+                  FRIXIA_SUPPORTED_PROTOCOL_T p,
+                  int dim);
 proto_frixia_fd_t *pop_proto_fd(proto_frixia_fd_queue_t *q);
 bool proto_fd_is_empty(proto_frixia_fd_queue_t *q);
 
