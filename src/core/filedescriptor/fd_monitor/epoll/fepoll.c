@@ -126,7 +126,7 @@ int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents)
     return events_number;
 }
 
-int search_fepoll_read_size(frixia_epoll_t *fepoll,int search_fd)
+frixia_fd_t *search_fepoll(frixia_epoll_t *fepoll,int search_fd)
 {
     simple_list_elem_t *curr = fepoll->fd_pool->l->first;
     while(curr != NULL)
@@ -135,8 +135,8 @@ int search_fepoll_read_size(frixia_epoll_t *fepoll,int search_fd)
         curr = curr->next;
         if(fd->fd == search_fd)
         {
-            return fd->read_dim;
+            return fd;
         }
     }
-    return -1;
+    return NULL;
 }

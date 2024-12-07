@@ -7,9 +7,8 @@
 
 #include "frixia_thread_pool.h"
 
-void *thread_main_loop(void *arg)
+void thread_main_loop(frixia_thread_pool_data_t *data)
 {
-    frixia_thread_pool_data_t *data = (frixia_thread_pool_data_t *)arg;
     frixia_events_queue_t     *q  = data->tasks;
     frixia_epoll_t            *ep = data->fepoll;
     while(true)
@@ -50,10 +49,13 @@ frixia_thread_pool_t* create_frixia_thread_pool(int n,frixia_epoll_t *fepoll, fr
         pthread_t th;
         frixia_events_queue_t *q = frixia_events_queue_create();
         frixia_thread_pool_data_t *tpdata = create_frixia_thread_pool_data();
-        set_frixia_thread_pool_data_events(tpdata,events)
+        set_frixia_thread_pool_data_events(tpdata,events);
         set_frixia_thread_pool_data_thread_tasks(tpdata,q);
         set_frixia_thread_pool_data_fepoll(tpdata,fepoll);
-        int exit_code = pthread_create(&th,NULL,thread_main_loop,tpdata);
+        int exit_code = pthread_create(&th,
+                                        NULL,
+                                        (void *)&thread_main_loop,
+                                        tpdata);
         if(exit_code != 0) { exit(-1);}
         threads[i] = th;
         queues[i] = q;
