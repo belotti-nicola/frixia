@@ -1,20 +1,12 @@
-TODO
-    0.read buf -> thread "main function"
-    1.read_http -> means parse it;
-    2.read_https -> decode it;
-    3.once correctly decoded, link callbacks.
-    
-    test add / remove frixia fds -> refactor this
-    POC_FUN //TODO MARKED
-    frixia_zombie -> ctrl termination / kill -9
-    fifo error codes missing
-    logger
-    
+TODO   
+    read frixia fd -> link right parameters (NO SWITCH)
+    frixia stop (keep looping?)
+    OS signals handling
+    HTTP
+
 ISSUE:
     fifo seems controversial (EPOLLET only)
-    const char for fifo
-    CMake and parent directory
-    frixia_zombie that remain binded to <ADDRESS>:<PORT>
+    thread pool termination is by killing 
 
 FEAT:
     reentrancy check (multiple threads)
@@ -30,9 +22,7 @@ REFACTORING
     name ENGINE_EVENT / PROGRAM_EVENT (1.ENUM 2.START_<t>_EVENT)
     STOPALL: no need to call functions? check
     frixia_fd can be designed better 
-    Q -> Q + mutex = SHARED_Q
     thread pool -> many Q to inject in threads Qs (dispatcher that delivers LOCAL DATA!)
-    thread pool termination is by killing 
     test -> 1. refactor with common functions (CSV handling) 2. insert header_numbers as test sample
     test::csv with free schema (load data, no DCs)
     pico -> read_headers first.
@@ -40,12 +30,15 @@ REFACTORING
 
 CHOICES
     C vs C++
+    handle mini tasks (HTTP: 1.read 2.decode req 3.do magic 4.reply to client)
 
 FUTURE DEVELOPMENT
     icon
     python integration
     HTTPS (integrabile->2.0.0)
     create library
+    use a thread pool library (external)
+    design a better policy than round robin for task scheduling 
 
 CHECK
-    filedescriptor of epoll and threads
+    nothing.
