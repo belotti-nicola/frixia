@@ -113,7 +113,7 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                  proto_frixia_callbacks_queue_t *proto_callbacks_q)
 {        
-    
+    bool keep_looping = true;
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
     start_fepoll(fsuite->fepoll);
 
@@ -130,6 +130,9 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
         protofd = pop_proto_fd(proto_fds_q);
     }
     destroy_proto_frixia_fd_queue(proto_fds_q);
+    int stop_fd = fadd_stop_filedescriptor(fsuite->fepoll);
+    //add_stop_callback(fd,&keep_looping);
+
 
     // FRIXIA EVENTS SETUP
     frixia_events_queue_t *events = frixia_events_queue_create();
@@ -147,8 +150,9 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     
     frixia_detached_start_monitor(fsuite);
     detached_start_frixia_dispatcher(dispatcher);
-    frixia_detached_wait_threads(fsuite);
 
+
+    frixia_detached_wait_threads(fsuite);
     frixia_events_queue_destroy(events);
     return OK;
 }

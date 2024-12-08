@@ -66,7 +66,7 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
     }
 
     fepoll->stop_fd = efd;
-    return FEPOLL_OK;
+    return efd;
 }
 
 FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
