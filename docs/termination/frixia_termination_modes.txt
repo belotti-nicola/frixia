@@ -1,0 +1,12 @@
+0.Force Stop
+    Dispatcher: instantly killed;
+    Thread Pool: instantly killed;
+    Epoll: instantly killed;
+1.Empty
+    Dispatcher: event callback TERMINATION (SIGNALS REMAININNG JOBS);
+    Thread Pool: event callback TERMINATION (SIGNALS REMAININNG JOBS);
+    Epoll: event callback TERMINATION (SIGNALS REMAININNG JOBS);
+2.Last one:
+    Dispatcher: keep_looping = false;
+    Thread Pool: keep_looping = false;
+    Epoll: keep_looping = false;
