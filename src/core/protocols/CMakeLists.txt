@@ -1,4 +1,5 @@
 add_subdirectory(http)
+add_subdirectory(fins)
 
 add_library(protocols
     frixia_supported_protocols.h
@@ -7,4 +8,5 @@ add_library(protocols
 
 target_link_libraries(protocols 
     http
+    fins
   )

@@ -4,7 +4,8 @@
 typedef enum FRIXIA_SUPPORTED_PROTOCOL
 {
     NO_PROTOCOL,
-    HTTP
+    HTTP,
+    FINS
     
 } FRIXIA_SUPPORTED_PROTOCOL_T;
 
