@@ -4,5 +4,5 @@ add_library(http_callback
 )
 
 target_link_libraries(http_callback
-    event
+    fevent
 )

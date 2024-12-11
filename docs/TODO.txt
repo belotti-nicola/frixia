@@ -1,8 +1,8 @@
 TODO   
-    read frixia fd -> link right parameters (NO SWITCH)
     frixia stop (keep looping?)
     OS signals handling
-    HTTP
+    no_protocol_callbacks read (tcp reply)
+    frixia_callbacks_data_structure
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

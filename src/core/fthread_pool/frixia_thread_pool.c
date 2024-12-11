@@ -4,6 +4,7 @@
 #include "../filedescriptor/reader/filedescriptor_reader.h"
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "errno.h"
+#include "../callback_suite/frixia_callback_main_function.h"
 
 #include "frixia_thread_pool.h"
 
@@ -15,11 +16,10 @@ void thread_main_loop(frixia_thread_pool_data_t *data)
     {
         frixia_event_t *e = frixia_events_queue_pop(q);
         int event_fd = e->fd;
-        printf("thread main loop!!!%d\n",event_fd);
-        char buf[1024+1]; // TODO: DEAL WITH FILE DESCRITOR SIZES
-        int bytes_read = read_frixia_filedescriptor(ep,event_fd,buf);
-        printf("read: %s(%d bytes read from fd: %d errno %d)\n",buf,bytes_read,event_fd,errno);
-        printf("End loop\n");
+        printf("thread main loop!!!%d start iteration\n",event_fd);
+        //TODO SEARCH FOR HTTP
+        frixia_callback_main_function(e,HTTP);
+        printf("thread main loop!!!%d stop  iteration\n",event_fd);
     }
 }
 

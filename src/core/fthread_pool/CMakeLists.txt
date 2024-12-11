@@ -7,4 +7,5 @@ add_library(fthread_pool
 
 target_link_libraries(fthread_pool
     fd_reader
+    callback_suite
 )
