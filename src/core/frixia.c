@@ -34,7 +34,6 @@
 #include "../setup/proto_callbacks/proto_callbacks_queue.h"
 #include "protocols/frixia_supported_protocols.h"
 #include "protocols/http/frixia_http_parser.h"
-#include "callback_suite/frixia_cb_hashmap.h"
 #include "../../deps/picohttpparser/picohttpparser.h"
 #include "protocols/frixia_supported_protocols.h"
 #include "fdispatcher/detached_frixia_dispatcher.h"

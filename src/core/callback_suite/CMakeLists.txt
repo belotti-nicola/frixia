@@ -6,8 +6,6 @@ add_subdirectory(callbacks)
 add_library(callback_suite
     frixia_callback_main_function.c
     frixia_callback_main_function.h
-    frixia_cb_hashmap.c
-    frixia_cb_hashmap.h
     )
 
 target_link_libraries(callback_suite
