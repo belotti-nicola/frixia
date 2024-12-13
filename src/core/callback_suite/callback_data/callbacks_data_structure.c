@@ -28,8 +28,11 @@ void destroy_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t *
     destroy_simple_list(d->callbacks);
     free(d);
 }
-void add_entry_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t *d,
-                                               frixia_callback_data_t *cb)
+void add_entry_frixia_callbacks_data_structure(
+    frixia_callbacks_data_structure_t *datastructure,
+    frixia_event_t                    *event,
+    void                              *fun(void *),
+    void                              *arg
+    )
 {
-    add_item(d->callbacks,cb);
 }
