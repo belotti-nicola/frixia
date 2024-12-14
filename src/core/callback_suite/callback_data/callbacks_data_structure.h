@@ -16,6 +16,7 @@ void                               destroy_frixia_callbacks_data_structure(frixi
 void                               add_entry_frixia_callbacks_data_structure(
     frixia_callbacks_data_structure_t *datastructure,
     frixia_event_t                    *event,
+    char                              *key,
     void                              *fun(void *),
     void                              *arg
     );

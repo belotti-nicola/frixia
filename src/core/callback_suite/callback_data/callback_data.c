@@ -1,9 +1,10 @@
-#include "callback_data.h"
 #include "../../../core/frixia_common.h"
 #include "../../fevent/frixia_event.h"
 #include "../hashmap/hash_map.h"
 
-frixia_callback_data_t *create_frixia_callback_data(frixia_event_t *event)
+#include "callback_data.h"
+
+frixia_callback_data_t *create_frixia_callback_data(frixia_event_t *event,int callbacks_size)
 {
     frixia_callback_data_t *p = malloc(sizeof(frixia_callback_data_t));
     if( p == NULL )
@@ -11,13 +12,13 @@ frixia_callback_data_t *create_frixia_callback_data(frixia_event_t *event)
         return NULL;
     }
     
-    HashMap_t *hm_1 = create_hash_map(64);
+    HashMap_t *hm_1 = create_hash_map(callbacks_size);
     if( hm_1 == NULL )
     {
         free(p);
         return NULL;
     }
-    HashMap_t *hm_2 = create_hash_map(64);
+    HashMap_t *hm_2 = create_hash_map(callbacks_size);
     if( hm_2 == NULL )
     {
         free(p);
@@ -25,6 +26,8 @@ frixia_callback_data_t *create_frixia_callback_data(frixia_event_t *event)
         return NULL;
     }
     p->fd = event->fd;
+    p->arguments = hm_1;
+    p->functions = hm_2;
     return p;
 }
 
@@ -35,22 +38,13 @@ void destroy_frixia_callback_data(frixia_callback_data_t *p)
     free(p);
 }
 
-void add_frixia_callback_data(frixia_callback_data_t *cb, void *fun(void *), void *arg)
+void add_frixia_callback_data(frixia_callback_data_t *cb, char *key, void *fun(void *), void *arg)
 {
+    HashEntry_t *hashed_fun = create_hash_entry(key,fun);
     HashMap_t *cb_functions = cb->functions;
-    if(cb_functions == NULL)
-    {
-        cb_functions = create_hash_map(64);
-    }
-    HashEntry_t *he_fun = create_hash_entry("aaaa",he_fun);
-    add_entry(cb_functions,he_fun);
+    add_entry(cb_functions,hashed_fun);
 
+    HashEntry_t *hashed_arg = create_hash_entry(key,arg);
     HashMap_t *cb_arguments = cb->arguments;
-    if(cb_arguments == NULL)
-    {
-        cb_arguments = create_hash_map(64);
-    }
-    HashEntry_t *he_arg = create_hash_entry("bbbb",he_arg);
-    add_entry(cb_arguments,he_arg);
-    
+    add_entry(cb_arguments,hashed_arg);
 }
