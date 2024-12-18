@@ -8,9 +8,7 @@ typedef struct proto_frixia_fd
 {
     enum FrixiaFDType                   filedescriptor_type;    // filedescriptor type : IF UNDEFINED IS NOT USED
     char                                filename[MAXSTR + 1];   // fifos
-    int                                 port;                   // tcp/udp
-    enum FRIXIA_EVENT_DISPATCHER        dispatcher;             // dispatcher
-    FRIXIA_SUPPORTED_PROTOCOL_T         protocol;               // protocol
+    int                                 port;                   // port UDP/TCP
     int                                 read_size;              // read_size
     
 } proto_frixia_fd_t;
@@ -18,8 +16,6 @@ typedef struct proto_frixia_fd
 proto_frixia_fd_t *create_proto_frixia_fd(enum FrixiaFDType filedescriptor_type,
                                           char filename[],
                                           int port,
-                                          enum FRIXIA_EVENT_DISPATCHER d,
-                                          FRIXIA_SUPPORTED_PROTOCOL_T p,
-                                          int r);
+                                          int size);
 
 #endif

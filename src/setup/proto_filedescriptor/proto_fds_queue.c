@@ -39,11 +39,14 @@ void add_proto_fd(proto_frixia_fd_queue_t *pff,
                   enum FrixiaFDType filedescriptor_type,
                   char filename[],
                   int port,
-                  enum FRIXIA_EVENT_DISPATCHER dispatcher,
-                  FRIXIA_SUPPORTED_PROTOCOL_T p,
                   int read_dim)
 {
-    proto_frixia_fd_t* el = create_proto_frixia_fd(filedescriptor_type,filename,port,dispatcher,p,read_dim);
+    proto_frixia_fd_t* el = create_proto_frixia_fd(
+        filedescriptor_type,
+        filename,
+        port,
+        read_dim
+    );
     push_simple_queue(pff->fd_q,(void*)el);
 }
 

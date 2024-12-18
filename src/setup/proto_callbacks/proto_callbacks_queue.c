@@ -1,16 +1,13 @@
 #include "proto_cb.h"
 #include "proto_callbacks_queue.h"
-
+#include "../../utils/datastructures/simple_list/simple_list.h"
 #include "../../core/frixia_common.h"
 #include "pc_http/proto_callback_http.h"
 #include "pc_noprotocol/proto_callback_noprotocol.h"
 
-#include "proto_cb.h"
-
-
 proto_frixia_callbacks_queue_t *create_proto_frixia_callbacks_queue()
 {
-    thread_safe_queue_t *q = create_q();
+    simple_queue_t *q = create_simple_queue();
     if (NULL == q)
     {
         return NULL;
@@ -21,13 +18,13 @@ proto_frixia_callbacks_queue_t *create_proto_frixia_callbacks_queue()
     {
         return NULL;
     }
-    fcbs->q = q;
+    fcbs->proto_callbacks = q;
 
     return fcbs;
 }
 void destroy_proto_frixia_callbacks_queue(proto_frixia_callbacks_queue_t *t)
 {
-    destroy_q(t->q);
+    destroy_simple_queue(t->proto_callbacks);
     free(t);
 }
 void add_proto_callback_no_protocol(proto_frixia_callbacks_queue_t *cbs,
@@ -40,8 +37,8 @@ void add_proto_callback_no_protocol(proto_frixia_callbacks_queue_t *cbs,
     proto_callback_noprotocol_t *cb = create_proto_callback_noprotocol(fd_type,port,filename,f, arg);
 
     proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,NO_PROTOCOL,cb,f,arg);
-    thread_safe_queue_t *q = cbs->q;
-    push_q(q, (void *)pf_cb);
+    simple_queue_t *l = cbs->proto_callbacks;
+    push_simple_queue(l, (void *)pf_cb);
 }
 
 void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
@@ -55,6 +52,12 @@ void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
     proto_callback_http_t *cb = create_proto_callback_http(fd_type,port, method, path, f, arg);
     
     proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,HTTP,cb,f,arg);
-    thread_safe_queue_t *q = cbs->q;
-    push_q(q, (void *)pf_cb);
+    simple_queue_t *q = cbs->proto_callbacks;
+    push_simple_queue(q, (void *)pf_cb);
+}
+
+proto_frixia_callback_t *pop_proto_frixia_callbacks_queue_t(proto_frixia_callbacks_queue_t *pcbs)
+{
+    //TODO
+
 }
