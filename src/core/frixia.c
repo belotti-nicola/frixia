@@ -110,7 +110,7 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 }
 */
 int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
-                 proto_frixia_callbacks_queue_t *proto_callbacks_q)
+                 proto_frixia_callbacks_queue_t *pbs)
 {        
     bool keep_looping = true;
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
@@ -129,6 +129,14 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
         protofd = pop_proto_fd(proto_fds_q);
     }
     destroy_proto_frixia_fd_queue(proto_fds_q);
+    
+    simple_list_elem_t *curr = pbs->proto_callbacks->first;
+    while(curr != NULL)
+    {
+        curr = curr->next;
+    }    
+    
+    
     int stop_fd = fadd_stop_filedescriptor(fsuite->fepoll);
     //add_stop_callback(fd,&keep_looping);
 
