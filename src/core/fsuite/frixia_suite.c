@@ -1,10 +1,9 @@
 #include "stdlib.h"
 #include "frixia_fd.h"
 #include <stdio.h>
-
-#include "frixia_suite.h"
 #include "../filedescriptor/starter/frixia_starter.h"
 
+#include "frixia_suite.h"
 
 frixia_suite_t *create_frixia_suite(int max_dimension)
 {
@@ -52,4 +51,14 @@ void frixia_suite_insert_filedescriptor(frixia_suite_t *s,
 
     int rc = insert_event(s->fepoll->fd,fd_info);
     printf("RC INSERT EVENT :: %d\n",rc);
+}
+
+void frixia_suite_insert_callback(
+    frixia_suite_t *s,enum FrixiaFDType fd_type,
+    FRIXIA_SUPPORTED_PROTOCOL_T protocol,
+    void *protocol_data,
+    void (*f)(void *),
+    void *arg)
+{
+
 }

@@ -58,6 +58,7 @@ void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
 
 proto_frixia_callback_t *pop_proto_frixia_callbacks_queue_t(proto_frixia_callbacks_queue_t *pcbs)
 {
-    //TODO
-
+    simple_queue_t          *q = pcbs->proto_callbacks;
+    proto_frixia_callback_t *retVal = pop_simple_queue(q);
+    return retVal;
 }

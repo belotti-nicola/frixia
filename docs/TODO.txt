@@ -3,7 +3,8 @@ TODO
     OS signals handling
     no_protocol_callbacks read (tcp reply)
     frixia_callbacks_data_structure
-    CALLBACKS SIZE IS 64
+    CALLBACKS SIZE IS 64 (compile time known)
+    general event creation    
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

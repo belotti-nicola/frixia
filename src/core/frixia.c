@@ -130,12 +130,19 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     }
     destroy_proto_frixia_fd_queue(proto_fds_q);
     
-    simple_list_elem_t *curr = pbs->proto_callbacks->first;
-    while(curr != NULL)
+    proto_frixia_callback_t *protocb = pop_proto_frixia_callbacks_queue_t(pbs);
+    while(protocb != NULL)
     {
-        curr = curr->next;
+        frixia_suite_insert_callback(fsuite,
+            protocb->fd_type,
+            protocb->protocol,
+            protocb->protocol_data,
+            protocb->f,
+            protocb->arg
+        );
+        protocb = pop_proto_frixia_callbacks_queue_t(pbs);
     }    
-    
+    destroy_proto_frixia_callbacks_queue(pbs);
     
     int stop_fd = fadd_stop_filedescriptor(fsuite->fepoll);
     //add_stop_callback(fd,&keep_looping);
