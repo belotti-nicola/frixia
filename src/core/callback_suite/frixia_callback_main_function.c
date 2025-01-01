@@ -7,7 +7,7 @@
 
 #include "frixia_callback_main_function.h"
 
-int frixia_callback_main_function(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p)
+int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p)
 {
     printf("%d %d\n",e->fd,p);
     switch(p)

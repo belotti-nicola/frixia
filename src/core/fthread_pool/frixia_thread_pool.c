@@ -18,7 +18,7 @@ void thread_main_loop(frixia_thread_pool_data_t *data)
         int event_fd = e->fd;
         printf("thread main loop!!!%d start iteration\n",event_fd);
         //TODO SEARCH FOR HTTP
-        frixia_callback_main_function(e,HTTP);
+        frixia_callback_main(e,HTTP);
         printf("thread main loop!!!%d stop  iteration\n",event_fd);
     }
 }

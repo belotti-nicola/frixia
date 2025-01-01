@@ -29,6 +29,7 @@ REFACTORING
     test::csv with free schema (load data, no DCs)
     pico -> read_headers first.
     setup -> src/setup
+    smaller jop pieces (HTTP: read, callback, response)
 
 CHOICES
     C vs C++

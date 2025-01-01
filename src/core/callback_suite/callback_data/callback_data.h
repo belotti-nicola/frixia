@@ -7,13 +7,14 @@
 
 typedef struct frixia_callback_data
 {
-    int        fd;
-    HashMap_t *callbacks;
+    int                               fd;
+    enum FRIXIA_SUPPORTED_PROTOCOL    protocol;
+    void                            (*callback)(void *);
+    void                             *argument;
 
 } frixia_callbacks_data_t;
 
-frixia_callbacks_data_t *create_frixia_callback_data(frixia_event_t *event,int callbacks_size);
-void add_frixia_callback_data(frixia_callbacks_data_t *cb, char *key, void (*fun)(void *), void *arg);
-void destroy_frixia_callbacks_data_t(frixia_callbacks_data_t *p);
+frixia_callbacks_data_t *create_frixia_callback_data(int fd, enum FRIXIA_SUPPORTED_PROTOCOL  protocol, void (*callback)(void *), void *argument);
+void                     destroy_frixia_callback_data(frixia_callbacks_data_t *fcbdata);
 
 #endif

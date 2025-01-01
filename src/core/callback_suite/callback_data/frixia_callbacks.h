@@ -9,16 +9,17 @@ typedef struct frixia_callbacks_data_structure
 {
     simple_list_t *events_callbacks;
 
-} frixia_callbacks_t;
+} frixia_callbacks_data_structure_t;
 
-frixia_callbacks_t *create_frixia_callbacks_data_structure();
-void                destroy_frixia_callbacks_data_structure(frixia_callbacks_t *d);
+frixia_callbacks_data_structure_t *create_frixia_callbacks_data_structure();
+void                destroy_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t *d);
 void                add_entry_frixia_callbacks_data_structure(
-    frixia_callbacks_t *datastructure,
-    frixia_event_t     *event,
-    char               *key,
-    void              (*fun)(void *),
-    void               *arg
+    frixia_callbacks_data_structure_t *datastructure,
+    frixia_event_t              *event,
+    FRIXIA_SUPPORTED_PROTOCOL_T  p,
+    char                        *key,
+    void                       (*fun)(void *),
+    void                        *arg
     );
 
 #endif

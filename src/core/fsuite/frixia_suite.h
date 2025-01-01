@@ -7,6 +7,7 @@
 #include "../../core/fevent/frixia_events_queue.h"
 #include "pthread.h"
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
+#include "../../core/callback_suite/callback_data/frixia_callbacks.h"
 
 typedef struct frixia_suite
 {
@@ -14,6 +15,8 @@ typedef struct frixia_suite
     pthread_t th;
     frixia_epoll_t *fepoll;
     frixia_events_queue_t *events_q;
+
+    frixia_callbacks_data_structure_t *fcb_data;
 
 } frixia_suite_t;
 
