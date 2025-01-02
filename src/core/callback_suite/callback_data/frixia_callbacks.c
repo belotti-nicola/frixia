@@ -30,11 +30,19 @@ void destroy_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t *
     free(d);
 }
 void add_entry_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t   *datastructure,
-                                               frixia_event_t       *event,
-                                               FRIXIA_SUPPORTED_PROTOCOL_T  p,
-                                               char                 *key,
-                                               void                (*fun)(void *),
-                                               void                 *arg)
+                                               frixia_event_t                      *event,
+                                               FRIXIA_SUPPORTED_PROTOCOL_T          p,
+                                               char                                *key,
+                                               void                               (*fun)(void *),
+                                               void                                *arg)
 {
-    
+    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(event->fd,p,fun,arg);
+    if(callback_data == NULL)
+    {
+        printf("ERROR INSERTING");
+        return;
+    }
+
+    simple_list_t *l = datastructure->events_callbacks;
+    add_item(l,callback_data);
 }

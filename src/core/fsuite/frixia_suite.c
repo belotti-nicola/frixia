@@ -2,6 +2,7 @@
 #include "frixia_fd.h"
 #include <stdio.h>
 #include "../filedescriptor/starter/frixia_starter.h"
+#include "../callback_suite/callback_data/frixia_callbacks.h"
 
 #include "frixia_suite.h"
 
@@ -60,5 +61,7 @@ void frixia_suite_insert_callback(
     void (*f)(void *),
     void *arg)
 {
-
+    frixia_callbacks_data_structure_t *callbacks = s->fcb_data;
+    //TODO
+    add_entry_frixia_callbacks_data_structure(NULL,NULL,0,NULL,NULL,NULL);
 }
