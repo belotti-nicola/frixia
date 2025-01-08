@@ -18,5 +18,14 @@ int http_callback(frixia_event_t *fevent, int read_size)
 
     FHTTP_t fhttp_2 = frixia_parse_request(buffer,bytes_read);
     printf("http_callback bytes_read %d(fd:%d,headers:%d)\n",bytes_read,fd_to_read,fhttp_2.num_headers);
-    return 1;
+    
+    void (*fun)(void *) = NULL;//TODO PICKUP FROM HASHTABLE
+    void *arg           = NULL;//TODO PICKUP FROM HASHTABLE
+
+    if(fun && arg)
+    {
+        fun(arg);
+    }
+    
+    return 0;
 }
