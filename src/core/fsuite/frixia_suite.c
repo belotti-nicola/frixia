@@ -18,6 +18,7 @@ frixia_suite_t *create_frixia_suite(int max_dimension)
     retVal->max_filedescriptors = max_dimension;
     
     retVal->fepoll = create_frixia_epoll();
+    retVal->fcb_data = create_frixia_callbacks_data_structure();
     return retVal;
 }
 
@@ -56,12 +57,12 @@ void frixia_suite_insert_filedescriptor(frixia_suite_t *s,
 
 void frixia_suite_insert_callback(
     frixia_suite_t *s,enum FrixiaFDType fd_type,
+    int fd,
     FRIXIA_SUPPORTED_PROTOCOL_T protocol,
     void *protocol_data,
     void (*f)(void *),
     void *arg)
 {
     frixia_callbacks_data_structure_t *callbacks = s->fcb_data;
-    //TODO
-    add_entry_frixia_callbacks_data_structure(NULL,NULL,0,NULL,NULL,NULL);
+    add_entry_frixia_callbacks_data_structure(callbacks,fd,protocol,"key",f,arg);
 }

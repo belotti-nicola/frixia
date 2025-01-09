@@ -7,24 +7,24 @@
 
 #include "frixia_callback_main_function.h"
 
-int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p)
+int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p, int dim)
 {
     printf("%d %d\n",e->fd,p);
     switch(p)
     {
         case HTTP:
         {
-            http_callback(e,1024);
+            http_callback(e,dim);
             break;
         }
         case FINS:
         {
-            fins_callback(e,1024,p);
+            fins_callback(e,dim,p);
             break;
         }
         case NO_PROTOCOL:
         {
-            no_protocol_callback(e,1024,p);
+            no_protocol_callback(e,dim,p);
             break;
         }
     }

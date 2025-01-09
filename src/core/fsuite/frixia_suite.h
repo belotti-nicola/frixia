@@ -29,6 +29,7 @@ void frixia_suite_insert_filedescriptor(frixia_suite_t *s,
                                         int read_dimension);
 
 void frixia_suite_insert_callback(frixia_suite_t *s, enum FrixiaFDType fd_type,
+                                  int fd,
                                   FRIXIA_SUPPORTED_PROTOCOL_T protocol,
                                   void *protocol_data,
                                   void (*f)(void *),

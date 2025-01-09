@@ -16,9 +16,15 @@ void thread_main_loop(frixia_thread_pool_data_t *data)
     {
         frixia_event_t *e = frixia_events_queue_pop(q);
         int event_fd = e->fd;
-        printf("thread main loop!!!%d start iteration\n",event_fd);
+        printf("thread main loop!!!%d start iteration\n",event_fd);        
         //TODO SEARCH FOR HTTP
-        frixia_callback_main(e,HTTP);
+        frixia_fd_t *frixia_fd = search_fepoll(data->fepoll,event_fd);
+        if(frixia_fd == NULL)
+        {
+            continue;
+        }  
+        int read_size = frixia_fd->read_dim;
+        frixia_callback_main(e,HTTP,read_size);
         printf("thread main loop!!!%d stop  iteration\n",event_fd);
     }
 }
