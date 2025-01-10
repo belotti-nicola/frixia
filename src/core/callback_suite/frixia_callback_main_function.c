@@ -9,6 +9,7 @@
 
 int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p, int dim)
 {
+    //TODO ELIMINATE SWITCH STATEMENT
     printf("%d %d\n",e->fd,p);
     switch(p)
     {

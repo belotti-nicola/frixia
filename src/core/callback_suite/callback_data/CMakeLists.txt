@@ -7,4 +7,5 @@ add_library(callback_data_structure
 
 target_link_libraries(callback_data_structure
     simple_list
+    hashmap
 )

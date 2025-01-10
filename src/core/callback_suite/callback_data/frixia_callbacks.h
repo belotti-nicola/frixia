@@ -13,13 +13,19 @@ typedef struct frixia_callbacks_data_structure
 
 frixia_callbacks_data_structure_t *create_frixia_callbacks_data_structure();
 void                destroy_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t *d);
-void                add_entry_frixia_callbacks_data_structure(
+void                add_http_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,
     int                          fd,
-    FRIXIA_SUPPORTED_PROTOCOL_T  p,
     char                        *key,
     void                       (*fun)(void *),
     void                        *arg
     );
+void                add_no_protocol_entry_to_frixia_callbacks(
+    frixia_callbacks_data_structure_t *datastructure,
+    int                          fd,
+    void                       (*fun)(void *),
+    void                        *arg
+    );
+
 
 #endif

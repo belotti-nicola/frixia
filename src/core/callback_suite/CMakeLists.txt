@@ -9,7 +9,6 @@ add_library(callback_suite
     )
 
 target_link_libraries(callback_suite
-    hashmap
     callback_data_structure
     http_callback
     fins_callback

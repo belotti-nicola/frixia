@@ -46,3 +46,50 @@ void add_entry_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t
     simple_list_t *l = datastructure->events_callbacks;
     add_item(l,callback_data);
 }
+
+void add_http_entry_to_frixia_callbacks(
+    frixia_callbacks_data_structure_t *datastructure,
+    int                          fd,
+    char                        *key,
+    void                       (*fun)(void *),
+    void                        *arg)
+{
+    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,HTTP,fun,arg);
+    if(callback_data == NULL)
+    {
+        printf("ERROR INSERTING");
+        return;
+    }
+    simple_list_t *l = datastructure->events_callbacks;
+    simple_list_elem_t *curr = l->first;
+    while( curr !=  NULL)
+    {
+        int *casted_fd = curr->val;
+        if( *casted_fd == fd)
+        {
+            HashMap_t   *hm = (HashMap_t *)curr->val;
+            add_entry(hm,NULL);
+            return;
+        }
+        curr = curr->next;
+    }
+
+    HashMap_t *hm = create_hash_map(128);//TODO SIZE
+    add_item(l,callback_data);
+}
+void add_no_protocol_entry_to_frixia_callbacks(
+    frixia_callbacks_data_structure_t *datastructure,
+    int                          fd,
+    void                       (*fun)(void *),
+    void                        *arg)
+{
+    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,NO_PROTOCOL,fun,arg);
+    if(callback_data == NULL)
+    {
+        printf("ERROR INSERTING");
+        return;
+    }
+
+    simple_list_t *l = datastructure->events_callbacks;
+    add_item(l,callback_data);
+}
