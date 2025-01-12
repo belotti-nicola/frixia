@@ -133,9 +133,21 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     proto_frixia_callback_t *protocb = pop_proto_frixia_callbacks_queue_t(pbs);
     while(protocb != NULL)
     {       
-        int target_fd = 4;//SEARCH FEPOLL FOR IT
+        int target_fd = -1;
 
-
+        fepoll_pool_t      *active_pool = fsuite->fepoll->fd_pool;
+        simple_list_elem_t *curr        = active_pool->l->first;
+        while(curr != NULL)
+        {
+            frixia_fd_t *filedescriptor = (frixia_fd_t *)curr->val;
+            if(filedescriptor->arg.port == protocb->port)
+            {
+                target_fd = 4;
+                break;
+            }
+            curr = curr->next;
+        }
+        
         frixia_suite_insert_callback(fsuite,
             protocb->fd_type,
             target_fd,
