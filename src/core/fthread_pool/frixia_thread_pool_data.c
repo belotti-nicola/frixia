@@ -1,4 +1,5 @@
 #include "frixia_thread_pool.h"
+#include "../callback_suite/callback_data/callback_data.h"
 #include "../fevent/frixia_events_queue.h"
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include <stdio.h>
@@ -6,7 +7,7 @@
 
 #include "frixia_thread_pool_data.h"
 
-frixia_thread_pool_data_t *create_frixia_thread_pool_data()
+frixia_thread_pool_data_t *create_frixia_thread_pool_data(frixia_callbacks_data_t *cbs)
 {
     frixia_thread_pool_data_t *ptr = malloc(sizeof(frixia_thread_pool_data_t *));
     if(ptr == NULL)
@@ -14,6 +15,7 @@ frixia_thread_pool_data_t *create_frixia_thread_pool_data()
         printf("ERROR creating thread pool data\n");
         return NULL;
     }
+    ptr->frixia_callbacks = cbs;
 }
 
 void destroy_frixia_thread_pool_data(frixia_thread_pool_data_t *t)

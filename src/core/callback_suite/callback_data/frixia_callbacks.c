@@ -1,9 +1,11 @@
 
+#include "../../../utils/datastructures/simple_hash_map/simple_hash_map.h"
 #include "../../../utils/datastructures/simple_list/simple_list.h"
 #include "../../fevent/frixia_event.h"
 #include "callback_data.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "frixia_callbacks.h"
 
@@ -49,10 +51,11 @@ void add_entry_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t
 
 void add_http_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,
-    int                          fd,
-    char                        *key,
-    void                       (*fun)(void *),
-    void                        *arg)
+    int                                fd,
+    char                              *method,
+    char                              *url,
+    void                             (*fun)(void *),
+    void                              *arg)
 {
     frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,HTTP,fun,arg);
     if(callback_data == NULL)
@@ -62,20 +65,25 @@ void add_http_entry_to_frixia_callbacks(
     }
     simple_list_t *l = datastructure->events_callbacks;
     simple_list_elem_t *curr = l->first;
+    
+    char *key = "GET::/foo"; //TODO COMPUTE
+    HashEntry_t *he = create_hash_entry(key,fun);    
+    
     while( curr !=  NULL)
     {
         int *casted_fd = curr->val;
         if( *casted_fd == fd)
         {
             HashMap_t   *hm = (HashMap_t *)curr->val;
-            add_entry(hm,NULL);
+            add_entry(hm,he);
             return;
         }
         curr = curr->next;
     }
 
     HashMap_t *hm = create_hash_map(128);//TODO SIZE
-    add_item(l,callback_data);
+    add_entry(hm,he);
+    return;
 }
 void add_no_protocol_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,
@@ -83,30 +91,37 @@ void add_no_protocol_entry_to_frixia_callbacks(
     void                       (*fun)(void *),
     void                        *arg)
 {
-    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,NO_PROTOCOL,fun,arg);
-    if(callback_data == NULL)
-    {
-        printf("ERROR INSERTING");
-        return;
-    }
-
-    simple_list_t *l = datastructure->events_callbacks;
-    add_item(l,callback_data);
+    return;
 }
 void add_fins_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,
     int                          fd,
     void                       (*fun)(void *),
-    void                        *arg
+    void                        *arg)
+{
+    return;
+}
+
+frixia_callbacks_data_t *frixia_get_http_callback(
+    frixia_callbacks_data_structure_t *datastructure,
+    int   fd,
+    char *method,
+    char *path
     )
 {
-    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,FINS,fun,arg);
-    if(callback_data == NULL)
+    simple_list_t *l = datastructure->events_callbacks;
+    simple_list_elem_t *curr = l->first;
+    while( curr !=  NULL)
     {
-        printf("ERROR INSERTING");
-        return;
+        int *casted_fd = curr->val;
+        if( *casted_fd == fd)
+        {
+            HashMap_t   *hm = (HashMap_t *)curr->val;
+            HashEntry_t *he = get_entry_value(hm,"concatenated");//TODO
+            return (frixia_callbacks_data_t *)he->value;
+        }
+        curr = curr->next;
     }
 
-    simple_list_t *l = datastructure->events_callbacks;
-    add_item(l,callback_data);
+    return NULL;
 }

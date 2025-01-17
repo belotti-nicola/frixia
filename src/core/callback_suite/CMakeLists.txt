@@ -1,4 +1,3 @@
-add_subdirectory(hashmap)
 add_subdirectory(callback_data)
 add_subdirectory(callbacks)
 

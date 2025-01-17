@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "callback_data/frixia_callbacks.h"
 #include "callbacks/http/frixia_http_callback.h"
 #include "callbacks/fins/frixia_fins_callback.h"
 #include "callbacks/no_protocol/frixia_no_protocol_callback.h"
@@ -7,7 +8,7 @@
 
 #include "frixia_callback_main_function.h"
 
-int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p, int dim)
+int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p, int dim, frixia_callbacks_data_structure_t *fcbs)
 {
     //TODO ELIMINATE SWITCH STATEMENT
     printf("%d %d\n",e->fd,p);
@@ -15,7 +16,7 @@ int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p, int d
     {
         case HTTP:
         {
-            http_callback(e,dim);
+            http_callback(e,dim,fcbs);
             break;
         }
         case FINS:

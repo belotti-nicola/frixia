@@ -17,19 +17,19 @@ void thread_main_loop(frixia_thread_pool_data_t *data)
         frixia_event_t *e = frixia_events_queue_pop(q);
         int event_fd = e->fd;
         printf("thread main loop!!!%d start iteration\n",event_fd);        
-        //TODO SEARCH FOR HTTP
+
         frixia_fd_t *frixia_fd = search_fepoll(data->fepoll,event_fd);
         if(frixia_fd == NULL)
         {
             continue;
         }  
         int read_size = frixia_fd->read_dim;
-        frixia_callback_main(e,HTTP,read_size);
+        frixia_callback_main(e,HTTP,read_size,data->frixia_callbacks);
         printf("thread main loop!!!%d stop  iteration\n",event_fd);
     }
 }
 
-frixia_thread_pool_t* create_frixia_thread_pool(int n,frixia_epoll_t *fepoll, frixia_events_queue_t *events)
+frixia_thread_pool_t* create_frixia_thread_pool(int n,frixia_epoll_t *fepoll, frixia_events_queue_t *events,frixia_callbacks_data_structure_t *cbs)
 {
     frixia_thread_pool_t *ptr = malloc(sizeof(frixia_thread_pool_t));
     if(ptr == NULL)
@@ -54,7 +54,7 @@ frixia_thread_pool_t* create_frixia_thread_pool(int n,frixia_epoll_t *fepoll, fr
     {
         pthread_t th;
         frixia_events_queue_t *q = frixia_events_queue_create();
-        frixia_thread_pool_data_t *tpdata = create_frixia_thread_pool_data();
+        frixia_thread_pool_data_t *tpdata = create_frixia_thread_pool_data(cbs);
         set_frixia_thread_pool_data_events(tpdata,events);
         set_frixia_thread_pool_data_thread_tasks(tpdata,q);
         set_frixia_thread_pool_data_fepoll(tpdata,fepoll);

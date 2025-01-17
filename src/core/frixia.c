@@ -170,7 +170,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     fsuite->events_q = events;
 
 
-    frixia_thread_pool_t *th_pool = create_frixia_thread_pool(FRIXIA_WORKERS,fsuite->fepoll,events);
+    frixia_thread_pool_t *th_pool = create_frixia_thread_pool(FRIXIA_WORKERS,fsuite->fepoll,events,fsuite->fcb_data);
     set_frixia_thread_pool_tasks(th_pool,events);
     
 

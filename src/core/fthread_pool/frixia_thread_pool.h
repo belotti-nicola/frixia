@@ -15,7 +15,7 @@ typedef struct frixia_thread_pool
 
 } frixia_thread_pool_t;
 
-frixia_thread_pool_t *create_frixia_thread_pool(int n,frixia_epoll_t *fepoll,frixia_events_queue_t *events);
+frixia_thread_pool_t *create_frixia_thread_pool(int n,frixia_epoll_t *fepoll,frixia_events_queue_t *events, frixia_callbacks_data_structure_t *cb);
 void                  set_frixia_thread_pool_tasks(frixia_thread_pool_t *ptr,
                                                    frixia_events_queue_t *tasks);
 

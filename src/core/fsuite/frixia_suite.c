@@ -64,5 +64,5 @@ void frixia_suite_insert_callback(
     void *arg)
 {
     frixia_callbacks_data_structure_t *callbacks = s->fcb_data;
-    add_http_entry_to_frixia_callbacks(callbacks,fd,"key",f,arg);
+    add_http_entry_to_frixia_callbacks(callbacks,fd,"key","method",f,arg);
 }

@@ -1,7 +1,6 @@
 #ifndef CALLBACK_DATA_H
 #define CALLBACK_DATA_H
 
-#include "../hashmap/hash_map.h"
 #include "../../../core/frixia_common.h"
 #include "../../fevent/frixia_event.h"
 
