@@ -140,7 +140,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
         while(curr != NULL)
         {
             frixia_fd_t *filedescriptor = (frixia_fd_t *)curr->val;
-            if(filedescriptor->arg.port == protocb->port)
+            if(filedescriptor->arg.port == 4)
             {
                 target_fd = 4;
                 break;

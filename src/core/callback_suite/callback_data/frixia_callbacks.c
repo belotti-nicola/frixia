@@ -93,3 +93,20 @@ void add_no_protocol_entry_to_frixia_callbacks(
     simple_list_t *l = datastructure->events_callbacks;
     add_item(l,callback_data);
 }
+void add_fins_entry_to_frixia_callbacks(
+    frixia_callbacks_data_structure_t *datastructure,
+    int                          fd,
+    void                       (*fun)(void *),
+    void                        *arg
+    )
+{
+    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,FINS,fun,arg);
+    if(callback_data == NULL)
+    {
+        printf("ERROR INSERTING");
+        return;
+    }
+
+    simple_list_t *l = datastructure->events_callbacks;
+    add_item(l,callback_data);
+}

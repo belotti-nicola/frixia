@@ -1,4 +1,4 @@
-#include "../../src/core/callback_suite/hashmap/hash_map.h"
+#include "../../src/utils/datastructures/simple_hash_map/simple_hash_map.h"
 #include <stdio.h>
 #include <string.h>
 

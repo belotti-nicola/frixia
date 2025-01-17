@@ -26,6 +26,12 @@ void                add_no_protocol_entry_to_frixia_callbacks(
     void                       (*fun)(void *),
     void                        *arg
     );
+void                add_fins_entry_to_frixia_callbacks(
+    frixia_callbacks_data_structure_t *datastructure,
+    int                          fd,
+    void                       (*fun)(void *),
+    void                        *arg
+    );
 
 
 #endif
