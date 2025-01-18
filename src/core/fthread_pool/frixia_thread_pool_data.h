@@ -5,6 +5,7 @@
 #include "../callback_suite/callback_data/frixia_callbacks.h"
 #include "../fevent/frixia_events_queue.h"
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
+#include "../callback_suite/callback_data/frixia_callbacks.h"
 #include "pthread.h"
 
 typedef struct frixia_thread_pool_data
@@ -17,12 +18,14 @@ typedef struct frixia_thread_pool_data
 
 } frixia_thread_pool_data_t;
 
-frixia_thread_pool_data_t *create_frixia_thread_pool_data(frixia_callbacks_data_t *cbs);
+frixia_thread_pool_data_t *create_frixia_thread_pool_data();
 void set_frixia_thread_pool_data_events(frixia_thread_pool_data_t *threadpool,
                                        frixia_events_queue_t *events);
 void set_frixia_thread_pool_data_thread_tasks(frixia_thread_pool_data_t *threadpool,
                                               frixia_events_queue_t *tasks);
 void set_frixia_thread_pool_data_fepoll(frixia_thread_pool_data_t *tp,
                                         frixia_epoll_t *fepoll);
+void set_frixia_thread_pool_data_callbacks(frixia_thread_pool_data_t         *tp,
+                                           frixia_callbacks_data_structure_t *cbs);
 
 #endif

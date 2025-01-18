@@ -20,6 +20,7 @@ frixia_callbacks_data_structure_t *create_frixia_callbacks_data_structure()
     simple_list_t *l = create_simple_list();
     if(l == NULL)
     {
+        printf("ERROR malloc frixia_callbacks_data_structure_t :: SIMPLE_LIST");
         return NULL;
     }
 
@@ -31,6 +32,7 @@ void destroy_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t *
     destroy_simple_list(d->events_callbacks);
     free(d);
 }
+
 void add_entry_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t   *datastructure,
                                                int                                  fd,
                                                FRIXIA_SUPPORTED_PROTOCOL_T          p,
@@ -60,7 +62,7 @@ void add_http_entry_to_frixia_callbacks(
     frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,HTTP,fun,arg);
     if(callback_data == NULL)
     {
-        printf("ERROR INSERTING");
+        printf("ERROR create_frixia_callback_data");
         return;
     }
     simple_list_t *l = datastructure->events_callbacks;

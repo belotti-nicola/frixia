@@ -54,10 +54,11 @@ frixia_thread_pool_t* create_frixia_thread_pool(int n,frixia_epoll_t *fepoll, fr
     {
         pthread_t th;
         frixia_events_queue_t *q = frixia_events_queue_create();
-        frixia_thread_pool_data_t *tpdata = create_frixia_thread_pool_data(cbs);
+        frixia_thread_pool_data_t *tpdata = create_frixia_thread_pool_data();
         set_frixia_thread_pool_data_events(tpdata,events);
         set_frixia_thread_pool_data_thread_tasks(tpdata,q);
         set_frixia_thread_pool_data_fepoll(tpdata,fepoll);
+        set_frixia_thread_pool_data_callbacks(tpdata,cbs);
         int exit_code = pthread_create(&th,
                                         NULL,
                                         (void *)&thread_main_loop,
