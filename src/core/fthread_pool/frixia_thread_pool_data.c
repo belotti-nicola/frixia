@@ -10,7 +10,7 @@
 
 frixia_thread_pool_data_t *create_frixia_thread_pool_data()
 {
-    frixia_thread_pool_data_t *ptr = malloc(sizeof(frixia_thread_pool_data_t *));
+    frixia_thread_pool_data_t *ptr = malloc(sizeof(frixia_thread_pool_data_t));
     if(ptr == NULL)
     {
         printf("ERROR creating thread pool data\n");

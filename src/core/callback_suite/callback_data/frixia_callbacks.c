@@ -68,7 +68,7 @@ void add_http_entry_to_frixia_callbacks(
     simple_list_t *l = datastructure->events_callbacks;
     simple_list_elem_t *curr = l->first;
     
-    char *key = "GET::/foo"; //TODO COMPUTE
+    char        *key = "GET::/foo"; //TODO COMPUTE
     HashEntry_t *he = create_hash_entry(key,fun);    
     
     while( curr !=  NULL)
@@ -85,6 +85,7 @@ void add_http_entry_to_frixia_callbacks(
 
     HashMap_t *hm = create_hash_map(128);//TODO SIZE
     add_entry(hm,he);
+    add_item(l,hm);
     return;
 }
 void add_no_protocol_entry_to_frixia_callbacks(
