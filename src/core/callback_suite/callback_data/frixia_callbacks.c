@@ -131,7 +131,8 @@ frixia_callbacks_data_t *frixia_get_http_callback(
                 printf("NULL ENTRY\n");
                 return NULL;
             }
-            return (frixia_callbacks_data_t *)he->value;
+            frixia_callbacks_data_t *retVal = create_frixia_callback_data(he->value,NULL);//TODO REMOVE IT
+            return retVal;
         }
         curr = curr->next;
     }

@@ -19,6 +19,8 @@ void goo()
 
 int main(int argc, char *argv[])
 {  
+    printf("foo %p goo %p\n",&foo,&goo);
+    
     proto_frixia_fd_queue_t *proto_fds_q = create_proto_frixia_fd_queue();
     add_proto_fd(proto_fds_q,TCP,"",4444,1024);
     add_proto_fd(proto_fds_q,TCP,"",8888,2048);

@@ -28,10 +28,10 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
         return 0;
     }
     void (*fun)(void *) = cb->function;
-    void *arg           = cb->argument;
-    if(fun && arg)
+    //void *arg           = cb->argument;
+    if(fun)
     {
-        fun(arg);
+        fun("arg");
     }
     
     return 0;
