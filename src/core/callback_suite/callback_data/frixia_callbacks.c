@@ -60,17 +60,18 @@ void add_http_entry_to_frixia_callbacks(
     void                             (*fun)(void *),
     void                              *arg)
 {
-    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fun,arg);
-    if(callback_data == NULL)
+    frixia_callbacks_data_t *cb_data = create_frixia_callback_data(fun,arg);
+    if(cb_data == NULL)
     {
-        printf("ERROR create_frixia_callback_data");
+        printf("error creating frixia callbacks data\n");
         return;
     }
+
     simple_list_t *l = datastructure->events_callbacks;
     simple_list_elem_t *curr = l->first;
     
     char        *key = "/foo"; //TODO COMPUTE
-    HashEntry_t *he = create_hash_entry(key,fun);    
+    HashEntry_t *he = create_hash_entry(key,cb_data);    
     
     while( curr !=  NULL)
     {
@@ -131,8 +132,7 @@ frixia_callbacks_data_t *frixia_get_http_callback(
                 printf("NULL ENTRY\n");
                 return NULL;
             }
-            frixia_callbacks_data_t *retVal = create_frixia_callback_data(he->value,NULL);//TODO REMOVE IT
-            return retVal;
+            return he->value;
         }
         curr = curr->next;
     }

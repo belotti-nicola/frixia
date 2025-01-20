@@ -1,5 +1,6 @@
 #include "../../protocols/frixia_supported_protocols.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "frixia_callback_entry.h"
 
