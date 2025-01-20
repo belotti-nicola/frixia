@@ -22,7 +22,12 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
     printf("event: %d, http_callback bytes_read %d(fd:%d,headers:%d, readsize %d)\n",fd_to_read,bytes_read,fd_to_read,fhttp_2.num_headers,read_size);
 
     frixia_callbacks_data_t *cb = frixia_get_http_callback(fcbs,fd_to_read,fhttp_2.method,fhttp_2.path);
-    void (*fun)(void *) = cb->callback;
+    if(cb == NULL)
+    {
+        printf("NULL POINTER CB\n");
+        return 0;
+    }
+    void (*fun)(void *) = cb->function;
     void *arg           = cb->argument;
     if(fun && arg)
     {

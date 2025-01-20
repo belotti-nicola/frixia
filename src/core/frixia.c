@@ -133,7 +133,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     proto_frixia_callback_t *protocb = pop_proto_frixia_callbacks_queue_t(pbs);
     while(protocb != NULL)
     {       
-        int target_fd = -1;
+        int target_fd = -1; //ISSUE::THIS DOES NOT WORK
 
         fepoll_pool_t      *active_pool = fsuite->fepoll->fd_pool;
         simple_list_elem_t *curr        = active_pool->l->first;

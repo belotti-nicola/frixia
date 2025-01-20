@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "frixia_callback_entry.h"
 
 #include "frixia_callbacks.h"
 
@@ -40,7 +41,7 @@ void add_entry_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t
                                                void                               (*fun)(void *),
                                                void                                *arg)
 {
-    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,p,fun,arg);
+    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fun,arg);
     if(callback_data == NULL)
     {
         printf("ERROR INSERTING");
@@ -59,7 +60,7 @@ void add_http_entry_to_frixia_callbacks(
     void                             (*fun)(void *),
     void                              *arg)
 {
-    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fd,HTTP,fun,arg);
+    frixia_callbacks_data_t *callback_data = create_frixia_callback_data(fun,arg);
     if(callback_data == NULL)
     {
         printf("ERROR create_frixia_callback_data");
@@ -73,8 +74,9 @@ void add_http_entry_to_frixia_callbacks(
     
     while( curr !=  NULL)
     {
-        int *casted_fd = curr->val;
-        if( *casted_fd == fd)
+        frixia_callback_entry_t *entry = (frixia_callback_entry_t *)curr->val;
+        int casted_fd = entry->fd;
+        if( casted_fd == fd)
         {
             HashMap_t   *hm = (HashMap_t *)curr->val;
             add_entry(hm,he);
@@ -85,7 +87,8 @@ void add_http_entry_to_frixia_callbacks(
 
     HashMap_t *hm = create_hash_map(128);//TODO SIZE
     add_entry(hm,he);
-    add_item(l,hm);
+    frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,HTTP,hm);
+    add_item(l,new_entry);
     return;
 }
 void add_no_protocol_entry_to_frixia_callbacks(
@@ -116,8 +119,9 @@ frixia_callbacks_data_t *frixia_get_http_callback(
     simple_list_elem_t *curr = l->first;
     while( curr !=  NULL)
     {
-        int *casted_fd = curr->val;
-        if( *casted_fd == fd)
+        frixia_callback_entry_t *entry = (frixia_callback_entry_t *)curr->val;
+        int casted_fd = entry->fd;
+        if( casted_fd == fd)
         {
             HashMap_t   *hm = (HashMap_t *)curr->val;
             HashEntry_t *he = get_entry_value(hm,"concatenated");//TODO

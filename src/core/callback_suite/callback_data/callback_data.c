@@ -5,7 +5,7 @@
 
 #include "callback_data.h"
 
-frixia_callbacks_data_t *create_frixia_callback_data(int fd, enum FRIXIA_SUPPORTED_PROTOCOL  protocol, void (*callback)(void *), void *argument)
+frixia_callbacks_data_t *create_frixia_callback_data(void (*f)(void *), void *a)
 {
     frixia_callbacks_data_t *ptr = malloc(sizeof(frixia_callbacks_data_t));
     if(ptr == NULL)
@@ -13,10 +13,8 @@ frixia_callbacks_data_t *create_frixia_callback_data(int fd, enum FRIXIA_SUPPORT
         printf("frixia_callbacks_data_t creation error!");
         return NULL;
     }
-    ptr->fd       = fd;
-    ptr->protocol = protocol;
-    ptr->callback = callback;
-    ptr->argument = argument;
+    ptr->function = f;
+    ptr->argument = a;
     return ptr;
 }
 void destroy_frixia_callback_data(frixia_callbacks_data_t *fcbdata)
