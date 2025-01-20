@@ -69,14 +69,15 @@ void add_http_entry_to_frixia_callbacks(
     simple_list_t *l = datastructure->events_callbacks;
     simple_list_elem_t *curr = l->first;
     
-    char        *key = "GET::/foo"; //TODO COMPUTE
+    char        *key = "/foo"; //TODO COMPUTE
     HashEntry_t *he = create_hash_entry(key,fun);    
     
     while( curr !=  NULL)
     {
         frixia_callback_entry_t *entry = (frixia_callback_entry_t *)curr->val;
-        int casted_fd = entry->fd;
-        if( casted_fd == fd)
+        int                         casted_fd = entry->fd;
+        FRIXIA_SUPPORTED_PROTOCOL_T casted_p  = entry->protocol;
+        if( casted_fd == fd && casted_p == HTTP)
         {
             HashMap_t   *hm = (HashMap_t *)curr->val;
             add_entry(hm,he);
@@ -115,16 +116,21 @@ frixia_callbacks_data_t *frixia_get_http_callback(
     char *path
     )
 {
-    simple_list_t *l = datastructure->events_callbacks;
+    simple_list_t      *l    = datastructure->events_callbacks;
     simple_list_elem_t *curr = l->first;
     while( curr !=  NULL)
     {
         frixia_callback_entry_t *entry = (frixia_callback_entry_t *)curr->val;
-        int casted_fd = entry->fd;
+        int casted_fd  = entry->fd;
         if( casted_fd == fd)
         {
-            HashMap_t   *hm = (HashMap_t *)curr->val;
-            HashEntry_t *he = get_entry_value(hm,"concatenated");//TODO
+            HashMap_t   *hm = (HashMap_t *)entry->data;
+            HashEntry_t *he = get_entry_value(hm,"/foo");//TODO+
+            if( he == NULL )
+            {
+                printf("NULL ENTRY\n");
+                return NULL;
+            }
             return (frixia_callbacks_data_t *)he->value;
         }
         curr = curr->next;

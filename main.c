@@ -7,9 +7,9 @@
 #include "src/core/protocols/http/frixia_http_parser.h"
 
 
-void foo()
+void foo(char *s)
 {
-    printf("foo function called\n");
+    printf("foo function called %s\n",s);
 }
 
 void goo()

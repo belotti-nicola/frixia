@@ -13,10 +13,10 @@ typedef union frixia_fd_arg
 
 typedef struct frixia_fd
 {
-    int                 fd;
-    enum FrixiaFDType   type;
-    frixia_fd_arg_t     arg; 
-    int                 read_dim;
+    int                  fd;
+    enum FrixiaFDType    type;
+    frixia_fd_arg_t     *arg; 
+    int                  read_dim;
 
 } frixia_fd_t;
 
