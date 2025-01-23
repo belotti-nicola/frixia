@@ -40,6 +40,10 @@
 #include "filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "filedescriptor/fd_monitor/detached_epoll_monitor.h"
 #include "../setup/setup_utility.h"
+#include "../utils/datastructures/simple_list/simple_list_elem.h"
+#include "../core/fsuite/frixia_fd.h"
+#include "../setup/proto_callbacks/pc_noprotocol/proto_callback_noprotocol.h"
+#include "../setup/proto_callbacks/pc_http/proto_callback_http.h"
 
 #include "fsuite/frixia_suite.h"
 
@@ -133,7 +137,24 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     proto_frixia_callback_t *protocb = pop_proto_frixia_callbacks_queue_t(pbs);
     while(protocb != NULL)
     {       
-        int target_fd = 4;//ISSUE FIND THE TARGET FD
+        int target_fd = -1;
+        simple_list_elem_t *curr = fsuite->fepoll->fd_pool->l->first;
+        while(curr != NULL)
+        {
+            frixia_fd_t *info = (frixia_fd_t *)curr->val;
+            if(info->type == TCP || info->type == UDP )
+            {
+                proto_callback_http_t *pcb = (proto_callback_http_t *)protocb->protocol_data;
+                
+                printf("AAAAAAA %d %d\n",pcb->port,info->arg->port);
+                if(info->arg->port == pcb->port )
+                {
+                    target_fd = info->fd;
+                }
+            }
+            curr = curr->next;
+        }
+
         
         frixia_suite_insert_callback(fsuite,
             protocb->fd_type,

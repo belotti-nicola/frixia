@@ -1,10 +1,11 @@
 TODO   
     frixia stop (keep looping?)
-    OS signals handling
     no_protocol_callbacks read (tcp reply)
-    frixia_callbacks_data_structure
-    CALLBACKS SIZE IS 64 (compile time known)
-    general event creation    
+    CALLBACKS SIZE IS 128 (compile time known)
+    general event creation
+    compile time callbacks for http
+    valgrind support
+    time triggered epoll
 
 ISSUE:
     fifo seems controversial (EPOLLET only)
