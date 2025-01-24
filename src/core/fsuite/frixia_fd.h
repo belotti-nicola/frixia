@@ -3,7 +3,7 @@
 
 #include "../frixia_common.h"
 
-typedef union frixia_fd_arg
+typedef struct frixia_fd_arg
 {
     int    port;
     char  *filename;

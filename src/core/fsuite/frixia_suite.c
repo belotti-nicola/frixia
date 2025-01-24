@@ -40,7 +40,7 @@ void frixia_suite_insert_filedescriptor(frixia_suite_t *s,
     frixia_fd_arg_t tmp;
     tmp.filename = filename;
     tmp.port = port;
-    int fd = start_appropriate_fd(fd_type,tmp); 
+    int fd = start_appropriate_fd(fd_type,tmp); //TODO FIX THIS SHIT
     if( fd < 0)
     {
         printf("Error starting fd %d type %d\n",fd,fd_type);
