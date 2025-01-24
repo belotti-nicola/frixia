@@ -144,9 +144,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
             frixia_fd_t *info = (frixia_fd_t *)curr->val;
             if(info->type == TCP || info->type == UDP )
             {
-                proto_callback_http_t *pcb = (proto_callback_http_t *)protocb->protocol_data;
-                
-                printf("AAAAAAA %d %d\n",pcb->port,info->arg->port);
+                proto_callback_http_t *pcb = (proto_callback_http_t *)protocb->protocol_data;               
                 if(info->arg->port == pcb->port )
                 {
                     target_fd = info->fd;

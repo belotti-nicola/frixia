@@ -18,7 +18,9 @@ void add_http_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,
     int                          fd,
     char                        *method,
+    int                          method_len,
     char                        *url,
+    int                          url_len,
     void                       (*fun)(void *),
     void                        *arg
     );
@@ -39,7 +41,9 @@ frixia_callbacks_data_t *frixia_get_http_callback(
     frixia_callbacks_data_structure_t *datastructure,
     int fd,
     char *method,
-    char *path
+    int method_len,
+    char *path,
+    int path_len
     );
 
 #endif

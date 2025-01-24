@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "../filedescriptor/starter/frixia_starter.h"
 #include "../callback_suite/callback_data/frixia_callbacks.h"
+#include "../../setup/proto_callbacks/pc_http/proto_callback_http.h"
 
 #include "frixia_suite.h"
 
@@ -64,5 +65,10 @@ void frixia_suite_insert_callback(
     void *arg)
 {
     frixia_callbacks_data_structure_t *callbacks = s->fcb_data;
-    add_http_entry_to_frixia_callbacks(callbacks,fd,"key","method",f,arg);
+    proto_callback_http_t *tmp = (proto_callback_http_t *)protocol_data;
+    char *method = tmp->method;
+    int method_len = 4;
+    char *path   = tmp->path;
+    int path_len = 5;
+    add_http_entry_to_frixia_callbacks(callbacks,fd,method,method_len,path,path_len,f,arg);
 }

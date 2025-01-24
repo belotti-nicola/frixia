@@ -66,6 +66,11 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
     do
     {
         index = (index+1)%hm->maximum_size;
+        if( !(hm->buckets+index))
+        {
+            counter++;
+            continue;
+        }
         if( strcmp((hm->buckets+index)->key,key)  == 0 )
         {
             return hm->buckets+index; 

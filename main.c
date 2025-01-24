@@ -17,16 +17,23 @@ void goo()
     printf("goo function called\n");
 }
 
+void moo()
+{
+    printf("moo function called\n");
+}
+
 int main(int argc, char *argv[])
 {  
     printf("foo %p goo %p\n",&foo,&goo);
     
     proto_frixia_fd_queue_t *proto_fds_q = create_proto_frixia_fd_queue();
     add_proto_fd(proto_fds_q,TCP,"",4444,1024);
+    add_proto_fd(proto_fds_q,TCP,"",8888,1024);
     
     proto_frixia_callbacks_queue_t *proto_callbacks_q = create_proto_frixia_callbacks_queue();
     add_proto_callback_http(proto_callbacks_q,TCP,4444,"GET","/foo",&foo,NULL);
     add_proto_callback_http(proto_callbacks_q,TCP,4444,"GET","/goo",&goo,NULL);
+    add_proto_callback_http(proto_callbacks_q,TCP,8888,"GET","/moo",&moo,NULL);
     
     return frixia_start(proto_fds_q,
                         proto_callbacks_q);

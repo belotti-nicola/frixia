@@ -21,7 +21,7 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
     FHTTP_t fhttp_2 = frixia_parse_request(buffer,bytes_read);
     printf("event: %d, http_callback bytes_read %d(fd:%d,headers:%d, readsize %d)\n",fd_to_read,bytes_read,fd_to_read,fhttp_2.num_headers,read_size);
 
-    frixia_callbacks_data_t *cb = frixia_get_http_callback(fcbs,fd_to_read,fhttp_2.method,fhttp_2.path);
+    frixia_callbacks_data_t *cb = frixia_get_http_callback(fcbs,fd_to_read,fhttp_2.method,fhttp_2.method_len,fhttp_2.path,fhttp_2.path_len);
     if(cb == NULL)
     {
         printf("NULL POINTER CB\n");
