@@ -68,31 +68,31 @@ void add_http_entry_to_frixia_callbacks(
         printf("error creating frixia callbacks data\n");
         return;
     }
-
-    simple_list_t *l = datastructure->events_callbacks;
-    simple_list_elem_t *curr = l->first;
     
     char key[50] = "";
     strncat(key,method,method_len);
     strncat(key,":",1);
     strncat(key,url,url_len);
     HashEntry_t *he = create_hash_entry(key,cb_data);    
-    
+
+
+    simple_list_t      *l    = datastructure->events_callbacks;
+    simple_list_elem_t *curr = l->first;    
     while( curr !=  NULL)
     {
-        frixia_callback_entry_t *entry = (frixia_callback_entry_t *)curr->val;
+        frixia_callback_entry_t    *entry     = (frixia_callback_entry_t *)curr->val;
         int                         casted_fd = entry->fd;
         FRIXIA_SUPPORTED_PROTOCOL_T casted_p  = entry->protocol;
         if( casted_fd == fd && casted_p == HTTP)
         {
-            HashMap_t   *hm = (HashMap_t *)curr->val;
+            HashMap_t   *hm = (HashMap_t *)entry->data;
             add_entry(hm,he);
             return;
         }
         curr = curr->next;
     }
 
-    HashMap_t *hm = create_hash_map(128);//TODO SIZE
+    HashMap_t *hm = create_hash_map(2);//TODO SIZE
     add_entry(hm,he);
     frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,HTTP,hm);
     add_item(l,new_entry);
@@ -130,7 +130,8 @@ frixia_callbacks_data_t *frixia_get_http_callback(
     {
         frixia_callback_entry_t *entry = (frixia_callback_entry_t *)curr->val;
         int casted_fd  = entry->fd;
-        if( casted_fd == fd)
+        FRIXIA_SUPPORTED_PROTOCOL_T casted_p  = entry->protocol;
+        if( casted_fd == fd && casted_p == HTTP)
         {
             HashMap_t   *hm = (HashMap_t *)entry->data;
             char key[50]="";

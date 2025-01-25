@@ -1,6 +1,7 @@
-#include "simple_hash_entry.h"
 #include <stdlib.h>
 #include <string.h>
+
+#include "simple_hash_entry.h"
 
 HashEntry_t* create_hash_entry(char *key,
                                void *value)

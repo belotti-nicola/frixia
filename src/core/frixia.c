@@ -169,7 +169,6 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     int stop_fd = fadd_stop_filedescriptor(fsuite->fepoll);
     //add_stop_callback(fd,&keep_looping);
 
-    //TODO
 
     // FRIXIA EVENTS SETUP
     frixia_events_queue_t *events = frixia_events_queue_create();
