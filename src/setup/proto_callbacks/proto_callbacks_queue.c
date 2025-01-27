@@ -49,7 +49,7 @@ void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
                              void (*f)(void *),
                              void *arg)
 {
-    proto_callback_http_t *cb = create_proto_callback_http(fd_type,port, method, path, f, arg);
+    proto_callback_http_t *cb = create_proto_callback_http(fd_type,port, method, path, f, arg);//TODO UNUSED
     
     proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,HTTP,cb,f,arg);
     simple_queue_t *q = cbs->proto_callbacks;

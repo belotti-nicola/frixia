@@ -28,10 +28,15 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
         return 0;
     }
     void (*fun)(void *) = cb->function;
-    //void *arg           = cb->argument;
-    if(fun)
+    void  *arg          = cb->argument;
+
+    if(fun != NULL && arg != NULL)
     {
-        fun("arg");
+        fun(arg);
+    }
+    else
+    {
+        printf("fun %d arg %d\n",fun == NULL,arg == NULL);
     }
     
     return 0;

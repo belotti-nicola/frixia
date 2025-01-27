@@ -69,7 +69,7 @@ void add_http_entry_to_frixia_callbacks(
         return;
     }
     
-    char *key = calloc(sizeof(char),50);
+    char *key = calloc(sizeof(char),50);//TODO CHECK IF THE CALLOC IS NECESSARY: WHY NOT URL ONLY
     strncat(key,method,method_len);
     strncat(key,":",1);
     strncat(key,url,url_len);
@@ -146,7 +146,8 @@ frixia_callbacks_data_t *frixia_get_http_callback(
                 printf("NULL ENTRY for fd %d key %s\n",fd,key);
                 return NULL;
             }
-            return he->value;
+            frixia_callbacks_data_t *retVal = (frixia_callbacks_data_t *)he->value;
+            return retVal;
         }
         curr = curr->next;
     }
