@@ -29,7 +29,7 @@ void too()
 
 int main(int argc, char *argv[])
 {  
-    printf("foo %p goo %p\n",&foo,&goo);
+    printf("foo %p goo %p moo %p too %p\n",&foo,&goo,&moo,&too);
     
     proto_frixia_fd_queue_t *proto_fds_q = create_proto_frixia_fd_queue();
     add_proto_fd(proto_fds_q,TCP,"",4444,1024);

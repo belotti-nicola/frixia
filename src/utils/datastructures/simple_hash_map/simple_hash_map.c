@@ -13,7 +13,7 @@ HashMap_t* create_hash_map(int maximum_size)
     }
     hm->maximum_size = maximum_size;
     hm->size         = 0;
-    hm->buckets      = malloc(maximum_size * sizeof(HashEntry_t));;
+    hm->buckets      = malloc(maximum_size * sizeof(HashEntry_t));
     return hm;
 }
 void destroy_hash_map(HashMap_t *hm)
@@ -57,6 +57,7 @@ void add_entry(HashMap_t *hm, HashEntry_t *entry)
 HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
 {
     int index = 0;
+    printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
     if( strcmp((hm->buckets+index)->key,key)  == 0 )
     {
         return (hm->buckets+index);
@@ -66,14 +67,15 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
     do
     {
         index = (index+1)%hm->maximum_size;
+        printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
         if( strcmp((hm->buckets+index)->key,key)  == 0 )
         {
-            return hm->buckets+index; 
+            return (hm->buckets+index); 
         }
         counter++;
 
     } while ( counter < hm->maximum_size );
     
-    printf("Available entry not found...\n");
+    printf("Hash entry not found...\n");
     return NULL;
 }

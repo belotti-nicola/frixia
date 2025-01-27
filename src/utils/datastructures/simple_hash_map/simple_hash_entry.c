@@ -9,9 +9,10 @@ HashEntry_t* create_hash_entry(char *key,
     HashEntry_t *he = malloc(sizeof(HashEntry_t));
     if(he == NULL)
     {
+        printf("HashEntry_t error!");
         return NULL;
     }
-    he->key = key;
+    he->key   = key;
     he->value = value;
     return he;
 }

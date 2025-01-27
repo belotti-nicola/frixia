@@ -69,12 +69,11 @@ void add_http_entry_to_frixia_callbacks(
         return;
     }
     
-    char key[50] = "";
+    char *key = calloc(sizeof(char),50);
     strncat(key,method,method_len);
     strncat(key,":",1);
     strncat(key,url,url_len);
     HashEntry_t *he = create_hash_entry(key,cb_data);    
-
 
     simple_list_t      *l    = datastructure->events_callbacks;
     simple_list_elem_t *curr = l->first;    
@@ -87,6 +86,7 @@ void add_http_entry_to_frixia_callbacks(
         {
             HashMap_t   *hm = (HashMap_t *)entry->data;
             add_entry(hm,he);
+            printf("fd %d 1key::'%s' pointer %p\n",fd,key,get_entry_value(hm,key));
             return;
         }
         curr = curr->next;
@@ -96,6 +96,7 @@ void add_http_entry_to_frixia_callbacks(
     add_entry(hm,he);
     frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,HTTP,hm);
     add_item(l,new_entry);
+    printf("1 %p key:: '%s' %p\n",hm,key,get_entry_value(hm,key));
     return;
 }
 void add_no_protocol_entry_to_frixia_callbacks(
@@ -139,9 +140,10 @@ frixia_callbacks_data_t *frixia_get_http_callback(
             strncat(key,":",1);
             strncat(key,path,path_len);
             HashEntry_t *he = get_entry_value(hm,key);
+            printf("hm %p '%s'\n",hm,key);
             if( he == NULL )
             {
-                printf("NULL ENTRY\n");
+                printf("NULL ENTRY for fd %d key %s\n",fd,key);
                 return NULL;
             }
             return he->value;
