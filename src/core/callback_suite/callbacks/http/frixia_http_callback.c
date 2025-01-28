@@ -22,9 +22,19 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
     printf("event: %d, http_callback bytes_read %d(fd:%d,headers:%d, readsize %d)\n",fd_to_read,bytes_read,fd_to_read,fhttp_2.num_headers,read_size);
 
     frixia_callbacks_data_t *cb = frixia_get_http_callback(fcbs,fd_to_read,fhttp_2.method,fhttp_2.method_len,fhttp_2.path,fhttp_2.path_len);
+    int response_len = 0;
+
     if(cb == NULL)
     {
         printf("NULL POINTER CB\n");
+        char response_404[2048];
+        snprintf(response_404, 2048,
+                 "HTTP/1.1 404 Not Found\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "\r\n"
+                 "404 Not Found");
+        response_len = strlen(response_404);
+        write_tcp(fd_to_reply,response_404,response_len);
         return 0;
     }
     void (*fun)(void *) = cb->function;
@@ -33,11 +43,16 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
     if(fun != NULL && arg != NULL)
     {
         fun(arg);
+        char response_OK[2048];
+        snprintf(response_OK, 2048,
+                 "HTTP/1.1 404 Not Found\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "\r\n"
+                 "404 NOT Not Found");
+        response_len = strlen(response_OK);
+        write_tcp(fd_to_reply,response_OK,response_len);
     }
-    else
-    {
-        printf("fun %d arg %d\n",fun == NULL,arg == NULL);
-    }
+
     
     return 0;
 }
