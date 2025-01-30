@@ -1,8 +1,9 @@
-#include "simple_hash_map.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "simple_hash_entry.h"
 
+#include "simple_hash_map.h"
 
 HashMap_t* create_hash_map(int maximum_size)
 {
@@ -28,7 +29,10 @@ void add_entry(HashMap_t *hm, HashEntry_t *entry)
         return;
     }
 
-    int index = 0;
+    char *key     = entry->key;
+    int   modulus = hm->maximum_size;
+    int   index   = compute_hash(key) % modulus; 
+
     if( (hm->buckets+index)->key == NULL )
     {
         *(hm->buckets+index) = *entry;
@@ -56,7 +60,9 @@ void add_entry(HashMap_t *hm, HashEntry_t *entry)
 }
 HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
 {
-    int index = 0;
+    int   modulus = hm->maximum_size;
+    int   index   = compute_hash(key) % modulus; 
+
     printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
     if( strcmp((hm->buckets+index)->key,key)  == 0 )
     {
@@ -66,7 +72,7 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
     int counter = 1;
     do
     {
-        index = (index+1)%hm->maximum_size;
+        index = (index+1);
         printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
         if( strcmp((hm->buckets+index)->key,key)  == 0 )
         {

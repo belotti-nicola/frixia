@@ -27,12 +27,11 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
     if(cb == NULL)
     {
         printf("NULL POINTER CB\n");
-        char response_404[2048];
-        snprintf(response_404, 2048,
+        char response_404[] = 
                  "HTTP/1.1 404 Not Found\r\n"
                  "Content-Type: text/plain\r\n"
                  "\r\n"
-                 "404 Not Found");
+                 "404 Not Found";
         response_len = strlen(response_404);
         write_tcp(fd_to_reply,response_404,response_len);
         return 0;
@@ -43,12 +42,11 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
     if(fun != NULL && arg != NULL)
     {
         fun(arg);
-        char response_OK[2048];
-        snprintf(response_OK, 2048,
+        char response_OK[] =
                  "HTTP/1.1 404 Not Found\r\n"
                  "Content-Type: text/plain\r\n"
                  "\r\n"
-                 "404 NOT Not Found");
+                 "200 OK";
         response_len = strlen(response_OK);
         write_tcp(fd_to_reply,response_OK,response_len);
     }

@@ -3,4 +3,6 @@ add_library(simple_hash_map
     simple_hash_map.h
     simple_hash_entry.c
     simple_hash_entry.c
+    simple_hashing_utility.c
+    simple_hashing_utility.h
     )
