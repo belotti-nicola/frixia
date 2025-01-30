@@ -1,23 +1,19 @@
 TODO   
     frixia stop (keep looping?)
-    no_protocol_callbacks read (tcp reply)
     CALLBACKS SIZE IS 128 (compile time known)
-    general event creation
-    compile time callbacks for http
     valgrind support
     time triggered epoll
+    LIBRARY SETUP SHARED COMPONENTS
 
 ISSUE:
     fifo seems controversial (EPOLLET only)
     thread pool termination is by killing 
 
 FEAT:
-    reentrancy check (multiple threads)
     logger
-    HTTP protocol utility to form responses strings
+    general event creation
 
 FIX:
-    if start fails, remove it from fd pool
     search udp/fifo/tcp unique function
     
 REFACTORING
@@ -31,6 +27,7 @@ REFACTORING
     pico -> read_headers first.
     setup -> src/setup
     smaller jop pieces (HTTP: read, callback, response)
+    HTTP: GET:/foo to search in HashMap is unnecessary (search /foo GET)
 
 CHOICES
     C vs C++

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "simple_hash_entry.h"
+#include "simple_hashing_utility.h"
 
 #include "simple_hash_map.h"
 
@@ -43,7 +44,7 @@ void add_entry(HashMap_t *hm, HashEntry_t *entry)
     int counter = 1;
     do
     {
-        index = (index+1)%hm->maximum_size;
+        index = (index+1)%modulus;
         if( (hm->buckets+index)->key == NULL )
         {
             *(hm->buckets+index) = *entry;
@@ -72,7 +73,7 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
     int counter = 1;
     do
     {
-        index = (index+1);
+        index = (index+1)%modulus;;
         printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
         if( strcmp((hm->buckets+index)->key,key)  == 0 )
         {
