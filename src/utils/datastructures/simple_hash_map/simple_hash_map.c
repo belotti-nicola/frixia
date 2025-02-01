@@ -73,7 +73,7 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
     int counter = 1;
     do
     {
-        index = (index+1)%modulus;;
+        index = (index+1)%modulus;
         printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
         if( strcmp((hm->buckets+index)->key,key)  == 0 )
         {

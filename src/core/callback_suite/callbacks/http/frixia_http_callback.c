@@ -37,17 +37,10 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
         write_tcp(fd_to_reply,response_404,response_len);
         return 0;
     }
-    void (*fun)(void *) = cb->function;
+    void (*fun)(int a,void *) = cb->function;
     void  *arg          = cb->argument;
 
-    fun(arg);
-    char response_OK[] =
-                 "HTTP/1.1 404 Not Found\r\n"
-                 "Content-Type: text/plain\r\n"
-                 "\r\n"
-                 "200 OK";
-    response_len = strlen(response_OK);
-    write_tcp(fd_to_reply,response_OK,response_len);
+    fun(fd_to_reply,arg);
     
     return 0;
 }
