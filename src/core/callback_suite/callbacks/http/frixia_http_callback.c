@@ -37,10 +37,10 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
         write_tcp(fd_to_reply,response_404,response_len);
         return 0;
     }
-    void (*fun)(int a,void *) = cb->function;
+    void (*fun)(int a, char *fullpath, int fullpath_len, void *headers, int headers_size, void *) = cb->function;
     void  *arg          = cb->argument;
 
-    fun(fd_to_reply,arg);
+    fun(fd_to_reply,fhttp_2.path, fhttp_2.path_len, fhttp_2.headers, fhttp_2.num_headers,arg);
     
     return 0;
 }

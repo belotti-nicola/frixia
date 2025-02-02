@@ -15,5 +15,6 @@ add_executable(frixia
 
 target_link_libraries(frixia 
   core
+  picohttpparser
 )
 

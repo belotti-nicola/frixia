@@ -10,7 +10,7 @@
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
 
 
-void foo(int fd, int *n)
+void foo(int fd, char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
 {
     *n = *n+1;
 
@@ -25,13 +25,19 @@ void foo(int fd, int *n)
     int ret = snprintf(buf, sizeof(buf), "%d", *n); 
 
  
-
     char response[1024]="";
     int response_len = 0;
     strncat(response,response_prefix,response_prefix_len);
     strncat(response,buf,ret);
     response_len = response_prefix_len+ret;
-    write_tcp(fd,response,response_len);   
+    write_tcp(fd,response,response_len);
+
+    printf("%.*s\n",fullpath_len,fullpath);
+    for(int i=0;i<headers_number;i++)
+    {
+        struct phr_header *tmp = (struct phr_header *)headers;
+        printf("%.*s -- %.*s\n",(tmp+i)->name_len,(tmp+i)->name,(tmp+i)->value_len,(tmp+i)->value);
+    }
 }
 
 void goo(int fd, int *n)
@@ -60,7 +66,7 @@ void too(int fd_to_reply)
 int main(int argc, char *argv[])
 {  
     int a=0;
-    int b=0;
+    int b=1;
     
     printf("foo %p goo %p moo %p too %p\n",&foo,&goo,&moo,&too);
     
