@@ -118,11 +118,11 @@ void add_fins_entry_to_frixia_callbacks(
 
 frixia_callbacks_data_t *frixia_get_http_callback(
     frixia_callbacks_data_structure_t *datastructure,
-    int   fd,
-    char *method,
-    int method_len,
-    char *path,
-    int path_len
+    int                                fd,
+    const char                        *method,
+    int                                method_len,
+    const char                        *path,
+    int                                path_len
     )
 {
     simple_list_t      *l    = datastructure->events_callbacks;

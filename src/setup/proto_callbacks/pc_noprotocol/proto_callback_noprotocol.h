@@ -1,11 +1,12 @@
+#include "../../../../src/core/fsuite/frixia_fd.h"
+#include "../proto_cb.h"
+
 #include "../proto_cb.h"
 
 typedef struct proto_callback_noprotocol
 {
-    int port;
-    char *filename;
-    enum FrixiaFDType fd_type;
-    proto_frixia_callback_t pc;
+    frixia_fd_arg_t         fd_info;
+    enum FrixiaFDType       fd_type;
 
 } proto_callback_noprotocol_t;
 

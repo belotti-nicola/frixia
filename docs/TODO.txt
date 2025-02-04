@@ -4,6 +4,8 @@ TODO
     valgrind support
     time triggered epoll
     LIBRARY SETUP SHARED COMPONENTS
+    set_fins_echo_server
+    set_noprotocol_echo_server
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

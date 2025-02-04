@@ -1,9 +1,10 @@
 #include "proto_cb.h"
-#include "proto_callbacks_queue.h"
 #include "../../utils/datastructures/simple_list/simple_list.h"
 #include "../../core/frixia_common.h"
 #include "pc_http/proto_callback_http.h"
 #include "pc_noprotocol/proto_callback_noprotocol.h"
+
+#include "proto_callbacks_queue.h"
 
 proto_frixia_callbacks_queue_t *create_proto_frixia_callbacks_queue()
 {
@@ -53,6 +54,26 @@ void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
     
     proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,HTTP,cb,f,arg);
     simple_queue_t *q = cbs->proto_callbacks;
+    push_simple_queue(q, (void *)pf_cb);
+}
+
+
+void set_fins_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_q,
+                          enum FrixiaFDType               fd_type,
+                          int                             port)
+{
+    return; 
+}
+
+void set_noprotocol_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_q,
+                                 enum FrixiaFDType               fd_type,
+                                 int                             port,
+                                 char                           *filename)
+{
+    proto_callback_noprotocol_t *cb = create_proto_callback_noprotocol(fd_type,port,filename,NULL,NULL);
+    
+    proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,FINS,cb,NULL,NULL);
+    simple_queue_t *q = proto_callbacks_q->proto_callbacks;
     push_simple_queue(q, (void *)pf_cb);
 }
 

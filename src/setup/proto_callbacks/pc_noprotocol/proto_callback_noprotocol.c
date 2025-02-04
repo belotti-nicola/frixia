@@ -1,5 +1,6 @@
-#include "proto_callback_noprotocol.h"
 #include <stdlib.h>
+
+#include "proto_callback_noprotocol.h"
 
 proto_callback_noprotocol_t *create_proto_callback_noprotocol(enum FrixiaFDType fd_type,
                                                               int port,
@@ -12,9 +13,10 @@ proto_callback_noprotocol_t *create_proto_callback_noprotocol(enum FrixiaFDType 
     {
         return NULL;
     }
-    p->port = port;
-    p->filename = filename;
-    p->fd_type = fd_type;
+    p->fd_info.port     = port;
+    p->fd_info.filename = filename;
+    p->fd_type          = fd_type;
+
     return p;
 }
 

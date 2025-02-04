@@ -10,7 +10,7 @@
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
 
 
-void foo(int fd, char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
+void foo(int fd, const char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
 {
     *n = *n+1;
 
@@ -80,7 +80,10 @@ int main(int argc, char *argv[])
     add_proto_callback_http(proto_callbacks_q,TCP,8888,"GET","/moo",&moo,NULL);
     add_proto_callback_http(proto_callbacks_q,TCP,8888,"GET","/too",&too,NULL);
 
-    
+    //set_fins_echo_server(proto_callbacks_q,TCP,9600); TODO
+
+    //set_noprotocol_echo_server(proto_callbacks_q,TCP,9600,NULL); TODO
+
     return frixia_start(proto_fds_q,
                         proto_callbacks_q);
 }

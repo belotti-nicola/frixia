@@ -31,6 +31,17 @@ void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
                              void (*f)(void *),
                              void *arg);
                              
+void set_noprotocol_echo_server(
+                        proto_frixia_callbacks_queue_t *proto_callbacks_q,
+                        enum FrixiaFDType               fd_type,
+                        int                             port,
+                        char                           *filename);
+
+void set_fins_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_q,
+                          enum FrixiaFDType               fd_type,
+                          int                             port);
+
+                             
 proto_frixia_callback_t *pop_proto_frixia_callbacks_queue_t(proto_frixia_callbacks_queue_t *q);
 
 #endif
