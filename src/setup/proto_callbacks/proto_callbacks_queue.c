@@ -72,7 +72,7 @@ void set_noprotocol_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_
 {
     proto_callback_noprotocol_t *cb = create_proto_callback_noprotocol(fd_type,port,filename,NULL,NULL);
     
-    proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,FINS,cb,NULL,NULL);
+    proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,NO_PROTOCOL,cb,NULL,NULL);
     simple_queue_t *q = proto_callbacks_q->proto_callbacks;
     push_simple_queue(q, (void *)pf_cb);
 }

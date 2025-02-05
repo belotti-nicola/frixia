@@ -144,11 +144,24 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
             frixia_fd_t *info = (frixia_fd_t *)curr->val;
             if(info->type == TCP || info->type == UDP )
             {
-                proto_callback_http_t *pcb = (proto_callback_http_t *)protocb->protocol_data;               
-                if(info->arg->port == pcb->port )
+                if(protocb->protocol == HTTP)
                 {
-                    target_fd = info->fd;
+                    proto_callback_http_t *pcb = (proto_callback_http_t *)protocb->protocol_data;               
+                    if(info->arg->port == pcb->port )
+                    {
+                        target_fd = info->fd;
+                    }
                 }
+                if(protocb->protocol == NO_PROTOCOL)
+                {
+                    proto_callback_noprotocol_t *pcb = (proto_callback_http_t *)protocb->protocol_data;               
+                    if(info->arg->port == pcb->fd_info.port)
+                    {
+                        target_fd = info->fd;
+                    }
+                }
+
+
             }
             curr = curr->next;
         }
