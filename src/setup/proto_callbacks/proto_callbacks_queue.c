@@ -62,7 +62,7 @@ void set_fins_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_q,
                           enum FrixiaFDType               fd_type,
                           int                             port)
 {
-    return; 
+
 }
 
 void set_noprotocol_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_q,
@@ -70,16 +70,16 @@ void set_noprotocol_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_
                                  int                             port,
                                  char                           *filename)
 {
-    proto_callback_noprotocol_t *cb = create_proto_callback_noprotocol(fd_type,port,filename,NULL,NULL);
+    proto_callback_noprotocol_t *cb = create_proto_callback_noprotocol(fd_type,port,filename,NULL,NULL);//TODO UNUSED
     
-    proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,NO_PROTOCOL,cb,NULL,NULL);
+    proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,NO_PROTOCOL,cb,NULL,NULL); //TODO BETTER
     simple_queue_t *q = proto_callbacks_q->proto_callbacks;
     push_simple_queue(q, (void *)pf_cb);
 }
 
 proto_frixia_callback_t *pop_proto_frixia_callbacks_queue_t(proto_frixia_callbacks_queue_t *pcbs)
 {
-    simple_queue_t          *q = pcbs->proto_callbacks;
+    simple_queue_t          *q      = pcbs->proto_callbacks;
     proto_frixia_callback_t *retVal = pop_simple_queue(q);
     return retVal;
 }

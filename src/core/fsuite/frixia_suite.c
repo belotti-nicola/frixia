@@ -72,9 +72,9 @@ void frixia_suite_insert_callback(
         {
             proto_callback_http_t *tmp = (proto_callback_http_t *)protocol_data;
             const char *method = tmp->method;
-            int method_len = 3;
+            int method_len = 3; //TODO
             const char *path   = tmp->path;
-            int path_len = 4;
+            int path_len = 4; //TODO
             add_http_entry_to_frixia_callbacks(callbacks,fd,method,method_len,path,path_len,f,arg);
             break;
         }

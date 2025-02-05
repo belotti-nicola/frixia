@@ -105,7 +105,31 @@ void add_no_protocol_entry_to_frixia_callbacks(
     void                       (*fun)(void *),
     void                        *arg)
 {
-    return;
+    frixia_callbacks_data_t *cb_data = create_frixia_callback_data(fun,arg);
+    if(cb_data == NULL)
+    {
+        printf("error creating frixia callbacks data\n");
+        return;
+    }
+
+    simple_list_t      *l    = datastructure->events_callbacks;
+    simple_list_elem_t *curr = l->first;    
+    while( curr !=  NULL)
+    {
+        frixia_callback_entry_t    *entry     = (frixia_callback_entry_t *)curr->val;
+        int                         casted_fd = entry->fd;
+        FRIXIA_SUPPORTED_PROTOCOL_T casted_p  = entry->protocol;
+        if( casted_fd == fd && casted_p == NO_PROTOCOL)
+        {
+            printf("add_no_protocol_entry_to_frixia_callbacks found entry. returning with no changes.\n");
+            return;
+        }
+        curr = curr->next;
+    }
+
+    frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,NO_PROTOCOL,NULL);
+    add_item(l,new_entry);
+
 }
 void add_fins_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,

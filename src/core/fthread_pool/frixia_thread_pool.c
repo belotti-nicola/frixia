@@ -24,7 +24,12 @@ void thread_main_loop(frixia_thread_pool_data_t *data)
             continue;
         }  
         int read_size = frixia_fd->read_dim;
-        frixia_callback_main(e,HTTP,read_size,data->frixia_callbacks);
+        FRIXIA_SUPPORTED_PROTOCOL_T p = HTTP;
+        if(event_fd == 6)
+        {
+            p = NO_PROTOCOL;
+        }
+        frixia_callback_main(e,p,read_size,data->frixia_callbacks);
         printf("thread main loop!!!%d stop  iteration\n",event_fd);
     }
 }

@@ -4,32 +4,66 @@
 #include "../../../filedescriptor/types/fifo/frixia_fifo.h"
 #include "../../../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "../../../protocols/frixia_supported_protocols.h"
+#include "../../../callback_suite/callback_data/frixia_callbacks.h"
+#include "../../../callback_suite/callback_data/frixia_callback_entry.h"
+#include "../../../frixia_common.h"
 
 #include "frixia_no_protocol_callback.h"
 
-int no_protocol_callback(frixia_event_t *fevent, int dim, FRIXIA_SUPPORTED_PROTOCOL_T type)
+int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_structure_t *fcbs)
 {  
     char s[dim];
+    int bytes_read = -1;
+
+    enum FrixiaFDType type = UNDEFINED;
+
+    simple_list_elem_t *curr = fcbs->events_callbacks->first;
+    frixia_callback_entry_t *entry = NULL;
+    while(curr != NULL)
+    {
+        entry = (frixia_callback_entry_t *)curr->val;
+        if( fevent->fd == entry->fd)
+        {
+            type = TCP;
+        }
+        curr = curr->next;
+    }
+
     switch(type)
     {
         case TCP:
         {
             int not_used =1;
-            read_tcp(fevent->fd,s,dim,&not_used);
+            bytes_read = read_tcp(fevent->fd,s,dim,&not_used);
+            close(not_used);
             break;
         }
         case UDP:
+        {
             read_udp(fevent->fd,s,dim);
             break;
+        }
         case FIFO:
+        {
             read_fifo(fevent->fd,s,dim);
             break;
+        }
+        case UNDEFINED:
+        {
+            printf("no_protocol_callback UNDEFINED switch case\n");
+            return -1;
+        }
         default:
-            printf("no_protocol_callback\n");
+            printf("no_protocol_callback default switch case\n");
             return -1;
     }
 
-    printf("%s\n",s);
+    frixia_callbacks_data_t *data_casted = entry->data;
+
+    if(data_casted == NULL)
+    {
+        printf("no_protocol_callback, logger is selected:: %.*s\n",bytes_read,s);
+    }    
 
     return 1;
 }

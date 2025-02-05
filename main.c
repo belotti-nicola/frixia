@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 
     //set_fins_echo_server(proto_callbacks_q,TCP,9600); TODO
 
-    set_noprotocol_echo_server(proto_callbacks_q,TCP,9600,NULL); 
+    set_noprotocol_echo_server(proto_callbacks_q,UDP,9600,NULL); 
 
     return frixia_start(proto_fds_q,
                         proto_callbacks_q);
