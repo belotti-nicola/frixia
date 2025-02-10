@@ -9,6 +9,22 @@
 
 #include "frixia_http_callback.h"
 
+int path_concrete_length(const char *tmp,const char find_this,int size)
+{
+    int counter = 0;
+    while(--size)
+    {
+        if( *tmp == find_this)
+        {
+            return counter;
+        }
+        tmp++;
+        counter++;
+    }
+
+    return size;
+}
+
 int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_structure_t *fcbs)
 {
     int fd_to_read = fevent->fd;
@@ -23,7 +39,8 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
     FHTTP_t fhttp_2 = frixia_parse_request(buffer,bytes_read);
     printf("event: %d, http_callback bytes_read %d(fd:%d,headers:%d, readsize %d)\n",fd_to_read,bytes_read,fd_to_read,fhttp_2.num_headers,read_size);
 
-    frixia_callbacks_data_t *cb = frixia_get_http_callback(fcbs,fd_to_read,fhttp_2.method,fhttp_2.method_len,fhttp_2.path,fhttp_2.path_len);
+    int path_len = path_concrete_length(fhttp_2.path,'?',fhttp_2.path_len);//TODO FIND BETTER NAME
+    frixia_callbacks_data_t *cb = frixia_get_http_callback(fcbs,fd_to_read,fhttp_2.method,fhttp_2.method_len,fhttp_2.path,path_len);
 
     int response_len = 0;
 
