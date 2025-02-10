@@ -5,7 +5,7 @@ TODO
     time triggered epoll
     LIBRARY SETUP SHARED COMPONENTS
     set_fins_echo_server
-    set_noprotocol_echo_server
+    debug level prints
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

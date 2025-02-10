@@ -18,9 +18,9 @@ void destroy_frixia_callbacks_data_structure(frixia_callbacks_data_structure_t *
 void add_http_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,
     int                          fd,
-    char                        *method,
+    const char                  *method,
     int                          method_len,
-    char                        *url,
+    const char                  *url,
     int                          url_len,
     void                       (*fun)(void *),
     void                        *arg

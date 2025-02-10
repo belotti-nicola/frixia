@@ -8,6 +8,9 @@
 #include "../../../callback_suite/callback_data/frixia_callback_entry.h"
 #include "../../../frixia_common.h"
 
+//TODO WIPE CLOSE
+#include <unistd.h>
+
 #include "frixia_no_protocol_callback.h"
 
 int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_structure_t *fcbs)
@@ -35,7 +38,7 @@ int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_
         {
             int not_used =1;
             bytes_read = read_tcp(fevent->fd,s,dim,&not_used);
-            close(not_used);
+            close(not_used);//TODO THERE IS NO RESPONSE
             break;
         }
         case UDP:

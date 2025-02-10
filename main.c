@@ -27,8 +27,8 @@ void foo(int fd, const char *fullpath, int fullpath_len, void *headers, int head
  
     char response[1024]="";
     int response_len = 0;
-    strncat(response,response_prefix,response_prefix_len);
-    strncat(response,buf,ret);
+    strncat(response,response_prefix,1024-response_prefix_len);
+    strncat(response,buf,1024-response_prefix_len-ret);
     response_len = response_prefix_len+ret;
     write_tcp(fd,response,response_len);
 
@@ -36,7 +36,7 @@ void foo(int fd, const char *fullpath, int fullpath_len, void *headers, int head
     for(int i=0;i<headers_number;i++)
     {
         struct phr_header *tmp = (struct phr_header *)headers;
-        printf("%.*s -- %.*s\n",(tmp+i)->name_len,(tmp+i)->name,(tmp+i)->value_len,(tmp+i)->value);
+        printf("%.*s -- %.*s\n",(int)((tmp+i)->name_len),(tmp+i)->name,(int)((tmp+i)->value_len),(tmp+i)->value);
     }
 }
 
