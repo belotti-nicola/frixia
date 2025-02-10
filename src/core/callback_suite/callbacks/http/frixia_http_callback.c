@@ -12,7 +12,8 @@
 int path_concrete_length(const char *tmp,const char find_this,int size)
 {
     int counter = 0;
-    while(--size)
+    int i       = size;
+    while(--i)
     {
         if( *tmp == find_this)
         {
