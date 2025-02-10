@@ -36,7 +36,7 @@ void add_proto_callback_no_protocol(proto_frixia_callbacks_queue_t *cbs,
                         void *arg)
 {
     proto_callback_noprotocol_t *cb = create_proto_callback_noprotocol(fd_type,port,filename,f, arg);
-
+    
     proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,NO_PROTOCOL,cb,f,arg);
     simple_queue_t *l = cbs->proto_callbacks;
     push_simple_queue(l, (void *)pf_cb);

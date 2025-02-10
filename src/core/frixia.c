@@ -142,7 +142,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
         while(curr != NULL)
         {
             frixia_fd_t *info = (frixia_fd_t *)curr->val;
-            if(info->type == TCP || info->type == UDP )
+            if(info->type == TCP || info->type == UDP)
             {
                 if(protocb->protocol == HTTP)
                 {
@@ -160,12 +160,21 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                         target_fd = info->fd;
                     }
                 }
-
-
+            }
+            if(info->type == FIFO)
+            {
+                if(protocb->protocol == NO_PROTOCOL && protocb->fd_type == FIFO)
+                {
+                    proto_callback_noprotocol_t *pcb = (proto_callback_noprotocol_t *)protocb->protocol_data;               
+                    frixia_fd_arg_t tmp = pcb->fd_info;
+                    if( strcmp(pcb->fd_info.filename, info->arg->filename) == 0 )
+                    {
+                        target_fd = info->fd;
+                    }
+                }
             }
             curr = curr->next;
         }
-
         
         frixia_suite_insert_callback(fsuite,
             protocb->fd_type,

@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
     add_proto_fd(proto_fds_q,TCP,"",4444,1024);
     add_proto_fd(proto_fds_q,TCP,"",8888,512);
     add_proto_fd(proto_fds_q,UDP,"",9600,512);
+    add_proto_fd(proto_fds_q,FIFO,"fifo.text",-1,512);
     
     proto_frixia_callbacks_queue_t *proto_callbacks_q = create_proto_frixia_callbacks_queue();
     add_proto_callback_http(proto_callbacks_q,TCP,4444,"GET","/foo",&foo,&a);
@@ -84,6 +85,7 @@ int main(int argc, char *argv[])
     //set_fins_echo_server(proto_callbacks_q,TCP,9600); TODO
 
     set_noprotocol_echo_server(proto_callbacks_q,UDP,9600,NULL); 
+    set_noprotocol_echo_server(proto_callbacks_q,FIFO,-1,"fifo.text"); 
 
     return frixia_start(proto_fds_q,
                         proto_callbacks_q);

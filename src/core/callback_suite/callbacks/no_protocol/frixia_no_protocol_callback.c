@@ -48,7 +48,7 @@ int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_
         }
         case FIFO:
         {
-            read_fifo(fevent->fd,s,dim);
+            bytes_read = read_fifo(fevent->fd,s,dim);
             break;
         }
         case UNDEFINED:

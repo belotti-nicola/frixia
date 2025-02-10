@@ -25,7 +25,7 @@ void thread_main_loop(frixia_thread_pool_data_t *data)
         }  
         int read_size = frixia_fd->read_dim;
         FRIXIA_SUPPORTED_PROTOCOL_T p = HTTP;
-        if(event_fd == 6)
+        if(event_fd == 6 || event_fd == 7) //TODO FIX THIS SHIT
         {
             p = NO_PROTOCOL;
         }

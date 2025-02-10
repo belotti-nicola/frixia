@@ -100,7 +100,7 @@ FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
 FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f)
 {
     printf("INSERT EVENT %d %d\n",epoll,f->fd);
-    if( f->type != TCP && f->type != UDP ) //TODO ADD UDP
+    if( f->type != TCP && f->type != UDP && f->type != FIFO ) //TODO FIX THIS SHIT
     {
         printf("Exiting::TCP (%d)\n",f->type);
         return -1;
@@ -115,7 +115,7 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f)
         printf("Add error!! (%d errno::%d) %d %d\n",return_code, errno,epoll,f->fd);
 		return -1;
     }
-    printf("Epoll_ctl :: %d (fd added: %d)",epoll,f->fd);
+    printf("Epoll_ctl :: %d (fd added: %d)\n",epoll,f->fd);
     return FEPOLL_OK;
 }
 
