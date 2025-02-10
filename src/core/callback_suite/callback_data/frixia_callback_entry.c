@@ -4,7 +4,7 @@
 
 #include "frixia_callback_entry.h"
 
-frixia_callback_entry_t *create_frixia_callback_entry(int fd, FRIXIA_SUPPORTED_PROTOCOL_T protocol,void *data)
+frixia_callback_entry_t *create_frixia_callback_entry(int fd, enum FrixiaFDType type, FRIXIA_SUPPORTED_PROTOCOL_T protocol,void *data)
 {
     frixia_callback_entry_t *ptr = malloc(sizeof(frixia_callback_entry_t));
     if(ptr == NULL)
@@ -13,9 +13,10 @@ frixia_callback_entry_t *create_frixia_callback_entry(int fd, FRIXIA_SUPPORTED_P
         return NULL;
     }
 
-    ptr->fd = fd;
+    ptr->fd       = fd;
+    ptr->type     = type;
     ptr->protocol = protocol;
-    ptr->data = data;
+    ptr->data     = data;
 
     return ptr;
 }

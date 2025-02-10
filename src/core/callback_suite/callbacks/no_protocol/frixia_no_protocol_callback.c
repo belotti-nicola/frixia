@@ -24,7 +24,7 @@ int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_
         entry = (frixia_callback_entry_t *)curr->val;
         if( fevent->fd == entry->fd)
         {
-            type = TCP;
+            type = entry->type;
         }
         curr = curr->next;
     }
@@ -40,7 +40,7 @@ int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_
         }
         case UDP:
         {
-            read_udp(fevent->fd,s,dim);
+            bytes_read = read_udp(fevent->fd,s,dim);
             break;
         }
         case FIFO:
@@ -62,7 +62,7 @@ int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_
 
     if(data_casted == NULL)
     {
-        printf("no_protocol_callback, logger is selected:: %.*s\n",bytes_read,s);
+        printf("no_protocol_callback %d, logger is selected:: %.*s\n",type,bytes_read,s);
     }    
 
     return 1;

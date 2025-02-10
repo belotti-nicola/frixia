@@ -94,7 +94,7 @@ void add_http_entry_to_frixia_callbacks(
 
     HashMap_t *hm = create_hash_map(2);//TODO SIZE
     add_entry(hm,he);
-    frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,HTTP,hm);
+    frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,TCP,HTTP,hm);
     add_item(l,new_entry);
     printf("1 %p key:: '%s' %p\n",hm,key,get_entry_value(hm,key));
     return;
@@ -102,6 +102,7 @@ void add_http_entry_to_frixia_callbacks(
 void add_no_protocol_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,
     int                          fd,
+    enum FrixiaFDType            type,
     void                       (*fun)(void *),
     void                        *arg)
 {
@@ -127,7 +128,7 @@ void add_no_protocol_entry_to_frixia_callbacks(
         curr = curr->next;
     }
 
-    frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,NO_PROTOCOL,NULL);
+    frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,type,NO_PROTOCOL,NULL);
     add_item(l,new_entry);
 
 }

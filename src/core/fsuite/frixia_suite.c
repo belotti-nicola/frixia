@@ -81,7 +81,7 @@ void frixia_suite_insert_callback(
         case NO_PROTOCOL:
         {
             proto_callback_noprotocol_t *tmp = (proto_callback_noprotocol_t *)protocol_data;
-            add_no_protocol_entry_to_frixia_callbacks(callbacks,fd,f,arg);
+            add_no_protocol_entry_to_frixia_callbacks(callbacks,fd,fd_type,f,arg);
             break;
         }
         case FINS:

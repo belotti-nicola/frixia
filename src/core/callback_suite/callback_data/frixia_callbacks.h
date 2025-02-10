@@ -5,6 +5,7 @@
 #include "../../fevent/frixia_event.h"
 #include "../../protocols/http/frixia_http_parser.h"
 #include "callback_data.h"
+#include "../../frixia_common.h"
 
 typedef struct frixia_callbacks_data_structure
 {
@@ -27,6 +28,7 @@ void add_http_entry_to_frixia_callbacks(
 void add_no_protocol_entry_to_frixia_callbacks(
     frixia_callbacks_data_structure_t *datastructure,
     int                          fd,
+    enum FrixiaFDType            type,
     void                       (*fun)(void *),
     void                        *arg
     );
