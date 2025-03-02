@@ -83,3 +83,9 @@ proto_frixia_callback_t *pop_proto_frixia_callbacks_queue_t(proto_frixia_callbac
     proto_frixia_callback_t *retVal = pop_simple_queue(q);
     return retVal;
 }
+
+void add_proto_callback_timer(proto_frixia_callbacks_queue_t *proto_callbacks_q,
+    int delay,int interval,void (*f)(void *),void *arg)
+{
+    return;
+}

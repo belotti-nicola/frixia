@@ -63,6 +63,11 @@ void too(int fd_to_reply)
     printf("too function called %d\n",fd_to_reply);
 }
 
+void timer_called()
+{
+    printf("Timer!\n");
+}
+
 int main(int argc, char *argv[])
 {  
     int a=0;
@@ -86,6 +91,8 @@ int main(int argc, char *argv[])
 
     set_noprotocol_echo_server(proto_callbacks_q,UDP,9600,NULL); 
     set_noprotocol_echo_server(proto_callbacks_q,FIFO,-1,"fifo.text"); 
+
+    add_proto_callback_timer(proto_callbacks_q,-1,-1,&timer_called,NULL);//TODO FIX
 
     return frixia_start(proto_fds_q,
                         proto_callbacks_q);

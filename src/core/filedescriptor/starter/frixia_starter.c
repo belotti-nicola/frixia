@@ -1,6 +1,7 @@
 #include "../types/tcp/frixia_tcp.h"
 #include "../types/udp/frixia_udp.h"
 #include "../types/fifo/frixia_fifo.h"
+#include "../types/timer/frixia_timer.h"
 #include <stdio.h>
 
 #include "frixia_starter.h"
@@ -20,6 +21,10 @@ int start_appropriate_fd(enum FrixiaFDType t, frixia_fd_arg_t arg)
     case FIFO:
     {
         return start_fifo_listening(arg.filename); 
+    }
+    case TIMER:
+    {
+        return start_timer_listening(2,10); 
     }
     default:
     {
@@ -45,6 +50,10 @@ int add_appropriate_fd(enum FrixiaFDType t, frixia_fd_arg_t arg)
     case FIFO:
     {
         return start_fifo_listening(arg.filename); 
+    }
+    case TIMER:
+    {
+        return start_timer_listening(5,10); 
     }
     default:
     {

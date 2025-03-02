@@ -38,4 +38,5 @@ target_link_libraries(core
   threadsafe_simple_queue
   fdispatcher
   fthread_pool
+  timer
 )

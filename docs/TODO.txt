@@ -1,6 +1,6 @@
 TODO   
     frixia stop (keep looping?)
-    CALLBACKS SIZE IS 128 (compile time known)
+    CALLBACKS SIZE IS KNOWN AT compile time known
     valgrind support
     time triggered epoll
     LIBRARY SETUP SHARED COMPONENTS
@@ -10,6 +10,7 @@ TODO
 ISSUE:
     fifo seems controversial (EPOLLET only)
     thread pool termination is by killing 
+    TIMER DIFFERS FROM TCP/UDP/FIFO. CREATE NEW FD STRUCTURE
 
 FEAT:
     logger
@@ -32,7 +33,6 @@ REFACTORING
     HTTP: GET:/foo to search in HashMap is unnecessary (search /foo GET)
 
 CHOICES
-    C vs C++
     handle mini tasks (HTTP: 1.read 2.decode req 3.do magic 4.reply to client)
 
 FUTURE DEVELOPMENT
@@ -41,7 +41,8 @@ FUTURE DEVELOPMENT
     HTTPS (integrabile->2.0.0)
     create library
     use a thread pool library (external)
-    design a better policy than round robin for task scheduling 
+    design a better policy than round robin for task scheduling
+    timer with delay/interval/start_time
 
 CHECK
     nothing.
