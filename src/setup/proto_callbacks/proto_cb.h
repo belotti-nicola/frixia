@@ -22,4 +22,7 @@ proto_frixia_callback_t *create_proto_frixia_callback(enum FrixiaFDType fd_type,
                                                      void (*f)(void *),
                                                      void *arg);
 
+proto_frixia_callback_t *create_proto_frixia_timer_callback(void (*f)(void *),void *arg);
+
+
 #endif
