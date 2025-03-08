@@ -187,7 +187,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
 
 
 
-    /*
+    
     int stop_fd = fadd_stop_filedescriptor(fsuite->fepoll);
     //add_stop_callback(fd,&keep_looping);
 
@@ -213,7 +213,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     frixia_detached_wait_threads(fsuite);
     frixia_events_queue_destroy(events);
 
-    */
+    
     
     return OK;
 }

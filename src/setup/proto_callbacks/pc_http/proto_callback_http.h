@@ -5,7 +5,8 @@ typedef struct proto_callback_http
     int port;
     const char *method;
     const char *path;
-    proto_frixia_callback_t pc;
+    void (*fun)(void *);
+    void *arg;
 
 } proto_callback_http_t;
 

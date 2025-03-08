@@ -75,15 +75,15 @@ void setup_frixia_suite_callback(frixia_suite_t *suite, int fd, proto_frixia_cal
     if( protocol == NO_PROTOCOL )
     {
         proto_callback_noprotocol_t *noprot_cb = (proto_callback_noprotocol_t *)cb->data;
-        //fun = noprot_cb->fun;
-        //arg = noprot_cb->arg;
+        //fun = noprot_cb->fun; //TODO fix this
+        //arg = noprot_cb->arg; //TODO fix this
         protocol_data = noprot_cb;
     }
     if( protocol == HTTP )
     {
         proto_callback_http_t *noprot_cb = (proto_callback_http_t *)cb->data;
-        fun = (noprot_cb->pc).f;
-        arg = (noprot_cb->pc).arg;
+        fun = noprot_cb->fun;
+        arg = noprot_cb->arg;
         protocol_data = noprot_cb;
     }
     if( protocol == FINS )
@@ -101,6 +101,5 @@ void setup_frixia_suite_callback(frixia_suite_t *suite, int fd, proto_frixia_cal
         protocol_data = t_cb;
     }
     
-    frixia_suite_insert_callback(suite,type,fd,protocol,NULL,fun,arg);
-
+    frixia_suite_insert_callback(suite,type,fd,protocol,protocol_data,fun,arg);
 }

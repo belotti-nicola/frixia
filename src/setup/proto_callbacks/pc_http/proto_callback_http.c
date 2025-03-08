@@ -16,6 +16,8 @@ proto_callback_http_t *create_proto_callback_http(enum FrixiaFDType fd_type,
     p->port = port;
     p->method = method;
     p->path = path;
+    p->fun = fun;
+    p->arg = arg;
     return p;
 }
 

@@ -140,6 +140,14 @@ void add_fins_entry_to_frixia_callbacks(
 {
     return;
 }
+void add_timer_entry_to_frixia_callbacks(
+    frixia_callbacks_data_structure_t *datastructure,
+    int                          fd,
+    void                       (*fun)(void *),
+    void                        *arg)
+{
+    return;
+}
 
 frixia_callbacks_data_t *frixia_get_http_callback(
     frixia_callbacks_data_structure_t *datastructure,

@@ -5,6 +5,8 @@
 #include "../callback_suite/callback_data/frixia_callbacks.h"
 #include "../../setup/proto_callbacks/pc_http/proto_callback_http.h"
 #include "../../setup/proto_callbacks/pc_noprotocol/proto_callback_noprotocol.h"
+#include "../../setup/proto_callbacks/pc_timer/proto_callback_timer.h"
+#include "../../setup/proto_callbacks/pc_fins/proto_callback_fins.h"
 #include <string.h>
 
 #include "frixia_suite.h"
@@ -87,17 +89,19 @@ void frixia_suite_insert_callback(
         }
         case FINS:
         {
-            printf("FINS PROTOCOL NOT SUPPORTED\n");
-            exit(-1);
+            proto_callback_fins_t *tmp = (proto_callback_fins_t *)protocol_data;
+            add_fins_entry_to_frixia_callbacks(callbacks,fd,f,arg);
+            break;
         }
         case TIMER:
         {
-            printf("TIMER NOT SUPPORTED\n");
-            exit(-1);
+            proto_callback_timer *tmp = (proto_callback_timer *)protocol_data;
+            add_fins_entry_to_frixia_callbacks(callbacks,fd,f,arg);
+            break;
         }
         default:
         {
-            printf("FINS PROTOCOL NOT SUPPORTED\n");
+            printf("Default!!! %d\n",protocol);
             exit(-1);
         }
     }
