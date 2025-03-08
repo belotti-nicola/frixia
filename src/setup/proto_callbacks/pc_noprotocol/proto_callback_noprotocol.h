@@ -7,6 +7,8 @@ typedef struct proto_callback_noprotocol
 {
     frixia_fd_arg_t         fd_info;
     enum FrixiaFDType       fd_type;
+    void (*fun)(void *);
+    void *arg;
 
 } proto_callback_noprotocol_t;
 

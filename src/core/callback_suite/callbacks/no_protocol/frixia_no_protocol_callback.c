@@ -66,7 +66,9 @@ int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_
     if(data_casted == NULL)
     {
         printf("no_protocol_callback %d, logger is selected:: %.*s\n",type,bytes_read,s);
+        return 1;
     }    
 
+    data_casted->function(data_casted->argument);
     return 1;
 }

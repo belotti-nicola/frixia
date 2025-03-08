@@ -16,6 +16,8 @@ proto_callback_noprotocol_t *create_proto_callback_noprotocol(enum FrixiaFDType 
     p->fd_info.port     = port;
     p->fd_info.filename = filename;
     p->fd_type          = fd_type;
+    p->fun              = fun;
+    p->arg              = arg;
 
     return p;
 }

@@ -88,7 +88,8 @@ int main(int argc, char *argv[])
     add_proto_callback_http(proto_callbacks_q,TCP,8888,"GET","/too",&too,NULL);
 
     //set_fins_echo_server(proto_callbacks_q,TCP,9600); TODO
-
+    add_proto_callback_no_protocol(proto_callbacks_q,UDP,9600,"",moo,NULL);
+    add_proto_callback_no_protocol(proto_callbacks_q,FIFO,-1,"fifo.text",moo,NULL);
     //set_noprotocol_echo_server(proto_callbacks_q,FIFO,-1,"fifo.text"); 
 
     add_proto_callback_timer(proto_callbacks_q,10,5,&timer_called,NULL);

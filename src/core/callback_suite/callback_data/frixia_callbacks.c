@@ -128,7 +128,7 @@ void add_no_protocol_entry_to_frixia_callbacks(
         curr = curr->next;
     }
 
-    frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,type,NO_PROTOCOL,NULL);
+    frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,type,NO_PROTOCOL,cb_data);
     add_item(l,new_entry);
 
 }
