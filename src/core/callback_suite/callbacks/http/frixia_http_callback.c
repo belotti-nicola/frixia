@@ -57,8 +57,10 @@ int http_callback(frixia_event_t *fevent, int read_size,frixia_callbacks_data_st
         write_tcp(fd_to_reply,response_404,response_len);
         return 0;
     }
-    void (*fun)(int a, const char *fullpath, int fullpath_len, void *headers, int headers_size, void *) = cb->function; //TODO CAST HERE
-    void  *arg          = cb->argument;
+    void (*fun)(int a, const char *fullpath, int fullpath_len, void *headers, int headers_size, void *) = 
+        (void (*)(int, const char *, int, void *, int, void *))cb->function; 
+    void  *arg          = 
+         cb->argument;
 
     fun(fd_to_reply,fhttp_2.path, fhttp_2.path_len, (void *)fhttp_2.headers, fhttp_2.num_headers,arg); //TODO VOID * IS NOT VOID *
     

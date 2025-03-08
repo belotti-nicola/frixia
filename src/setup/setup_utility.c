@@ -6,6 +6,12 @@
 #include "../core/filedescriptor/types/udp/frixia_udp.h"
 #include "../core/filedescriptor/types/fifo/frixia_fifo.h"
 #include "../core/filedescriptor/fd_monitor/epoll/fepoll.h"
+#include "proto_callbacks/proto_callback_element.h"
+#include "proto_callbacks/pc_fins/proto_callback_fins.h"
+#include "proto_callbacks/pc_http/proto_callback_http.h"
+#include "proto_callbacks/pc_noprotocol/proto_callback_noprotocol.h"
+#include "proto_callbacks/pc_timer/proto_callback_timer.h"
+
 
 #include "setup_utility.h"
 
@@ -56,4 +62,45 @@ int start_filedescriptors_monitoring(frixia_epoll_t            *fepoll,
     }
     
     return OK;
+}
+
+void setup_frixia_suite_callback(frixia_suite_t *suite, int fd, proto_frixia_callback_element_t *cb)
+{
+    enum FrixiaFDType type = TCP;
+    FRIXIA_SUPPORTED_PROTOCOL_T protocol = cb->protocol;
+    
+    void (*fun)(void *) = NULL;
+    void  *arg = NULL;
+    void  *protocol_data = NULL; //TODO fix this
+    if( protocol == NO_PROTOCOL )
+    {
+        proto_callback_noprotocol_t *noprot_cb = (proto_callback_noprotocol_t *)cb->data;
+        //fun = noprot_cb->fun;
+        //arg = noprot_cb->arg;
+        protocol_data = noprot_cb;
+    }
+    if( protocol == HTTP )
+    {
+        proto_callback_http_t *noprot_cb = (proto_callback_http_t *)cb->data;
+        fun = (noprot_cb->pc).f;
+        arg = (noprot_cb->pc).arg;
+        protocol_data = noprot_cb;
+    }
+    if( protocol == FINS )
+    {
+        proto_callback_fins_t *fins_cb = (proto_callback_fins_t *)cb->data;
+        fun = fins_cb->fun;
+        arg = fins_cb->arg;
+        protocol_data = fins_cb;
+    }
+    if( protocol == TIMER )
+    {
+        proto_callback_timer *t_cb = (proto_callback_timer *)cb->data;
+        fun = t_cb->fun;
+        arg = t_cb->arg;
+        protocol_data = t_cb;
+    }
+    
+    frixia_suite_insert_callback(suite,type,fd,protocol,NULL,fun,arg);
+
 }

@@ -5,7 +5,7 @@
 
 typedef struct proto_frixia_callbacks_queu
 {
-    FRIXIA_SUPPORTED_PROTOCOL_T   p;
+    FRIXIA_SUPPORTED_PROTOCOL_T   protocol;
     void                         *data;
 
 } proto_frixia_callback_element_t;

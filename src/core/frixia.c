@@ -134,9 +134,10 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     }
     destroy_proto_frixia_fd_queue(proto_fds_q);
     
-    proto_frixia_callback_t *protocb = pop_proto_frixia_callbacks_queue_t(pbs);
+    proto_frixia_callback_element_t *protocb = pop_proto_frixia_callbacks_queue_t(pbs);
     while(protocb != NULL)
     {       
+        
         int target_fd = -1;
         simple_list_elem_t *curr = fsuite->fepoll->fd_pool->l->first;
         while(curr != NULL)
@@ -146,7 +147,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
             {
                 if(protocb->protocol == HTTP)
                 {
-                    proto_callback_http_t *pcb = (proto_callback_http_t *)protocb->protocol_data;               
+                    proto_callback_http_t *pcb = (proto_callback_http_t *)protocb->data;               
                     if(info->arg->port == pcb->port )
                     {
                         target_fd = info->fd;
@@ -154,7 +155,7 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
                 }
                 if(protocb->protocol == NO_PROTOCOL)
                 {
-                    proto_callback_noprotocol_t *pcb = (proto_callback_noprotocol_t *)protocb->protocol_data;               
+                    proto_callback_noprotocol_t *pcb = (proto_callback_noprotocol_t *)protocb->data;               
                     if(info->arg->port == pcb->fd_info.port)
                     {
                         target_fd = info->fd;
@@ -163,31 +164,30 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
             }
             if(info->type == FIFO)
             {
-                if(protocb->protocol == NO_PROTOCOL && protocb->fd_type == FIFO)
+                proto_callback_noprotocol_t *pcb = (proto_callback_noprotocol_t *)protocb->data;
+                if( strcmp(pcb->fd_info.filename, info->arg->filename) == 0 )
                 {
-                    proto_callback_noprotocol_t *pcb = (proto_callback_noprotocol_t *)protocb->protocol_data;               
-                    frixia_fd_arg_t tmp = pcb->fd_info;
-                    if( strcmp(pcb->fd_info.filename, info->arg->filename) == 0 )
-                    {
-                        target_fd = info->fd;
-                    }
+                    target_fd = info->fd;
                 }
             }
+        
             curr = curr->next;
         }
         
-        frixia_suite_insert_callback(fsuite,
-            protocb->fd_type,
-            target_fd,
-            protocb->protocol,
-            protocb->protocol_data,
-            protocb->f,
-            protocb->arg
-        );
+        
+        //fix this shit
+        setup_frixia_suite_callback(fsuite,target_fd,protocb);
+
         protocb = pop_proto_frixia_callbacks_queue_t(pbs);
     }    
     destroy_proto_frixia_callbacks_queue(pbs);
     
+
+
+
+
+
+    /*
     int stop_fd = fadd_stop_filedescriptor(fsuite->fepoll);
     //add_stop_callback(fd,&keep_looping);
 
@@ -212,6 +212,9 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
 
     frixia_detached_wait_threads(fsuite);
     frixia_events_queue_destroy(events);
+
+    */
+    
     return OK;
 }
 int frixia_stop(int epoll_fd,

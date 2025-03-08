@@ -20,7 +20,7 @@ proto_frixia_callback_element_t *create_proto_frixia_callback_timer_element(
         return NULL;
     }
 
-    ptr->p    = TIMER;
+    ptr->protocol    = TIMER;
     ptr->data = (void *)create_proto_callback_timer(delay,interval,fun,arg);
     return ptr;
 }
@@ -39,7 +39,7 @@ proto_frixia_callback_element_t *create_proto_frixia_callback_http_element(
         return NULL;
     }
 
-    ptr->p    = HTTP;
+    ptr->protocol    = HTTP;
     ptr->data = (void *)create_proto_callback_http(fd_type,port,method,path,fun,arg);
     return ptr;
 }
@@ -57,7 +57,7 @@ proto_frixia_callback_element_t *create_proto_frixia_callback_fins_element(
         return NULL;
     }
 
-    ptr->p    = FINS;
+    ptr->protocol    = FINS;
     ptr->data = (void *)create_proto_callback_fins(f,port,fd_type,fun,arg);
     return ptr;
 }
@@ -75,7 +75,7 @@ proto_frixia_callback_element_t *create_proto_frixia_callback_noprotocol_element
         return NULL;
     }
 
-    ptr->p    = NO_PROTOCOL;
+    ptr->protocol    = NO_PROTOCOL;
     ptr->data = (void *)create_proto_callback_noprotocol(fd_type,port,filename,fun,arg);
     return ptr;
 }

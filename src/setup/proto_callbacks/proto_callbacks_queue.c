@@ -1,9 +1,6 @@
 #include "proto_cb.h"
 #include "../../utils/datastructures/simple_list/simple_list.h"
 #include "../../core/frixia_common.h"
-#include "pc_http/proto_callback_http.h"
-#include "pc_noprotocol/proto_callback_noprotocol.h"
-#include "pc_timer/proto_callback_timer.h"
 #include "proto_callback_element.h"
 
 #include "proto_callbacks_queue.h"
@@ -30,6 +27,14 @@ void destroy_proto_frixia_callbacks_queue(proto_frixia_callbacks_queue_t *t)
     destroy_simple_queue(t->proto_callbacks);
     free(t);
 }
+proto_frixia_callback_element_t *pop_proto_frixia_callbacks_queue_t(proto_frixia_callbacks_queue_t *pcbs)
+{
+    simple_queue_t                  *q      = pcbs->proto_callbacks;
+    proto_frixia_callback_element_t *retVal = pop_simple_queue(q);
+    return retVal;
+}
+
+
 void add_proto_callback_no_protocol(proto_frixia_callbacks_queue_t *cbs,
                         enum FrixiaFDType fd_type,
                         int port,
@@ -37,11 +42,9 @@ void add_proto_callback_no_protocol(proto_frixia_callbacks_queue_t *cbs,
                         void (*f)(void *),
                         void *arg)
 {
-    proto_callback_noprotocol_t *cb = create_proto_callback_noprotocol(fd_type,port,filename,f, arg);
-    
-    proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,NO_PROTOCOL,cb,f,arg);
+    proto_frixia_callback_element_t *cb = create_proto_frixia_callback_noprotocol_element(fd_type,port,filename,f, arg);
     simple_queue_t *l = cbs->proto_callbacks;
-    push_simple_queue(l, (void *)pf_cb);
+    push_simple_queue(l, (void *)cb);
 }
 
 void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
@@ -52,38 +55,9 @@ void add_proto_callback_http(proto_frixia_callbacks_queue_t *cbs,
                              void (*f)(void *),
                              void *arg)
 {
-    proto_callback_http_t *cb = create_proto_callback_http(fd_type,port, method, path, f, arg);//TODO UNUSED
-    
-    proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,HTTP,cb,f,arg);
+    proto_frixia_callback_element_t *cb = create_proto_frixia_callback_http_element(fd_type,port, method, path, f, arg);//TODO UNUSED
     simple_queue_t *q = cbs->proto_callbacks;
-    push_simple_queue(q, (void *)pf_cb);
-}
-
-
-void set_fins_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_q,
-                          enum FrixiaFDType               fd_type,
-                          int                             port)
-{
-
-}
-
-void set_noprotocol_echo_server(proto_frixia_callbacks_queue_t *proto_callbacks_q,
-                                 enum FrixiaFDType               fd_type,
-                                 int                             port,
-                                 char                           *filename)
-{
-    proto_callback_noprotocol_t *cb = create_proto_callback_noprotocol(fd_type,port,filename,NULL,NULL);//TODO UNUSED
-    
-    proto_frixia_callback_t *pf_cb = create_proto_frixia_callback(fd_type,NO_PROTOCOL,cb,NULL,NULL); //TODO BETTER
-    simple_queue_t *q = proto_callbacks_q->proto_callbacks;
-    push_simple_queue(q, (void *)pf_cb);
-}
-
-proto_frixia_callback_t *pop_proto_frixia_callbacks_queue_t(proto_frixia_callbacks_queue_t *pcbs)
-{
-    simple_queue_t          *q      = pcbs->proto_callbacks;
-    proto_frixia_callback_t *retVal = pop_simple_queue(q);
-    return retVal;
+    push_simple_queue(q, (void *)cb);
 }
 
 void add_proto_callback_timer(proto_frixia_callbacks_queue_t *proto_callbacks_q,

@@ -89,8 +89,8 @@ int main(int argc, char *argv[])
 
     //set_fins_echo_server(proto_callbacks_q,TCP,9600); TODO
 
-    set_noprotocol_echo_server(proto_callbacks_q,UDP,9600,NULL); 
-    set_noprotocol_echo_server(proto_callbacks_q,FIFO,-1,"fifo.text"); 
+    //set_noprotocol_echo_server(proto_callbacks_q,UDP,9600,NULL); 
+    //set_noprotocol_echo_server(proto_callbacks_q,FIFO,-1,"fifo.text"); 
 
     add_proto_callback_timer(proto_callbacks_q,10,5,&timer_called,NULL);
 

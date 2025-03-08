@@ -90,6 +90,16 @@ void frixia_suite_insert_callback(
             printf("FINS PROTOCOL NOT SUPPORTED\n");
             exit(-1);
         }
+        case TIMER:
+        {
+            printf("TIMER NOT SUPPORTED\n");
+            exit(-1);
+        }
+        default:
+        {
+            printf("FINS PROTOCOL NOT SUPPORTED\n");
+            exit(-1);
+        }
     }
     
 
