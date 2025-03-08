@@ -6,7 +6,7 @@ proto_callback_fins_t *create_proto_callback_fins(enum FrixiaFDType f,
                                                   int port,
                                                   enum FrixiaFDType fd_type,
                                                   void (*fun)(void *),
-                                                  void *arg);
+                                                  void *arg)
 {
     proto_callback_fins_t *p = malloc(1 * sizeof(proto_callback_fins_t));
     if (p == NULL)
@@ -14,8 +14,9 @@ proto_callback_fins_t *create_proto_callback_fins(enum FrixiaFDType f,
         return NULL;
     }
     p->port = port;
-    p->method = method;
-    p->path = path;
+    p->fd_type = fd_type;
+    p->fun = fun;
+    p->arg = arg;
     return p;
 }
 

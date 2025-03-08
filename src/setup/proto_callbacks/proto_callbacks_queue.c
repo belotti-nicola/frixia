@@ -4,6 +4,7 @@
 #include "pc_http/proto_callback_http.h"
 #include "pc_noprotocol/proto_callback_noprotocol.h"
 #include "pc_timer/proto_callback_timer.h"
+#include "proto_callback_element.h"
 
 #include "proto_callbacks_queue.h"
 
@@ -88,7 +89,7 @@ proto_frixia_callback_t *pop_proto_frixia_callbacks_queue_t(proto_frixia_callbac
 void add_proto_callback_timer(proto_frixia_callbacks_queue_t *proto_callbacks_q,
     int delay,int interval,void (*f)(void *),void *arg)
 {
-    proto_callback_timer *cb = create_proto_frixia_callback_timer_element(delay,interval,f,arg);
+    proto_frixia_callback_element_t *cb = create_proto_frixia_callback_timer_element(delay,interval,f,arg);
     simple_queue_t *q = proto_callbacks_q->proto_callbacks;
     push_simple_queue(q, (void *)cb);
 }
