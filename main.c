@@ -71,9 +71,12 @@ void timer_called()
 int main(int argc, char *argv[])
 {  
     frixia_environment_t environment;
+    convoy_t c;
+    environment.convoy = &c;
     frixia_add_tcp(&environment,"0.0.0.0",4444,1028);
     frixia_add_udp(&environment,"0.0.0.0",8888,1028);
 
+    
 
 
     /*

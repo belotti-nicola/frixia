@@ -52,6 +52,7 @@ void convoy_add_udp_filedescriptor(convoy_t *c,int fd,const char *ip,int port,in
     }
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = UDP;
+    c->size++;
 }
 void convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,int bytes)
 {
@@ -77,6 +78,7 @@ void convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,int byte
     }
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = FIFO;
+    c->size++;
 }
 void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int delay, int interval)
 {
@@ -101,6 +103,7 @@ void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int dela
     }
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = TIMER;
+    c->size++;
 }
 
 void convoy_register_http_callback(convoy_t *c,const char *method,const char *path,void *fun, void *arg)

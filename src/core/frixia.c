@@ -117,7 +117,10 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(frixia_environment_t *env)
 {        
     convoy_t *convoy = env->convoy;
-    
+    for(int i=0;i<convoy->size;i++)
+    {
+        printf("%d\n",convoy->filedescriptors[i].type);
+    }
     
     
     frixia_events_queue_t *events = frixia_events_queue_create();
