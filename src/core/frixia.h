@@ -2,12 +2,30 @@
 #include "../setup/proto_filedescriptor/proto_fds_queue.h"
 #include "../setup/proto_callbacks/proto_callbacks_queue.h"
 #include "protocols/frixia_supported_protocols.h"
-
+#include "convoy_data_structure/convoy.h"
 #include "fevent/frixia_event.h"
 #include "thread_pool/fthread_pool.h"
+#include "../core/filedescriptor/fd_monitor/epoll/fepoll.h"
 
-int frixia_start(proto_frixia_fd_queue_t         *proto_fds,
-                 proto_frixia_callbacks_queue_t  *proto_cbs);
+
+typedef struct frixia_environment
+{
+    convoy_t *convoy;
+    frixia_epoll_t *fepoll;
+    frixia_events_queue_t *events;
+
+} frixia_environment_t;
+
+void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
+void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
+void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read);
+void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval);
+
+
+
+
+
+int frixia_start(frixia_environment_t *env);
 int frixia_stop(int epoll_fd,
                 struct FrixiaFD f[],
                 int max_size);

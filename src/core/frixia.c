@@ -20,6 +20,7 @@
 #include "../core/filedescriptor/types/tcp/frixia_tcp.h"
 #include "../core/filedescriptor/types/udp/frixia_udp.h"
 #include "../core/filedescriptor/types/fifo/frixia_fifo.h"
+#include "../core/filedescriptor/types/timer/frixia_timer.h"
 #include "ctl_parser/control_strings_parser.h"
 #include "frixia_codes.h"
 #include "fd_pool/filedescriptor_pool_defs.h"
@@ -113,9 +114,16 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
     }
 }
 */
-int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
-                 proto_frixia_callbacks_queue_t *pbs)
+int frixia_start(frixia_environment_t *env)
 {        
+    convoy_t *convoy = env->convoy;
+    
+    
+    
+    frixia_events_queue_t *events = frixia_events_queue_create();
+    env->events = events;
+   
+    /*
     bool keep_looping = true;
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
     start_fepoll(fsuite->fepoll);
@@ -214,7 +222,8 @@ int frixia_start(proto_frixia_fd_queue_t        *proto_fds_q,
     frixia_events_queue_destroy(events);
 
     
-    
+    */
+    printf("End\n");
     return OK;
 }
 int frixia_stop(int epoll_fd,
@@ -323,4 +332,51 @@ int frixia_read_event_data(frixia_event_t *fe,
         {}
     }
 
+}
+
+
+void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
+{
+    int fd = start_tcp_listening(port);
+    if(fd < 0)
+    {
+        return;
+    }
+
+    convoy_t *c = env->convoy;
+    convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read);
+
+}
+void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
+{
+    int fd = start_udp_listening(port);
+    if(fd < 0)
+    {
+        return;
+    }
+
+    convoy_t *c = env->convoy;
+    convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
+}
+void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
+{
+    int fd = start_fifo_listening(file);
+    if(fd < 0)
+    {
+        return;
+    }
+
+    convoy_t *c = env->convoy;
+    convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
+}
+void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
+{
+    int fd = start_timer_listening(delay,interval);
+    if(fd < 0)
+    {
+        return;
+    }
+
+    convoy_t *c = env->convoy;
+    convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
 }

@@ -70,9 +70,15 @@ void timer_called()
 
 int main(int argc, char *argv[])
 {  
+    frixia_environment_t environment;
+    frixia_add_tcp(&environment,"0.0.0.0",4444,1028);
+    frixia_add_udp(&environment,"0.0.0.0",8888,1028);
+
+
+
+    /*
     int a=0;
     int b=1;
-    
     printf("foo %p goo %p moo %p too %p\n",&foo,&goo,&moo,&too);
     
     proto_frixia_fd_queue_t *proto_fds_q = create_proto_frixia_fd_queue();
@@ -93,7 +99,6 @@ int main(int argc, char *argv[])
     //set_noprotocol_echo_server(proto_callbacks_q,FIFO,-1,"fifo.text"); 
 
     add_proto_callback_timer(proto_callbacks_q,10,5,&timer_called,NULL);
-
-    return frixia_start(proto_fds_q,
-                        proto_callbacks_q);
+    */
+    return frixia_start(&environment);
 }

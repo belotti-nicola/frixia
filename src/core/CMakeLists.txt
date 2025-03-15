@@ -16,6 +16,7 @@ add_subdirectory(filedescriptor)
 add_subdirectory(fsuite)
 add_subdirectory(fdispatcher)
 add_subdirectory(fthread_pool)
+add_subdirectory(convoy_data_structure)
 
 target_link_libraries(core 
   ctl_parser
@@ -39,4 +40,5 @@ target_link_libraries(core
   fdispatcher
   fthread_pool
   timer
+  convoy
 )
