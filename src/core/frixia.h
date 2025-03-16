@@ -24,7 +24,6 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
 
 
 
-
 int frixia_start(frixia_environment_t *env);
 int frixia_stop(int epoll_fd,
                 struct FrixiaFD f[],

@@ -70,9 +70,21 @@ void timer_called()
 
 int main(int argc, char *argv[])
 {  
+
+    //setup all the frixia environment. refactor it. 
     frixia_environment_t environment;
     convoy_t c;
+    frixia_fd_args_t fd;
+    frixia_tcp_t tcp;
+    fd.tcp_info = &tcp;
+    frixia_file_descriptor_t frixia_fd = {0,UNDEFINED,&fd,NO_PROTOCOL,NULL};
+    for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
+    {
+        c.filedescriptors[i] = frixia_fd;
+    }
     environment.convoy = &c;
+
+
     frixia_add_tcp(&environment,"0.0.0.0",4444,1028);
     frixia_add_udp(&environment,"0.0.0.0",8888,1028);
 
