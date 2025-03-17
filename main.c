@@ -73,6 +73,10 @@ int main(int argc, char *argv[])
 
     //setup all the frixia environment. refactor it. 
     frixia_environment_t environment;
+    frixia_epoll_t *fepoll = create_frixia_epoll();
+    environment.fepoll = fepoll;
+    start_fepoll(fepoll);
+    
     convoy_t c;
     frixia_fd_args_t fd;
     frixia_tcp_t tcp;

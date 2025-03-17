@@ -126,6 +126,9 @@ int frixia_start(frixia_environment_t *env)
     frixia_events_queue_t *events = frixia_events_queue_create();
     env->events = events;
    
+
+
+
     /*
     bool keep_looping = true;
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
@@ -345,6 +348,13 @@ void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     {
         return;
     }
+    
+    //TODO FIX THIS SHIT
+    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_fd_args_t tmp_fd_args = {port,""};
+    frixia_fd_t fd_args = {fd,TCP,&tmp_fd_args,bytes_to_read};
+    insert_event(fepoll->fd,&fd_args);
+    
 
     convoy_t *c = env->convoy;
     convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read);
