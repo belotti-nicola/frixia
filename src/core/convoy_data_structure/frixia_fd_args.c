@@ -27,3 +27,9 @@ void set_frixia_timer_fd(frixia_fd_args_t *fd, const char *id, int delay, int in
     fd->timer_info->delay = delay;
     fd->timer_info->interval = interval;
 }
+
+void set_frixia_scheduler_fd(frixia_fd_args_t *fd, int tick)
+{
+    fd->scheduler_info->tick = tick;
+}
+

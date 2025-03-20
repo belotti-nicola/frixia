@@ -15,7 +15,7 @@
 #include <arpa/inet.h>
 #include <sys/epoll.h>
 
-#include "frixia.h"
+#include "frixia_h.h"
 #include "frixia_common.h"
 #include "../core/filedescriptor/types/tcp/frixia_tcp.h"
 #include "../core/filedescriptor/types/udp/frixia_udp.h"
@@ -117,17 +117,18 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 int frixia_start(frixia_environment_t *env)
 {        
     convoy_t *convoy = env->convoy;
-    for(int i=0;i<convoy->size;i++)
+ 
+    for(int i=0;i<10;i++)
     {
-        printf("%d\n",convoy->filedescriptors[i].type);
+        frixia_event_t events[10];
+        int num = frixia_epoll_wait(env->fepoll,events);
+        for(int j=0;j<num;j++)
+        {
+            char buf[8];
+            int rbytes = read_timer(events[j].fd,buf);
+            printf("%d %d %s\n",rbytes,j,buf);
+        }
     }
-    
-    
-    frixia_events_queue_t *events = frixia_events_queue_create();
-    env->events = events;
-   
-
-
 
     /*
     bool keep_looping = true;
@@ -367,6 +368,12 @@ void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     {
         return;
     }
+    
+    //TODO FIX THIS SHIT
+    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_fd_args_t tmp_fd_args = {port,""};
+    frixia_fd_t fd_args = {fd,UDP,&tmp_fd_args,bytes_to_read};
+    insert_event(fepoll->fd,&fd_args);
 
     convoy_t *c = env->convoy;
     convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
@@ -378,6 +385,11 @@ void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_re
     {
         return;
     }
+    //TODO FIX THIS SHIT
+    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_fd_args_t tmp_fd_args = {0,""};
+    frixia_fd_t fd_args = {fd,FIFO,&tmp_fd_args,bytes_to_read};
+    insert_event(fepoll->fd,&fd_args);
 
     convoy_t *c = env->convoy;
     convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
@@ -389,7 +401,29 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
     {
         return;
     }
+    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_fd_args_t tmp_fd_args = {0,""};
+    frixia_fd_t fd_args = {fd,TIMER,&tmp_fd_args,0};
+    insert_event(fepoll->fd,&fd_args);
 
     convoy_t *c = env->convoy;
     convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
+}
+
+void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
+{
+    int fd = start_timer_listening(2,2);
+    if(fd < 0)
+    {
+        return;
+    }
+
+    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_fd_args_t tmp_fd_args = {0,""};
+    frixia_fd_t fd_args = {fd,SCHEDULER,&tmp_fd_args,0};
+    printf("%d vs %d\n",fepoll->fd,fd_args.fd);
+    int rc = insert_event(fepoll->fd,&fd_args);
+
+    convoy_t *c = env->convoy;
+    convoy_add_scheduler_filedescriptor(c,fd,tick_size);
 }

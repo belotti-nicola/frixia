@@ -1,6 +1,6 @@
 add_library(core
-  frixia.c
-  frixia.h
+  frixia_h.c
+  frixia_h.h
   frixia_common.h
   frixia_common.c 
 )

@@ -30,7 +30,9 @@ enum FrixiaFDType
     TCP,
     UDP,
     FIFO,
-    TIMER
+    TIMER,
+    WAKE,
+    SCHEDULER
 
 };
 

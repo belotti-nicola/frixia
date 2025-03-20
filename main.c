@@ -1,7 +1,7 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "src/core/frixia.h"
+#include "src/core/frixia_h.h"
 #include "src/setup/proto_filedescriptor/proto_fds_queue.h"
 #include "src/setup/proto_callbacks/proto_callbacks_queue.h"
 #include "src/core/protocols/http/frixia_http_parser.h"
@@ -89,12 +89,12 @@ int main(int argc, char *argv[])
     environment.convoy = &c;
 
 
-    frixia_add_tcp(&environment,"0.0.0.0",4444,1028);
-    frixia_add_udp(&environment,"0.0.0.0",8888,1028);
+    frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
+    frixia_add_udp(&environment,"0.0.0.0",8888,1024);
+    frixia_add_fifo(&environment,"fifo",512);
+    frixia_add_scheduler(&environment,2);
 
     
-
-
     /*
     int a=0;
     int b=1;

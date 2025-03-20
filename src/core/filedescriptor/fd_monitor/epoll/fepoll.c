@@ -78,7 +78,7 @@ FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
     }
     fepoll->fd = fd_epoll;
     printf("EPOLL CREATE :: %d\n",fd_epoll);
-    return 0;
+    return FEPOLL_OK;
 }
 FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
 {    
@@ -99,10 +99,10 @@ FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
 
 FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f)
 {
-    printf("INSERT EVENT %d %d\n",epoll,f->fd);
-    if( f->type != TCP && f->type != UDP && f->type != FIFO ) //TODO FIX THIS SHIT
+    printf("INSERT EVENT epoll_fd %d target_fd:%d\n",epoll,f->fd);
+    if( f->type != TCP && f->type != UDP && f->type != FIFO && f->type != SCHEDULER ) //TODO FIX THIS SHIT
     {
-        printf("Exiting::TCP (%d)\n",f->type);
+        printf("Exiting:: unsupported fd");
         return -1;
     }
 
