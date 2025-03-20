@@ -25,9 +25,9 @@ int start_timer_listening(int delay, int interval)
     }
 
     bzero(&timer_spec, sizeof(timer_spec));
-    timer_spec.it_value.tv_sec = 1;
+    timer_spec.it_value.tv_sec = delay;
     timer_spec.it_value.tv_nsec = 0;
-    timer_spec.it_interval.tv_sec = 1;
+    timer_spec.it_interval.tv_sec = interval;
     timer_spec.it_interval.tv_nsec = 0;
 
     if (timerfd_settime(tfd, 0, &timer_spec, NULL) != 0) {
@@ -45,7 +45,7 @@ int read_timer(int fd, char buf[8])
     if( bytes_read <= 0)
     {
         printf("ERROR start_timer_listening %d (fd: %d, errno: %d)\n",bytes_read,fd,errno);
-        return READ_TIMER_ERROR;
+        return ERR_TIMERFD_READ;
     }
 
     return bytes_read;
@@ -58,7 +58,8 @@ int stop_timer_listening(int fd)
     if(rc != 0)
     {
         printf("ERROR start_timer_listening::%d\n",errno);
-        return ERR_CLOSE;
+        return ERR_TIMERFD_CLOSE;
     }
+
     return TIMER_OK;
 }

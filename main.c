@@ -93,7 +93,6 @@ int main(int argc, char *argv[])
     frixia_add_udp(&environment,"0.0.0.0",8888,1024);
     frixia_add_fifo(&environment,"fifo",512);
     frixia_add_scheduler(&environment,2);
-
     
     /*
     int a=0;

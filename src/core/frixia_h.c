@@ -412,7 +412,9 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
 
 void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
 {
-    int fd = start_timer_listening(2,2);
+    //TODO not cleaniest but do the works
+    //0 would be FROM_NOW but the fd will not be read causing the engine to stop
+    int fd = start_timer_listening(1,tick_size);
     if(fd < 0)
     {
         return;
@@ -421,8 +423,7 @@ void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
     frixia_epoll_t *fepoll = env->fepoll;
     frixia_fd_args_t tmp_fd_args = {0,""};
     frixia_fd_t fd_args = {fd,SCHEDULER,&tmp_fd_args,0};
-    printf("%d vs %d\n",fepoll->fd,fd_args.fd);
-    int rc = insert_event(fepoll->fd,&fd_args);
+    insert_event(fepoll->fd,&fd_args);
 
     convoy_t *c = env->convoy;
     convoy_add_scheduler_filedescriptor(c,fd,tick_size);

@@ -5,8 +5,8 @@ enum FTIMER_CODE {
     TIMER_OK,
     ERR_TIMER_CREATE=-1,
     ERR_TIMERFD_SETTIME = -2,
-    ERR_CLOSE = -3,
-    READ_TIMER_ERROR = -4
+    ERR_TIMERFD_CLOSE = -3,
+    ERR_TIMERFD_READ = -4
 };
 
 int start_timer_listening(int delay, int interval);
