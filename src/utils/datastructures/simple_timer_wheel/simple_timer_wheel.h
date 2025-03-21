@@ -12,8 +12,8 @@ typedef struct simple_timer_wheel
 
 } simple_timer_wheel_t;
 
-void simple_timer_wheel_add_oneshot_timer(simple_timer_wheel_t *tw, int delay,void (*fun)(void *), void *arg);
-void simple_timer_wheel_add_periodic_timer(simple_timer_wheel_t *tw, int delay,void (*fun)(void *), void *arg);
+void simple_timer_wheel_add_oneshot_timer(simple_timer_wheel_t *tw, int delay, void (*fun)(void *), void *arg);
+void simple_timer_wheel_add_periodic_timer(simple_timer_wheel_t *tw, int delay, int interval, void (*fun)(void *), void *arg);
 void simple_timer_wheel_tick(simple_timer_wheel_t *tw);
 
 

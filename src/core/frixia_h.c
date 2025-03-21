@@ -45,6 +45,7 @@
 #include "../core/fsuite/frixia_fd.h"
 #include "../setup/proto_callbacks/pc_noprotocol/proto_callback_noprotocol.h"
 #include "../setup/proto_callbacks/pc_http/proto_callback_http.h"
+#include "../utils/datastructures/simple_timer_wheel/simple_timer_wheel.h"
 
 #include "fsuite/frixia_suite.h"
 
@@ -118,7 +119,29 @@ int frixia_start(frixia_environment_t *env)
 {        
     convoy_t *convoy = env->convoy;
  
-    for(int i=0;i<10;i++)
+    simple_timer_t def_timer;
+    def_timer.arg = NULL;
+    def_timer.callback = NULL;
+    
+    simple_wheel_slot_t def_slot;
+    def_slot.current_size = 0;
+    for(int i=0;i<TIMERS_PER_SLOT_NUMBER;i++)
+    {
+        def_slot.timers[i] = def_timer;
+    }
+
+    simple_timer_wheel_t tw;
+    tw.current_index = 0;
+    tw.tick_duration = 2;
+    for(int i=0;i<TIMER_WHEEL_SLOT_SIZE;i++)
+    {
+        tw.slots[i] = def_slot;
+    }
+    simple_timer_wheel_add_oneshot_timer(&tw,5,NULL,NULL);
+    
+    
+    
+    for(int i=0;i<TIMER_WHEEL_SLOT_SIZE;i++)
     {
         frixia_event_t events[10];
         int num = frixia_epoll_wait(env->fepoll,events);
@@ -126,7 +149,8 @@ int frixia_start(frixia_environment_t *env)
         {
             char buf[8];
             int rbytes = read_timer(events[j].fd,buf);
-            printf("%d %d %s\n",rbytes,j,buf);
+            simple_timer_wheel_tick(&tw); 
+            printf("Tick done.\n");
         }
     }
 

@@ -41,4 +41,5 @@ target_link_libraries(core
   fthread_pool
   timer
   convoy
+  simple_timer_wheel
 )
