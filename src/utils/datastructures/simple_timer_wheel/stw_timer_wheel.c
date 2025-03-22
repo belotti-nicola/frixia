@@ -1,39 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "simple_timer_wheel.h"
-
-typedef struct periodic_context
-{
-    simple_timer_wheel_t *tw;
-    int delay;
-    int interval;
-    void (*fun)(void *);
-    void *arg;
-
-} periodic_context_t;
-
-void *periodic_timer_callback(periodic_context_t *ctx)
-{
-    if(ctx->fun == NULL )
-    {
-        return;
-    }
-    if(ctx->arg == NULL )
-    {
-        return;
-    }
-
-    ctx->fun(ctx->arg);
-    simple_timer_wheel_add_oneshot_timer(
-        ctx->tw,
-        ctx->delay,
-        ctx->fun,
-        ctx->arg
-    );
-
-}
-
+#include "stw_timer_wheel.h"
 
 void simple_timer_wheel_add_oneshot_timer(simple_timer_wheel_t *tw, int delay,void (*fun)(void *), void *arg)
 {
@@ -44,10 +12,8 @@ void simple_timer_wheel_add_oneshot_timer(simple_timer_wheel_t *tw, int delay,vo
     int target_slot = (delay / tick_duration + tw->current_index ) % TIMER_WHEEL_SLOT_SIZE;
     int target_round = delay / wheel_duration;
 
-    printf("%d %d\n",target_slot,target_round);
-
     simple_wheel_slot_t *slot = tw->slots;
-    simple_wheel_slot_add_timer(slot+target_slot,fun,arg);   
+    simple_wheel_slot_add_timer(slot+target_slot,delay,0,TIMER_ONESHOT,target_round,fun,arg);   
 
 }
 void simple_timer_wheel_add_periodic_timer(simple_timer_wheel_t *tw, int delay, int interval, void (*fun)(void *), void *arg)
@@ -59,23 +25,33 @@ void simple_timer_wheel_add_periodic_timer(simple_timer_wheel_t *tw, int delay, 
     int target_slot = (delay / tick_duration + tw->current_index ) % TIMER_WHEEL_SLOT_SIZE;
     int target_round = delay / wheel_duration;
 
-    printf("%d %d\n",target_slot,target_round);
-
     simple_wheel_slot_t *slot = tw->slots;
-    periodic_context_t ctx = {
-        .tw = tw,
-        .delay = delay,
-        .interval = interval,
-        .fun = fun,
-        .arg = arg
-    };
-    simple_wheel_slot_add_timer(slot+target_slot,periodic_timer_callback,&ctx); 
+    simple_wheel_slot_add_timer(slot+target_slot,delay,interval,TIMER_PERIODIC,target_round,fun,arg); 
 }
 void simple_timer_wheel_tick(simple_timer_wheel_t *tw)
 {
     int index = (++tw->current_index)%TIMER_WHEEL_SLOT_SIZE;
-    printf("%d\n",index);
+
     simple_wheel_slot_t *slot = tw->slots+index;
-    simple_wheel_slot_remove_timers(slot);
+    simple_wheel_slot_remove_timers(slot,tw);   
+}
+
+simple_timer_wheel_t simple_timer_wheel_create(int tick_duration)
+{
+    simple_timer_t default_timer = simple_timer_wheel_timer_create(0,0,TIMER_ONESHOT);   
     
+    simple_timer_wheel_t tw;
+    tw.current_index = 0;
+    tw.tick_duration = tick_duration;
+    tw.slots_size = TIMER_WHEEL_SLOT_SIZE;
+    for(int i=0;i<TIMER_WHEEL_SLOT_SIZE;i++)
+    {
+        tw.slots[i].current_size = 0;
+        for(int j=0;j<TIMERS_PER_SLOT_NUMBER;j++)
+        {
+            tw.slots[i].timers[j] = default_timer;
+        }
+    }
+
+    return tw;
 }

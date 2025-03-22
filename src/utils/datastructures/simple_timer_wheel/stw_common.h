@@ -1,0 +1,15 @@
+#ifndef STW_COMMON_H
+#define STW_COMMON_H
+
+
+#define TIMERS_PER_SLOT_NUMBER 5
+#define TIMER_WHEEL_SLOT_SIZE  16
+
+typedef enum TIMER_TYPE
+{
+    TIMER_ONESHOT,
+    TIMER_PERIODIC
+
+} TIMER_TYPE_T;
+
+#endif
