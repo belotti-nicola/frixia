@@ -1,5 +1,5 @@
-#ifndef SIMPLE_TIMER_WHEEL_H
-#define SIMPLE_TIMER_WHEEL_H
+#ifndef STW_TIMER_WHEEL_H
+#define STW_TIMER_WHEEL_H
 
 #include "stw_common.h"
 #include "stw_timer_wheel_slot.h"

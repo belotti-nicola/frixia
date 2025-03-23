@@ -22,7 +22,7 @@ void simple_wheel_slot_add_timer(simple_wheel_slot_t *slot, int delay, int perio
     slot->current_size++;
 }
 
-void simple_wheel_slot_remove_timers(simple_wheel_slot_t *slot,simple_timer_wheel_t *tw)
+void simple_wheel_slot_remove_timers(simple_wheel_slot_t *slot, simple_timer_wheel_t *tw)
 {
     int dim = slot->current_size;
     for (int i = 0; i < dim; i++)
@@ -31,7 +31,7 @@ void simple_wheel_slot_remove_timers(simple_wheel_slot_t *slot,simple_timer_whee
         if (remaining_rounds != 0)
         {
             slot->timers[i].remaining_rounds--;
-            break;
+            continue;
         }
         void (*fun)(void *) = slot->timers[i].callback;
         void *arg = slot->timers[i].arg;
@@ -43,9 +43,8 @@ void simple_wheel_slot_remove_timers(simple_wheel_slot_t *slot,simple_timer_whee
         TIMER_TYPE_T t = slot->timers->type;
         if (t == TIMER_PERIODIC)
         {
-            int delay = slot->timers[i].delay;
             int interval = slot->timers[i].interval;
-            simple_timer_wheel_add_periodic_timer(tw,0,interval,fun,arg);
+            simple_timer_wheel_add_periodic_timer(tw,interval,interval,fun,arg);
         }
         slot->timers[i].callback = NULL;
         slot->timers[i].arg = NULL;

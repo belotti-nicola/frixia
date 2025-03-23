@@ -30,10 +30,12 @@ void simple_timer_wheel_add_periodic_timer(simple_timer_wheel_t *tw, int delay, 
 }
 void simple_timer_wheel_tick(simple_timer_wheel_t *tw)
 {
-    int index = (++tw->current_index)%TIMER_WHEEL_SLOT_SIZE;
-
+    int index = tw->current_index;
     simple_wheel_slot_t *slot = tw->slots+index;
     simple_wheel_slot_remove_timers(slot,tw);   
+
+    tw->current_index = (++tw->current_index ) % TIMER_WHEEL_SLOT_SIZE;
+
 }
 
 simple_timer_wheel_t simple_timer_wheel_create(int tick_duration)

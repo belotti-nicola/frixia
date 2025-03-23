@@ -1,5 +1,5 @@
-#ifndef SIMPLE_TIMER_H
-#define SIMPLE_TIMER_H
+#ifndef STW_TIMER_H
+#define STW_TIMER_H
 
 #include "stw_common.h"
 

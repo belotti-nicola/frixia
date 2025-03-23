@@ -15,15 +15,15 @@ int main()
 
     simple_timer_wheel_t tw = simple_timer_wheel_create(1);
     simple_timer_wheel_add_oneshot_timer( &tw,2,increment_counter,&c1);
-    simple_timer_wheel_add_periodic_timer(&tw,3,3,increment_counter,&c2);
+    simple_timer_wheel_add_periodic_timer(&tw,5,2,increment_counter,&c2);
     simple_timer_wheel_add_oneshot_timer(&tw,33,increment_counter,&c3);
     
-    for(int i=0;i<100;i++)
+    for(int i=0;i<21;i++)
     {
         simple_timer_wheel_tick(&tw);
     }
 
-    if( c1 != 1 || c2 != 32 || c3 != 1)
+    if( c1 != 1 || c2 != 7 || c3 != 0)
     {
         printf("ERROR :: C1:%d C2:%d C3:%d\n",c1,c2,c3);
         return 1;

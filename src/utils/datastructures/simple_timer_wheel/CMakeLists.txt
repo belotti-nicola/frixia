@@ -1,9 +1,9 @@
 add_library(simple_timer_wheel
-    stw_timer_wheel.c
+    stw_common.h
     stw_timer_wheel.h
+    stw_timer_wheel.c
     stw_timer_wheel_slot.h
     stw_timer_wheel_slot.c
     stw_timer.h
     stw_timer.c
-    stw_common.h
 )
