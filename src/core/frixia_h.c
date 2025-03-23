@@ -45,7 +45,7 @@
 #include "../core/fsuite/frixia_fd.h"
 #include "../setup/proto_callbacks/pc_noprotocol/proto_callback_noprotocol.h"
 #include "../setup/proto_callbacks/pc_http/proto_callback_http.h"
-#include "../utils/datastructures/simple_timer_wheel/stw_timer_wheel.h"
+#include "../utils/datastructures/threadsafe_timer_wheel/ts_timer_wheel.h"
 
 #include "fsuite/frixia_suite.h"
 
@@ -119,10 +119,9 @@ int frixia_start(frixia_environment_t *env)
 {        
     convoy_t *convoy = env->convoy;
  
-    simple_timer_wheel_t tw = simple_timer_wheel_create(1);
-    simple_timer_wheel_add_oneshot_timer(&tw,5,NULL,NULL);
-    simple_timer_wheel_add_periodic_timer(&tw,4,2,NULL,NULL);
-    
+    threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
+    ts_timer_wheel_add_oneshot_timer(&tw,5,NULL,NULL);
+    ts_timer_wheel_add_periodic_timer(&tw,4,2,NULL,NULL);
     
     for(int i=0;i<TIMER_WHEEL_SLOT_SIZE;i++)
     {
@@ -132,8 +131,8 @@ int frixia_start(frixia_environment_t *env)
         {
             char buf[8];
             int rbytes = read_timer(events[j].fd,buf);
-            simple_timer_wheel_tick(&tw); 
-            printf("Tick done.\n");
+            ts_timer_wheel_tick(&tw); 
+            printf("Tick done(%d).\n",i);
         }
     }
 

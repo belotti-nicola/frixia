@@ -50,5 +50,7 @@ void simple_wheel_slot_remove_timers(simple_wheel_slot_t *slot, simple_timer_whe
         slot->timers[i].arg = NULL;
         slot->timers[i].remaining_rounds = 0;
         slot->current_size--;
+
+        printf("Timer expired!\n");
     }
 }
