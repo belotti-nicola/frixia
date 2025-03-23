@@ -5,11 +5,11 @@
 
 void simple_timer_wheel_add_oneshot_timer(simple_timer_wheel_t *tw, int delay,void (*fun)(void *), void *arg)
 {
-    int slots = TIMER_WHEEL_SLOT_SIZE;
+    int slots_number = tw->slots_size;
     int tick_duration = tw->tick_duration;
     
-    int wheel_duration = slots * tick_duration;
-    int target_slot = (delay / tick_duration + tw->current_index ) % TIMER_WHEEL_SLOT_SIZE;
+    int wheel_duration = slots_number * tick_duration;
+    int target_slot = (delay / tick_duration + tw->current_index ) % slots_number;
     int target_round = delay / wheel_duration;
 
     simple_wheel_slot_t *slot = tw->slots;
@@ -18,11 +18,11 @@ void simple_timer_wheel_add_oneshot_timer(simple_timer_wheel_t *tw, int delay,vo
 }
 void simple_timer_wheel_add_periodic_timer(simple_timer_wheel_t *tw, int delay, int interval, void (*fun)(void *), void *arg)
 {
-    int slots = TIMER_WHEEL_SLOT_SIZE;
+    int slots_number = tw->slots_size;
     int tick_duration = tw->tick_duration;
     
-    int wheel_duration = slots * tick_duration;
-    int target_slot = (delay / tick_duration + tw->current_index ) % TIMER_WHEEL_SLOT_SIZE;
+    int wheel_duration = slots_number * tick_duration;
+    int target_slot = (delay / tick_duration + tw->current_index ) % slots_number;
     int target_round = delay / wheel_duration;
 
     simple_wheel_slot_t *slot = tw->slots;
@@ -31,16 +31,17 @@ void simple_timer_wheel_add_periodic_timer(simple_timer_wheel_t *tw, int delay, 
 void simple_timer_wheel_tick(simple_timer_wheel_t *tw)
 {
     int index = tw->current_index;
+    int slots_number = tw->slots_size;
     simple_wheel_slot_t *slot = tw->slots+index;
     simple_wheel_slot_remove_timers(slot,tw);   
 
-    tw->current_index = (++tw->current_index ) % TIMER_WHEEL_SLOT_SIZE;
+    tw->current_index = (++tw->current_index ) % slots_number;
 
 }
 
 simple_timer_wheel_t simple_timer_wheel_create(int tick_duration)
 {
-    simple_timer_t default_timer = simple_timer_wheel_timer_create(0,0,TIMER_ONESHOT);   
+    simple_timer_t default_timer = simple_timer_wheel_timer_create(0,0,TIMER_ONESHOT,INACTIVE);   
     
     simple_timer_wheel_t tw;
     tw.current_index = 0;
@@ -48,7 +49,7 @@ simple_timer_wheel_t simple_timer_wheel_create(int tick_duration)
     tw.slots_size = TIMER_WHEEL_SLOT_SIZE;
     for(int i=0;i<TIMER_WHEEL_SLOT_SIZE;i++)
     {
-        tw.slots[i].current_size = 0;
+        tw.slots[i].size = TIMERS_PER_SLOT_NUMBER;
         for(int j=0;j<TIMERS_PER_SLOT_NUMBER;j++)
         {
             tw.slots[i].timers[j] = default_timer;

@@ -10,7 +10,7 @@ typedef struct simple_timer_wheel simple_timer_wheel_t;
 
 typedef struct simple_wheel_slot
 {
-    int current_size;
+    int            size;
     simple_timer_t timers[TIMERS_PER_SLOT_NUMBER];
 
 } simple_wheel_slot_t;

@@ -12,4 +12,11 @@ typedef enum TIMER_TYPE
 
 } TIMER_TYPE_T;
 
+typedef enum TIMER_STATUS
+{
+    ACTIVE,
+    INACTIVE
+    
+} TIMER_STATUS_T;
+
 #endif

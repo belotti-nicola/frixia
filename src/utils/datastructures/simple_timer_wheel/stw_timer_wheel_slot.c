@@ -6,10 +6,19 @@
 
 void simple_wheel_slot_add_timer(simple_wheel_slot_t *slot, int delay, int period, TIMER_TYPE_T type,int remaining_rounds, void (*fun)(void *), void *arg)
 {
-    int index = slot->current_size;
-    if (index > TIMERS_PER_SLOT_NUMBER)
+    int index=0;
+    for( ;index < TIMERS_PER_SLOT_NUMBER; index++)
     {
-        printf("Error simple_wheel_slot_add_timer!!!Already %d timers in this slot\n",TIMERS_PER_SLOT_NUMBER); // TODO: REMOVE + SHIFT
+        if( slot->timers[index].status == INACTIVE )
+        {
+            break;
+        }
+    }
+    
+    if (index == TIMERS_PER_SLOT_NUMBER)
+    {
+        // TODO: REMOVE + SHIFT
+        printf("Error simple_wheel_slot_add_timer!!!Already %d timers in this slot\n",TIMERS_PER_SLOT_NUMBER); 
         return;
     }
     slot->timers[index].delay = delay;
@@ -18,15 +27,20 @@ void simple_wheel_slot_add_timer(simple_wheel_slot_t *slot, int delay, int perio
     slot->timers[index].remaining_rounds = remaining_rounds;
     slot->timers[index].callback = fun;
     slot->timers[index].arg = arg;
+    slot->timers[index].status = ACTIVE;
 
-    slot->current_size++;
 }
 
 void simple_wheel_slot_remove_timers(simple_wheel_slot_t *slot, simple_timer_wheel_t *tw)
 {
-    int dim = slot->current_size;
+    int dim = TIMERS_PER_SLOT_NUMBER;
     for (int i = 0; i < dim; i++)
     {
+        if( slot->timers[i].status == INACTIVE )
+        {
+            continue;
+        }
+        
         int remaining_rounds = slot->timers[i].remaining_rounds;
         if (remaining_rounds != 0)
         {
@@ -40,17 +54,18 @@ void simple_wheel_slot_remove_timers(simple_wheel_slot_t *slot, simple_timer_whe
             fun(arg);
         }
 
-        TIMER_TYPE_T t = slot->timers->type;
+        slot->timers[i].callback = NULL;
+        slot->timers[i].arg = NULL;
+        slot->timers[i].remaining_rounds = 0;
+        slot->timers[i].status = INACTIVE;
+
+        TIMER_TYPE_T t = slot->timers[i].type;
         if (t == TIMER_PERIODIC)
         {
             int interval = slot->timers[i].interval;
             simple_timer_wheel_add_periodic_timer(tw,interval,interval,fun,arg);
         }
-        slot->timers[i].callback = NULL;
-        slot->timers[i].arg = NULL;
-        slot->timers[i].remaining_rounds = 0;
-        slot->current_size--;
 
-        printf("Timer expired!\n");
+        printf("Timer expired! %d\n",t);
     }
 }

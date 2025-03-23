@@ -121,9 +121,11 @@ int frixia_start(frixia_environment_t *env)
  
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
     ts_timer_wheel_add_oneshot_timer(&tw,5,NULL,NULL);
+    ts_timer_wheel_add_oneshot_timer(&tw,20,NULL,NULL);
     ts_timer_wheel_add_periodic_timer(&tw,4,2,NULL,NULL);
     
-    for(int i=0;i<TIMER_WHEEL_SLOT_SIZE;i++)
+
+    for(int i=0;i<2*TIMER_WHEEL_SLOT_SIZE;i++)
     {
         frixia_event_t events[10];
         int num = frixia_epoll_wait(env->fepoll,events);

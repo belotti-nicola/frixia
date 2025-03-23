@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
     frixia_add_udp(&environment,"0.0.0.0",8888,1024);
     frixia_add_fifo(&environment,"fifo",512);
-    frixia_add_scheduler(&environment,2);
+    frixia_add_scheduler(&environment,1);
     
     /*
     int a=0;
@@ -103,9 +103,7 @@ int main(int argc, char *argv[])
     add_proto_fd(proto_fds_q,TCP,"",4444,1024);
     add_proto_fd(proto_fds_q,TCP,"",8888,512);
     add_proto_fd(proto_fds_q,UDP,"",9600,512);
-    add_proto_fd(proto_fds_q,FIFO,"fifo.text",-1,512);
-    
-    proto_frixia_callbacks_queue_t *proto_callbacks_q = create_proto_frixia_callbacks_queue();
+    add_proto_fd(proto_fds_q,FIFO,"fNULLproto_callbacks_q = create_proto_frixia_callbacks_queue();
     add_proto_callback_http(proto_callbacks_q,TCP,4444,"GET","/foo",&foo,&a);
     add_proto_callback_http(proto_callbacks_q,TCP,4444,"GET","/goo",&goo,&b);
     add_proto_callback_http(proto_callbacks_q,TCP,8888,"GET","/moo",&moo,NULL);
