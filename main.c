@@ -5,6 +5,7 @@
 #include "src/setup/proto_filedescriptor/proto_fds_queue.h"
 #include "src/setup/proto_callbacks/proto_callbacks_queue.h"
 #include "src/core/protocols/http/frixia_http_parser.h"
+#include "src/core/crono/detached_start_scheduler.h"
 
 //TODO
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
@@ -70,9 +71,10 @@ void timer_called()
 
 int main(int argc, char *argv[])
 {  
-
-    //setup all the frixia environment. refactor it. 
     frixia_environment_t environment;
+
+    /*
+    //setup all the frixia environment. refactor it. 
     frixia_epoll_t *fepoll = create_frixia_epoll();
     environment.fepoll = fepoll;
     start_fepoll(fepoll);
@@ -87,13 +89,16 @@ int main(int argc, char *argv[])
         c.filedescriptors[i] = frixia_fd;
     }
     environment.convoy = &c;
-
-
+    */
+    crono_t crono;
+    frixia_detached_start_crono(&crono);
+    frixia_wait_crono(&crono);
+    /*
     frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
     frixia_add_udp(&environment,"0.0.0.0",8888,1024);
     frixia_add_fifo(&environment,"fifo",512);
     frixia_add_scheduler(&environment,1);
-    
+    */
     /*
     int a=0;
     int b=1;

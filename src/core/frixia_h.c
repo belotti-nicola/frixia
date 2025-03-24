@@ -117,6 +117,7 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 */
 int frixia_start(frixia_environment_t *env)
 {        
+    /*
     convoy_t *convoy = env->convoy;
  
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
@@ -138,7 +139,7 @@ int frixia_start(frixia_environment_t *env)
         }
     }
 
-    /*
+
     bool keep_looping = true;
     frixia_suite_t *fsuite = create_frixia_suite(MAXIMUM_FD_NUMBER);
     start_fepoll(fsuite->fepoll);
