@@ -6,13 +6,14 @@
 #include "fevent/frixia_event.h"
 #include "thread_pool/fthread_pool.h"
 #include "../core/filedescriptor/fd_monitor/epoll/fepoll.h"
-
+#include "crono/crono.h"
 
 typedef struct frixia_environment
 {
     convoy_t *convoy;
     frixia_epoll_t *fepoll;
     frixia_events_queue_t *events;
+    crono_t *crono;
 
 } frixia_environment_t;
 

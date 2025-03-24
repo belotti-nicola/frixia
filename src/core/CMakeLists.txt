@@ -17,6 +17,7 @@ add_subdirectory(fsuite)
 add_subdirectory(fdispatcher)
 add_subdirectory(fthread_pool)
 add_subdirectory(convoy_data_structure)
+add_subdirectory(crono)
 
 target_link_libraries(core 
   ctl_parser
@@ -41,5 +42,5 @@ target_link_libraries(core
   fthread_pool
   timer
   convoy
-  threadsafe_simple_timer_wheel
+  crono
 )
