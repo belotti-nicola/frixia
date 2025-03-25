@@ -20,7 +20,7 @@ int start_timer_listening(int delay, int interval)
     tfd = timerfd_create(CLOCK_MONOTONIC, 0);
     if (tfd == -1)
     {
-        printf("ERROR start_timer_listening::%d\n",errno);
+        printf("ERROR start_timer_listening::timerfd_create::%d\n",errno);
         return ERR_TIMER_CREATE;
     }
 
@@ -31,7 +31,7 @@ int start_timer_listening(int delay, int interval)
     timer_spec.it_interval.tv_nsec = 0;
 
     if (timerfd_settime(tfd, 0, &timer_spec, NULL) != 0) {
-        printf("ERROR start_timer_listening::%d\n",errno);
+        printf("ERROR start_timer_listening::timerfd_settime::%d\n",errno);
         return ERR_TIMERFD_SETTIME;
     }
 
@@ -44,7 +44,7 @@ int read_timer(int fd, char buf[8])
     int bytes_read = read(fd,buf,8);
     if( bytes_read <= 0)
     {
-        printf("ERROR start_timer_listening %d (fd: %d, errno: %d)\n",bytes_read,fd,errno);
+        printf("ERROR read_timer %d (fd: %d, errno: %d)\n",bytes_read,fd,errno);
         return ERR_TIMERFD_READ;
     }
 

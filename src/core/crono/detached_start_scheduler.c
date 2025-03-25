@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include "crono.h"
 #include <sys/socket.h>
+#include <errno.h>
 
 #include "../filedescriptor/types/timer/frixia_timer.h"
 #include "../filedescriptor/fd_monitor/epoll/epoll.h"
@@ -13,6 +14,7 @@ void crono_main_loop(crono_t *crono)
     int fd = start_timer_listening(1,1);
     if(fd < 0)
     {
+        printf("Error!!! %d(%d)\n",fd,errno);
         return;
     }
 
@@ -27,6 +29,7 @@ void crono_main_loop(crono_t *crono)
     frixia_event_t events[10];
     while(counter < 5)
     {
+        printf("Crono tock\n");
         char buf[8];
         int size = wait_epoll_events(crono_fd,10,events);
         for(int i=0;i<size;i++)

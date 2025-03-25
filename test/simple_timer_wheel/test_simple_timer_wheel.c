@@ -1,5 +1,6 @@
 #include "../../src/utils/datastructures/simple_timer_wheel/stw_timer_wheel.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void *increment_counter(void *counter)
 {

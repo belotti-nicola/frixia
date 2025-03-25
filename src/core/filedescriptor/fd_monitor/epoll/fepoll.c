@@ -66,6 +66,7 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
     }
 
     fepoll->stop_fd = efd;
+    printf("Stop filedescriptor:%d\n",efd);
     return efd;
 }
 
@@ -140,3 +141,14 @@ frixia_fd_t *search_fepoll(frixia_epoll_t *fepoll,int search_fd)
     }
     return NULL;
 }
+
+void frixia_wake(frixia_epoll_t *fepoll)
+{
+    int wake_fd = fepoll->stop_fd;
+    int rc = eventfd_write(wake_fd,1);
+    if( rc < 0 )
+    {
+        printf("Errorr!!%d\n",errno);
+    }
+}
+

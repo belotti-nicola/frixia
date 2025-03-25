@@ -6,6 +6,10 @@
 #include "src/setup/proto_callbacks/proto_callbacks_queue.h"
 #include "src/core/protocols/http/frixia_http_parser.h"
 #include "src/core/crono/detached_start_scheduler.h"
+#include "src/core/fsuite/frixia_suite.h"
+#include "src/core/filedescriptor/fd_monitor/detached_epoll_monitor.h"
+#include "src/core/filedescriptor/types/timer/frixia_timer.h"
+
 
 //TODO
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
@@ -69,9 +73,42 @@ void timer_called()
     printf("Timer!\n");
 }
 
+
+void timer_callback(void *arg)
+{
+    frixia_epoll_t *fep = (frixia_epoll_t *)arg;
+    frixia_wake(fep);
+}
+
 int main(int argc, char *argv[])
 {  
     frixia_environment_t environment;
+
+    threadsafe_simple_queue_t *ptr1 = create_threadsafe_simple_queue();
+    threadsafe_simple_queue_t *ptr2 = create_threadsafe_simple_queue();
+
+
+    frixia_epoll_t *fepoll = create_frixia_epoll();
+    start_fepoll(fepoll);
+    frixia_suite_t *suite = create_frixia_suite(10);
+    suite->fepoll = fepoll;
+    fepoll->events_queue = ptr1;
+    suite->events_q = frixia_events_queue_create();
+    frixia_detached_start_monitor(suite);   
+        
+    char buf[8];
+    fadd_stop_filedescriptor(fepoll);
+    sleep(2);
+    frixia_wake(fepoll);
+    read_timer(4,buf);
+    sleep(2);
+    //frixia_wake(fepoll);
+    read_timer(4,buf);
+    
+    frixia_detached_wait_threads(suite);
+
+    
+    
 
     /*
     //setup all the frixia environment. refactor it. 
@@ -89,10 +126,8 @@ int main(int argc, char *argv[])
         c.filedescriptors[i] = frixia_fd;
     }
     environment.convoy = &c;
-    */
-    crono_t crono;
-    frixia_detached_start_crono(&crono);
-    frixia_wait_crono(&crono);
+    */     
+    
     /*
     frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
     frixia_add_udp(&environment,"0.0.0.0",8888,1024);
