@@ -43,4 +43,5 @@ target_link_libraries(core
   timer
   convoy
   crono
+  eventfd
 )

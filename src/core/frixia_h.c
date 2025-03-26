@@ -46,6 +46,7 @@
 #include "../setup/proto_callbacks/pc_noprotocol/proto_callback_noprotocol.h"
 #include "../setup/proto_callbacks/pc_http/proto_callback_http.h"
 #include "../utils/datastructures/threadsafe_timer_wheel/ts_timer_wheel.h"
+#include "../core/filedescriptor/types/eventfd/frixia_eventfd.h"
 
 #include "fsuite/frixia_suite.h"
 
@@ -436,4 +437,29 @@ void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
 
     convoy_t *c = env->convoy;
     convoy_add_scheduler_filedescriptor(c,fd,tick_size);
+}
+
+void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, int interval)
+{
+    int fd = start_eventfd_listening();
+    if(fd < 0)
+    {
+        printf("Error::frixia_add_scheduled_periodic_timer.\n");
+        return;
+    }
+
+    //TODO
+    struct epoll_event event;
+    event.events = EPOLLIN | EPOLLONESHOT;
+    event.data.fd = fd;
+    
+    int epoll_fd = env->fepoll->fd;
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &event) == -1) {
+        printf("epoll_ctl ADD stop fd error for epoll_fd %d eventfd %d (errno: %d)\n",epoll_fd,fd,errno);
+        return;
+    }
+
+    convoy_t *c = env->convoy;
+    convoy_add_scheduled_timer_filedescriptor(c,fd);
+
 }

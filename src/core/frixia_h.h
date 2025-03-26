@@ -22,7 +22,7 @@ void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
 void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read);
 void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval);
 void frixia_add_scheduler(frixia_environment_t *env, int tick_size);
-
+void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, int interval);
 
 
 

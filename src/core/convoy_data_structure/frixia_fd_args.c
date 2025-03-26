@@ -33,3 +33,7 @@ void set_frixia_scheduler_fd(frixia_fd_args_t *fd, int tick)
     fd->scheduler_info->tick = tick;
 }
 
+void set_frixia_eventfd_fd(frixia_fd_args_t *fd, int ev_fd)
+{
+    fd->eventfd_info->fd = ev_fd;
+}

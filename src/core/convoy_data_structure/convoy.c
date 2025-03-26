@@ -161,6 +161,36 @@ void convoy_add_scheduler_filedescriptor(convoy_t *c, int fd, int tick)
     set_frixia_scheduler_fd(c->filedescriptors[target].type_data,tick);
     c->size++;
 }
+void convoy_add_scheduled_timer_filedescriptor(convoy_t *c,int fd)
+{
+    if( c->size == MAXIMUM_FD_NUMBER)
+    {
+        printf("Convoy reached maximum size.\n");
+        return;
+    }
+    if( c->size == 0)
+    {
+        c->filedescriptors[0].fd   = fd;
+        c->filedescriptors[0].type = EVENTFD;
+        c->size++;
+        return;
+    }
+    
+    int target = c->size;
+    for(int i=0;i<target;i++)
+    {
+        if( c->filedescriptors[i].type == EVENTFD && c->filedescriptors[i].type_data->eventfd_info->fd == fd )
+        {
+            printf("Convoy error: eventfd is already present (%d).\n",fd);
+            return;
+        }
+    }
+    c->filedescriptors[target].fd   = fd;
+    c->filedescriptors[target].type = EVENTFD;
+    set_frixia_eventfd_fd(c->filedescriptors[target].type_data,fd);
+    c->size++;
+}
+
 
 void convoy_register_http_callback(convoy_t *c,const char *method,const char *path,void *fun, void *arg)
 {}

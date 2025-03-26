@@ -20,3 +20,9 @@ crono_t crono_create(int tick_duration)
     
     return ret;
 }
+
+void crono_tick(crono_t crono)
+{
+    threadsafe_simple_timer_wheel_t *tw = &(crono.tw);
+    ts_timer_wheel_tick(tw);
+}

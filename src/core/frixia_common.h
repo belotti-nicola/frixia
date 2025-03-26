@@ -32,7 +32,8 @@ enum FrixiaFDType
     FIFO,
     TIMER,
     WAKE,
-    SCHEDULER
+    SCHEDULER,
+    EVENTFD
 
 };
 

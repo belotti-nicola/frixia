@@ -35,6 +35,12 @@ typedef struct frixia_scheduler
 
 } frixia_scheduler_t;
 
+typedef struct frixia_eventfd
+{
+    int         fd;
+
+} frixia_eventfd_t;
+
 typedef union frixia_fd_args
 {
     frixia_tcp_t *tcp_info;
@@ -42,6 +48,7 @@ typedef union frixia_fd_args
     frixia_fifo_t *fifo_info;
     frixia_timer_t *timer_info;
     frixia_scheduler_t *scheduler_info;
+    frixia_eventfd_t *eventfd_info;
     
 } frixia_fd_args_t;
 
@@ -50,5 +57,6 @@ void set_frixia_udp_fd(frixia_fd_args_t *fd, const char *ip, int port, int read_
 void set_frixia_fifo_fd(frixia_fd_args_t *fd, const char *name, int read_size);
 void set_frixia_timer_fd(frixia_fd_args_t *fd, const char *id, int delay, int interval);
 void set_frixia_scheduler_fd(frixia_fd_args_t *fd, int tick);
+void set_frixia_eventfd_fd(frixia_fd_args_t *fd, int ev_fd);
 
 #endif

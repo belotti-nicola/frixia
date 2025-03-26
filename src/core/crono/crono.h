@@ -12,6 +12,7 @@ typedef struct crono
 
 void crono_add_oneshot_timer(crono_t crono,int delay,void (*fun)(void *),void *arg);
 void crono_add_periodic_timer(crono_t crono,int delay,int interval,void (*fun)(void *),void *arg);
+void crono_tick(crono_t crono);
 
 crono_t crono_create(int tick_duration);
 

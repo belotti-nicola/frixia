@@ -92,18 +92,32 @@ int main(int argc, char *argv[])
     start_fepoll(fepoll);
     frixia_suite_t *suite = create_frixia_suite(10);
     suite->fepoll = fepoll;
-    fepoll->events_queue = ptr1;
+    fepoll->events_queue = frixia_events_queue_create();
     suite->events_q = frixia_events_queue_create();
     frixia_detached_start_monitor(suite);   
         
     char buf[8];
     fadd_stop_filedescriptor(fepoll);
-    sleep(2);
-    frixia_wake(fepoll);
-    read_timer(4,buf);
-    sleep(2);
-    //frixia_wake(fepoll);
-    read_timer(4,buf);
+
+    
+    environment.fepoll = fepoll;
+    
+    
+    
+    
+    convoy_t c;
+    frixia_fd_args_t fd;
+    frixia_tcp_t tcp;
+    fd.tcp_info = &tcp;
+    frixia_file_descriptor_t frixia_fd = {0,UNDEFINED,&fd,NO_PROTOCOL,NULL};
+    for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
+    {
+        c.filedescriptors[i] = frixia_fd;
+    }
+    environment.convoy = &c;
+    frixia_add_scheduled_periodic_timer(&environment,2,2);
+    frixia_detached_start_crono(&c);
+
     
     frixia_detached_wait_threads(suite);
 

@@ -8,6 +8,8 @@
 #include "../filedescriptor/types/timer/frixia_timer.h"
 #include "../filedescriptor/fd_monitor/epoll/epoll.h"
 
+#include "detached_start_scheduler.h"
+
 void crono_main_loop(crono_t *crono)
 {
     int tick_size = 1;
@@ -36,11 +38,11 @@ void crono_main_loop(crono_t *crono)
         {
             read_timer(events[i].fd,buf);
         }
-        printf("Crono tick\n");
+        crono_tick(*crono);
+        
         counter++;
     }
-    
-    return 0;
+
 }
 
 
