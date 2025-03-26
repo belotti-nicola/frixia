@@ -31,6 +31,14 @@ int read_eventfd(int fd)
     return 0;
 }
 
+int write_eventfd(int fd)
+{
+    int rc = eventfd_write(fd,1);
+    if( rc < 0 )
+    {
+        printf("Error!!%d\n",errno);
+    }
+}
 
 int stop_eventfd_listening(int fd)
 {

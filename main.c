@@ -9,6 +9,7 @@
 #include "src/core/fsuite/frixia_suite.h"
 #include "src/core/filedescriptor/fd_monitor/detached_epoll_monitor.h"
 #include "src/core/filedescriptor/types/timer/frixia_timer.h"
+#include "src/core/filedescriptor/types/eventfd/frixia_eventfd.h"
 
 
 //TODO
@@ -74,16 +75,34 @@ void timer_called()
 }
 
 
-void timer_callback(void *arg)
+void *timer_callback(int fd)
 {
-    frixia_epoll_t *fep = (frixia_epoll_t *)arg;
-    frixia_wake(fep);
+    write_eventfd(fd);    
 }
 
 int main(int argc, char *argv[])
 {  
     frixia_environment_t environment;
 
+
+    frixia_epoll_t *fepoll = create_frixia_epoll();
+    start_fepoll(fepoll);
+    frixia_suite_t *suite = create_frixia_suite(10);
+    suite->fepoll = fepoll;
+    fepoll->events_queue = frixia_events_queue_create();
+    suite->events_q = frixia_events_queue_create();
+    fadd_stop_filedescriptor(fepoll);
+    frixia_detached_start_monitor(suite);
+
+
+    threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
+    crono_t crono = crono_create(&tw);
+    crono_add_periodic_timer(&crono,5,1,timer_callback,4);
+    
+    frixia_detached_start_crono(&crono);
+    frixia_wait_crono(&crono);
+
+    /*
     threadsafe_simple_queue_t *ptr1 = create_threadsafe_simple_queue();
     threadsafe_simple_queue_t *ptr2 = create_threadsafe_simple_queue();
 
@@ -126,7 +145,7 @@ int main(int argc, char *argv[])
     
     
 
-    /*
+    
     //setup all the frixia environment. refactor it. 
     frixia_epoll_t *fepoll = create_frixia_epoll();
     environment.fepoll = fepoll;

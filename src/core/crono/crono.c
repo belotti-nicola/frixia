@@ -2,27 +2,27 @@
 
 #include "crono.h"
 
-void crono_add_oneshot_timer(crono_t crono,int delay,void (*fun)(void *),void *arg)
+void crono_add_oneshot_timer(crono_t *crono,int delay,void (*fun)(void *),void *arg)
 {
-    threadsafe_simple_timer_wheel_t *tw = &(crono.tw);
+    threadsafe_simple_timer_wheel_t *tw = crono->tw;
     ts_timer_wheel_add_oneshot_timer(tw,delay,fun,arg);
 }
-void crono_add_periodic_timer(crono_t crono,int delay,int interval,void (*fun)(void *),void *arg)
+void crono_add_periodic_timer(crono_t *crono,int delay,int interval,void (*fun)(void *),void *arg)
 {
-    threadsafe_simple_timer_wheel_t *tw = &(crono.tw);
+    threadsafe_simple_timer_wheel_t *tw = crono->tw;
     ts_timer_wheel_add_periodic_timer(tw,delay,interval,fun,arg);
 }
 
-crono_t crono_create(int tick_duration)
+void crono_tick(crono_t *crono)
 {
-    crono_t ret;
-    ret.tw = ts_timer_wheel_create(tick_duration);
-    
-    return ret;
+    threadsafe_simple_timer_wheel_t *tw = crono->tw;
+    ts_timer_wheel_tick(tw);
 }
 
-void crono_tick(crono_t crono)
+crono_t crono_create(threadsafe_simple_timer_wheel_t *tw)
 {
-    threadsafe_simple_timer_wheel_t *tw = &(crono.tw);
-    ts_timer_wheel_tick(tw);
+    crono_t ret;
+    ret.tw = tw;
+    
+    return ret;
 }

@@ -29,7 +29,7 @@ void crono_main_loop(crono_t *crono)
 
     int counter = 0;
     frixia_event_t events[10];
-    while(counter < 5)
+    while(counter < 10)
     {
         printf("Crono tock\n");
         char buf[8];
@@ -38,7 +38,7 @@ void crono_main_loop(crono_t *crono)
         {
             read_timer(events[i].fd,buf);
         }
-        crono_tick(*crono);
+        crono_tick(crono);
         
         counter++;
     }
