@@ -102,24 +102,26 @@ int main(int argc, char *argv[])
     
     environment.fepoll = fepoll;
     
+    crono_t crono = crono_create(1);
     
-    
-    
-    convoy_t c;
+    convoy_t convoy;
     frixia_fd_args_t fd;
     frixia_tcp_t tcp;
     fd.tcp_info = &tcp;
     frixia_file_descriptor_t frixia_fd = {0,UNDEFINED,&fd,NO_PROTOCOL,NULL};
     for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
     {
-        c.filedescriptors[i] = frixia_fd;
+        convoy.filedescriptors[i] = frixia_fd;
     }
-    environment.convoy = &c;
-    frixia_add_scheduled_periodic_timer(&environment,2,2);
-    frixia_detached_start_crono(&c);
-
+    environment.convoy = &convoy;
+    environment.crono  = &crono;
     
-    frixia_detached_wait_threads(suite);
+    
+    frixia_add_scheduled_periodic_timer(&environment,2,2);
+
+    frixia_detached_start_crono(&crono);
+    frixia_wait_crono(&crono);
+    //frixia_detached_wait_threads(suite);
 
     
     
