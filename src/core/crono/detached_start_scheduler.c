@@ -4,6 +4,7 @@
 #include "crono.h"
 #include <sys/socket.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include "../filedescriptor/types/timer/frixia_timer.h"
 #include "../filedescriptor/fd_monitor/epoll/epoll.h"
@@ -27,9 +28,9 @@ void crono_main_loop(crono_t *crono)
     int crono_fd = create_epoll();
     add_fd_listener(crono_fd,fd,&ev);
 
-    int counter = 0;
+    bool keep_looping = crono->keep_looping;
     frixia_event_t events[10];
-    while(counter < 10)
+    while( keep_looping )
     {
         printf("Crono tock\n");
         char buf[8];
@@ -38,9 +39,7 @@ void crono_main_loop(crono_t *crono)
         {
             read_timer(events[i].fd,buf);
         }
-        crono_tick(crono);
-        
-        counter++;
+        crono_tick(crono);       
     }
 
 }

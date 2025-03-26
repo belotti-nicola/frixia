@@ -92,15 +92,27 @@ int main(int argc, char *argv[])
     fepoll->events_queue = frixia_events_queue_create();
     suite->events_q = frixia_events_queue_create();
     fadd_stop_filedescriptor(fepoll);
+    fadd_stop_filedescriptor(fepoll);
+    fadd_stop_filedescriptor(fepoll);
     frixia_detached_start_monitor(suite);
 
 
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
     crono_t crono = crono_create(&tw);
-    crono_add_periodic_timer(&crono,5,1,timer_callback,4);
+    crono_add_periodic_timer(&crono,5,3,timer_callback,4);
+    crono_add_oneshot_timer(&crono,5,timer_callback,10);
     
     frixia_detached_start_crono(&crono);
+
+    sleep(10);
+    
+    crono_stop(&crono);
     frixia_wait_crono(&crono);
+    printf("Crono stopped.\n");
+
+    stop_fepoll(fepoll);
+    frixia_detached_wait_threads(suite);
+    printf("fepoll stopped.\n");
 
     /*
     threadsafe_simple_queue_t *ptr1 = create_threadsafe_simple_queue();

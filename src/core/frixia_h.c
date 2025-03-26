@@ -448,16 +448,12 @@ void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, i
         return;
     }
 
-    //TODO
-    struct epoll_event event;
-    event.events = EPOLLIN | EPOLLONESHOT;
-    event.data.fd = fd;
-    
-    int epoll_fd = env->fepoll->fd;
-    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &event) == -1) {
-        printf("epoll_ctl ADD stop fd error for epoll_fd %d eventfd %d (errno: %d)\n",epoll_fd,fd,errno);
-        return;
-    }
+    //TODO FIX THIS SHIT
+    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_fd_args_t tmp_fd_args;
+    tmp_fd_args.eventfd_info->fd = fd;
+    frixia_fd_t fd_args = {fd,EVENTFD,&tmp_fd_args,8};
+    insert_event(fepoll->fd,&fd_args);
 
     convoy_t *c = env->convoy;
     convoy_add_scheduled_timer_filedescriptor(c,fd);

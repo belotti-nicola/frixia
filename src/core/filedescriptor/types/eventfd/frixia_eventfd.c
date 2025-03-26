@@ -38,6 +38,7 @@ int write_eventfd(int fd)
     {
         printf("Error!!%d\n",errno);
     }
+    return 0;
 }
 
 int stop_eventfd_listening(int fd)

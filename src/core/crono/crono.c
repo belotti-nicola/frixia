@@ -26,3 +26,8 @@ crono_t crono_create(threadsafe_simple_timer_wheel_t *tw)
     
     return ret;
 }
+
+void crono_stop(crono_t *c)
+{
+    c->keep_looping = false;
+}
