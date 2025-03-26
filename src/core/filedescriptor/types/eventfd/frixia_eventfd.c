@@ -36,7 +36,7 @@ int write_eventfd(int fd)
     int rc = eventfd_write(fd,1);
     if( rc < 0 )
     {
-        printf("Error!!%d\n",errno);
+        printf("write_eventfd !!%d\n",errno);
     }
     return 0;
 }

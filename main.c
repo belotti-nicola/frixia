@@ -77,6 +77,7 @@ void timer_called()
 
 void *timer_callback(int fd)
 {
+    printf("Timer callback: %d\n",fd);
     write_eventfd(fd);    
 }
 
@@ -100,11 +101,11 @@ int main(int argc, char *argv[])
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
     crono_t crono = crono_create(&tw);
     crono_add_periodic_timer(&crono,5,3,timer_callback,4);
-    crono_add_oneshot_timer(&crono,5,timer_callback,10);
+    crono_add_oneshot_timer(&crono,10,timer_callback,5);
     
     frixia_detached_start_crono(&crono);
 
-    sleep(10);
+    sleep(20);
     
     crono_stop(&crono);
     frixia_wait_crono(&crono);

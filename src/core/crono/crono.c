@@ -23,6 +23,7 @@ crono_t crono_create(threadsafe_simple_timer_wheel_t *tw)
 {
     crono_t ret;
     ret.tw = tw;
+    ret.keep_looping = true;
     
     return ret;
 }

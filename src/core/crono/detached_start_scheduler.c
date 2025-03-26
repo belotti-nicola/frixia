@@ -28,11 +28,9 @@ void crono_main_loop(crono_t *crono)
     int crono_fd = create_epoll();
     add_fd_listener(crono_fd,fd,&ev);
 
-    bool keep_looping = crono->keep_looping;
     frixia_event_t events[10];
-    while( keep_looping )
+    while( crono->keep_looping )
     {
-        printf("Crono tock\n");
         char buf[8];
         int size = wait_epoll_events(crono_fd,10,events);
         for(int i=0;i<size;i++)
@@ -42,8 +40,8 @@ void crono_main_loop(crono_t *crono)
         crono_tick(crono);       
     }
 
+    printf("Crono terminated.\n");
 }
-
 
 int frixia_detached_start_crono(crono_t *c)
 {   
