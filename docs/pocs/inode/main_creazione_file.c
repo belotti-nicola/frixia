@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     }
 
     struct epoll_event event;
-    event.events = EPOLLIN;
+    event.events = EPOLLIN || EPOLLONESHOT ;
     event.data.fd = inotify_fd;
 
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, inotify_fd, &event) == -1) {
