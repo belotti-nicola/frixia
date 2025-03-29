@@ -101,7 +101,13 @@ FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
 FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f)
 {
     printf("INSERT EVENT epoll_fd %d target_fd:%d\n",epoll,f->fd);
-    if( f->type != TCP && f->type != UDP && f->type != FIFO && f->type != SCHEDULER ) //TODO FIX THIS SHIT
+    //TODO FIX THIS SHIT
+    if( f->type != TCP &&
+        f->type != UDP &&
+        f->type != FIFO &&
+        f->type != SCHEDULER &&
+        f->type != FILE_CREATION &&
+        f->type != FILE_MODIFY )
     {
         printf("Exiting:: unsupported fd");
         return -1;

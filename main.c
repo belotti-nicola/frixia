@@ -84,8 +84,31 @@ void *timer_callback(int fd)
 int main(int argc, char *argv[])
 {  
     frixia_environment_t environment;
+    frixia_epoll_t *fepoll = create_frixia_epoll();
+    start_fepoll(fepoll);
+    convoy_t convoy;
+    frixia_fd_args_t fd;
+    frixia_tcp_t tcp;
+    fd.tcp_info = &tcp;
+    frixia_file_descriptor_t frixia_fd = {0,UNDEFINED,&fd,NO_PROTOCOL,NULL};
+    for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
+    {
+        convoy.filedescriptors[i] = frixia_fd;
+    }
+    environment.convoy = &convoy;
+    environment.fepoll = fepoll;
+
+    frixia_add_file_creation(&environment,"/home/doss/","created.txt");
+    frixia_add_file_modify(&environment,"/home/doss/","modify.txt");
 
 
+    frixia_suite_t *suite = create_frixia_suite(10);
+    suite->fepoll = fepoll;
+    frixia_detached_start_monitor(suite);
+
+    frixia_detached_wait_threads(suite);
+
+    /*
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
     frixia_suite_t *suite = create_frixia_suite(10);
@@ -102,11 +125,11 @@ int main(int argc, char *argv[])
     crono_t crono = crono_create(&tw);
     crono_add_periodic_timer(&crono,5,3,timer_callback,4);
     crono_add_oneshot_timer(&crono,10,timer_callback,5);
-    
+
     frixia_detached_start_crono(&crono);
 
     sleep(20);
-    
+
     crono_stop(&crono);
     frixia_wait_crono(&crono);
     printf("Crono stopped.\n");
@@ -114,6 +137,7 @@ int main(int argc, char *argv[])
     stop_fepoll(fepoll);
     frixia_detached_wait_threads(suite);
     printf("fepoll stopped.\n");
+    /*
 
     /*
     threadsafe_simple_queue_t *ptr1 = create_threadsafe_simple_queue();
@@ -126,16 +150,16 @@ int main(int argc, char *argv[])
     suite->fepoll = fepoll;
     fepoll->events_queue = frixia_events_queue_create();
     suite->events_q = frixia_events_queue_create();
-    frixia_detached_start_monitor(suite);   
-        
+    frixia_detached_start_monitor(suite);
+
     char buf[8];
     fadd_stop_filedescriptor(fepoll);
 
-    
+
     environment.fepoll = fepoll;
-    
+
     crono_t crono = crono_create(1);
-    
+
     convoy_t convoy;
     frixia_fd_args_t fd;
     frixia_tcp_t tcp;
@@ -147,23 +171,23 @@ int main(int argc, char *argv[])
     }
     environment.convoy = &convoy;
     environment.crono  = &crono;
-    
-    
+
+
     frixia_add_scheduled_periodic_timer(&environment,2,2);
 
     frixia_detached_start_crono(&crono);
     frixia_wait_crono(&crono);
     //frixia_detached_wait_threads(suite);
 
-    
-    
 
-    
-    //setup all the frixia environment. refactor it. 
+
+
+
+    //setup all the frixia environment. refactor it.
     frixia_epoll_t *fepoll = create_frixia_epoll();
     environment.fepoll = fepoll;
     start_fepoll(fepoll);
-    
+
     convoy_t c;
     frixia_fd_args_t fd;
     frixia_tcp_t tcp;
@@ -174,8 +198,8 @@ int main(int argc, char *argv[])
         c.filedescriptors[i] = frixia_fd;
     }
     environment.convoy = &c;
-    */     
-    
+    */
+
     /*
     frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
     frixia_add_udp(&environment,"0.0.0.0",8888,1024);

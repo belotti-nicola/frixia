@@ -16,6 +16,8 @@ void convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,int byte
 void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int delay, int interval);
 void convoy_add_scheduler_filedescriptor(convoy_t *c, int fd, int tick);
 void convoy_add_scheduled_timer_filedescriptor(convoy_t *c,int fd);
+void convoy_add_file_creation_filedescriptor(convoy_t *c,int fd, char *dir,char *name);
+void convoy_add_file_modify_filedescriptor(convoy_t *c, int fd, char *dir, char *name);
 
 void convoy_register_http_callback(convoy_t *c,const char *method,const char *path,void *fun, void *arg);
 void convoy_register_fins_callback(convoy_t *c);

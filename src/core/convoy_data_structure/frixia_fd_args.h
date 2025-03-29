@@ -40,6 +40,19 @@ typedef struct frixia_eventfd
     int         fd;
 
 } frixia_eventfd_t;
+typedef struct frixia_file_creation
+{
+    char *directory;
+    char *filename;
+
+}frixia_file_creation_t;
+
+typedef struct frixia_file_modify
+{
+    char *directory;
+    char *filename;
+
+}frixia_file_modify_t;
 
 typedef union frixia_fd_args
 {
@@ -49,6 +62,8 @@ typedef union frixia_fd_args
     frixia_timer_t *timer_info;
     frixia_scheduler_t *scheduler_info;
     frixia_eventfd_t *eventfd_info;
+    frixia_file_creation_t *file_creation_info;
+    frixia_file_modify_t *file_modify_info;
     
 } frixia_fd_args_t;
 
@@ -58,5 +73,7 @@ void set_frixia_fifo_fd(frixia_fd_args_t *fd, const char *name, int read_size);
 void set_frixia_timer_fd(frixia_fd_args_t *fd, const char *id, int delay, int interval);
 void set_frixia_scheduler_fd(frixia_fd_args_t *fd, int tick);
 void set_frixia_eventfd_fd(frixia_fd_args_t *fd, int ev_fd);
+void set_frixia_file_modify_fd(frixia_fd_args_t *fd, char *dir, char *name);
+void set_frixia_file_creation_fd(frixia_fd_args_t *fd, char *dir, char *name);
 
 #endif

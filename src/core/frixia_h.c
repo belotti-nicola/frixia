@@ -47,6 +47,8 @@
 #include "../setup/proto_callbacks/pc_http/proto_callback_http.h"
 #include "../utils/datastructures/threadsafe_timer_wheel/ts_timer_wheel.h"
 #include "../core/filedescriptor/types/eventfd/frixia_eventfd.h"
+#include "../core/filedescriptor/types/file_creation/frixia_file_creation.h"
+#include "../core/filedescriptor/types/file_modify/frixia_file_modify.h"
 
 #include "fsuite/frixia_suite.h"
 
@@ -458,4 +460,48 @@ void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, i
     convoy_t *c = env->convoy;
     convoy_add_scheduled_timer_filedescriptor(c,fd);
 
+}
+
+void frixia_add_file_creation(frixia_environment_t *env, char *directory, char *file)
+{
+    int fd = start_file_creation_listening(directory,file);
+    if( fd < 0)
+    {
+        printf("Error::frixia_add_file_creation. (rc:%d,directory %s,file %s)\n",fd,directory,file);
+        return;
+    }
+    printf("frixia_add_file_creation %d\n",fd);
+
+    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_fd_args_t tmp_fd_args;
+    frixia_file_creation_t fc;
+    fc.directory = directory;
+    fc.filename = file;
+    tmp_fd_args.file_creation_info = &fc;
+    frixia_fd_t fd_args = {fd,FILE_CREATION,&tmp_fd_args,8};
+    insert_event(fepoll->fd,&fd_args);
+
+    convoy_t *c = env->convoy;
+    convoy_add_file_creation_filedescriptor(c,fd,directory,file);
+}
+void frixia_add_file_modify(frixia_environment_t *env, char *directory, char *file)
+{
+    int fd = start_file_modify_listening(file);
+    if( fd < 0)
+    {
+        printf("Error::frixia_add_file_creation.\n");
+        return;
+    }
+
+    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_fd_args_t tmp_fd_args;
+    frixia_file_creation_t fm;
+    fm.directory = directory;
+    fm.filename = file;
+    tmp_fd_args.file_modify_info = &fm;
+    frixia_fd_t fd_args = {fd,FILE_MODIFY,&tmp_fd_args,8};
+    insert_event(fepoll->fd,&fd_args);
+
+    convoy_t *c = env->convoy;
+    convoy_add_file_modify_filedescriptor(c,fd,directory,file);
 }
