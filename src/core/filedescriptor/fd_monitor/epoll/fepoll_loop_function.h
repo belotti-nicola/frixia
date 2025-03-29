@@ -1,3 +1,3 @@
-#include "../../../fsuite/frixia_suite.h"
+#include "../detached_epoll_monitor.h"
 
-int fepoll_loop_function(frixia_suite_t *suite);
+int fepoll_loop_function(fepoll_th_data_t *th_data);

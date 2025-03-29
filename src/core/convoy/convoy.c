@@ -34,6 +34,7 @@ void convoy_add_tcp_filedescriptor(convoy_t *c,int fd, const char *ip,int port,i
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = TCP;
     set_frixia_tcp_fd(c->filedescriptors[target].type_data,ip,port,bytes);
+    c->size++;
 }
 void convoy_add_udp_filedescriptor(convoy_t *c,int fd,const char *ip,int port,int bytes)
 {

@@ -15,6 +15,7 @@ typedef struct frixia_epoll
     fepoll_pool_t           *fd_pool;
     int                      stop_fd;
     frixia_events_queue_t   *events_queue;
+    pthread_t               *th;
 
 } frixia_epoll_t;
 

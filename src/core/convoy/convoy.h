@@ -1,3 +1,6 @@
+#ifndef CONVOY_H
+#define CONVOY_H
+
 #include "../frixia_common.h"
 
 #include "fd.h"
@@ -21,3 +24,5 @@ void convoy_add_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath);
 void convoy_register_http_callback(convoy_t *c,const char *method,const char *path,void *fun, void *arg);
 void convoy_register_fins_callback(convoy_t *c);
 void convoy_register_timer_callback(convoy_t *c,const char *id,void *fun,void *arg);                                             
+
+#endif

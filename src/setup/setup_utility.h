@@ -5,6 +5,7 @@
 #include "proto_filedescriptor/proto_fds_queue.h"
 #include "../../src/core/filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "proto_callbacks/proto_callback_element.h"
+#include "../../src/core/fsuite/frixia_suite.h"
 
 
 int start_filedescriptors_monitoring(frixia_epoll_t          *f,

@@ -83,29 +83,55 @@ void *timer_callback(int fd)
 
 int main(int argc, char *argv[])
 {  
-    frixia_environment_t environment;
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
+    fadd_stop_filedescriptor(fepoll);
+    
     convoy_t convoy;
+    convoy.size = 0;
     frixia_fd_args_t fd;
     frixia_tcp_t tcp;
+    char *ip = "0.0.0.0";
+    tcp.ip =ip;
+    tcp.port = 0;
+    tcp.read_size = -1;
     fd.tcp_info = &tcp;
     frixia_file_descriptor_t frixia_fd = {0,UNDEFINED,&fd,NO_PROTOCOL,NULL};
     for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
     {
         convoy.filedescriptors[i] = frixia_fd;
     }
+    
+    threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
+    crono_t crono = crono_create(&tw);
+    
+    frixia_environment_t environment;
     environment.convoy = &convoy;
     environment.fepoll = fepoll;
 
-    frixia_add_inode_monitoring(&environment,"../");
+    frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
+    frixia_add_udp(&environment,"0.0.0.0",8888,1024);
+    frixia_add_fifo(&environment,"fifo",1024);
+    frixia_add_inode(&environment,".");
 
     frixia_suite_t *suite = create_frixia_suite(10);
     suite->fepoll = fepoll;
-    frixia_detached_start_monitor(suite);
+    fepoll->events_queue = frixia_events_queue_create();
+    suite->events_q = frixia_events_queue_create();
 
-    frixia_detached_wait_threads(suite);
+    
 
+    fepoll_th_data_t fepoll_data;
+    fepoll_data.convoy = &convoy;
+    fepoll_data.fepoll = fepoll;
+    fepoll_data.events = frixia_events_queue_create();
+    fadd_stop_filedescriptor(fepoll);
+    frixia_detached_start_monitor(&fepoll_data);
+
+    sleep(2);
+    stop_fepoll(fepoll);
+    //crono_stop(environment.crono);
+    frixia_detached_wait_monitor(&fepoll_data);
     /*
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);

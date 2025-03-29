@@ -119,6 +119,8 @@ void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
 */
 int frixia_start(frixia_environment_t *env)
 {        
+
+    
     /*
     convoy_t *convoy = env->convoy;
  
@@ -445,7 +447,7 @@ void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, i
 
 }
 
-void frixia_add_inode_monitoring(frixia_environment_t *env, char *filepath)
+void frixia_add_inode(frixia_environment_t *env, char *filepath)
 {
     int fd = start_inode_listening(filepath);
     if( fd < 0)

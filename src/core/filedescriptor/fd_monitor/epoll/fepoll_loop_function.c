@@ -1,22 +1,26 @@
 #include "fepoll.h"
-#include "../../../fsuite/frixia_suite.h"
 #include "../../../frixia_common.h"
 #include "epoll.h"
 #include "../../../fevent/frixia_event.h"
 
 #include "fepoll_loop_function.h"
 
-int fepoll_loop_function(frixia_suite_t *fsuite)
+int fepoll_loop_function(fepoll_th_data_t *th_data)
 {
-    frixia_epoll_t *fepoll = fsuite->fepoll;
+    frixia_epoll_t *fepoll = th_data->fepoll;
 
-    int stop_fd = fsuite->fepoll->stop_fd;
+    int stop_fd = fepoll->stop_fd;
     bool keep_looping = true;
     while(keep_looping)
     {
         frixia_event_t ev_q[FRIXIA_EPOLL_MAXIMUM_EVENTS];
         int events_number = frixia_epoll_wait(fepoll,ev_q);
         printf("events_number :: %d\n",events_number);
+        if( events_number < 0)
+        {
+            //just to not jam up 
+            wait(1);
+        }
         for(int i=0;i<events_number;i++)
         {
             printf("event_fd %d(%d events occured), pushing to events_queue\n",ev_q->fd,events_number);
@@ -29,11 +33,10 @@ int fepoll_loop_function(frixia_suite_t *fsuite)
                 continue;
             }
             frixia_event_t *e = create_event(event_fd);
-            frixia_events_queue_push(fsuite->events_q,e);
+            frixia_events_queue_push(th_data->events,e);
         }
     }
 
-    printf("fsuite->events_q->dim %d\n",fsuite->events_q->queue->size);
     stop_fepoll(fepoll);
     return 0;
 }

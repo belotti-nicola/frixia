@@ -23,26 +23,26 @@ int start_inode_listening(char *path)
         return FERR_START_INODE_INOTIFY_ADD_WATCHDOG;
     }
 
-    printf("start_INODE_listening: fd %d, path %s\n",inotify_fd,path);
+    printf("start_inode_listening: fd %d, path %s\n",inotify_fd,path);
     return inotify_fd;
 }
-int stop_INODE_listening(int fd)
+int stop_inode_listening(int fd)
 {
     int ret = close(fd);
     if(ret < 0)
     {
-        printf("Error::start_INODE_listening::inotify_add_watch :: errno %d\n",errno);
+        printf("Error::start_inode_listening::inotify_add_watch :: errno %d\n",errno);
         return FERR_STOP_INODE_LISTENING;
     }
     return 0;
     
 }
-int read_INODE(int fd,char *buf,int max_size)
+int read_inode(int fd,char *buf,int max_size)
 {
     int bytes_read = read(fd, buf, max_size);
     if (bytes_read < 0)
     {
-        printf("start_INODE_listening :: read_INODE :: errno %d\n",errno);
+        printf("start_inode_listening :: read_inode :: errno %d\n",errno);
         return FERR_READ_INODE; 
     }
     return bytes_read;
