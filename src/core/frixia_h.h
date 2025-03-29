@@ -2,7 +2,7 @@
 #include "../setup/proto_filedescriptor/proto_fds_queue.h"
 #include "../setup/proto_callbacks/proto_callbacks_queue.h"
 #include "protocols/frixia_supported_protocols.h"
-#include "convoy_data_structure/convoy.h"
+#include "convoy/convoy.h"
 #include "fevent/frixia_event.h"
 #include "thread_pool/fthread_pool.h"
 #include "../core/filedescriptor/fd_monitor/epoll/fepoll.h"

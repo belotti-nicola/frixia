@@ -98,30 +98,20 @@ FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fe,int fd)
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f)
+FRIXIA_EPOLL_CODE_T insert_event(int epoll, int fd)
 {
-    printf("INSERT EVENT epoll_fd %d target_fd:%d\n",epoll,f->fd);
-    //TODO FIX THIS SHIT
-    if( f->type != TCP &&
-        f->type != UDP &&
-        f->type != FIFO &&
-        f->type != SCHEDULER &&
-        f->type != INODE)
-    {
-        printf("Exiting:: unsupported fd");
-        return -1;
-    }
+    printf("INSERT EVENT epoll_fd %d target_fd:%d\n",epoll,fd);
 
     struct epoll_event ev;
     ev.events =  EPOLLIN | EPOLLET;
-    ev.data.fd = f->fd;
-    int return_code = epoll_ctl(epoll, EPOLL_CTL_ADD, f->fd, &ev);
+    ev.data.fd = fd;
+    int return_code = epoll_ctl(epoll, EPOLL_CTL_ADD, fd, &ev);
     if( return_code != 0) 
     {
-        printf("Add error!! (%d errno::%d) %d %d\n",return_code, errno,epoll,f->fd);
+        printf("Add error!! (%d errno::%d) %d %d\n",return_code, errno,epoll,fd);
 		return -1;
     }
-    printf("Epoll_ctl :: %d (fd added: %d)\n",epoll,f->fd);
+    printf("Epoll_ctl :: %d (fd added: %d)\n",epoll,fd);
     return FEPOLL_OK;
 }
 

@@ -2,6 +2,8 @@
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
 #include <errno.h>
+#include <stdio.h>
+#include <unistd.h>
 
 #include "frixia_eventfd.h"
 
@@ -10,8 +12,9 @@ int start_eventfd_listening()
 {
     const int INITIAL_VALUE = 0;
     int efd = eventfd(INITIAL_VALUE, EFD_NONBLOCK);
-    if (efd == -1) {
-        perror("start_eventfd_listening::eventfd\n",errno);
+    if (efd == -1) 
+    {
+        printf("Error:start_eventfd_listening::errno:%d\n",errno);
         return -1;
     }
 
@@ -20,11 +23,11 @@ int start_eventfd_listening()
 
 int read_eventfd(int fd)
 {
-    uint64_t result;
-    read(fd, &result, sizeof(result));
-    if( result <= 0)
+    int result;
+    int read_bytes = read(fd, &result, sizeof(result));
+    if( result <= 0 || read_bytes < 0)
     {
-        printf("ERROR read_eventfd %d (fd: %d, errno: %d)\n",result,fd,errno);
+        printf("ERROR read_eventfd %d or %d (fd: %d, errno: %d)\n",result, read_bytes,fd,errno);
         return -1;
     }
 

@@ -24,7 +24,6 @@ int start_timer_listening(int delay, int interval)
         return ERR_TIMER_CREATE;
     }
 
-    bzero(&timer_spec, sizeof(timer_spec));
     timer_spec.it_value.tv_sec = delay;
     timer_spec.it_value.tv_nsec = 0;
     timer_spec.it_interval.tv_sec = interval;

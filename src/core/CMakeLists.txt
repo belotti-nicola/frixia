@@ -16,7 +16,7 @@ add_subdirectory(filedescriptor)
 add_subdirectory(fsuite)
 add_subdirectory(fdispatcher)
 add_subdirectory(fthread_pool)
-add_subdirectory(convoy_data_structure)
+add_subdirectory(convoy)
 add_subdirectory(crono)
 
 target_link_libraries(core 

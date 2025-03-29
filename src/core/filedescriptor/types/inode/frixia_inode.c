@@ -45,5 +45,5 @@ int read_INODE(int fd,char *buf,int max_size)
         printf("start_INODE_listening :: read_INODE :: errno %d\n",errno);
         return FERR_READ_INODE; 
     }
-    return buf;
+    return bytes_read;
 }

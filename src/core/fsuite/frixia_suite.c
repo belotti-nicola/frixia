@@ -55,7 +55,7 @@ void frixia_suite_insert_filedescriptor(frixia_suite_t *s,
     frixia_fd_t *fd_info = create_frixia_fd(fd,fd_type,port,filename,read_dimension);
     add_item(l,fd_info);
 
-    int rc = insert_event(s->fepoll->fd,fd_info);
+    int rc = insert_event(s->fepoll->fd,fd);
     printf("RC INSERT EVENT :: %d\n",rc);
 
 }

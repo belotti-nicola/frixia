@@ -361,12 +361,8 @@ void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
         return;
     }
     
-    //TODO FIX THIS SHIT
     frixia_epoll_t *fepoll = env->fepoll;
-    frixia_fd_args_t tmp_fd_args = {port,""};
-    frixia_fd_t fd_args = {fd,TCP,&tmp_fd_args,bytes_to_read};
-    insert_event(fepoll->fd,&fd_args);
-    
+    insert_event(fepoll->fd,fd);   
 
     convoy_t *c = env->convoy;
     convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read);
@@ -382,9 +378,7 @@ void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     
     //TODO FIX THIS SHIT
     frixia_epoll_t *fepoll = env->fepoll;
-    frixia_fd_args_t tmp_fd_args = {port,""};
-    frixia_fd_t fd_args = {fd,UDP,&tmp_fd_args,bytes_to_read};
-    insert_event(fepoll->fd,&fd_args);
+    insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
     convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
@@ -398,9 +392,7 @@ void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_re
     }
     //TODO FIX THIS SHIT
     frixia_epoll_t *fepoll = env->fepoll;
-    frixia_fd_args_t tmp_fd_args = {0,""};
-    frixia_fd_t fd_args = {fd,FIFO,&tmp_fd_args,bytes_to_read};
-    insert_event(fepoll->fd,&fd_args);
+    insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
     convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
@@ -413,9 +405,7 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
         return;
     }
     frixia_epoll_t *fepoll = env->fepoll;
-    frixia_fd_args_t tmp_fd_args = {0,""};
-    frixia_fd_t fd_args = {fd,TIMER,&tmp_fd_args,0};
-    insert_event(fepoll->fd,&fd_args);
+    insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
     convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
@@ -432,9 +422,7 @@ void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
     }
 
     frixia_epoll_t *fepoll = env->fepoll;
-    frixia_fd_args_t tmp_fd_args = {0,""};
-    frixia_fd_t fd_args = {fd,SCHEDULER,&tmp_fd_args,0};
-    insert_event(fepoll->fd,&fd_args);
+    insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
     convoy_add_scheduler_filedescriptor(c,fd,tick_size);
@@ -449,12 +437,8 @@ void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, i
         return;
     }
 
-    //TODO FIX THIS SHIT
     frixia_epoll_t *fepoll = env->fepoll;
-    frixia_fd_args_t tmp_fd_args;
-    tmp_fd_args.eventfd_info->fd = fd;
-    frixia_fd_t fd_args = {fd,EVENTFD,&tmp_fd_args,8};
-    insert_event(fepoll->fd,&fd_args);
+    insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
     convoy_add_scheduled_timer_filedescriptor(c,fd);
@@ -466,18 +450,12 @@ void frixia_add_inode_monitoring(frixia_environment_t *env, char *filepath)
     int fd = start_inode_listening(filepath);
     if( fd < 0)
     {
-        printf("Error::frixia_add_inode. (rc:%d,directory %s,file %s)\n",fd,filepath);
+        printf("Error::frixia_add_inode. (rc:%d,file %s)\n",fd,filepath);
         return;
     }
-    printf("frixia_add_inode %d\n",fd);
 
     frixia_epoll_t *fepoll = env->fepoll;
-    frixia_fd_args_t tmp_fd_args;
-    frixia_inode_t fr_d;
-    fr_d.path = filepath;
-    tmp_fd_args.inode_info = &fr_d;
-    frixia_fd_t fd_args = {fd,INODE,&tmp_fd_args,8};
-    insert_event(fepoll->fd,&fd_args);
+    insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
     convoy_add_add_inode_filedescriptor(c,fd,filepath);
