@@ -98,9 +98,7 @@ int main(int argc, char *argv[])
     environment.convoy = &convoy;
     environment.fepoll = fepoll;
 
-    frixia_add_file_creation(&environment,"/home/doss/","created.txt");
-    frixia_add_file_modify(&environment,"/home/doss/","modify.txt");
-
+    frixia_add_inode_monitoring(&environment,"../");
 
     frixia_suite_t *suite = create_frixia_suite(10);
     suite->fepoll = fepoll;

@@ -3,6 +3,5 @@ add_subdirectory(udp)
 add_subdirectory(fifo)
 add_subdirectory(timer)
 add_subdirectory(eventfd)
-add_subdirectory(file_creation)
-add_subdirectory(file_modify)
+add_subdirectory(inode)
 

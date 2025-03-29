@@ -44,6 +44,5 @@ target_link_libraries(core
   convoy
   crono
   eventfd
-  file_creation
-  file_modify
+  inode
 )

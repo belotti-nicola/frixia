@@ -34,8 +34,7 @@ enum FrixiaFDType
     WAKE,
     SCHEDULER,
     EVENTFD,
-    FILE_CREATION,
-    FILE_MODIFY
+    INODE
 
 };
 

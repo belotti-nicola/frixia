@@ -38,14 +38,7 @@ void set_frixia_eventfd_fd(frixia_fd_args_t *fd, int ev_fd)
     fd->eventfd_info->fd = ev_fd;
 }
 
-void set_frixia_file_modify_fd(frixia_fd_args_t *fd, char *dir, char *name)
+void set_frixia_inode_fd(frixia_fd_args_t *fd, char *filepath)
 {
-    fd->file_modify_info->directory = dir;
-    fd->file_modify_info->filename = name;
+    fd->inode_info->path = filepath;
 }
-void set_frixia_file_creation_fd(frixia_fd_args_t *fd, char *dir, char *name)
-{
-    fd->file_creation_info->directory = dir;
-    fd->file_creation_info->filename = name;
-}
-

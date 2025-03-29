@@ -106,8 +106,7 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, frixia_fd_t *f)
         f->type != UDP &&
         f->type != FIFO &&
         f->type != SCHEDULER &&
-        f->type != FILE_CREATION &&
-        f->type != FILE_MODIFY )
+        f->type != INODE)
     {
         printf("Exiting:: unsupported fd");
         return -1;
