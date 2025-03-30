@@ -81,7 +81,7 @@ FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
     printf("EPOLL CREATE :: %d\n",fd_epoll);
     return FEPOLL_OK;
 }
-FRIXIA_EPOLL_CODE_T stop_fepoll(frixia_epoll_t *fe)
+FRIXIA_EPOLL_CODE_T fepoll_stop(frixia_epoll_t *fe)
 {    
     uint64_t value = 1;
     int fd = fe->stop_fd;

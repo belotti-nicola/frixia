@@ -1,11 +1,9 @@
 TODO   
-    frixia stop (keep looping?)
+    eventfd vs timer
     CALLBACKS SIZE IS KNOWN AT compile time known
     valgrind support
-    time triggered epoll
-    LIBRARY SETUP SHARED COMPONENTS
-    set_fins_echo_server
     debug level prints
+    convoy is shared -> make it threadsafe
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

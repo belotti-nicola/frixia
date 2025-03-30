@@ -2,6 +2,7 @@
 #include "../../../frixia_common.h"
 #include "epoll.h"
 #include "../../../fevent/frixia_event.h"
+#include <unistd.h>
 
 #include "fepoll_loop_function.h"
 
@@ -19,7 +20,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
         if( events_number < 0)
         {
             //just to not jam up 
-            wait(1);
+            sleep(1);
         }
         for(int i=0;i<events_number;i++)
         {
@@ -37,6 +38,6 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
         }
     }
 
-    stop_fepoll(fepoll);
+    fepoll_stop(fepoll);
     return 0;
 }

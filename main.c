@@ -127,11 +127,15 @@ int main(int argc, char *argv[])
     fepoll_data.events = frixia_events_queue_create();
     fadd_stop_filedescriptor(fepoll);
     frixia_detached_start_monitor(&fepoll_data);
+    frixia_detached_start_crono(&crono);
+
 
     sleep(2);
-    stop_fepoll(fepoll);
-    //crono_stop(environment.crono);
+    fepoll_stop(fepoll);
+    crono_stop(&crono);
     frixia_detached_wait_monitor(&fepoll_data);
+
+
     /*
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
@@ -158,7 +162,7 @@ int main(int argc, char *argv[])
     frixia_wait_crono(&crono);
     printf("Crono stopped.\n");
 
-    stop_fepoll(fepoll);
+    fepoll_stop(fepoll);
     frixia_detached_wait_threads(suite);
     printf("fepoll stopped.\n");
     /*
