@@ -5,4 +5,6 @@ add_library(fdispatcher
     frixia_dispatcher_loop_function.h
     detached_frixia_dispatcher.c
     detached_frixia_dispatcher.h
+    detached_frixia_dispatcher_new.c
+    detached_frixia_dispatcher_new.h
 )

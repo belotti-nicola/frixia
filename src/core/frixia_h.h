@@ -7,6 +7,7 @@
 #include "thread_pool/fthread_pool.h"
 #include "../core/filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "crono/crono.h"
+#include "../core/fdispatcher/frixia_dispatcher.h"
 
 typedef struct frixia_environment
 {
@@ -14,6 +15,7 @@ typedef struct frixia_environment
     frixia_epoll_t *fepoll;
     frixia_events_queue_t *events;
     crono_t *crono;
+    frixia_dispatcher_t *dispatcher;
 
 } frixia_environment_t;
 

@@ -10,6 +10,8 @@
 #include "src/core/filedescriptor/fd_monitor/detached_epoll_monitor.h"
 #include "src/core/filedescriptor/types/timer/frixia_timer.h"
 #include "src/core/filedescriptor/types/eventfd/frixia_eventfd.h"
+#include "src/core/fdispatcher/frixia_dispatcher.h"
+#include "src/core/fdispatcher/detached_frixia_dispatcher_new.h"
 
 
 //TODO
@@ -83,6 +85,8 @@ void *timer_callback(int fd)
 
 int main(int argc, char *argv[])
 {  
+    frixia_events_queue_t *events_queue = frixia_events_queue_create(); 
+    
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
     fadd_stop_filedescriptor(fepoll);
@@ -104,10 +108,20 @@ int main(int argc, char *argv[])
     
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
     crono_t crono = crono_create(&tw);
-    
+
+
+    frixia_dispatcher_t *dispatcher = create_frixia_dispatcher(FRIXIA_WORKERS);
+    set_frixia_dispatcher_tasks(dispatcher,events_queue);
+    set_frixia_dispatcher_thread_pool(dispatcher,NULL);//TODO IMPLEMENT
+    frixia_dispatcher_data_t d_data;
+    d_data.dispatcher = dispatcher;
+    d_data.started = false;
+    detached_start_frixia_dispatcher_new(&d_data);
+
     frixia_environment_t environment;
     environment.convoy = &convoy;
     environment.fepoll = fepoll;
+    environment.dispatcher = dispatcher;
 
     frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
     frixia_add_udp(&environment,"0.0.0.0",8888,1024);
@@ -116,7 +130,7 @@ int main(int argc, char *argv[])
 
     frixia_suite_t *suite = create_frixia_suite(10);
     suite->fepoll = fepoll;
-    fepoll->events_queue = frixia_events_queue_create();
+    fepoll->events_queue = events_queue;
     suite->events_q = frixia_events_queue_create();
 
     
@@ -130,7 +144,7 @@ int main(int argc, char *argv[])
     fadd_stop_filedescriptor(fepoll);
     frixia_detached_start_monitor(&fepoll_data);
     frixia_detached_start_crono(&crono);
-
+    detached_stop_frixia_dispatcher_new(&d_data);
 
     sleep(2);
     fepoll_stop(fepoll);
