@@ -24,7 +24,7 @@ int detached_start_frixia_dispatcher_new(frixia_dispatcher_data_t *data)
     data->started = true;
     return 0;
 }
-int detached_stop_frixia_dispatcher_new(frixia_dispatcher_data_t *data)
+int detached_join_frixia_dispatcher_new(frixia_dispatcher_data_t *data)
 {
     if ( ! data->started)
     {

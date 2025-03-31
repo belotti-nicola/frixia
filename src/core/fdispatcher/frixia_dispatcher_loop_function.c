@@ -8,22 +8,29 @@ int frixia_dispatcher_loop_function(void *arg)
     printf("frixia_dispatcher_loop_function started\n");
     frixia_dispatcher_t   *dispatcher   = (frixia_dispatcher_t *)arg;
     frixia_events_queue_t *events_queue = dispatcher->tasks;
-    frixia_event_t        *event;
+    int                    stop_fd      = dispatcher->stop_fd;
     
+    frixia_event_t        *event;
     bool keep_looping = true;
     while(keep_looping)
     {
-        printf("keep looping dispatcher true\n");
         event = frixia_events_queue_pop(events_queue);
         if(event == NULL)
         {
             printf("ERROR POPPING EVENTS QUEUE\n");
             continue;
         }
+        if(event->fd == stop_fd)
+        {
+            printf("Stop event!!!\n");
+            keep_looping = false;
+            dispatch_event_to_all_workers(dispatcher,event);
+            continue;
+        }
         printf("EVENT POPPED BY DISPATCHER::fd::%d\n",event->fd);
         dispatch_event_to_workers(dispatcher,event);
     }
 
-    destroy_frixia_dispatcher(dispatcher);
+    printf("frixia_dispatcher_loop_function: END.\n");
     return 0;
 }

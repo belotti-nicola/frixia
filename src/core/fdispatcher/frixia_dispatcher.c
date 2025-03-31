@@ -2,7 +2,7 @@
 
 #include "frixia_dispatcher.h"
 
-frixia_dispatcher_t *create_frixia_dispatcher(int workers_number)
+frixia_dispatcher_t *create_frixia_dispatcher(int workers_number,int stop_fd)
 {
     frixia_dispatcher_t *ptr = malloc(sizeof(frixia_dispatcher_t));
     if(ptr == NULL)
@@ -11,6 +11,7 @@ frixia_dispatcher_t *create_frixia_dispatcher(int workers_number)
         return NULL;
     }
     ptr->workers = workers_number;
+    ptr->stop_fd = stop_fd;
     return ptr;
 }
 
@@ -42,4 +43,21 @@ void dispatch_event_to_workers(frixia_dispatcher_t *dispatcher,frixia_event_t *e
     frixia_events_queue_t  *q_i = *(q+task_index);
     frixia_events_queue_push(q_i,event);
     dispatcher->task_index = (task_index + 1)%dim;
+}
+
+void dispatch_event_to_all_workers(frixia_dispatcher_t *dispatcher,frixia_event_t *event)
+{
+    if( dispatcher->thread_pool == NULL )
+    {
+        printf("Thread pool is null!\n");
+        return;
+    }
+
+    int dim = dispatcher->workers;
+    for(int i=0;i<dim;i++)
+    {
+        frixia_events_queue_t **q = dispatcher->thread_pool->threads_tasks;
+        frixia_events_queue_t  *q_i = *(q+i);
+        frixia_events_queue_push(q_i,event);
+    }
 }

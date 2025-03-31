@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
     crono_t crono = crono_create(&tw);
 
 
-    frixia_dispatcher_t *dispatcher = create_frixia_dispatcher(FRIXIA_WORKERS);
+    frixia_dispatcher_t *dispatcher = create_frixia_dispatcher(FRIXIA_WORKERS,4);
     set_frixia_dispatcher_tasks(dispatcher,events_queue);
     set_frixia_dispatcher_thread_pool(dispatcher,NULL);//TODO IMPLEMENT
     frixia_dispatcher_data_t d_data;
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
     frixia_suite_t *suite = create_frixia_suite(10);
     suite->fepoll = fepoll;
     fepoll->events_queue = events_queue;
-    suite->events_q = frixia_events_queue_create();
+    suite->events_q = events_queue;
 
     
 
@@ -139,18 +139,17 @@ int main(int argc, char *argv[])
     int a = 0;bool started = false;
     fepoll_data.convoy = &convoy;
     fepoll_data.fepoll = fepoll;
-    fepoll_data.events = frixia_events_queue_create();
+    fepoll_data.events = events_queue;
     fepoll_data.started = started;
-    fadd_stop_filedescriptor(fepoll);
     frixia_detached_start_monitor(&fepoll_data);
     frixia_detached_start_crono(&crono);
-    detached_stop_frixia_dispatcher_new(&d_data);
 
     sleep(2);
     fepoll_stop(fepoll);
     crono_stop(&crono);
     
     
+    detached_join_frixia_dispatcher_new(&d_data);
     frixia_detached_wait_monitor(&fepoll_data);
     frixia_wait_crono(&crono);
 
