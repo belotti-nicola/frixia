@@ -4,6 +4,7 @@
 #include "../../convoy/convoy.h"
 #include "../../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include <pthread.h>
+#include <stdbool.h>
 
 typedef struct fepoll_th_data
 {
@@ -11,6 +12,7 @@ typedef struct fepoll_th_data
     frixia_epoll_t *fepoll;
     frixia_events_queue_t *events;
     pthread_t th;
+    bool started;
 
 } fepoll_th_data_t;
 

@@ -122,9 +122,11 @@ int main(int argc, char *argv[])
     
 
     fepoll_th_data_t fepoll_data;
+    int a = 0;bool started = false;
     fepoll_data.convoy = &convoy;
     fepoll_data.fepoll = fepoll;
     fepoll_data.events = frixia_events_queue_create();
+    fepoll_data.started = started;
     fadd_stop_filedescriptor(fepoll);
     frixia_detached_start_monitor(&fepoll_data);
     frixia_detached_start_crono(&crono);
@@ -133,8 +135,10 @@ int main(int argc, char *argv[])
     sleep(2);
     fepoll_stop(fepoll);
     crono_stop(&crono);
+    
+    
     frixia_detached_wait_monitor(&fepoll_data);
-
+    frixia_wait_crono(&crono);
 
     /*
     frixia_epoll_t *fepoll = create_frixia_epoll();
