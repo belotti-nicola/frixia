@@ -16,6 +16,7 @@ typedef struct frixia_environment
     frixia_events_queue_t *events;
     crono_t *crono;
     frixia_dispatcher_t *dispatcher;
+    frixia_thread_pool_t *th_pool;
 
 } frixia_environment_t;
 

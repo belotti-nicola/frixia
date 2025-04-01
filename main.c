@@ -123,6 +123,10 @@ int main(int argc, char *argv[])
     environment.fepoll = fepoll;
     environment.dispatcher = dispatcher;
     environment.crono = &crono;
+    frixia_thread_pool_t *tpool = create_frixia_thread_pool(FRIXIA_WORKERS,fepoll,events_queue,NULL);
+    environment.th_pool = tpool;
+    dispatcher->thread_pool = tpool;
+
 
     frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
     frixia_add_udp(&environment,"0.0.0.0",8888,1024);
@@ -134,7 +138,9 @@ int main(int argc, char *argv[])
     fepoll->events_queue = events_queue;
     suite->events_q = events_queue;
 
-    
+
+
+
 
     fepoll_th_data_t fepoll_data;
     int a = 0;bool started = false;

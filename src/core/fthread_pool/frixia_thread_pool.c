@@ -16,11 +16,17 @@ void thread_main_loop(frixia_thread_pool_data_t *data)
     {
         frixia_event_t *e = frixia_events_queue_pop(q);
         int event_fd = e->fd;
+        if(event_fd == 4)
+        {
+            break;
+        }
+
         printf("thread main loop!!!%d start iteration\n",event_fd);        
 
         frixia_fd_t *frixia_fd = search_fepoll(data->fepoll,event_fd);
         if(frixia_fd == NULL)
         {
+            printf("frixia_fd == NULL!!!%d  continuing...\n",event_fd);
             continue;
         }  
         int read_size = frixia_fd->read_dim;
@@ -42,6 +48,8 @@ void thread_main_loop(frixia_thread_pool_data_t *data)
         frixia_callback_main(e,p,read_size,data->frixia_callbacks);
         printf("thread main loop!!!%d stop  iteration\n",event_fd);
     }
+
+    printf("Exited.\n");
 }
 
 frixia_thread_pool_t* create_frixia_thread_pool(int n,frixia_epoll_t *fepoll, frixia_events_queue_t *events,frixia_callbacks_data_structure_t *cbs)
