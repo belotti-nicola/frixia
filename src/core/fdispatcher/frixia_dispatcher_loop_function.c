@@ -11,8 +11,8 @@ int frixia_dispatcher_loop_function(void *arg)
     int                    stop_fd      = dispatcher->stop_fd;
     
     frixia_event_t        *event;
-    bool keep_looping = true;
-    while(keep_looping)
+    bool *keep_looping = dispatcher->keep_looping;
+    while(*keep_looping)
     {
         event = frixia_events_queue_pop(events_queue);
         if(event == NULL)
@@ -23,7 +23,7 @@ int frixia_dispatcher_loop_function(void *arg)
         if(event->fd == stop_fd)
         {
             printf("Stop event!!!\n");
-            keep_looping = false;
+            *keep_looping = false;
             dispatch_event_to_all_workers(dispatcher,event);
             continue;
         }

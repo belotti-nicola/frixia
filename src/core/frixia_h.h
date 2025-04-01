@@ -30,9 +30,7 @@ void frixia_add_inode(frixia_environment_t *env, char *filepath);
 
 
 int frixia_start(frixia_environment_t *env);
-int frixia_stop(int epoll_fd,
-                struct FrixiaFD f[],
-                int max_size);
+int frixia_stop(frixia_environment_t *env);
 
 int set_engine_event(struct FrixiaFD fd,
                      struct FrixiaFD ffds[],

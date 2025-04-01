@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "frixia_dispatcher.h"
 
@@ -12,6 +13,14 @@ frixia_dispatcher_t *create_frixia_dispatcher(int workers_number,int stop_fd)
     }
     ptr->workers = workers_number;
     ptr->stop_fd = stop_fd;
+    bool *keep_looping = malloc(sizeof(bool));
+    if(ptr == NULL)
+    {
+        printf("Error in frixia dispatcher creation!\n");
+        return NULL;
+    }
+    ptr->keep_looping = keep_looping;
+    *keep_looping = true;
     return ptr;
 }
 
@@ -60,4 +69,9 @@ void dispatch_event_to_all_workers(frixia_dispatcher_t *dispatcher,frixia_event_
         frixia_events_queue_t  *q_i = *(q+i);
         frixia_events_queue_push(q_i,event);
     }
+}
+
+void dispatcher_stop(frixia_dispatcher_t *dispatcher)
+{
+    *(dispatcher->keep_looping) = false;
 }

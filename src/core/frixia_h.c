@@ -246,6 +246,21 @@ int frixia_start(frixia_environment_t *env)
     printf("End\n");
     return OK;
 }
+
+int frixia_stop(frixia_environment_t *environment)
+{
+    frixia_epoll_t *fe = environment->fepoll;
+    fepoll_stop(fe);
+
+    crono_t *cr = environment->crono;
+    crono_stop(cr);
+
+    frixia_dispatcher_t *dispatcher = environment->dispatcher;
+    dispatcher_stop(dispatcher);
+
+}
+
+/*
 int frixia_stop(int epoll_fd,
                 struct FrixiaFD f[],
                 int max_size)
@@ -285,7 +300,7 @@ int frixia_stop(int epoll_fd,
 
     return OK;
 }
-
+*/
 int set_engine_event(struct FrixiaFD protoffd,
                      struct FrixiaFD ffds[],
                      int size)

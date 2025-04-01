@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
     environment.convoy = &convoy;
     environment.fepoll = fepoll;
     environment.dispatcher = dispatcher;
+    environment.crono = &crono;
 
     frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
     frixia_add_udp(&environment,"0.0.0.0",8888,1024);
@@ -144,10 +145,9 @@ int main(int argc, char *argv[])
     frixia_detached_start_monitor(&fepoll_data);
     frixia_detached_start_crono(&crono);
 
+
     sleep(2);
-    fepoll_stop(fepoll);
-    crono_stop(&crono);
-    
+    frixia_stop(&environment);
     
     detached_join_frixia_dispatcher_new(&d_data);
     frixia_detached_wait_monitor(&fepoll_data);
