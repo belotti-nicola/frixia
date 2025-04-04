@@ -45,4 +45,5 @@ target_link_libraries(core
   crono
   eventfd
   inode
+  bound_robin
 )

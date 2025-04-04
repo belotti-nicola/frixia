@@ -12,6 +12,8 @@
 #include "src/core/filedescriptor/types/eventfd/frixia_eventfd.h"
 #include "src/core/fdispatcher/frixia_dispatcher.h"
 #include "src/core/fdispatcher/detached_frixia_dispatcher_new.h"
+#include "src/core/thread_pool/bound_robin/bound_robin.h"
+#include "src/core/thread_pool/bound_robin/detached_bound_robin.h"
 
 
 //TODO
@@ -76,6 +78,13 @@ void timer_called()
     printf("Timer!\n");
 }
 
+void *deleteme_pls(void *arg)
+{
+    int *a = (int *)arg;
+    printf("A is:%d\n",*a);
+    sleep(5);
+    return NULL;
+}
 
 void *timer_callback(int fd)
 {
@@ -138,9 +147,10 @@ int main(int argc, char *argv[])
     fepoll->events_queue = events_queue;
     suite->events_q = events_queue;
 
-
-
-
+    int arg = 0;
+    bound_robin_t br;
+    bound_robin_create(&br,deleteme_pls,&arg,deleteme_pls,&arg);
+    bound_robin_wait(&br);
 
     fepoll_th_data_t fepoll_data;
     int a = 0;bool started = false;
