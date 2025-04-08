@@ -3,5 +3,8 @@ add_library(bound_robin
     bound_robin.c
     detached_bound_robin.h
     detached_bound_robin.h
+)
 
+target_link_libraries(bound_robin
+    threadsafe_simple_queue
 )
