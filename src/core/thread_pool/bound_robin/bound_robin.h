@@ -3,28 +3,12 @@
 
 #include "../../../utils/datastructures/threadsafe_simple_queue/threadsafe_simple_queue.h"
 #include "../../../core/frixia_common.h"
+#include "bound_robin_thread.h"
 #include <pthread.h>
 #include <stdbool.h>
 
 #include "bound_robin.h"
 
-typedef struct thread_context
-{
-    threadsafe_simple_queue_t *thread_events;
-    bool                      *keep_looping;
-    void                      *thread_data;
-
-    void                      *(*cb_main)(void *);
-    void                      *cb_arg;
-
-} thread_context_t;
-
-typedef struct callback_arg
-{
-    void *event;
-    void *client_code;
-    
-} callback_arg_t;
 
 typedef struct bound_robin
 {
