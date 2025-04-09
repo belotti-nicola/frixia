@@ -27,6 +27,7 @@ void bound_robin_create(bound_robin_t *br,
                         void *th_delegate_fun(void *),void *th_delegate_arg)
 {
     
+    br->current_index = 0;
     br->delegate_argument = th_delegate_arg;
 
     for(int i=0;i<FRIXIA_WORKERS;i++)

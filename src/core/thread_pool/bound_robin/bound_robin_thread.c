@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #include "bound_robin_thread.h"
 
@@ -16,19 +17,22 @@ void bound_robin_thread_main_loop(void *argument)
     callback_arg_t cb_arg;
     while( keep_looping )
     {
+        printf("BR::Event popping\n");
         void *event = pop_threadsafe_simple_queue(events);
+        printf("BR::Event popped\n");
         if(event == NULL)
         {
             sleep(100);
             continue;
         }
-        printf("BR::Event popped\n");
         /*
         cb_arg.event = event;
         cb_arg.client_code = ctx->cb_arg;
         fun((void *)&cb_arg);
         */
     }
+
+    printf("bound_robin_thread_main_loop endend.\n");
 }
 
 void bound_robin_thread_stop(thread_context_t *ctx)
@@ -59,6 +63,7 @@ thread_context_t *bound_robin_create_thread_context()
         printf("bound_robin_create_thread_context Error keep_looping!!\n");
         return NULL;
     }
+    *b = true;
     ctx->keep_looping = b;
 
     return ctx;
