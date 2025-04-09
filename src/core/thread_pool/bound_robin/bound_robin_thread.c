@@ -35,3 +35,31 @@ void bound_robin_thread_stop(thread_context_t *ctx)
 {
     ctx->keep_looping = false;
 }
+
+thread_context_t *bound_robin_create_thread_context()
+{
+    thread_context_t *ctx = malloc(sizeof(thread_context_t));
+    if( ctx == NULL )
+    {
+        printf("bound_robin_create_thread_context Error!! thread_context_t\n");
+        return NULL;
+    }
+
+    threadsafe_simple_queue_t *q = malloc(sizeof(threadsafe_simple_queue_t));
+    if( ctx == NULL )
+    {
+        printf("bound_robin_create_thread_context Error threadsafe_simple_queue_t!!\n");
+        return NULL;
+    }
+    ctx->thread_events = q;
+
+    bool *b = malloc(sizeof(bool));
+    if( ctx == NULL )
+    {
+        printf("bound_robin_create_thread_context Error keep_looping!!\n");
+        return NULL;
+    }
+    ctx->keep_looping = b;
+
+    return ctx;
+}
