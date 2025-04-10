@@ -4,6 +4,7 @@
 
 #include "../../../utils/datastructures/threadsafe_simple_queue/threadsafe_simple_queue.h"
 #include <stdatomic.h>
+#include <pthread.h>
 
 #include "bound_robin_thread.h"
 
@@ -12,6 +13,7 @@ typedef struct thread_context
 {
     threadsafe_simple_queue_t *thread_events;
     atomic_bool               *keep_looping;
+    pthread_barrier_t         *create_barrier;
 
     void                      *(*cb_main)(void *);
     void                      *cb_arg;

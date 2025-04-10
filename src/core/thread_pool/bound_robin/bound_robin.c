@@ -28,7 +28,15 @@ void bound_robin_create(bound_robin_t *br,
                         void *th_main_fun(void *),void *th_main_arg,
                         void *th_delegate_fun(void *),void *th_delegate_arg)
 {
-    
+    pthread_barrier_t *barrier = malloc(sizeof(pthread_barrier_t));
+    if( barrier == NULL)
+    {
+        printf("Error pthread barrier!!\n");
+        return;
+    }
+    br->create_barrier = barrier;
+    pthread_barrier_init(barrier, NULL, FRIXIA_WORKERS+1);
+
     br->current_index = 0;
     br->delegate_argument = th_delegate_arg;
 
@@ -39,6 +47,7 @@ void bound_robin_create(bound_robin_t *br,
         new_context->thread_events = q;        
         new_context->cb_main = th_main_fun;
         new_context->cb_arg  = th_main_arg;
+        new_context->create_barrier = br->create_barrier;
 
         void *casted_thread_arg = (void *)new_context;
         int rc = pthread_create(&(br->th[i]),NULL,bound_robin_thread_main_loop,casted_thread_arg);
@@ -49,6 +58,10 @@ void bound_robin_create(bound_robin_t *br,
         }
         br->th_contex[i] = new_context;
     }
+
+
+    int rc = pthread_barrier_wait(br->create_barrier);
+    printf("RC::%d\n",rc);
 }
 
 void bound_robin_wait(bound_robin_t *br)

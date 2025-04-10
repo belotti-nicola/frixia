@@ -17,6 +17,7 @@ typedef struct bound_robin
     pthread_t                  th[FRIXIA_WORKERS];
     void                      *(*delegate_function)(void *);
     void                      *delegate_argument;
+    pthread_barrier_t          *create_barrier;
 
     thread_context_t          *th_contex[FRIXIA_WORKERS];
 

@@ -16,7 +16,8 @@ void bound_robin_thread_main_loop(void *argument)
     void   *arg          = ctx->cb_arg;
 
     atomic_bool *keep_looping = ctx->keep_looping;
-    while( atomic_load(keep_looping) == 1 )
+    pthread_barrier_wait(ctx->create_barrier);
+    while( atomic_load(keep_looping) == true )
     {
         void *event = pop_threadsafe_simple_queue(events);
         if(event == NULL)

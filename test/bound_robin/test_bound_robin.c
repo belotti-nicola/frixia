@@ -6,10 +6,7 @@
 void *test_main_function(void *arg)
 {
     atomic_int *value_ptr = (atomic_int *)arg;
-
-    int value = atomic_load(value_ptr);
-    value++;
-    atomic_store(value_ptr,value);
+    atomic_fetch_add(value_ptr, 1); 
 }
 
 int main()
@@ -27,13 +24,13 @@ int main()
     bound_robin_add_task(&br,&test);
     bound_robin_add_task(&br,&test);
     bound_robin_broadcast_task(&br,&test);
-    sleep(1);
+    bound_robin_broadcast_task(&br,&test);
     bound_robin_wait(&br);
 
     int result = atomic_load(&test_value);
-    if( result != 8 )
+    if( result != 13 )
     {
-        printf("Error::test_bound_robin result: %d != 8",result);
+        printf("Error::test_bound_robin result: %d != 13\n",result);
         return 1;
     }
 
