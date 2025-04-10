@@ -1,28 +1,28 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 #include "bound_robin_thread.h"
 
 void bound_robin_thread_main_loop(void *argument)
 {
     thread_context_t *ctx = (thread_context_t *)argument;
-
-    bool keep_looping = *(ctx->keep_looping);
     threadsafe_simple_queue_t *events = ctx->thread_events;
 
     void *(*fun)(void *) = ctx->cb_main;
     void   *arg          = ctx->cb_arg;
 
-    callback_arg_t cb_arg;
-    while( keep_looping )
+    bool *keep_looping = ctx->keep_looping;
+    while( *keep_looping == true )
     {
-        printf("BR::Event popping\n");
+        printf("BR::Event popping %d\n",*keep_looping);
         void *event = pop_threadsafe_simple_queue(events);
-        printf("BR::Event popped\n");
+        printf("BR::Event popped %d\n",*keep_looping);
         if(event == NULL)
         {
-            sleep(100);
+            sleep(1);
             continue;
         }
         /*
@@ -37,7 +37,8 @@ void bound_robin_thread_main_loop(void *argument)
 
 void bound_robin_thread_stop(thread_context_t *ctx)
 {
-    ctx->keep_looping = false;
+    bool *target = ctx->keep_looping;
+    *target = false;    
 }
 
 thread_context_t *bound_robin_create_thread_context()

@@ -150,6 +150,7 @@ int main(int argc, char *argv[])
     int arg = 0;
     bound_robin_t br;
     bound_robin_create(&br,deleteme_pls,&arg,deleteme_pls,&arg);
+    sleep(2);
     bound_robin_add_task(&br,NULL);
     bound_robin_wait(&br);
 

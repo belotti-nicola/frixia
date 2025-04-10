@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include "../../../utils/datastructures/threadsafe_simple_queue/threadsafe_simple_queue.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "bound_robin.h"
 
@@ -53,9 +54,13 @@ void bound_robin_wait(bound_robin_t *br)
 {
     for(int i=0;i<FRIXIA_WORKERS;i++)
     {
-        thread_context_t *ctx = br->th_contex[i]->cb_arg;
+        thread_context_t *ctx = br->th_contex[i];
+        printf("%d %d\n",i,*(ctx->keep_looping));
         bound_robin_thread_stop(ctx);
+        printf("%d %d\n",i,*(ctx->keep_looping));
     }
+
+    bound_robin_broadcast_task(br,NULL);
     
     for(int i=0;i<FRIXIA_WORKERS;i++)
     {
