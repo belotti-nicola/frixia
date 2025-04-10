@@ -41,6 +41,10 @@ FUTURE DEVELOPMENT
     use a thread pool library (external)
     design a better policy than round robin for task scheduling
     timer with delay/interval/start_time
+    THREAD_POOL
+        1. bound_robin
+        2. static scheduling
+        3. task stealing
 
 CHECK
     nothing.
