@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
     bound_robin_t br;
     bound_robin_create(&br,deleteme_pls,&arg,deleteme_pls,&arg);
     sleep(2);
-    bound_robin_add_task(&br,NULL);
+    //bound_robin_add_task(&br,NULL);
     bound_robin_wait(&br);
 
     fepoll_th_data_t fepoll_data;

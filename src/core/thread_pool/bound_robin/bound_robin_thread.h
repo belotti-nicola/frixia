@@ -3,6 +3,7 @@
 
 
 #include "../../../utils/datastructures/threadsafe_simple_queue/threadsafe_simple_queue.h"
+#include <stdatomic.h>
 
 #include "bound_robin_thread.h"
 
@@ -10,20 +11,12 @@
 typedef struct thread_context
 {
     threadsafe_simple_queue_t *thread_events;
-    bool                      *keep_looping;
+    atomic_bool               *keep_looping;
 
     void                      *(*cb_main)(void *);
     void                      *cb_arg;
 
 } thread_context_t;
-
-typedef struct callback_arg
-{
-    void *event;
-    void *client_code;
-    
-} callback_arg_t;
-
 
 typedef struct bound_robin_thread
 {

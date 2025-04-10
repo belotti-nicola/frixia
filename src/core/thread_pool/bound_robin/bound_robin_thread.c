@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "bound_robin_event.h"
 
 #include "bound_robin_thread.h"
 
@@ -14,17 +15,18 @@ void bound_robin_thread_main_loop(void *argument)
     void *(*fun)(void *) = ctx->cb_main;
     void   *arg          = ctx->cb_arg;
 
-    bool *keep_looping = ctx->keep_looping;
-    while( *keep_looping == true )
+    atomic_bool *keep_looping = ctx->keep_looping;
+    while( atomic_load(keep_looping) == 1 )
     {
-        printf("BR::Event popping %d\n",*keep_looping);
         void *event = pop_threadsafe_simple_queue(events);
-        printf("BR::Event popped %d\n",*keep_looping);
         if(event == NULL)
         {
-            sleep(1);
+            printf("Event null!!!\n");
             continue;
         }
+        bound_robin_event_t *ev = (bound_robin_event_t *)event;
+        ev->fun(ev->arg);
+        printf("BR::Event popped done.\n");
         /*
         cb_arg.event = event;
         cb_arg.client_code = ctx->cb_arg;
@@ -37,8 +39,8 @@ void bound_robin_thread_main_loop(void *argument)
 
 void bound_robin_thread_stop(thread_context_t *ctx)
 {
-    bool *target = ctx->keep_looping;
-    *target = false;    
+    atomic_bool *target = ctx->keep_looping;
+    atomic_store(target,0);   
 }
 
 thread_context_t *bound_robin_create_thread_context()
@@ -58,13 +60,13 @@ thread_context_t *bound_robin_create_thread_context()
     }
     ctx->thread_events = q;
 
-    bool *b = malloc(sizeof(bool));
+    atomic_bool *b = malloc(sizeof(atomic_bool));
     if( ctx == NULL )
     {
         printf("bound_robin_create_thread_context Error keep_looping!!\n");
         return NULL;
     }
-    *b = true;
+    atomic_init(b,1);
     ctx->keep_looping = b;
 
     return ctx;

@@ -3,23 +3,24 @@
 #include "../../../utils/datastructures/threadsafe_simple_queue/threadsafe_simple_queue.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include "bound_robin_event.h"
 
 #include "bound_robin.h"
 
 
-void bound_robin_add_task(bound_robin_t *br, void *task)
+void bound_robin_add_task(bound_robin_t *br, bound_robin_event_t *task)
 {
     int index = br->current_index;
     threadsafe_simple_queue_t *q = br->th_contex[index]->thread_events;
-    push_threadsafe_simple_queue(q,task);
+    push_threadsafe_simple_queue(q,(void *)task);
     br->current_index = br->current_index + 1;
 }
-void bound_robin_broadcast_task(bound_robin_t *br, void *task)
+void bound_robin_broadcast_task(bound_robin_t *br, bound_robin_event_t *task)
 {
     for(int i=0;i<FRIXIA_WORKERS;i++)
     {
         threadsafe_simple_queue_t *q = br->th_contex[i]->thread_events;
-        push_threadsafe_simple_queue(q,task);
+        push_threadsafe_simple_queue(q,(void *)task);
     }
 }
 
@@ -55,9 +56,7 @@ void bound_robin_wait(bound_robin_t *br)
     for(int i=0;i<FRIXIA_WORKERS;i++)
     {
         thread_context_t *ctx = br->th_contex[i];
-        printf("%d %d\n",i,*(ctx->keep_looping));
         bound_robin_thread_stop(ctx);
-        printf("%d %d\n",i,*(ctx->keep_looping));
     }
 
     bound_robin_broadcast_task(br,NULL);
