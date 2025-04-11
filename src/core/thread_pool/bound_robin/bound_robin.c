@@ -25,7 +25,6 @@ void bound_robin_broadcast_task(bound_robin_t *br, bound_robin_event_t *task)
 }
 
 void bound_robin_create(bound_robin_t *br,
-                        void *th_main_fun(void *),void *th_main_arg,
                         void *th_delegate_fun(void *),void *th_delegate_arg)
 {
     pthread_barrier_t *barrier = malloc(sizeof(pthread_barrier_t));
@@ -38,15 +37,12 @@ void bound_robin_create(bound_robin_t *br,
     pthread_barrier_init(barrier, NULL, FRIXIA_WORKERS+1);
 
     br->current_index = 0;
-    br->delegate_argument = th_delegate_arg;
 
     for(int i=0;i<FRIXIA_WORKERS;i++)
     {
         threadsafe_simple_queue_t *q = create_threadsafe_simple_queue();
         thread_context_t *new_context = bound_robin_create_thread_context();
         new_context->thread_events = q;        
-        new_context->cb_main = th_main_fun;
-        new_context->cb_arg  = th_main_arg;
         new_context->create_barrier = br->create_barrier;
 
         void *casted_thread_arg = (void *)new_context;

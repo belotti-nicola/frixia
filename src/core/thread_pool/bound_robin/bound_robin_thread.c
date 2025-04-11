@@ -7,7 +7,7 @@
 
 #include "bound_robin_thread.h"
 
-void bound_robin_thread_main_loop(void *argument)
+void *bound_robin_thread_main_loop(void *argument)
 {
     thread_context_t *ctx = (thread_context_t *)argument;
     threadsafe_simple_queue_t *events = ctx->thread_events;
@@ -36,6 +36,7 @@ void bound_robin_thread_main_loop(void *argument)
     }
 
     printf("bound_robin_thread_main_loop endend.(%d tasks available )\n",events->queue->size);
+    return NULL;
 }
 
 void bound_robin_thread_stop(thread_context_t *ctx)

@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 
     int arg = 0;
     bound_robin_t br;
-    bound_robin_create(&br,deleteme_pls,&arg,deleteme_pls,&arg);
+    bound_robin_create(&br,deleteme_pls,&arg);
     sleep(2);
     //bound_robin_add_task(&br,NULL);
     bound_robin_wait(&br);
@@ -163,8 +163,6 @@ int main(int argc, char *argv[])
     frixia_detached_start_monitor(&fepoll_data);
     frixia_detached_start_crono(&crono);
 
-
-    sleep(2);
     frixia_stop(&environment);
     
     detached_join_frixia_dispatcher_new(&d_data);

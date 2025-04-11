@@ -27,7 +27,7 @@ typedef struct bound_robin_thread
 
 } bound_robin_thread_t;
 
-void bound_robin_thread_main_loop(void *ctx);
+void *bound_robin_thread_main_loop(void *ctx);
 void bound_robin_thread_stop(thread_context_t *ctx);
 thread_context_t *bound_robin_create_thread_context();
 #endif
