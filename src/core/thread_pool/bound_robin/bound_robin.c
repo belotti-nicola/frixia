@@ -79,3 +79,13 @@ void bound_robin_wait(bound_robin_t *br)
         }
     }
 }
+
+void bound_robin_stop(bound_robin_t *br)
+{
+    thread_context_t *ctx;
+    for (int i = 0; i < FRIXIA_WORKERS; i++)
+    {
+        ctx = br->th_contex[i];
+        bound_robin_thread_stop(ctx);
+    }
+}

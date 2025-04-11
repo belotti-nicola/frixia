@@ -26,6 +26,7 @@ void bound_robin_create(bound_robin_t *br,
 
 void bound_robin_add_task(bound_robin_t *br, bound_robin_event_t *e);
 void bound_robin_broadcast_task(bound_robin_t *br, bound_robin_event_t *e);
+void bound_robin_stop(bound_robin_t *br);
 void bound_robin_wait(bound_robin_t *br);
 
 #endif

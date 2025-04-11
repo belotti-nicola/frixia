@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include "frixia_fd_args.h"
+#include "frixia_callback.h"
+#include "../../utils/datastructures/simple_hash_map/simple_hash_map.h"
+#include <string.h>
 
 #include "convoy.h"
 
@@ -15,7 +18,7 @@ void convoy_add_tcp_filedescriptor(convoy_t *c,int fd, const char *ip,int port,i
         c->filedescriptors[0].fd   = fd;
         c->filedescriptors[0].type = TCP;
         set_frixia_tcp_fd(c->filedescriptors[0].type_data,ip,port,bytes);
-        c->size++;
+        c->size = 1 ;
         return;
     }
 
@@ -34,7 +37,7 @@ void convoy_add_tcp_filedescriptor(convoy_t *c,int fd, const char *ip,int port,i
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = TCP;
     set_frixia_tcp_fd(c->filedescriptors[target].type_data,ip,port,bytes);
-    c->size++;
+    c->size = c->size +1;
 }
 void convoy_add_udp_filedescriptor(convoy_t *c,int fd,const char *ip,int port,int bytes)
 {
@@ -48,7 +51,7 @@ void convoy_add_udp_filedescriptor(convoy_t *c,int fd,const char *ip,int port,in
         c->filedescriptors[0].fd   = fd;
         c->filedescriptors[0].type = UDP;
         set_frixia_udp_fd(c->filedescriptors[0].type_data,ip,port,bytes);
-        c->size++;
+        c->size = 1;
         return;
     }
 
@@ -66,8 +69,9 @@ void convoy_add_udp_filedescriptor(convoy_t *c,int fd,const char *ip,int port,in
     }
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = UDP;
-    set_frixia_udp_fd(c->filedescriptors[target].type_data,ip,port,bytes);
-    c->size++;
+    frixia_fd_args_t *args = c->filedescriptors[target].type_data;
+    set_frixia_udp_fd(args,ip,port,bytes);
+    c->size = c->size +1;
 }
 void convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,int bytes)
 {
@@ -81,7 +85,7 @@ void convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,int byte
         c->filedescriptors[0].fd   = fd;
         c->filedescriptors[0].type = FIFO;
         set_frixia_fifo_fd(c->filedescriptors[0].type_data,path,bytes);
-        c->size++;
+        c->size = 1;
         return;
     }
 
@@ -99,7 +103,7 @@ void convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,int byte
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = FIFO;
     set_frixia_fifo_fd(c->filedescriptors[target].type_data,path,bytes);
-    c->size++;
+    c->size = c->size +1;
 }
 void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int delay, int interval)
 {
@@ -113,7 +117,7 @@ void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int dela
         c->filedescriptors[0].fd   = fd;
         c->filedescriptors[0].type = TIMER;
         set_frixia_timer_fd(c->filedescriptors[0].type_data,id,delay,interval);
-        c->size++;
+        c->size = 1;
         return;
     }
     
@@ -131,7 +135,7 @@ void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int dela
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = TIMER;
     set_frixia_timer_fd(c->filedescriptors[target].type_data,id,delay,interval);
-    c->size++;
+    c->size = c->size +1;
 }
 void convoy_add_scheduler_filedescriptor(convoy_t *c, int fd, int tick)
 {
@@ -160,7 +164,7 @@ void convoy_add_scheduler_filedescriptor(convoy_t *c, int fd, int tick)
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = SCHEDULER;
     set_frixia_scheduler_fd(c->filedescriptors[target].type_data,tick);
-    c->size++;
+    c->size = c->size +1;
 }
 void convoy_add_scheduled_timer_filedescriptor(convoy_t *c,int fd)
 {
@@ -173,7 +177,7 @@ void convoy_add_scheduled_timer_filedescriptor(convoy_t *c,int fd)
     {
         c->filedescriptors[0].fd   = fd;
         c->filedescriptors[0].type = EVENTFD;
-        c->size++;
+        c->size = 1;
         return;
     }
     
@@ -189,7 +193,7 @@ void convoy_add_scheduled_timer_filedescriptor(convoy_t *c,int fd)
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = EVENTFD;
     set_frixia_eventfd_fd(c->filedescriptors[target].type_data,fd);
-    c->size++;
+    c->size = c->size +1;
 }
 void convoy_add_add_inode_filedescriptor(convoy_t *c,int fd, char *path)
 {
@@ -203,7 +207,7 @@ void convoy_add_add_inode_filedescriptor(convoy_t *c,int fd, char *path)
         c->filedescriptors[0].fd   = fd;
         c->filedescriptors[0].type = INODE;
         set_frixia_inode_fd(c->filedescriptors[0].type_data,path);
-        c->size++;
+        c->size = 1;
         return;
     }
     
@@ -219,10 +223,53 @@ void convoy_add_add_inode_filedescriptor(convoy_t *c,int fd, char *path)
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = EVENTFD;
     set_frixia_inode_fd(c->filedescriptors[target].type_data,path);
-    c->size++;
+    c->size = c->size +1;
 }
-void convoy_register_http_callback(convoy_t *c,const char *method,const char *path,void *fun, void *arg)
-{}
+
+void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const char *method,const char *path,void *(*fun)(void *), void *arg)
+{
+    int index = -1;
+    int size  = c->size;
+    for(int i=0; i<size; i++)
+    {
+        frixia_file_descriptor_t fd = c->filedescriptors[i];
+        if (fd.type != TCP)
+        {
+            break;
+        }
+        frixia_tcp_t *tcp_info = fd.type_data->tcp_info;
+        if( strcmp(tcp_info->ip,ip) == 0 &&
+            tcp_info->port == port )
+        {
+            index = i;
+        }
+        printf("%s %d %d\n",tcp_info->ip,tcp_info->port,tcp_info->read_size);
+    }
+    if( index == -1 )
+    {
+        printf("HTTP Entry not present! %s %d\n",ip,port);
+        return;
+    }
+    printf("index %d\n",index);
+
+    c->filedescriptors[index].protocol = HTTP;
+
+    frixia_callback_t cb = create_frixia_callback(fun,arg);
+    HashEntry_t *he = create_hash_entry(method,&cb);  
+    HashMap_t *hm;
+    void *ptr = c->filedescriptors[index].protocol_data;
+    if( ptr == NULL )
+    {
+        hm = create_hash_map(16);
+        c->filedescriptors[size].protocol_data = hm;
+    }
+    else 
+    {
+        hm = (HashMap_t *)c->filedescriptors[size].protocol_data;
+    }
+    add_entry(hm,he);
+}
+
 void convoy_register_fins_callback(convoy_t *c)
 {}
 void convoy_register_timer_callback(convoy_t *c,const char *id,void *fun,void *arg)

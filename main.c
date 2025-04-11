@@ -20,7 +20,7 @@
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
 
 
-void foo(int fd, const char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
+void *foo(int fd, const char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
 {
     *n = *n+1;
 
@@ -102,17 +102,17 @@ int main(int argc, char *argv[])
     
     convoy_t convoy;
     convoy.size = 0;
-    frixia_fd_args_t fd;
-    frixia_tcp_t tcp;
-    char *ip = "0.0.0.0";
-    tcp.ip =ip;
-    tcp.port = 0;
-    tcp.read_size = -1;
-    fd.tcp_info = &tcp;
-    frixia_file_descriptor_t frixia_fd = {0,UNDEFINED,&fd,NO_PROTOCOL,NULL};
+    frixia_fd_args_t fdargs[MAXIMUM_FD_NUMBER];
+    frixia_tcp_t tcps[MAXIMUM_FD_NUMBER];
     for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
     {
-        convoy.filedescriptors[i] = frixia_fd;
+        convoy.filedescriptors[i].fd = -1;
+        convoy.filedescriptors[i].type = UNDEFINED;
+        convoy.filedescriptors[i].protocol_data = NULL;
+        convoy.filedescriptors[i].type_data = &fdargs[i];
+        fdargs[i].tcp_info = &tcps[i];
+        convoy.filedescriptors[i].protocol = NO_PROTOCOL;
+        convoy.filedescriptors[i].protocol_data = NULL;
     }
     
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
@@ -150,9 +150,7 @@ int main(int argc, char *argv[])
     int arg = 0;
     bound_robin_t br;
     bound_robin_create(&br,deleteme_pls,&arg);
-    sleep(2);
-    //bound_robin_add_task(&br,NULL);
-    bound_robin_wait(&br);
+    environment.bound_robin = &br;
 
     fepoll_th_data_t fepoll_data;
     int a = 0;bool started = false;
@@ -163,11 +161,25 @@ int main(int argc, char *argv[])
     frixia_detached_start_monitor(&fepoll_data);
     frixia_detached_start_crono(&crono);
 
+    frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/foo",foo,NULL);
+    frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/goo",goo,NULL);
+    
+    sleep(5);
+    printf("Sleep ended. Stopping all components.\n");
+    
     frixia_stop(&environment);
     
     detached_join_frixia_dispatcher_new(&d_data);
+    printf("Dispatcher ended.\n");
+    
     frixia_detached_wait_monitor(&fepoll_data);
+    printf("Fepoll ended.\n");
+    
     frixia_wait_crono(&crono);
+    printf("Crono ended.\n");
+    
+    bound_robin_wait(&br);
+    printf("Bound robin ended.\n");
 
     /*
     frixia_epoll_t *fepoll = create_frixia_epoll();

@@ -477,3 +477,9 @@ void frixia_add_inode(frixia_environment_t *env, char *filepath)
     convoy_t *c = env->convoy;
     convoy_add_add_inode_filedescriptor(c,fd,filepath);
 }
+
+void frixia_register_http_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg)
+{
+    convoy_t *convoy = env->convoy;
+    convoy_register_http_callback(convoy,ip,port,method,path,fun,arg);
+}

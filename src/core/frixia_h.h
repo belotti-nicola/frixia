@@ -8,6 +8,7 @@
 #include "../core/filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "crono/crono.h"
 #include "../core/fdispatcher/frixia_dispatcher.h"
+#include "../core/thread_pool/bound_robin/bound_robin.h"
 
 typedef struct frixia_environment
 {
@@ -17,6 +18,7 @@ typedef struct frixia_environment
     crono_t *crono;
     frixia_dispatcher_t *dispatcher;
     frixia_thread_pool_t *th_pool;
+    bound_robin_t *bound_robin;
 
 } frixia_environment_t;
 
@@ -27,6 +29,8 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
 void frixia_add_scheduler(frixia_environment_t *env, int tick_size);
 void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, int interval);
 void frixia_add_inode(frixia_environment_t *env, char *filepath);
+
+void frixia_register_http_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg);
 
 
 
