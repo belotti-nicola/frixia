@@ -76,6 +76,10 @@ void bound_robin_wait(bound_robin_t *br)
     
     for(int i=0;i<FRIXIA_WORKERS;i++)
     {
-        pthread_join(br->th[i],NULL);
+        int rc = pthread_join(br->th[i],NULL);
+        if( rc < 0 )
+        {
+            printf("Error bound robin:: join rc %d\n",rc);
+        }
     }
 }

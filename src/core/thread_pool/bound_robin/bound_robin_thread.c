@@ -17,7 +17,7 @@ void bound_robin_thread_main_loop(void *argument)
 
     atomic_bool *keep_looping = ctx->keep_looping;
     pthread_barrier_wait(ctx->create_barrier);
-    while( atomic_load(keep_looping) == true )
+    while( atomic_load(keep_looping) == true || !simple_threadsafe_queue_is_empty(events))
     {
         void *event = pop_threadsafe_simple_queue(events);
         if(event == NULL)
@@ -35,7 +35,7 @@ void bound_robin_thread_main_loop(void *argument)
         */
     }
 
-    printf("bound_robin_thread_main_loop endend.\n");
+    printf("bound_robin_thread_main_loop endend.(%d tasks available )\n",events->queue->size);
 }
 
 void bound_robin_thread_stop(thread_context_t *ctx)
