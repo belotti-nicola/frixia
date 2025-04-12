@@ -19,7 +19,7 @@ int main()
     );
 
     bound_robin_t br; 
-    bound_robin_create(&br,test_main_function,(void *)&test_value);
+    bound_robin_create(&br);
     bound_robin_broadcast_task(&br,&testing_task);
     bound_robin_add_task(&br,&testing_task);
     bound_robin_broadcast_task(&br,&testing_task);

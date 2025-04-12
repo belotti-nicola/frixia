@@ -1,9 +1,10 @@
 TODO   
-    eventfd vs timer
     CALLBACKS SIZE IS KNOWN AT compile time known
     valgrind support
     debug level prints
     convoy is shared -> make it threadsafe
+    simplify API start
+    remove unnecessary elements
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

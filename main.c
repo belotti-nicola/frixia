@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 
     int arg = 0;
     bound_robin_t br;
-    bound_robin_create(&br,deleteme_pls,&arg);
+    bound_robin_create(&br);
     environment.bound_robin = &br;
 
     fepoll_th_data_t fepoll_data;
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
     frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/foo",foo,NULL);
     frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/goo",goo,NULL);
     
-    sleep(5);
+    sleep(10);
     printf("Sleep ended. Stopping all components.\n");
     
     frixia_stop(&environment);

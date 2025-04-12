@@ -24,8 +24,7 @@ void bound_robin_broadcast_task(bound_robin_t *br, bound_robin_event_t *task)
     }
 }
 
-void bound_robin_create(bound_robin_t *br,
-                        void *th_delegate_fun(void *),void *th_delegate_arg)
+void bound_robin_create(bound_robin_t *br)
 {
     pthread_barrier_t *barrier = malloc(sizeof(pthread_barrier_t));
     if( barrier == NULL)
