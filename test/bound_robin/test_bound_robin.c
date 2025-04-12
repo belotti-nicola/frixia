@@ -13,17 +13,13 @@ int main()
 {
     atomic_int test_value = 0;
     atomic_init(&test_value,0);
-    bound_robin_event_t testing_task = bound_robin_create_event(
-        test_main_function,
-        (void *)&test_value
-    );
 
     bound_robin_t br; 
     bound_robin_create(&br);
-    bound_robin_add_task_to_all_workers(&br,&testing_task);
-    bound_robin_add_task_to_one_worker(&br,&testing_task);
-    bound_robin_add_task_to_all_workers(&br,&testing_task);
-    bound_robin_add_task_to_all_workers(&br,&testing_task);
+    bound_robin_add_task_to_all_workers(&br,test_main_function,&test_value);
+    bound_robin_add_task_to_one_worker(&br,test_main_function,&test_value);
+    bound_robin_add_task_to_all_workers(&br,test_main_function,&test_value);
+    bound_robin_add_task_to_all_workers(&br,test_main_function,&test_value);
     bound_robin_wait(&br);
 
     int result = atomic_load(&test_value);

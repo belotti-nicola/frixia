@@ -9,6 +9,6 @@ typedef struct bound_robin_event
 } bound_robin_event_t;
 
 
-bound_robin_event_t bound_robin_create_event(void *(*fun)(void *),void *arg);
+bound_robin_event_t *bound_robin_create_event(void *(*fun)(void *),void *arg);
 
 #endif

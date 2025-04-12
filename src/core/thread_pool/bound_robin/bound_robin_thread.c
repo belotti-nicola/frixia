@@ -26,6 +26,11 @@ void *bound_robin_thread_main_loop(void *argument)
             continue;
         }
         bound_robin_event_t *ev = (bound_robin_event_t *)event;
+        if( ev->fun == NULL )
+        {
+            printf("Event fun null!!!\n");
+            continue;
+        }
         ev->fun(ev->arg);
         printf("BR::Event popped done.\n");
         /*
