@@ -8,14 +8,14 @@
 #include "bound_robin.h"
 
 
-void bound_robin_add_task(bound_robin_t *br, bound_robin_event_t *task)
+void bound_robin_add_task_to_one_worker(bound_robin_t *br, bound_robin_event_t *task)
 {
     int index = br->current_index;
     threadsafe_simple_queue_t *q = br->th_contex[index]->thread_events;
     push_threadsafe_simple_queue(q,(void *)task);
     br->current_index = br->current_index + 1;
 }
-void bound_robin_broadcast_task(bound_robin_t *br, bound_robin_event_t *task)
+void bound_robin_add_task_to_all_workers(bound_robin_t *br, bound_robin_event_t *task)
 {
     for(int i=0;i<FRIXIA_WORKERS;i++)
     {
@@ -67,7 +67,7 @@ void bound_robin_wait(bound_robin_t *br)
         bound_robin_thread_stop(ctx);
     }
 
-    bound_robin_broadcast_task(br,NULL);
+    bound_robin_add_task_to_all_workers(br,NULL);
     
     for(int i=0;i<FRIXIA_WORKERS;i++)
     {

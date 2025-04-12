@@ -20,10 +20,10 @@ int main()
 
     bound_robin_t br; 
     bound_robin_create(&br);
-    bound_robin_broadcast_task(&br,&testing_task);
-    bound_robin_add_task(&br,&testing_task);
-    bound_robin_broadcast_task(&br,&testing_task);
-    bound_robin_broadcast_task(&br,&testing_task);
+    bound_robin_add_task_to_all_workers(&br,&testing_task);
+    bound_robin_add_task_to_one_worker(&br,&testing_task);
+    bound_robin_add_task_to_all_workers(&br,&testing_task);
+    bound_robin_add_task_to_all_workers(&br,&testing_task);
     bound_robin_wait(&br);
 
     int result = atomic_load(&test_value);
