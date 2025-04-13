@@ -7,4 +7,6 @@ add_library(fdispatcher
     detached_frixia_dispatcher.h
     detached_frixia_dispatcher_new.c
     detached_frixia_dispatcher_new.h
+    frixia_dispatcher_handler.h
+    frixia_dispatcher_handler.c
 )

@@ -2,6 +2,7 @@
 #include "../../../utils/datastructures/simple_hash_map/simple_hash_map.h"
 #include "../../../utils/datastructures/simple_list/simple_list.h"
 #include "../../fevent/frixia_event.h"
+#include "../../convoy/convoy.h"
 #include "callback_data.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -150,7 +151,7 @@ void add_timer_entry_to_frixia_callbacks(
 }
 
 frixia_callbacks_data_t *frixia_get_http_callback(
-    frixia_callbacks_data_structure_t *datastructure,
+    convoy_t                          *convoy,
     int                                fd,
     const char                        *method,
     int                                method_len,
@@ -158,22 +159,19 @@ frixia_callbacks_data_t *frixia_get_http_callback(
     int                                path_len
     )
 {
-    simple_list_t      *l    = datastructure->events_callbacks;
-    simple_list_elem_t *curr = l->first;
-    while( curr !=  NULL)
+    int size = convoy->size;
+    for(int i=0;i<size;i++)
     {
-        frixia_callback_entry_t *entry = (frixia_callback_entry_t *)curr->val;
-        int casted_fd  = entry->fd;
-        FRIXIA_SUPPORTED_PROTOCOL_T casted_p  = entry->protocol;
-        if( casted_fd == fd && casted_p == HTTP)
+        frixia_file_descriptor_t frixia_fd = convoy->filedescriptors[i];
+        if ( frixia_fd.fd == fd )
         {
-            HashMap_t   *hm = (HashMap_t *)entry->data;
+            HashMap_t *hm = (HashMap_t *) convoy->filedescriptors[i].protocol_data;
             char key[50]="";
             strncat(key,method,method_len);
             strncat(key,":",1);
             strncat(key,path,path_len);
+
             HashEntry_t *he = get_entry_value(hm,key);
-            printf("hm %p '%s'\n",hm,key);
             if( he == NULL )
             {
                 printf("NULL ENTRY for fd %d key %s\n",fd,key);
@@ -182,8 +180,8 @@ frixia_callbacks_data_t *frixia_get_http_callback(
             frixia_callbacks_data_t *retVal = (frixia_callbacks_data_t *)he->value;
             return retVal;
         }
-        curr = curr->next;
     }
 
+    printf("FD not found for HTTP entry in convoy: returning null\n");
     return NULL;
 }

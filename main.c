@@ -95,7 +95,10 @@ void *timer_callback(int fd)
 int main(int argc, char *argv[])
 {  
     frixia_events_queue_t *events_queue = frixia_events_queue_create(); 
-    
+       
+    bound_robin_t br;
+    bound_robin_create(&br);
+
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
     fadd_stop_filedescriptor(fepoll);
@@ -112,7 +115,6 @@ int main(int argc, char *argv[])
         convoy.filedescriptors[i].type_data = &fdargs[i];
         fdargs[i].tcp_info = &tcps[i];
         convoy.filedescriptors[i].protocol = NO_PROTOCOL;
-        convoy.filedescriptors[i].protocol_data = NULL;
     }
     
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
@@ -121,13 +123,15 @@ int main(int argc, char *argv[])
 
     frixia_dispatcher_t *dispatcher = create_frixia_dispatcher(FRIXIA_WORKERS,4);
     set_frixia_dispatcher_tasks(dispatcher,events_queue);
-    set_frixia_dispatcher_thread_pool(dispatcher,NULL);//TODO IMPLEMENT
+    set_frixia_dispatcher_bound_robin(dispatcher,&br);
+    dispatcher->convoy = &convoy;
     frixia_dispatcher_data_t d_data;
     d_data.dispatcher = dispatcher;
     d_data.started = false;
     detached_start_frixia_dispatcher_new(&d_data);
 
     frixia_environment_t environment;
+    environment.bound_robin = &br;
     environment.convoy = &convoy;
     environment.fepoll = fepoll;
     environment.dispatcher = dispatcher;
@@ -147,10 +151,7 @@ int main(int argc, char *argv[])
     fepoll->events_queue = events_queue;
     suite->events_q = events_queue;
 
-    int arg = 0;
-    bound_robin_t br;
-    bound_robin_create(&br);
-    environment.bound_robin = &br;
+
 
     fepoll_th_data_t fepoll_data;
     int a = 0;bool started = false;

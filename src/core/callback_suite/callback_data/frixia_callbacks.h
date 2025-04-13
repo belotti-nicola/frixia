@@ -6,6 +6,8 @@
 #include "../../protocols/http/frixia_http_parser.h"
 #include "callback_data.h"
 #include "../../frixia_common.h"
+#include "../../convoy/convoy.h"
+
 
 typedef struct frixia_callbacks_data_structure
 {
@@ -46,7 +48,7 @@ void add_timer_entry_to_frixia_callbacks(
     );
 
 frixia_callbacks_data_t *frixia_get_http_callback(
-    frixia_callbacks_data_structure_t *datastructure,
+    convoy_t *convoy,
     int fd,
     const char *method,
     int method_len,

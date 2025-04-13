@@ -22,22 +22,17 @@ void *bound_robin_thread_main_loop(void *argument)
         void *event = pop_threadsafe_simple_queue(events);
         if(event == NULL)
         {
-            printf("Event null!!!\n");
+            printf("BR:: EVENT NULL!!!\n");
             continue;
         }
         bound_robin_event_t *ev = (bound_robin_event_t *)event;
         if( ev->fun == NULL )
         {
-            printf("Event fun null!!!\n");
+            printf("BR:: EVENT->fun NULL!!!\n");
             continue;
         }
         ev->fun(ev->arg);
         printf("BR::Event popped done.\n");
-        /*
-        cb_arg.event = event;
-        cb_arg.client_code = ctx->cb_arg;
-        fun((void *)&cb_arg);
-        */
     }
 
     printf("bound_robin_thread_main_loop endend.(%d tasks available )\n",events->queue->size);

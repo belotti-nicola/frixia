@@ -233,9 +233,9 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
     for(int i=0; i<size; i++)
     {
         frixia_file_descriptor_t fd = c->filedescriptors[i];
-        if (fd.type != TCP)
+        if ( fd.type != TCP )
         {
-            break;
+            continue;
         }
         frixia_tcp_t *tcp_info = fd.type_data->tcp_info;
         if( strcmp(tcp_info->ip,ip) == 0 &&
@@ -243,7 +243,7 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
         {
             index = i;
         }
-        printf("%s %d %d\n",tcp_info->ip,tcp_info->port,tcp_info->read_size);
+        printf("Entry found::%s %d %d\n",tcp_info->ip,tcp_info->port,tcp_info->read_size);
     }
     if( index == -1 )
     {
@@ -260,11 +260,13 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
     void *ptr = c->filedescriptors[index].protocol_data;
     if( ptr == NULL )
     {
+        printf("Creating HTTP structure\n");
         hm = create_hash_map(16);
         c->filedescriptors[size].protocol_data = hm;
     }
     else 
     {
+        printf("Adding to HTTP structure\n");
         hm = (HashMap_t *)c->filedescriptors[size].protocol_data;
     }
     add_entry(hm,he);

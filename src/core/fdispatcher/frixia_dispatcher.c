@@ -44,6 +44,11 @@ void set_frixia_dispatcher_thread_pool(frixia_dispatcher_t *fd, frixia_thread_po
     fd->thread_pool = tp;
 }
 
+void set_frixia_dispatcher_bound_robin(frixia_dispatcher_t *fd, bound_robin_t *br)
+{
+    fd->bound_robin = br;
+}
+
 void dispatch_event_to_workers(frixia_dispatcher_t *dispatcher,frixia_event_t *event)
 {
     int task_index = dispatcher->task_index;
