@@ -257,19 +257,21 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
     frixia_callback_t cb = create_frixia_callback(fun,arg);
     HashEntry_t *he = create_hash_entry(method,&cb);  
     HashMap_t *hm;
-    void *ptr = c->filedescriptors[index].protocol_data;
+    void **ptr = c->filedescriptors[index].protocol_data;
     if( ptr == NULL )
     {
-        printf("Creating HTTP structure\n");
         hm = create_hash_map(16);
-        c->filedescriptors[size].protocol_data = hm;
+        add_entry(hm,he);
+        c->filedescriptors[index].protocol_data = hm; 
+        printf("Creating HTTP structure %p\n",hm);
     }
     else 
     {
         printf("Adding to HTTP structure\n");
-        hm = (HashMap_t *)c->filedescriptors[size].protocol_data;
+        void *hash_map_void = *ptr;
+        hm = (HashMap_t *) ptr;
+        add_entry(hm,he);
     }
-    add_entry(hm,he);
 }
 
 void convoy_register_fins_callback(convoy_t *c)

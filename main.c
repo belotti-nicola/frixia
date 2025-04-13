@@ -111,10 +111,10 @@ int main(int argc, char *argv[])
     {
         convoy.filedescriptors[i].fd = -1;
         convoy.filedescriptors[i].type = UNDEFINED;
-        convoy.filedescriptors[i].protocol_data = NULL;
         convoy.filedescriptors[i].type_data = &fdargs[i];
         fdargs[i].tcp_info = &tcps[i];
         convoy.filedescriptors[i].protocol = NO_PROTOCOL;
+        convoy.filedescriptors[i].protocol_data = NULL;
     }
     
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);

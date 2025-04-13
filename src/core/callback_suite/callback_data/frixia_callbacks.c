@@ -165,7 +165,9 @@ frixia_callbacks_data_t *frixia_get_http_callback(
         frixia_file_descriptor_t frixia_fd = convoy->filedescriptors[i];
         if ( frixia_fd.fd == fd )
         {
-            HashMap_t *hm = (HashMap_t *) convoy->filedescriptors[i].protocol_data;
+            void       **p = convoy->filedescriptors[i].protocol_data;
+            void      *ptr = *p;
+            HashMap_t *hm = (HashMap_t *) p;
             char key[50]="";
             strncat(key,method,method_len);
             strncat(key,":",1);

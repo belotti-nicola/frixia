@@ -8,6 +8,6 @@ typedef struct frixia_file_descriptor
     enum FrixiaFDType type;
     frixia_fd_args_t  *type_data;
     FRIXIA_SUPPORTED_PROTOCOL_T protocol;
-    void *protocol_data;
+    void **protocol_data;
 
 } frixia_file_descriptor_t;

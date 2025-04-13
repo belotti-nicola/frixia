@@ -65,14 +65,13 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
     int   index   = compute_hash(key) % modulus; 
 
     printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
-    if( strcmp((hm->buckets+index)->key,key)  == 0 )
-    {
-        return (hm->buckets+index);
-    }
-
-    int counter = 1;
+    int counter = 0;
     do
     {
+        if ( (hm->buckets+ index)->key == NULL )
+        {
+            continue;
+        }
         index = (index+1)%modulus;
         printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
         if( strcmp((hm->buckets+index)->key,key)  == 0 )
