@@ -50,10 +50,10 @@ void *foo(int fd, const char *fullpath, int fullpath_len, void *headers, int hea
     }
 }
 
-void goo(int fd, int *n)
+void *goo(int fd, const char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
 {
     *n = *n*2;
-    printf("foo function called %d\n",*n);
+    printf("goo function called %d\n",*n);
     
     char response[] =
                  "HTTP/1.1 404 Not Found\r\n"
@@ -163,8 +163,10 @@ int main(int argc, char *argv[])
     frixia_detached_start_monitor(&fepoll_data);
     frixia_detached_start_crono(&crono);
 
-    frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/foo",foo,NULL);
-    frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/goo",goo,NULL);
+    int count_foo = 3;
+    int count_goo = 2;
+    frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/foo",foo,&count_foo);
+    frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/goo",goo,&count_goo);
     
     sleep(10);
     printf("Sleep ended. Stopping all components.\n");

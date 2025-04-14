@@ -93,7 +93,7 @@ void add_http_entry_to_frixia_callbacks(
         curr = curr->next;
     }
 
-    HashMap_t *hm = create_hash_map(2);//TODO SIZE
+    HashMap_t *hm = create_hash_map(16);//TODO SIZE
     add_entry(hm,he);
     frixia_callback_entry_t *new_entry = create_frixia_callback_entry(fd,TCP,HTTP,hm);
     add_item(l,new_entry);
