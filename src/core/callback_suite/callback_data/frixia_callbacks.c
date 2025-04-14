@@ -167,12 +167,12 @@ frixia_callbacks_data_t *frixia_get_http_callback(
         {
             void       **p = convoy->filedescriptors[i].protocol_data;
             void      *ptr = *p;
-            HashMap_t *hm = (HashMap_t *) p;
+            HashMap_t *hm = (HashMap_t *) ptr;
+            printf("trace this %p\n",hm);
             char key[50]="";
             strncat(key,method,method_len);
             strncat(key,":",1);
             strncat(key,path,path_len);
-
             HashEntry_t *he = get_entry_value(hm,key);
             if( he == NULL )
             {

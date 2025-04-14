@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
     convoy.size = 0;
     frixia_fd_args_t fdargs[MAXIMUM_FD_NUMBER];
     frixia_tcp_t tcps[MAXIMUM_FD_NUMBER];
+    void **protocol_data_arr = malloc(MAXIMUM_FD_NUMBER * sizeof(void *));
     for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
     {
         convoy.filedescriptors[i].fd = -1;
@@ -114,7 +115,7 @@ int main(int argc, char *argv[])
         convoy.filedescriptors[i].type_data = &fdargs[i];
         fdargs[i].tcp_info = &tcps[i];
         convoy.filedescriptors[i].protocol = NO_PROTOCOL;
-        convoy.filedescriptors[i].protocol_data = NULL;
+        convoy.filedescriptors[i].protocol_data  = protocol_data_arr+i ;
     }
     
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);

@@ -254,23 +254,30 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
 
     c->filedescriptors[index].protocol = HTTP;
 
-    frixia_callback_t cb = create_frixia_callback(fun,arg);
-    HashEntry_t *he = create_hash_entry(method,&cb);  
-    HashMap_t *hm;
+    frixia_callback_t *cb = create_frixia_callback(fun,arg);
+    int method_len = strlen(method);
+    int path_len   = strlen(path);
+    
+    char *key = calloc(sizeof(char),50);//TODO CHECK IF THE CALLOC IS NECESSARY: WHY NOT URL ONLY
+    strncat(key,method,method_len);
+    strncat(key,":",1);
+    strncat(key,path,path_len);
+    HashEntry_t *he = create_hash_entry(key,cb);  
     void **ptr = c->filedescriptors[index].protocol_data;
-    if( ptr == NULL )
+    if( *ptr == NULL )
     {
-        hm = create_hash_map(16);
+        HashMap_t *hm = create_hash_map(16);
         add_entry(hm,he);
-        c->filedescriptors[index].protocol_data = hm; 
+        *(c->filedescriptors[index].protocol_data) = hm; 
         printf("Creating HTTP structure %p\n",hm);
     }
     else 
     {
-        printf("Adding to HTTP structure\n");
         void *hash_map_void = *ptr;
-        hm = (HashMap_t *) ptr;
+        HashMap_t *hm = (HashMap_t *) hash_map_void;
         add_entry(hm,he);
+        printf("Adding to HTTP structure %p\n",hm);
+
     }
 }
 

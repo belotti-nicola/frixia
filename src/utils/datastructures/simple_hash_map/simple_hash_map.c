@@ -27,6 +27,7 @@ void add_entry(HashMap_t *hm, HashEntry_t *entry)
 {
     if(hm->size >= hm->maximum_size)
     {
+        printf("Error::add_entry::size: %d %d\n",hm->size,hm->maximum_size);
         return;
     }
 
@@ -68,17 +69,29 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
     int counter = 0;
     do
     {
-        if ( (hm->buckets+ index)->key == NULL )
+        if(  hm->buckets               == NULL)
         {
+            counter++;
             continue;
         }
-        index = (index+1)%modulus;
-        printf("(hm->buckets+index)->key '%s', key '%s'\n",(hm->buckets+index)->key,key);
+        
+        if ( (hm->buckets+ index)      == NULL )
+        {
+            counter++;
+            continue;
+        }
+        if ( (hm->buckets+ index)->key == NULL )
+        {
+            counter++;
+            continue;
+        }
+        printf("(hm->buckets+index)->key '%s', key '%s' (%d)\n",(hm->buckets+index)->key,key,counter);
         if( strcmp((hm->buckets+index)->key,key)  == 0 )
         {
             return (hm->buckets+index); 
         }
         counter++;
+        index = (index+1)%modulus;
 
     } while ( counter < hm->maximum_size );
     
