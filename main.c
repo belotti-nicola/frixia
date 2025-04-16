@@ -147,13 +147,6 @@ int main(int argc, char *argv[])
     frixia_add_fifo(&environment,"fifo",1024);
     frixia_add_inode(&environment,".");
 
-    frixia_suite_t *suite = create_frixia_suite(10);
-    suite->fepoll = fepoll;
-    fepoll->events_queue = events_queue;
-    suite->events_q = events_queue;
-
-
-
     fepoll_th_data_t fepoll_data;
     int a = 0;bool started = false;
     fepoll_data.convoy = &convoy;
