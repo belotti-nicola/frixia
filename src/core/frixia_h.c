@@ -258,6 +258,9 @@ int frixia_stop(frixia_environment_t *environment)
     frixia_dispatcher_t *dispatcher = environment->dispatcher;
     dispatcher_stop(dispatcher);
 
+    bound_robin_t *br = environment->bound_robin;
+    bound_robin_stop(br);
+
 }
 
 /*
