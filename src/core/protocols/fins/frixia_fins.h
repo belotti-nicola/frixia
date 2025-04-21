@@ -3,7 +3,7 @@
 
 #include "frixia_fins_message.h"
 
-int read_fins_message(char *s,
+int parse_fins_message(char *s,
                       size_t buffer_length,
                       fins_message_t *message);
 

@@ -160,7 +160,9 @@ int main(int argc, char *argv[])
     int count_goo = 2;
     frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/foo",foo,&count_foo);
     frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/goo",goo,&count_goo);
-    
+    frixia_register_fins_callback(&environment,UDP,"0.0.0.0",8888,1,2,foo,NULL);//TODO foo is a work-around here
+
+
     sleep(10);
     printf("Sleep ended. Stopping all components.\n");
     

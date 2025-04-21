@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/epoll.h>
+#include <stdint.h>
 
 #include "frixia_h.h"
 #include "frixia_common.h"
@@ -485,4 +486,10 @@ void frixia_register_http_callback(frixia_environment_t *env, const char *ip, in
 {
     convoy_t *convoy = env->convoy;
     convoy_register_http_callback(convoy,ip,port,method,path,fun,arg);
+}
+
+void frixia_register_fins_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second, void *(*fun)(void *), void *arg)
+{
+    convoy_t *convoy = env->convoy;
+    convoy_register_fins_callback(convoy,type,ip,port,first,second,fun,arg);
 }

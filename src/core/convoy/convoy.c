@@ -2,6 +2,7 @@
 #include "frixia_fd_args.h"
 #include "frixia_callback.h"
 #include "../../utils/datastructures/simple_hash_map/simple_hash_map.h"
+#include <stdint.h>
 #include <string.h>
 
 #include "convoy.h"
@@ -281,7 +282,71 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
     }
 }
 
-void convoy_register_fins_callback(convoy_t *c)
-{}
+void convoy_register_fins_callback(convoy_t *c, enum FrixiaFDType type, const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg)
+{
+    if ( type != TCP && type != UDP )
+    {
+        printf("Error registering FINS: type can be only TCP or UDP (value is instead: %d)\n",type);
+        return;
+    }
+
+    int index = -1;
+    int size  = c->size;
+    for(int i=0; i<size; i++)
+    {
+        frixia_file_descriptor_t fd = c->filedescriptors[i];
+        if ( type != TCP && type != UDP )
+        {
+            continue;
+        }
+        if ( type == TCP )
+        {
+            frixia_tcp_t *tcp_info = fd.type_data->tcp_info;
+            if( strcmp(tcp_info->ip,ip) == 0 &&
+                tcp_info->port == port )
+            {
+                index = i;
+                break;
+            }
+        }
+        if ( type == UDP )
+        {
+            frixia_udp_t *udp_info = fd.type_data->udp_info;
+            if( strcmp(udp_info->ip,ip) == 0 &&
+                udp_info->port == port )
+            {
+                index = i;
+                break;
+            }
+        }      
+    }
+    if( index == -1 )
+    {
+        printf("FINS Entry not present! %s %d %d\n",ip,port,type);
+        return;
+    }
+
+    c->filedescriptors[index].protocol = FINS;
+    char *key = calloc(sizeof(char),5);
+    uint16_t value_16bits = second*16+first;
+    snprintf(key, 6, "%u", value_16bits);
+    frixia_callback_t *cb = create_frixia_callback(fun,arg);
+    HashEntry_t *he = create_hash_entry(key,cb);  
+    void **ptr = c->filedescriptors[index].protocol_data;
+    if( *ptr == NULL )
+    {
+        HashMap_t *hm = create_hash_map(16);
+        add_entry(hm,he);
+        *(c->filedescriptors[index].protocol_data) = hm; 
+        printf("Creating FINS structure %p\n",hm);
+    }
+    else 
+    {
+        void *hash_map_void = *ptr;
+        HashMap_t *hm = (HashMap_t *) hash_map_void;
+        add_entry(hm,he);
+        printf("Adding to FINS structure %p\n",hm);
+    }
+}
 void convoy_register_timer_callback(convoy_t *c,const char *id,void *fun,void *arg)
 {}                                            
