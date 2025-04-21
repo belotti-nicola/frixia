@@ -37,12 +37,12 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     fins_message_t msg;
     parse_fins_message(buffer,fd_dimension,&msg);
     
-    printf("FINS_MSG:: %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
-        msg.ICF,msg.RSV,msg.GCT,
-        msg.DNA,msg.DA1,msg.DA2,
-        msg.SNA,msg.DA1,msg.DA2,
-        msg.SNA,msg.SA1,msg.SA2,
-        msg.SID,msg.payload[0],msg.payload_length);
+    printf("FINS_MSG::%s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d %s:%d\n",
+        "ICF",msg.ICF,"RSV",msg.RSV,"GCT",msg.GCT,
+        "DNA",msg.DNA,"DA1",msg.DA1,"DA2",msg.DA2,
+        "SNA",msg.SNA,"DA1",msg.DA1,"DA2",msg.DA2,
+        "SNA",msg.SNA,"SA1",msg.SA1,"SA2",msg.SA2,
+        "SID",msg.SID,"payload0",msg.payload[0],"length",msg.payload_length);
 
     return 0;
 }

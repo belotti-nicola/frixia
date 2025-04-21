@@ -243,8 +243,9 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
             tcp_info->port == port )
         {
             index = i;
+            printf("Entry found::%s %d %d\n",tcp_info->ip,tcp_info->port,tcp_info->read_size);
+            break;
         }
-        printf("Entry found::%s %d %d\n",tcp_info->ip,tcp_info->port,tcp_info->read_size);
     }
     if( index == -1 )
     {
@@ -295,7 +296,7 @@ void convoy_register_fins_callback(convoy_t *c, enum FrixiaFDType type, const ch
     for(int i=0; i<size; i++)
     {
         frixia_file_descriptor_t fd = c->filedescriptors[i];
-        if ( type != TCP && type != UDP )
+        if ( type != fd.type )
         {
             continue;
         }
@@ -316,6 +317,7 @@ void convoy_register_fins_callback(convoy_t *c, enum FrixiaFDType type, const ch
                 udp_info->port == port )
             {
                 index = i;
+                printf("Entry found::%s %d %d\n",udp_info->ip,udp_info->port,udp_info->read_size);
                 break;
             }
         }      
@@ -327,7 +329,7 @@ void convoy_register_fins_callback(convoy_t *c, enum FrixiaFDType type, const ch
     }
 
     c->filedescriptors[index].protocol = FINS;
-    char *key = calloc(sizeof(char),5);
+    char *key = calloc(sizeof(char),6);
     uint16_t value_16bits = second*16+first;
     snprintf(key, 6, "%u", value_16bits);
     frixia_callback_t *cb = create_frixia_callback(fun,arg);
