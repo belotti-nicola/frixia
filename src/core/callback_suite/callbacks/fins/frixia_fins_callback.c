@@ -10,6 +10,7 @@
 
 int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
 {
+    printf("FINS CALLBACK: fd %d fd_dimension %d type %d\n",fd,fd_dimension,type);
     if( type != TCP && type != UDP )
     {
         printf("FINS Wrong read protocol:%d\n",type);
@@ -18,9 +19,10 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
 
     char buffer[fd_dimension];
     int reply_fd = -1;
+    int bytes_read = -1;
     if(type == TCP)
     {
-        read_tcp(fd,
+        bytes_read = read_tcp(fd,
             buffer,
             fd_dimension,
             &reply_fd
@@ -28,15 +30,29 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     }
     if(type == UDP)
     {
-        read_udp(fd,
-                 buffer,
-                 fd_dimension
+        bytes_read = read_udp(fd,
+            buffer,
+            fd_dimension
         );
     }
 
-    fins_message_t msg;
-    parse_fins_message(buffer,fd_dimension,&msg);
+    if ( bytes_read < 0 )
+    {
+        printf("FINS CALLBACK ERROR:: bytes_read is negative!\n");
+        return 0;
+    }
     
+
+    fins_message_t msg;
+    printf("FINS CALLBACK:: read:%.*s (%d bytes)\n",bytes_read,buffer);
+    int rc = parse_fins_message(buffer,bytes_read-1,&msg);
+    if ( rc < 0 )
+    {
+        printf("FINS CALLBACK ERROR:: parse failed!\n");
+        return 0;
+    }
+
+
     printf("FINS_MSG::%s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:%lu\n",
         "ICF",msg.ICF,"RSV",msg.RSV,"GCT",msg.GCT,
         "DNA",msg.DNA,"DA1",msg.DA1,"DA2",msg.DA2,
