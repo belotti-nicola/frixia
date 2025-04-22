@@ -142,3 +142,28 @@ int read_udp(int fd, char buf[], int size)
     }
     return read_bytes;
 }
+
+int write_udp(const char *ip, int port, char message[], int size)
+{
+    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockfd < 0) {
+        printf("Error creating socket\n");
+        return ERR_FUDP_CREATING_SOCKET;
+    }
+
+    struct sockaddr_in dest_addr;
+    memset(&dest_addr, 0, sizeof(dest_addr));
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_port = htons(port);
+    inet_pton(AF_INET, ip, &dest_addr.sin_addr); 
+
+    int bytes_written = sendto(sockfd, message, sizeof(message), 0,
+                        (struct sockaddr*)&dest_addr, sizeof(dest_addr));
+    if ( bytes_written < 0 ) {
+        printf("Error writing UDP\n");
+        return ERR_FUDP_WRITING;
+    }
+
+    close(sockfd);
+    return 0;
+}

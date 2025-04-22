@@ -35,7 +35,6 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
             fd_dimension
         );
     }
-
     if ( bytes_read < 0 )
     {
         printf("FINS CALLBACK ERROR:: bytes_read is negative!\n");
@@ -44,7 +43,6 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     
 
     fins_message_t msg;
-    printf("FINS CALLBACK:: read:%.*s (%d bytes)\n",bytes_read,buffer);
     int rc = parse_fins_message(buffer,bytes_read-1,&msg);
     if ( rc < 0 )
     {
@@ -64,6 +62,30 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     {
         printf("payload %d 0x%02X\n",i,msg.payload[i]);
     }
+
+
+    fins_message_t reply = msg;
+    reply.DNA = msg.SNA;
+    reply.DA1 = msg.SA1;
+    reply.DA2 = msg.SA2;
+    reply.SNA = msg.DNA;
+    reply.SA1 = msg.DA1;
+    reply.SA2 = msg.DA2;
+    reply.payload[0] = 0x01;
+    reply.payload[1] = 0x02;
+    reply.payload[2] = 0x00;
+    reply.payload[3] = 0x00;
+    reply.payload_length = 4;
+
+    if(type == TCP)
+    {
+        write_tcp(reply_fd,"a",1);
+    }
+    if(type == UDP)
+    {
+        write_udp("0.0.0.0",9600,"reply_from_frixia",0);
+    }
+    
 
     return 0;
 }
