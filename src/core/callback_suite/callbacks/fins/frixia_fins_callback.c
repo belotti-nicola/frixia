@@ -5,6 +5,7 @@
 #include "../../../protocols/fins/frixia_fins_message.h"
 #include "../../../protocols/fins/frixia_fins.h"
 #include "../../../protocols/frixia_supported_protocols.h"
+#include <errno.h>
 
 #include "frixia_fins_callback.h"
 
@@ -18,14 +19,14 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     }
 
     char buffer[fd_dimension];
-    int reply_fd = -1;
+    int fins_reply_fd = -1;
     int bytes_read = -1;
     if(type == TCP)
     {
         bytes_read = read_tcp(fd,
             buffer,
             fd_dimension,
-            &reply_fd
+            &fins_reply_fd
         );
     }
     if(type == UDP)
@@ -37,16 +38,21 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     }
     if ( bytes_read < 0 )
     {
-        printf("FINS CALLBACK ERROR:: bytes_read is negative!\n");
+        printf("FINS CALLBACK ERROR:: bytes_read is negative (rc %d errno %d)!\n",bytes_read, errno);
         return 0;
     }
-    
+
+    //TRACE THE UDP DATAGRAM
+    for (int i = 0; i < bytes_read; i++) {
+        printf("%02X ", (unsigned char)buffer[i]);
+    }
+    printf("\n");
 
     fins_message_t msg;
-    int rc = parse_fins_message(buffer,bytes_read-1,&msg);
+    int rc = parse_fins_message(buffer,bytes_read,&msg);
     if ( rc < 0 )
     {
-        printf("FINS CALLBACK ERROR:: parse failed!\n");
+        printf("FINS CALLBACK ERROR:: parse failed (%.*s)!\n",bytes_read,buffer);
         return 0;
     }
 
@@ -64,26 +70,28 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     }
 
 
-    fins_message_t reply = msg;
-    reply.DNA = msg.SNA;
-    reply.DA1 = msg.SA1;
-    reply.DA2 = msg.SA2;
-    reply.SNA = msg.DNA;
-    reply.SA1 = msg.DA1;
-    reply.SA2 = msg.DA2;
-    reply.payload[0] = 0x01;
-    reply.payload[1] = 0x02;
-    reply.payload[2] = 0x00;
-    reply.payload[3] = 0x00;
-    reply.payload_length = 4;
+    fins_message_t fins_reply = msg;
+    fins_reply.DNA = msg.SNA;
+    fins_reply.DA1 = msg.SA1;
+    fins_reply.DA2 = msg.SA2;
+    fins_reply.SNA = msg.DNA;
+    fins_reply.SA1 = msg.DA1;
+    fins_reply.SA2 = msg.DA2;
+    fins_reply.payload[0] = 0x01;
+    fins_reply.payload[1] = 0x02;
+    fins_reply.payload[2] = 0x00;
+    fins_reply.payload[3] = 0x00;
+    fins_reply.payload_length = 4;
 
+    char *reply = "fins_reply_from_frixia";
+    int   size  = strlen(reply);
     if(type == TCP)
     {
-        write_tcp(reply_fd,"a",1);
+        write_tcp(reply,&fins_reply,size);
     }
     if(type == UDP)
     {
-        write_udp("0.0.0.0",9600,"reply_from_frixia",0);
+        printf("Skip.\n");
     }
     
 

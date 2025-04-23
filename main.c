@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
 
     frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
-    frixia_add_tcp(&environment,"0.0.0.0",8888,1024);
+    frixia_add_udp(&environment,"0.0.0.0",9600,1024);
     frixia_add_fifo(&environment,"fifo",1024);
     frixia_add_inode(&environment,".");
 
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
     int count_goo = 2;
     frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/foo",foo,&count_foo);
     frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/goo",goo,&count_goo);
-    frixia_register_fins_callback(&environment,TCP,"0.0.0.0",8888,0x01,0x02,foo,NULL);//TODO foo is a work-around here
+    frixia_register_fins_callback(&environment,UDP,"0.0.0.0",9600,0x01,0x02,foo,NULL);//TODO foo is a work-around here
 
     sleep(10);
     printf("Sleep ended. Stopping all components.\n");
