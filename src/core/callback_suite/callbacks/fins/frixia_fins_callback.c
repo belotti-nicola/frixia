@@ -83,7 +83,7 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     fins_reply.payload[3] = 0x00;
     fins_reply.payload_length = 4;
 
-    char *reply = "fins_reply_from_frixia";
+    char reply[] = "fins_reply_from_frixia";
     int   size  = strlen(reply);
     if(type == TCP)
     {
@@ -91,7 +91,8 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     }
     if(type == UDP)
     {
-        printf("Skip.\n");
+        int rc = write_udp(fd,&fins_reply,size+1);
+        printf("bytes written:: %d\n",rc);
     }
     
 

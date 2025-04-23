@@ -154,7 +154,19 @@ int read_udp(int fd, char buf[], int size)
     return read_bytes;
 }
 
-int write_udp(const char *ip, int port, char message[], int size)
-{
-    return 0;
+int write_udp(int fd, char buf[],int size)
+{  
+    struct sockaddr_in dest_addr;
+    memset(&dest_addr, 0, sizeof(dest_addr));
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_port = htons(6000);
+    inet_pton(AF_INET, "127.0.0.1", &dest_addr.sin_addr);
+    int rc = sendto(fd, (const char *)buf, size, MSG_CONFIRM,(struct sockaddr *)&dest_addr, sizeof(dest_addr));
+    if ( rc < 0 )
+    {
+        return ERR_FUDP_WRITING;
+    }
+
+    return rc;
+
 }
