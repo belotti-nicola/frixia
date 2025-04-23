@@ -91,7 +91,9 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     }
     if(type == UDP)
     {
-        int rc = write_udp(fd,&fins_reply,size+1);
+        const char reply[]    = "frixia answered!";
+        int        reply_size = strlen(reply); 
+        int rc = write_udp(fd,reply,reply_size);
         printf("bytes written:: %d\n",rc);
     }
     

@@ -161,7 +161,7 @@ int write_udp(int fd, char buf[],int size)
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(6000);
     inet_pton(AF_INET, "127.0.0.1", &dest_addr.sin_addr);
-    int rc = sendto(fd, (const char *)buf, size, MSG_CONFIRM,(struct sockaddr *)&dest_addr, sizeof(dest_addr));
+    int rc = sendto(fd, buf, size, MSG_CONFIRM,(struct sockaddr *)&dest_addr, sizeof(dest_addr));
     if ( rc < 0 )
     {
         return ERR_FUDP_WRITING;
