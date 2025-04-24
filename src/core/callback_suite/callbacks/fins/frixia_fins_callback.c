@@ -66,8 +66,10 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     
     for(int i=0;i<msg.payload_length;i++)
     {
-        printf("payload %d 0x%02X\n",i,msg.payload[i]);
+        printf("payload[%d] 0x%02X",i,msg.payload[i]);
+        if( i != msg.payload_length - 1 ) printf(" -- ");
     }
+    printf("\n");
 
 
     fins_message_t fins_reply = msg;
@@ -83,18 +85,28 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     fins_reply.payload[3] = 0x00;
     fins_reply.payload_length = 4;
 
-    char reply[] = "fins_reply_from_frixia";
-    int   size  = strlen(reply);
+    const char reply[]    = "frixia answered!";
+    int        reply_size = strlen(reply); 
+    int        rc_write   = -1;
     if(type == TCP)
     {
-        write_tcp(reply,&fins_reply,size);
+        rc_write = write_tcp(reply,&fins_reply,reply_size);
+        if ( rc_write < 0 )
+        {
+            printf("Error writing TCP %d\n",errno);
+            return -1;
+        }
+        printf("TCP wrote %d bytes\n",reply_size);
     }
     if(type == UDP)
     {
-        const char reply[]    = "frixia answered!";
-        int        reply_size = strlen(reply); 
-        int rc = write_udp(fd,reply,reply_size);
-        printf("bytes written:: %d\n",rc);
+        rc_write = write_udp(fd,reply,reply_size);
+        if ( rc_write < 0 )
+        {
+            printf("Error writing UDP %d\n",errno);
+            return -1;
+        }
+        printf("UDP wrote %d bytes\n",reply_size);
     }
     
 
