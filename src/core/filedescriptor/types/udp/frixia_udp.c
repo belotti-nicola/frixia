@@ -133,35 +133,45 @@ int get_fudp_code_string_from_string(char *s)
     }
 }
 
-int read_udp(int fd, char buf[], int size)
+int read_udp(int fd, char *buf, int buf_size,struct sockaddr_in *client)
 {
-    struct sockaddr sender;
-    socklen_t addr_len;
-
-    ssize_t read_bytes = recvfrom(fd,
-        buf,
-        size,
-        0,
-        (struct sockaddr *)&sender,
-         &addr_len
+    char client_ip[16];
+    
+    memset(client, 0, sizeof(*client));
+    int len = sizeof(*client);
+    int read_bytes = recvfrom(
+        fd,
+        (char *)buf,
+        buf_size,
+        MSG_WAITALL,
+        (struct sockaddr *)client,
+        &len
     );
-
-    if (read_bytes < 0)
+    if ( read_bytes < 0 )
     {
         return ERR_FUDP_READING;
     }
 
+    inet_ntop(AF_INET,
+        &(client->sin_addr),
+        client_ip, INET_ADDRSTRLEN);
+    
+    /*
+    printf("Message received from %s:%d -> %s\n",
+        client_ip,
+        ntohs(client->sin_port),
+        buf);
+    */
+
     return read_bytes;
 }
 
-int write_udp(int fd, char buf[],int size)
+int write_udp(int fd, char buf[],int size,struct sockaddr_in *client)
 {  
-    struct sockaddr_in dest_addr;
-    memset(&dest_addr, 0, sizeof(dest_addr));
-    dest_addr.sin_family = AF_INET;
-    dest_addr.sin_port = htons(6000);
-    inet_pton(AF_INET, "127.0.0.1", &dest_addr.sin_addr);
-    int rc = sendto(fd, buf, size, MSG_CONFIRM,(struct sockaddr *)&dest_addr, sizeof(dest_addr));
+    char client_ip[32];
+
+    inet_ntop(AF_INET, &(client->sin_addr), client_ip, INET_ADDRSTRLEN);
+    int rc = sendto(fd, buf, size, MSG_CONFIRM,(struct sockaddr *)client, sizeof(*client));
     if ( rc < 0 )
     {
         return ERR_FUDP_WRITING;

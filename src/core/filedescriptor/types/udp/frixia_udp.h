@@ -1,6 +1,9 @@
 #ifndef FRIXIA_UDP_H
 #define FRIXIA_UDP_H
 
+#include <netinet/in.h>
+
+
 enum FUDP_CODE {
     FUDP_OK,
     ERR_FUDP_START_SOCKET=-1,
@@ -21,8 +24,8 @@ int start_udp_listening(int port);
 
 int stop_udp_listening(int target_fd);
 
-int read_udp(int fd, char buf[], int buf_size);
-int write_udp(int fd, char buf[],int size);
+int read_udp(int fd, char *buf, int buf_size,struct sockaddr_in *client);
+int write_udp(int fd, char buf[],int size,struct sockaddr_in *client);
 
 char* get_fudp_code_string(enum FUDP_CODE c);
 int get_fudp_code_string_from_string(char *s);

@@ -5,12 +5,16 @@
 #include "../../../protocols/fins/frixia_fins_message.h"
 #include "../../../protocols/fins/frixia_fins.h"
 #include "../../../protocols/frixia_supported_protocols.h"
+
+#include <netinet/in.h>
 #include <errno.h>
 
 #include "frixia_fins_callback.h"
 
 int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
 {
+    struct sockaddr_in client;
+
     printf("FINS CALLBACK: fd %d fd_dimension %d type %d\n",fd,fd_dimension,type);
     if( type != TCP && type != UDP )
     {
@@ -19,6 +23,7 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     }
 
     char buffer[fd_dimension];
+
     int fins_reply_fd = -1;
     int bytes_read = -1;
     if(type == TCP)
@@ -33,7 +38,8 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     {
         bytes_read = read_udp(fd,
             buffer,
-            fd_dimension
+            fd_dimension,
+            &client
         );
     }
     if ( bytes_read < 0 )
@@ -100,7 +106,7 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     }
     if(type == UDP)
     {
-        rc_write = write_udp(fd,reply,reply_size);
+        rc_write = write_udp(fd,reply,reply_size,&client);
         if ( rc_write < 0 )
         {
             printf("Error writing UDP %d\n",errno);

@@ -359,7 +359,7 @@ int frixia_read_event_data(frixia_event_t *fe,
         }
         case UDP:
         {
-            int bytes_read = read_udp(fd,message,1024);
+            int bytes_read = read_udp(fd,message,1024,NULL);
             return bytes_read;
         }
         case FIFO:

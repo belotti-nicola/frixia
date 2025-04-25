@@ -34,7 +34,7 @@ int read_frixia_filedescriptor(frixia_epoll_t *fepoll, int fd, char *s)
         }      
         case UDP:
         {
-            bytes_read = read_udp(fd,s,dim);
+            //bytes_read = read_udp(fd,s,dim);
             break;
         }
         case FIFO:

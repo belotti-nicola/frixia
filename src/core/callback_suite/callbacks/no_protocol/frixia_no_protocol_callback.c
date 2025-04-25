@@ -43,7 +43,7 @@ int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_
         }
         case UDP:
         {
-            bytes_read = read_udp(fevent->fd,s,dim);
+            bytes_read = read_udp(fevent->fd,s,dim,NULL);
             break;
         }
         case FIFO:
