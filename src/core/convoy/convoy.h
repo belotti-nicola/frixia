@@ -23,6 +23,7 @@ void convoy_add_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath);
 
 void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const char *method,const char *path,void *(*fun)(void *), void *arg);
 void convoy_register_fins_callback(convoy_t *c, enum FrixiaFDType type, const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg);
+void convoy_register_noprotocol_callback(convoy_t *c, enum FrixiaFDType type, const char *ip, int port, void *(*fun)(void *), void *arg);
 
 void convoy_register_timer_callback(convoy_t *c, const char *id, void *fun, void *arg);
 

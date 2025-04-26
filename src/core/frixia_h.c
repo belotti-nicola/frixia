@@ -493,3 +493,9 @@ void frixia_register_fins_callback(frixia_environment_t *env,enum FrixiaFDType t
     convoy_t *convoy = env->convoy;
     convoy_register_fins_callback(convoy,type,ip,port,first,second,fun,arg);
 }
+
+void frixia_register_noprotocol_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second, void *(*fun)(void *), void *arg)
+{
+    convoy_t *convoy = env->convoy;
+    convoy_register_fins_callback(convoy,type,ip,port,first,second,fun,arg);
+}

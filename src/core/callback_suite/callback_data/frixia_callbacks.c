@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "frixia_callback_entry.h"
+#include "frixia_http_key.h"
 
 #include "frixia_callbacks.h"
 
@@ -70,10 +71,9 @@ void add_http_entry_to_frixia_callbacks(
         return;
     }
     
+    int remaining_len = 50;
     char *key = calloc(sizeof(char),50);//TODO CHECK IF THE CALLOC IS NECESSARY: WHY NOT URL ONLY
-    strncat(key,method,method_len);
-    strncat(key,":",1);
-    strncat(key,url,url_len);
+    frixia_compute_http_key(key,50,method,method_len,url,url_len);
     HashEntry_t *he = create_hash_entry(key,cb_data);    
 
     simple_list_t      *l    = datastructure->events_callbacks;
@@ -168,11 +168,8 @@ frixia_callbacks_data_t *frixia_get_http_callback(
             void       **p = convoy->filedescriptors[i].protocol_data;
             void      *ptr = *p;
             HashMap_t *hm = (HashMap_t *) ptr;
-            printf("trace this %p\n",hm);
             char key[50]="";
-            strncat(key,method,method_len);
-            strncat(key,":",1);
-            strncat(key,path,path_len);
+            frixia_compute_http_key(key,50,method,method_len,path,path_len);
             HashEntry_t *he = get_entry_value(hm,key);
             if( he == NULL )
             {

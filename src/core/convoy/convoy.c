@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "frixia_fd_args.h"
 #include "frixia_callback.h"
+#include "../callback_suite/callback_data/frixia_http_key.h"
 #include "../../utils/datastructures/simple_hash_map/simple_hash_map.h"
 #include <stdint.h>
 #include <string.h>
@@ -261,9 +262,7 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
     int path_len   = strlen(path);
     
     char *key = calloc(sizeof(char),50);//TODO CHECK IF THE CALLOC IS NECESSARY: WHY NOT URL ONLY
-    strncat(key,method,method_len);
-    strncat(key,":",1);
-    strncat(key,path,path_len);
+    frixia_compute_http_key(key,50,method,method_len,path,path_len);
     HashEntry_t *he = create_hash_entry(key,cb);  
     void **ptr = c->filedescriptors[index].protocol_data;
     if( *ptr == NULL )
@@ -350,5 +349,14 @@ void convoy_register_fins_callback(convoy_t *c, enum FrixiaFDType type, const ch
         printf("Adding to FINS structure %p\n",hm);
     }
 }
+void convoy_register_noprotocol_callback(convoy_t *c, enum FrixiaFDType type, const char *ip, int port, void *(*fun)(void *), void *arg)
+{
+    //TODO NO PROTOCOL TYPES CAN BE ANYTHING
+    //IP IF UDP/TCP
+    //NAME IF FIFO
+    //AND SO ON
+    //FIND A GOOD WAY TO IMPLEMENT THIS
+}
+
 void convoy_register_timer_callback(convoy_t *c,const char *id,void *fun,void *arg)
 {}                                            
