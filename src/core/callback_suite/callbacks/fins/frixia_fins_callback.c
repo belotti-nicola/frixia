@@ -5,13 +5,16 @@
 #include "../../../protocols/fins/frixia_fins_message.h"
 #include "../../../protocols/fins/frixia_fins.h"
 #include "../../../protocols/frixia_supported_protocols.h"
+#include "../../../callback_suite/callback_data/frixia_callbacks.h"
+#include "../../../callback_suite/callback_data/callback_data.h"
+#include "../../../convoy/convoy.h"
 
 #include <netinet/in.h>
 #include <errno.h>
 
 #include "frixia_fins_callback.h"
 
-int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
+int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type, convoy_t *convoy)
 {
     struct sockaddr_in client;
 
@@ -62,7 +65,6 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
         return 0;
     }
 
-
     printf("FINS_MSG::%s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:0x%02X %s:%lu\n",
         "ICF",msg.ICF,"RSV",msg.RSV,"GCT",msg.GCT,
         "DNA",msg.DNA,"DA1",msg.DA1,"DA2",msg.DA2,
@@ -91,6 +93,28 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
     fins_reply.payload[3] = 0x00;
     fins_reply.payload_length = 4;
 
+
+    const char *cmd_1     = msg.payload[0];
+    const char *cmd_2 = msg.payload[1];
+    frixia_callbacks_data_t *cb = frixia_get_fins_callback(convoy,fd,cmd_1,cmd_2);
+    if ( cb == NULL )
+    {
+        printf("FINS COMMAND CALLBACK IS NULL!!!\n");
+        return -1;
+    }
+    if ( cb->function == NULL )
+    {
+        printf("FINS COMMAND CALLBACK IS NULL!!!\n");
+        return -1;
+    }
+
+    void (*fun)(void *arg) = 
+        (void (*)(void *))cb->function; 
+    void  *arg          = 
+         cb->argument;
+    fun(arg);
+    
+    /*
     const char reply[]    = "frixia answered!";
     int        reply_size = strlen(reply); 
     int        rc_write   = -1;
@@ -114,6 +138,7 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type)
         }
         printf("UDP wrote %d bytes\n",reply_size);
     }
+    */
     
 
     return 0;

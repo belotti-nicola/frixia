@@ -6,6 +6,9 @@ TODO
     simplify API start
     remove unnecessary elements
 
+    moving any function to the thread_pool might be functional
+    http/fins calling
+
 ISSUE:
     fifo seems controversial (EPOLLET only)
     thread pool termination is by killing 

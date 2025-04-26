@@ -33,7 +33,7 @@ void get_callback_type(convoy_t *convoy, int fd,void *(*fun)(void *),void *arg)
                     {
                         size = convoy->filedescriptors[i].type_data->udp_info->read_size;
                     }
-                    fun = fins_callback(fd,size,type);
+                    fun = fins_callback(fd,size,type,convoy);
                     return;
                 }
                 case NO_PROTOCOL:

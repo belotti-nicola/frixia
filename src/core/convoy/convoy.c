@@ -3,6 +3,8 @@
 #include "frixia_callback.h"
 #include "../callback_suite/callback_data/frixia_http_key.h"
 #include "../../utils/datastructures/simple_hash_map/simple_hash_map.h"
+#include "../callback_suite/callback_data/frixia_fins_key.h"
+
 #include <stdint.h>
 #include <string.h>
 
@@ -328,10 +330,9 @@ void convoy_register_fins_callback(convoy_t *c, enum FrixiaFDType type, const ch
     }
 
     c->filedescriptors[index].protocol = FINS;
-    char *key = calloc(sizeof(char),6);
-    uint16_t value_16bits = second*16+first;
-    snprintf(key, 6, "%u", value_16bits);
     frixia_callback_t *cb = create_frixia_callback(fun,arg);
+    char *key = calloc(sizeof(char),16);
+    frixia_compute_fins_key(key,first,second);
     HashEntry_t *he = create_hash_entry(key,cb);  
     void **ptr = c->filedescriptors[index].protocol_data;
     if( *ptr == NULL )

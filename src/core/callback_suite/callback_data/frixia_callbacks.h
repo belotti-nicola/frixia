@@ -56,4 +56,12 @@ frixia_callbacks_data_t *frixia_get_http_callback(
     int path_len
     );
 
+frixia_callbacks_data_t *frixia_get_fins_callback(
+    convoy_t *convoy,
+    int fd,
+    const char cmd_1,
+    const char cmd_2
+);
+
+
 #endif

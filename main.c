@@ -92,6 +92,11 @@ void *timer_callback(int fd)
     write_eventfd(fd);    
 }
 
+void *woo(void *arg)
+{
+    printf("woo called\n");
+}
+
 int main(int argc, char *argv[])
 {  
     frixia_events_queue_t *events_queue = frixia_events_queue_create(); 
@@ -160,7 +165,7 @@ int main(int argc, char *argv[])
     int count_goo = 2;
     frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/foo",foo,&count_foo);
     frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/goo",goo,&count_goo);
-    frixia_register_fins_callback(&environment,UDP,"0.0.0.0",9600,0x01,0x02,foo,NULL);//TODO foo is a work-around here
+    frixia_register_fins_callback(&environment,UDP,"0.0.0.0",9600,0x01,0x02,woo,NULL);//TODO foo is a work-around here
 
 
     sleep(10);

@@ -9,6 +9,7 @@
 #include <string.h>
 #include "frixia_callback_entry.h"
 #include "frixia_http_key.h"
+#include "frixia_fins_key.h"
 
 #include "frixia_callbacks.h"
 
@@ -184,3 +185,32 @@ frixia_callbacks_data_t *frixia_get_http_callback(
     printf("FD not found for HTTP entry in convoy: returning null\n");
     return NULL;
 }
+
+frixia_callbacks_data_t *frixia_get_fins_callback(convoy_t *convoy, int fd, const char cmd_1, const char cmd_2)
+{
+    int size = convoy->size;
+    for(int i=0;i<size;i++)
+    {
+        frixia_file_descriptor_t frixia_fd = convoy->filedescriptors[i];
+        if ( frixia_fd.fd == fd )
+        {
+            void       **p = convoy->filedescriptors[i].protocol_data;
+            void      *ptr = *p;
+            HashMap_t *hm = (HashMap_t *) ptr;
+            char key[16];
+            frixia_compute_fins_key(key,cmd_1,cmd_2);
+            HashEntry_t *he = get_entry_value(hm,key);
+            if( he == NULL )
+            {
+                printf("NULL ENTRY for fd %d key %s\n",fd,key);
+                return NULL;
+            }
+            frixia_callbacks_data_t *retVal = (frixia_callbacks_data_t *)he->value;
+            return retVal;
+        }
+    }
+
+    printf("FD not found for FINS entry in convoy: returning null\n");
+    return NULL;
+}
+

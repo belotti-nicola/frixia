@@ -21,7 +21,7 @@ int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p, int d
         }
         case FINS:
         {
-            fins_callback(e,dim,p);
+            fins_callback(e,dim,p,NULL);
             break;
         }
         case NO_PROTOCOL:

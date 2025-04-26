@@ -74,7 +74,6 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
             counter++;
             continue;
         }
-        
         if ( (hm->buckets+ index)      == NULL )
         {
             counter++;
@@ -85,7 +84,7 @@ HashEntry_t* get_entry_value(HashMap_t* hm, char *key)
             counter++;
             continue;
         }
-        printf("(hm->buckets+index)->key '%s', key '%s' (%d)\n",(hm->buckets+index)->key,key,counter);
+        printf("(hm->buckets+index)->key '%s', key '%s' (counter %d)\n",(hm->buckets+index)->key,key,counter);
         if( strcmp((hm->buckets+index)->key,key)  == 0 )
         {
             return (hm->buckets+index); 
