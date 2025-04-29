@@ -15,9 +15,11 @@
 #include "src/core/thread_pool/bound_robin/bound_robin.h"
 #include "src/core/thread_pool/bound_robin/detached_bound_robin.h"
 
+#include <netinet/in.h>
 
 //TODO
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
+#include "src/core/filedescriptor/types/udp/frixia_udp.h"
 
 
 void *foo(int fd, const char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
@@ -92,9 +94,19 @@ void *timer_callback(int fd)
     write_eventfd(fd);    
 }
 
-void *woo(void *arg)
+void *woo_tcp(int fd, int tcp_rep, struct sockaddr_in *udp_rep, void *arg)
 {
-    printf("woo called\n");
+    printf("woo_tcp called\n");
+    char *s = "frixia answer";
+    int dim = strlen(s);
+    write_tcp(tcp_rep,"frixia answer",dim);
+}
+void *woo_udp(int fd, int tcp_rep, struct sockaddr_in *udp_rep, void *arg)
+{
+    printf("woo_udp called\n");
+    char *s = "frixia answer";
+    int dim = strlen(s);
+    write_udp(fd,"frixia answer",dim,udp_rep);
 }
 
 int main(int argc, char *argv[])
@@ -147,8 +159,8 @@ int main(int argc, char *argv[])
     dispatcher->thread_pool = tpool;
 
 
-    frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
-    frixia_add_udp(&environment,"0.0.0.0",9600,1024);
+    frixia_add_tcp(&environment,"127.0.0.1",9600,1024);
+    frixia_add_udp(&environment,"127.0.0.1",9600,1024);
     frixia_add_fifo(&environment,"fifo",1024);
     frixia_add_inode(&environment,".");
 
@@ -163,9 +175,10 @@ int main(int argc, char *argv[])
 
     int count_foo = 3;
     int count_goo = 2;
-    frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/foo",foo,&count_foo);
-    frixia_register_http_callback(&environment,"0.0.0.0",4444,"GET","/goo",goo,&count_goo);
-    frixia_register_fins_callback(&environment,UDP,"0.0.0.0",9600,0x01,0x02,woo,NULL);//TODO foo is a work-around here
+    frixia_register_http_callback(&environment,"127.0.0.1",4444,"GET","/foo",foo,&count_foo);
+    frixia_register_http_callback(&environment,"127.0.0.1",4444,"GET","/goo",goo,&count_goo);
+    frixia_register_fins_callback(&environment,TCP,"127.0.0.1",9600,0x01,0x02,woo_tcp,NULL);//TODO foo is a work-around here
+    frixia_register_fins_callback(&environment,UDP,"127.0.0.1",9600,0x01,0x02,woo_udp,NULL);//TODO foo is a work-around here
 
 
     sleep(10);
@@ -278,8 +291,8 @@ int main(int argc, char *argv[])
     */
 
     /*
-    frixia_add_tcp(&environment,"0.0.0.0",4444,1024);
-    frixia_add_udp(&environment,"0.0.0.0",8888,1024);
+    frixia_add_tcp(&environment,"127.0.0.1",4444,1024);
+    frixia_add_udp(&environment,"127.0.0.1",8888,1024);
     frixia_add_fifo(&environment,"fifo",512);
     frixia_add_scheduler(&environment,1);
     */

@@ -16,7 +16,7 @@
 
 int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type, convoy_t *convoy)
 {
-    struct sockaddr_in client;
+    struct sockaddr_in udp_reply;
 
     printf("FINS CALLBACK: fd %d fd_dimension %d type %d\n",fd,fd_dimension,type);
     if( type != TCP && type != UDP )
@@ -27,14 +27,14 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type, convoy_t *co
 
     char buffer[fd_dimension];
 
-    int fins_reply_fd = -1;
+    int tcp_reply  = -1;
     int bytes_read = -1;
     if(type == TCP)
     {
         bytes_read = read_tcp(fd,
             buffer,
             fd_dimension,
-            &fins_reply_fd
+            &tcp_reply
         );
     }
     if(type == UDP)
@@ -42,7 +42,7 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type, convoy_t *co
         bytes_read = read_udp(fd,
             buffer,
             fd_dimension,
-            &client
+            &udp_reply
         );
     }
     if ( bytes_read < 0 )
@@ -108,11 +108,11 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type, convoy_t *co
         return -1;
     }
 
-    void (*fun)(void *arg) = 
-        (void (*)(void *))cb->function; 
+    void (*fun)(int,int, struct sockaddr_in *, void *) = 
+        (void (*)(int,int,struct sockaddr_in *,void *))cb->function; 
     void  *arg          = 
          cb->argument;
-    fun(arg);
+    fun(fd,tcp_reply,&udp_reply,arg);
     
     /*
     const char reply[]    = "frixia answered!";
@@ -120,7 +120,7 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type, convoy_t *co
     int        rc_write   = -1;
     if(type == TCP)
     {
-        rc_write = write_tcp(reply,&fins_reply,reply_size);
+        rc_write = write_tcp(reply,&fins_reply,reply_size);l
         if ( rc_write < 0 )
         {
             printf("Error writing TCP %d\n",errno);
