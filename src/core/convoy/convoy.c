@@ -230,7 +230,7 @@ void convoy_add_add_inode_filedescriptor(convoy_t *c,int fd, char *path)
     c->size = c->size +1;
 }
 
-void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const char *method,const char *path,void *(*fun)(void *), void *arg)
+void convoy_register_http_method_callback(convoy_t *c,const char *ip, int port, const char *method,const char *path,void *(*fun)(void *), void *arg)
 {
     int index = -1;
     int size  = c->size;
@@ -284,7 +284,7 @@ void convoy_register_http_callback(convoy_t *c,const char *ip, int port, const c
     }
 }
 
-void convoy_register_fins_callback(convoy_t *c, enum FrixiaFDType type, const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg)
+void convoy_register_fins_command_callback(convoy_t *c, enum FrixiaFDType type, const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg)
 {
     if ( type != TCP && type != UDP )
     {
