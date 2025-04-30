@@ -482,13 +482,13 @@ void frixia_add_inode(frixia_environment_t *env, char *filepath)
     convoy_add_add_inode_filedescriptor(c,fd,filepath);
 }
 
-void frixia_register_http_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg)
+void frixia_register_http_method_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg)
 {
     convoy_t *convoy = env->convoy;
     convoy_register_http_callback(convoy,ip,port,method,path,fun,arg);
 }
 
-void frixia_register_fins_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second, void *(*fun)(void *), void *arg)
+void frixia_register_fins_command_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second, void *(*fun)(void *), void *arg)
 {
     convoy_t *convoy = env->convoy;
     convoy_register_fins_callback(convoy,type,ip,port,first,second,fun,arg);

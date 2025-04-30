@@ -175,10 +175,10 @@ int main(int argc, char *argv[])
 
     int count_foo = 3;
     int count_goo = 2;
-    frixia_register_http_callback(&environment,"127.0.0.1",4444,"GET","/foo",foo,&count_foo);
-    frixia_register_http_callback(&environment,"127.0.0.1",4444,"GET","/goo",goo,&count_goo);
-    frixia_register_fins_callback(&environment,TCP,"127.0.0.1",9600,0x01,0x02,woo_tcp,NULL);//TODO foo is a work-around here
-    frixia_register_fins_callback(&environment,UDP,"127.0.0.1",9600,0x01,0x02,woo_udp,NULL);//TODO foo is a work-around here
+    frixia_register_http_method_callback(&environment,"127.0.0.1",4444,"GET","/foo",foo,&count_foo);
+    frixia_register_http_method_callback(&environment,"127.0.0.1",4444,"GET","/goo",goo,&count_goo);
+    frixia_register_fins_command_callback(&environment,TCP,"127.0.0.1",9600,0x01,0x02,woo_tcp,NULL);//TODO foo is a work-around here
+    frixia_register_fins_command_callback(&environment,UDP,"127.0.0.1",9600,0x01,0x02,woo_udp,NULL);//TODO foo is a work-around here
 
 
     sleep(10);
