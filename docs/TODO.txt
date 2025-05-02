@@ -8,6 +8,7 @@ TODO
 
     moving any function to the thread_pool might be functional
     http/fins calling
+    mallocing convoy to simplify api
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

@@ -6,6 +6,7 @@
 #include "../../../protocols/frixia_supported_protocols.h"
 #include "../../../callback_suite/callback_data/frixia_callbacks.h"
 #include "../../../callback_suite/callback_data/frixia_callback_entry.h"
+#include "../../../convoy/frixia_callback.h"
 #include "../../../frixia_common.h"
 
 //TODO WIPE CLOSE
@@ -13,62 +14,45 @@
 
 #include "frixia_no_protocol_callback.h"
 
-int no_protocol_callback(frixia_event_t *fevent, int dim, frixia_callbacks_data_structure_t *fcbs)
+int no_protocol_callback(int fd, int dim, convoy_t *convoy)
 {  
-    char s[dim];
-    int bytes_read = -1;
+    char buffer[dim];
+    int fd_to_reply;
+    int bytes_read = read_tcp(fd,
+        buffer,
+        dim,
+        &fd_to_reply);
+    
 
-    enum FrixiaFDType type = UNDEFINED;
-
-    simple_list_elem_t *curr = fcbs->events_callbacks->first;
-    frixia_callback_entry_t *entry = NULL;
-    while(curr != NULL)
+    int index = -1;
+    for(int i=0;i<convoy->size;i++)
     {
-        entry = (frixia_callback_entry_t *)curr->val;
-        if( fevent->fd == entry->fd)
+        if ( convoy->filedescriptors[i].fd == fd &&
+             convoy->filedescriptors[i].protocol == NO_PROTOCOL &&
+             convoy->filedescriptors[i].type == TCP )
         {
-            type = entry->type;
+            index = i;
+            break;
         }
-        curr = curr->next;
     }
-
-    switch(type)
+    printf("Found::%d\n",index);
+    
+    frixia_callback_t *cb = (frixia_callback_t *) *(convoy->filedescriptors[index].protocol_data);
+    if ( cb == NULL)
     {
-        case TCP:
-        {
-            int not_used =1;
-            bytes_read = read_tcp(fevent->fd,s,dim,&not_used);
-            close(not_used);//TODO THERE IS NO RESPONSE
-            break;
-        }
-        case UDP:
-        {
-            bytes_read = read_udp(fevent->fd,s,dim,NULL);
-            break;
-        }
-        case FIFO:
-        {
-            bytes_read = read_fifo(fevent->fd,s,dim);
-            break;
-        }
-        case UNDEFINED:
-        {
-            printf("no_protocol_callback UNDEFINED switch case\n");
-            return -1;
-        }
-        default:
-            printf("no_protocol_callback default switch case\n");
-            return -1;
+        printf("Error: CB is null!!!\n");
+        return -1;
     }
-
-    frixia_callbacks_data_t *data_casted = entry->data;
-
-    if(data_casted == NULL)
+    
+    void *(*fun)(void *) = (void *(*)(void *))cb->function;
+    void   *arg          =                    cb->argument;
+    if ( fun == NULL )
     {
-        printf("no_protocol_callback %d, logger is selected:: %.*s\n",type,bytes_read,s);
-        return 1;
-    }    
+        printf("Error: CB->fun is null!!\n");
+        return -1;
+    }
+    fun(NULL);
 
-    data_casted->function(data_casted->argument);
+
     return 1;
 }

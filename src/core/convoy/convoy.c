@@ -350,14 +350,37 @@ void convoy_register_fins_command_callback(convoy_t *c, enum FrixiaFDType type, 
         printf("Adding to FINS structure %p\n",hm);
     }
 }
-void convoy_register_noprotocol_callback(convoy_t *c, enum FrixiaFDType type, const char *ip, int port, void *(*fun)(void *), void *arg)
+void convoy_register_noprotocol_tcp_callback(convoy_t *convoy,const char *ip,int port, void *(*fun)(void *), void *arg)
 {
-    //TODO NO PROTOCOL TYPES CAN BE ANYTHING
-    //IP IF UDP/TCP
-    //NAME IF FIFO
-    //AND SO ON
-    //FIND A GOOD WAY TO IMPLEMENT THIS
+    int index = -1;
+    int size  = convoy->size;
+    for(int i=0; i<size; i++)
+    {
+        frixia_file_descriptor_t fd = convoy->filedescriptors[i];
+        if ( TCP != fd.type )
+        {
+            continue;
+        }
+        frixia_tcp_t *tcp_info = fd.type_data->tcp_info;
+        if( strcmp(tcp_info->ip,ip) == 0 &&
+            tcp_info->port == port )
+        {
+            index = i;
+            break;
+        }
+    }
+    if( index == -1 )
+    {
+        printf("NOPROTOCOL TCP Entry not present! %s %d %d\n",ip,port);
+        return;
+    }
+
+    convoy->filedescriptors[index].protocol = NO_PROTOCOL;
+    frixia_callback_t *cb = create_frixia_callback(fun,arg);
+    *(convoy->filedescriptors[index].protocol_data) = cb; 
 }
 
 void convoy_register_timer_callback(convoy_t *c,const char *id,void *fun,void *arg)
-{}                                            
+{
+
+}                                            

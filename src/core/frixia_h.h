@@ -32,6 +32,7 @@ void frixia_add_inode(frixia_environment_t *env, char *filepath);
 
 void frixia_register_http_method_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg);
 void frixia_register_fins_command_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg);
+void frixia_register_noprotocol_tcp_callback(frixia_environment_t *env, const char *ip, int port, void *(*fun)(void *),void *arg);
 
 
 int frixia_start(frixia_environment_t *env);

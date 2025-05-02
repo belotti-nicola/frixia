@@ -108,6 +108,10 @@ void *woo_udp(int fd, int tcp_rep, struct sockaddr_in *udp_rep, void *arg)
     int dim = strlen(s);
     write_udp(fd,"frixia answer",dim,udp_rep);
 }
+void noprotocol_tcp_cb(void *arg)
+{
+    printf("no protocol\n");
+}
 
 int main(int argc, char *argv[])
 {  
@@ -159,7 +163,9 @@ int main(int argc, char *argv[])
     dispatcher->thread_pool = tpool;
 
 
+    frixia_add_tcp(&environment,"127.0.0.1",4444,1024);
     frixia_add_tcp(&environment,"127.0.0.1",9600,1024);
+    frixia_add_tcp(&environment,"127.0.0.1",9601,1024);
     frixia_add_udp(&environment,"127.0.0.1",9600,1024);
     frixia_add_fifo(&environment,"fifo",1024);
     frixia_add_inode(&environment,".");
@@ -179,6 +185,7 @@ int main(int argc, char *argv[])
     frixia_register_http_method_callback(&environment,"127.0.0.1",4444,"GET","/goo",goo,&count_goo);
     frixia_register_fins_command_callback(&environment,TCP,"127.0.0.1",9600,0x01,0x02,woo_tcp,NULL);//TODO foo is a work-around here
     frixia_register_fins_command_callback(&environment,UDP,"127.0.0.1",9600,0x01,0x02,woo_udp,NULL);//TODO foo is a work-around here
+    frixia_register_noprotocol_tcp_callback(&environment,"127.0.0.1",9601,noprotocol_tcp_cb,NULL);
 
 
     sleep(10);

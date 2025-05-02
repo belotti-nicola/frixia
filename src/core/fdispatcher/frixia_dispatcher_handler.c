@@ -2,6 +2,7 @@
 #include "../protocols/frixia_supported_protocols.h"
 #include "../callback_suite/callbacks/http/frixia_http_callback.h"
 #include "../callback_suite/callbacks/fins/frixia_fins_callback.h"
+#include "../callback_suite/callbacks/no_protocol/frixia_no_protocol_callback.h"
 
 #include "frixia_dispatcher_handler.h"
 
@@ -38,7 +39,8 @@ void get_callback_type(convoy_t *convoy, int fd,void *(*fun)(void *),void *arg)
                 }
                 case NO_PROTOCOL:
                 {
-                    printf("NO_PROTOCOL!!!\n");
+                    size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
+                    fun = no_protocol_callback(fd,size,convoy);
                     return;
                 }
                 default:
