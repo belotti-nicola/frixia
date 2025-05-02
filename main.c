@@ -108,9 +108,15 @@ void *woo_udp(int fd, int tcp_rep, struct sockaddr_in *udp_rep, void *arg)
     int dim = strlen(s);
     write_udp(fd,"frixia answer",dim,udp_rep);
 }
-void noprotocol_tcp_cb(void *arg)
+void noprotocol_tcp_cb(const unsigned char *buf, int buf_size, void *arg)
 {
-    printf("no protocol\n");
+    printf("Bytes received: %d\n",buf_size);
+    printf("Message received:");
+    for(int i=0;i<buf_size;i++)
+    {
+        printf("0x%02X ",*(buf+i));
+    }
+    printf("\n");
 }
 
 int main(int argc, char *argv[])

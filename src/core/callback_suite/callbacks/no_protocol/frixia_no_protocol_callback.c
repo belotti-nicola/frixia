@@ -44,14 +44,16 @@ int no_protocol_callback(int fd, int dim, convoy_t *convoy)
         return -1;
     }
     
-    void *(*fun)(void *) = (void *(*)(void *))cb->function;
-    void   *arg          =                    cb->argument;
+    void *(*fun)(const unsigned char *str,int str_size,void *) = 
+        (void *(*)(const unsigned char*, int, void *))cb->function;
+    void   *arg = 
+        cb->argument;
     if ( fun == NULL )
     {
         printf("Error: CB->fun is null!!\n");
         return -1;
     }
-    fun(arg);
+    fun(buffer,bytes_read,arg);
 
 
     return 1;
