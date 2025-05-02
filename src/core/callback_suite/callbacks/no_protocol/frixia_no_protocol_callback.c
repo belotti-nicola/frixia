@@ -51,7 +51,7 @@ int no_protocol_callback(int fd, int dim, convoy_t *convoy)
         printf("Error: CB->fun is null!!\n");
         return -1;
     }
-    fun(NULL);
+    fun(arg);
 
 
     return 1;
