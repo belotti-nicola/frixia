@@ -1,0 +1,8 @@
+compile with this command:
+
+gcc main.c -o main
+
+
+port is 9601 (to change, recompile)
+accept is done once 
+
