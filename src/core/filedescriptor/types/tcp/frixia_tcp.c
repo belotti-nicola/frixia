@@ -9,6 +9,7 @@
 
 #include "frixia_tcp.h"
 #include "../../../../core/frixia_codes.h"
+#include <fcntl.h>
 
 int start_tcp_listening(int port)
 {
@@ -27,6 +28,10 @@ int start_tcp_listening(int port)
     if (setsockopt(tcp_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&reuse, sizeof(reuse)) < 0)
     {
         return ERR_FTCP_SETSOCKETOPT;
+    }
+    if ( fcntl(tcp_fd, F_SETFL, fcntl(tcp_fd, F_GETFL, 0) | O_NONBLOCK) < 0 )
+    {
+        return ERR_FTCP_FNCTL;
     }
 
     struct sockaddr_in serveraddr;
@@ -80,8 +85,8 @@ int write_tcp( int reply_fd,char buffer[],int size )
         close(reply_fd);
         return ERR_FTCP_WRITE;
     }
-    close(reply_fd);
-    return FTCP_OK;
+    //close(reply_fd);
+    return ret_code;
 }
 
 char* get_ftcp_code_string(enum FTCP_CODE c){

@@ -108,7 +108,7 @@ void *woo_udp(int fd, int tcp_rep, struct sockaddr_in *udp_rep, void *arg)
     int dim = strlen(s);
     write_udp(fd,"frixia answer",dim,udp_rep);
 }
-void noprotocol_tcp_cb(const unsigned char *buf, int buf_size, void *arg)
+void noprotocol_tcp_cb(int fd,int tcp_rep,const unsigned char *buf, int buf_size, void *arg)
 {
     printf("Bytes received: %d\n",buf_size);
     printf("Message received:");
@@ -117,6 +117,23 @@ void noprotocol_tcp_cb(const unsigned char *buf, int buf_size, void *arg)
         printf("0x%02X ",*(buf+i));
     }
     printf("\n");
+
+    const unsigned char fins_response[] = {
+        'F','I','N','S',             // Header
+        0x00, 0x00, 0x00, 0x0C,      // Length = 20 bytes
+        0x00, 0x00, 0x00, 0x01,      // Command = response frame
+        0x00, 0x00, 0x00, 0x00,      // No error
+        0x00, 0x00, 0x00, 0x00,      // Fake data (e.g., read response)
+        0x00, 0x00, 0x00, 0x00
+    };
+    int size = sizeof(fins_response);
+    int rc = write_tcp(tcp_rep,fins_response,size);
+    if( rc < 0 )
+    {
+        printf("Error writing TCP!\n");
+        return;
+    }
+    printf("Write successfully %d bytes\n",rc);
 }
 
 int main(int argc, char *argv[])
@@ -194,7 +211,7 @@ int main(int argc, char *argv[])
     frixia_register_noprotocol_tcp_callback(&environment,"127.0.0.1",9601,noprotocol_tcp_cb,NULL);
 
 
-    sleep(10);
+    sleep(40);
     printf("Sleep ended. Stopping all components.\n");
     
     frixia_stop(&environment);

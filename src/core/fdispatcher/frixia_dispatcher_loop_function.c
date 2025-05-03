@@ -36,7 +36,7 @@ int frixia_dispatcher_loop_function(void *arg)
         void *(*fun)(void *) = NULL;
         void   *arg          = NULL;
         get_callback_type(convoy,fd,fun,arg);
-        bound_robin_add_task_to_one_worker(bound_robin,fun,arg);
+        //bound_robin_add_task_to_one_worker(bound_robin,fun,arg);
     }
 
     printf("frixia_dispatcher_loop_function: END.\n");

@@ -15,7 +15,8 @@ enum FTCP_CODE {
     ERR_FTCP_START_MALFORMED_PORT = -10,
     ERR_FTCP_STOP_MALFORMED_EPOLL_FD = -11,
     ERR_FTCP_STOP_MALFORMED_TARGET_FD = -12,
-    ERR_FTCP_WRITE = -13
+    ERR_FTCP_WRITE = -13,
+    ERR_FTCP_FNCTL = -14
 };
 
 int start_tcp_listening(int port);

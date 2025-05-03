@@ -11,6 +11,7 @@
 
 //TODO WIPE CLOSE
 #include <unistd.h>
+#include <errno.h>
 
 #include "frixia_no_protocol_callback.h"
 
@@ -22,7 +23,11 @@ int no_protocol_callback(int fd, int dim, convoy_t *convoy)
         buffer,
         dim,
         &fd_to_reply);
-    
+    if ( bytes_read < 0 )
+    {
+        printf("Error reading!!! %d\n",fd);
+        return -1;
+    }
 
     int index = -1;
     for(int i=0;i<convoy->size;i++)
@@ -35,7 +40,6 @@ int no_protocol_callback(int fd, int dim, convoy_t *convoy)
             break;
         }
     }
-    printf("Found::%d\n",index);
     
     frixia_callback_t *cb = (frixia_callback_t *) *(convoy->filedescriptors[index].protocol_data);
     if ( cb == NULL)
@@ -44,8 +48,8 @@ int no_protocol_callback(int fd, int dim, convoy_t *convoy)
         return -1;
     }
     
-    void *(*fun)(const unsigned char *str,int str_size,void *) = 
-        (void *(*)(const unsigned char*, int, void *))cb->function;
+    void *(*fun)(int a, int b, const unsigned char *str,int str_size,void *) = 
+        (void *(*)(int, int, const unsigned char*, int, void *))cb->function;
     void   *arg = 
         cb->argument;
     if ( fun == NULL )
@@ -53,8 +57,8 @@ int no_protocol_callback(int fd, int dim, convoy_t *convoy)
         printf("Error: CB->fun is null!!\n");
         return -1;
     }
-    fun(buffer,bytes_read,arg);
-
+    
+    fun(fd,fd_to_reply,buffer,bytes_read,arg);
 
     return 1;
 }

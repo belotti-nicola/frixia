@@ -12,7 +12,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
 
     int stop_fd = fepoll->stop_fd;
     bool keep_looping = true;
-    while(keep_looping)
+    while( keep_looping )
     {
         frixia_event_t ev_q[FRIXIA_EPOLL_MAXIMUM_EVENTS];
         int events_number = frixia_epoll_wait(fepoll,ev_q);
@@ -20,7 +20,9 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
         if( events_number < 0)
         {
             //just to not jam up 
+            printf("Sleep due to events_number in fepoll < 0\n");
             sleep(1);
+            continue;
         }
         for(int i=0;i<events_number;i++)
         {
