@@ -21,10 +21,10 @@ enum FTCP_CODE {
 
 int start_tcp_listening(int port);
 int stop_tcp_listening(int fd);
-int read_tcp(int fd,char buf[], int size, int* reply_fd);
+int read_tcp(int fd,char buf[], int size, int *error);
 
 int write_tcp( int client_fd,char buffer[],int size);
-
+int accept_tcp( int fd, int *reply_fd);
 char* get_ftcp_code_string(enum FTCP_CODE);
 int get_ftcp_code_string_from_string(char *s);
 

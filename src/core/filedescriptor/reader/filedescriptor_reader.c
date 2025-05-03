@@ -29,7 +29,7 @@ int read_frixia_filedescriptor(frixia_epoll_t *fepoll, int fd, char *s)
         }   
         case TCP:
         {
-            bytes_read = read_tcp(fd,s,dim,&not_used);
+            bytes_read = read_tcp(fd,s,dim,NULL);
             break;
         }      
         case UDP:

@@ -133,7 +133,7 @@ void noprotocol_tcp_cb(int fd,int tcp_rep,const unsigned char *buf, int buf_size
         printf("Error writing TCP!\n");
         return;
     }
-    printf("Write successfully %d bytes\n",rc);
+    printf("Write successfully %d bytes (%d requested to write)\n",rc,size);
 }
 
 int main(int argc, char *argv[])

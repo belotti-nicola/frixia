@@ -57,21 +57,34 @@ int stop_tcp_listening(int closing_fd)
     return FTCP_OK;
 }
 
-int read_tcp(int filedescriptor,char buf[], int size, int* reply_fd)
+int accept_tcp(int filedescriptor, int *reply)
 {
     struct sockaddr in_addr;
     socklen_t in_len;
 
     in_len = sizeof(in_addr);
-    *reply_fd = accept(filedescriptor, &in_addr, &in_len);
-    if (*reply_fd == -1)
+    
+    int fd = accept(filedescriptor, &in_addr, &in_len);
+    if ( fd == -1 )
     {
         return ERR_FTCP_ACCEPTING;
     }
-    int read_bytes = read(*reply_fd, buf, size);
+
+    int flags = fcntl(fd, F_GETFL, 0);
+    if ( fcntl(fd, F_SETFL, flags | O_NONBLOCK) )
+    {
+        return ERR_FTCP_ACCEPTING;
+    }
+    *reply = fd;
+    return FTCP_OK;
+}
+
+int read_tcp(int filedescriptor,char buf[], int size, int *error)
+{   
+    int read_bytes = read(filedescriptor, buf, size);
     if (read_bytes < 0)
     {
-        close(*reply_fd);
+        *error = errno;
         return ERR_FTCP_READING;
     }
     return read_bytes;

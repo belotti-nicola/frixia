@@ -31,10 +31,12 @@ int http_callback(int fd, int read_size,convoy_t *convoy)
 {
     char buffer[read_size];
     int fd_to_reply;
+
+    accept_tcp(fd,&fd_to_reply);
+
     int bytes_read = read_tcp(fd,
                               buffer,
-                              read_size,
-                              &fd_to_reply);
+                              read_size, NULL);
 
 
     FHTTP_t fhttp_2 = frixia_parse_request(buffer,bytes_read);
