@@ -11,6 +11,7 @@ int frixia_dispatcher_loop_function(void *arg)
     frixia_events_queue_t *events_queue = dispatcher->tasks;
     bound_robin_t         *bound_robin  = dispatcher->bound_robin; 
     convoy_t              *convoy       = dispatcher->convoy;
+    frixia_epoll_t        *fepoll       = dispatcher->fepoll;
     int                    stop_fd      = dispatcher->stop_fd;
     
     frixia_event_t        *event;
@@ -35,7 +36,7 @@ int frixia_dispatcher_loop_function(void *arg)
 
         void *(*fun)(void *) = NULL;
         void   *arg          = NULL;
-        get_callback_type(convoy,fd,fun,arg);
+        get_callback_type(convoy,fepoll,fd,fun,arg);
         //bound_robin_add_task_to_one_worker(bound_robin,fun,arg);
     }
 

@@ -182,7 +182,7 @@ frixia_callbacks_data_t *frixia_get_http_callback(
         }
     }
 
-    printf("FD not found for HTTP entry in convoy: returning null\n");
+    printf("FD(%d) not found for HTTP entry in convoy: returning null\n",fd);
     return NULL;
 }
 

@@ -18,6 +18,7 @@ typedef struct frixia_dispatcher
     int                    stop_fd;
     bool                  *keep_looping;
     convoy_t              *convoy;
+    frixia_epoll_t        *fepoll;
 
 } frixia_dispatcher_t;
 
@@ -26,6 +27,7 @@ void                 destroy_frixia_dispatcher(frixia_dispatcher_t *p);
 void                 set_frixia_dispatcher_tasks(frixia_dispatcher_t *disp, frixia_events_queue_t *fqueue);
 void                 set_frixia_dispatcher_thread_pool(frixia_dispatcher_t *fd, frixia_thread_pool_t *tp);
 void                 set_frixia_dispatcher_bound_robin(frixia_dispatcher_t *fd, bound_robin_t *br);
+void                 set_frixia_dispatcher_epoll(frixia_dispatcher_t *fd, frixia_epoll_t *ep);
 void                 dispatch_event_to_workers(frixia_dispatcher_t *dispatcher, frixia_event_t *event);
 void                 dispatch_event_to_all_workers(frixia_dispatcher_t *dispatcher,frixia_event_t *event);
 void                 dispatcher_stop(frixia_dispatcher_t *dispatcher);

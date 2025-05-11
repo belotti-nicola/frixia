@@ -6,4 +6,5 @@ add_library(http_callback
 target_link_libraries(http_callback
     fevent
     callback_data_structure
+    fepoll
 )

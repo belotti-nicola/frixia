@@ -67,6 +67,7 @@ int accept_tcp(int filedescriptor, int *reply)
     int fd = accept(filedescriptor, &in_addr, &in_len);
     if ( fd == -1 )
     {
+        printf("Errno: %d\n",errno);
         return ERR_FTCP_ACCEPTING;
     }
 
@@ -100,6 +101,12 @@ int write_tcp( int reply_fd,char buffer[],int size )
     }
     //close(reply_fd);
     return ret_code;
+}
+
+int close_tcp(int fd)
+{
+    close(fd);
+    return FTCP_OK;
 }
 
 char* get_ftcp_code_string(enum FTCP_CODE c){

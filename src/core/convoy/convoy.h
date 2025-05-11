@@ -13,7 +13,7 @@ typedef struct convoy
 
 } convoy_t;
 
-void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes);
+void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes,FRIXIA_SUPPORTED_PROTOCOL_T protocol);
 void convoy_add_udp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes);
 void convoy_add_fifo_filedescriptor(convoy_t *c, int fd, const char *path, int bytes);
 void convoy_add_timer_filedescriptor(convoy_t *c, int fd, const char *id, int delay, int interval);

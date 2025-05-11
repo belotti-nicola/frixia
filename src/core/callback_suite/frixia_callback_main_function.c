@@ -16,7 +16,7 @@ int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p, int d
     {
         case HTTP:
         {
-            http_callback(e,dim,fcbs);
+            http_callback(e,dim,fcbs,NULL);
             break;
         }
         case FINS:
@@ -27,6 +27,11 @@ int frixia_callback_main(frixia_event_t *e, FRIXIA_SUPPORTED_PROTOCOL_T p, int d
         case NO_PROTOCOL:
         {
             no_protocol_callback(e,dim,fcbs);
+            break;
+        }
+        case HTTPCLIENT:
+        {
+            httpclient_callback(e,dim,fcbs);
             break;
         }
     }

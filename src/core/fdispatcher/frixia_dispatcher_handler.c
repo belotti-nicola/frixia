@@ -3,10 +3,11 @@
 #include "../callback_suite/callbacks/http/frixia_http_callback.h"
 #include "../callback_suite/callbacks/fins/frixia_fins_callback.h"
 #include "../callback_suite/callbacks/no_protocol/frixia_no_protocol_callback.h"
+#include "../filedescriptor/fd_monitor/epoll/fepoll.h"
 
 #include "frixia_dispatcher_handler.h"
 
-void get_callback_type(convoy_t *convoy, int fd,void *(*fun)(void *),void *arg)
+void get_callback_type(convoy_t *convoy, frixia_epoll_t *fepoll, int fd,void *(*fun)(void *),void *arg)
 {
     int size = convoy->size;
     for(int i=0;i<size;i++)
@@ -20,7 +21,7 @@ void get_callback_type(convoy_t *convoy, int fd,void *(*fun)(void *),void *arg)
                 case HTTP:
                 {
                     size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
-                    fun = http_callback(fd,size,convoy);
+                    fun = http_callback(fd,size,convoy,fepoll);
                     return;
                 }
                 case FINS:
@@ -42,6 +43,12 @@ void get_callback_type(convoy_t *convoy, int fd,void *(*fun)(void *),void *arg)
                     size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
                     fun = no_protocol_callback(fd,size,convoy);
                     return;
+                }
+                case HTTPCLIENT:
+                {
+                    size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
+                    httpclient_callback(fd,size,convoy);
+                    return; 
                 }
                 default:
                 {

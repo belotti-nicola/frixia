@@ -50,6 +50,7 @@ void *foo(int fd, const char *fullpath, int fullpath_len, void *headers, int hea
         struct phr_header *tmp = (struct phr_header *)headers;
         printf("%.*s -- %.*s\n",(int)((tmp+i)->name_len),(tmp+i)->name,(int)((tmp+i)->value_len),(tmp+i)->value);
     }
+    close_tcp(fd);
 }
 
 void *goo(int fd, const char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
@@ -169,6 +170,7 @@ int main(int argc, char *argv[])
     frixia_dispatcher_t *dispatcher = create_frixia_dispatcher(FRIXIA_WORKERS,4);
     set_frixia_dispatcher_tasks(dispatcher,events_queue);
     set_frixia_dispatcher_bound_robin(dispatcher,&br);
+    set_frixia_dispatcher_epoll(dispatcher,fepoll);
     dispatcher->convoy = &convoy;
     frixia_dispatcher_data_t d_data;
     d_data.dispatcher = dispatcher;

@@ -10,7 +10,7 @@
 
 #include "convoy.h"
 
-void convoy_add_tcp_filedescriptor(convoy_t *c,int fd, const char *ip,int port,int bytes)
+void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes,FRIXIA_SUPPORTED_PROTOCOL_T protocol)
 {
     if( c->size == MAXIMUM_FD_NUMBER)
     {
@@ -21,6 +21,7 @@ void convoy_add_tcp_filedescriptor(convoy_t *c,int fd, const char *ip,int port,i
     {
         c->filedescriptors[0].fd   = fd;
         c->filedescriptors[0].type = TCP;
+        c->filedescriptors[0].protocol = protocol;
         set_frixia_tcp_fd(c->filedescriptors[0].type_data,ip,port,bytes);
         c->size = 1 ;
         return;
@@ -32,7 +33,9 @@ void convoy_add_tcp_filedescriptor(convoy_t *c,int fd, const char *ip,int port,i
     {
         if( c->filedescriptors[i].type == TCP &&
             c->filedescriptors[i].type_data->tcp_info->ip == ip &&
-            c->filedescriptors[i].type_data->tcp_info->port == port)
+            c->filedescriptors[i].type_data->tcp_info->port == port &&
+            c->filedescriptors[i].protocol == protocol
+        )
         {
             printf("Convoy error: tcp socket is already present (%s %d).\n",ip,port);
             return;
@@ -40,6 +43,7 @@ void convoy_add_tcp_filedescriptor(convoy_t *c,int fd, const char *ip,int port,i
     }
     c->filedescriptors[target].fd   = fd;
     c->filedescriptors[target].type = TCP;
+    c->filedescriptors[target].protocol = protocol;
     set_frixia_tcp_fd(c->filedescriptors[target].type_data,ip,port,bytes);
     c->size = c->size +1;
 }

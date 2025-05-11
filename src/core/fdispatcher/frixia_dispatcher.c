@@ -49,6 +49,12 @@ void set_frixia_dispatcher_bound_robin(frixia_dispatcher_t *fd, bound_robin_t *b
     fd->bound_robin = br;
 }
 
+void set_frixia_dispatcher_epoll(frixia_dispatcher_t *fd, frixia_epoll_t *ep)
+{
+    fd->fepoll = ep;
+}
+
+
 void dispatch_event_to_workers(frixia_dispatcher_t *dispatcher,frixia_event_t *event)
 {
     int task_index = dispatcher->task_index;
