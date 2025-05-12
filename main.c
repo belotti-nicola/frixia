@@ -14,6 +14,7 @@
 #include "src/core/fdispatcher/detached_frixia_dispatcher_new.h"
 #include "src/core/thread_pool/bound_robin/bound_robin.h"
 #include "src/core/thread_pool/bound_robin/detached_bound_robin.h"
+#include "src/core/callback_suite/callback_data/frixia_callback_context.h"
 
 #include <netinet/in.h>
 
@@ -22,8 +23,14 @@
 #include "src/core/filedescriptor/types/udp/frixia_udp.h"
 
 
-void *foo(int fd, const char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
+void *foo(frixia_callback_context_t *ctx, int *n)
 {
+    int fd = ctx->tcp_ctx->reply;
+    const char *fullpath = ctx->http_ctx->path;
+    int fullpath_len = ctx->http_ctx->path_len;
+    int headers_number = ctx->http_ctx->num_headers;
+    const char *headers = 
+
     *n = *n+1;
 
     char response_prefix[] =
@@ -53,8 +60,13 @@ void *foo(int fd, const char *fullpath, int fullpath_len, void *headers, int hea
     close_tcp(fd);
 }
 
-void *goo(int fd, const char *fullpath, int fullpath_len, void *headers, int headers_number, int *n)
+void *goo(frixia_callback_context_t *ctx, int *n)
 {
+    int fd = ctx->tcp_ctx->reply;
+    const char *fullpath = ctx->http_ctx->path;
+    int fullpath_len = ctx->http_ctx->path_len;
+    
+    
     *n = *n*2;
     printf("goo function called %d\n",*n);
     
@@ -66,22 +78,23 @@ void *goo(int fd, const char *fullpath, int fullpath_len, void *headers, int hea
     int response_len = strlen(response);
     write_tcp(fd,response,response_len);
 }
-void moo(int fd_to_reply)
+void moo(frixia_callback_context_t *ctx, int fd_to_reply)
 {
     printf("moo function called %d\n",fd_to_reply);
 }
 
-void too(int fd_to_reply)
+void too(frixia_callback_context_t *ctx)
 {
+    int fd_to_reply = ctx->tcp_ctx->reply;
     printf("too function called %d\n",fd_to_reply);
 }
 
-void timer_called()
+void zoo(frixia_callback_context_t *ctx)
 {
     printf("Timer!\n");
 }
 
-void *deleteme_pls(void *arg)
+void *deleteme_pls(frixia_callback_context_t *ctx,void *arg)
 {
     int *a = (int *)arg;
     printf("A is:%d\n",*a);
@@ -89,28 +102,36 @@ void *deleteme_pls(void *arg)
     return NULL;
 }
 
-void *timer_callback(int fd)
+void *timer_callback(frixia_callback_context_t *ctx,int fd)
 {
     printf("Timer callback: %d\n",fd);
     write_eventfd(fd);    
 }
 
-void *woo_tcp(int fd, int tcp_rep, struct sockaddr_in *udp_rep, void *arg)
+void *woo_tcp(frixia_callback_context_t *ctx, void *arg)
 {
+    int tcp_rep = ctx->tcp_ctx->reply;
     printf("woo_tcp called\n");
     char *s = "frixia answer";
     int dim = strlen(s);
     write_tcp(tcp_rep,"frixia answer",dim);
 }
-void *woo_udp(int fd, int tcp_rep, struct sockaddr_in *udp_rep, void *arg)
+void *woo_udp(frixia_callback_context_t *ctx, void *arg)
 {
+    int fd = ctx->udp_ctx->fd;
+    struct sockaddr_in udp_rep = ctx->udp_ctx->reply;
     printf("woo_udp called\n");
     char *s = "frixia answer";
     int dim = strlen(s);
-    write_udp(fd,"frixia answer",dim,udp_rep);
+    write_udp(fd,"frixia answer",dim,&udp_rep);
 }
-void noprotocol_tcp_cb(int fd,int tcp_rep,const unsigned char *buf, int buf_size, void *arg)
+void noprotocol_tcp_cb(frixia_callback_context_t *ctx, void *arg)
+//void noprotocol_tcp_cb(int fd,int tcp_rep,const unsigned char *buf, int buf_size, void *arg)
 {
+    int tcp_rep = ctx->tcp_ctx->reply;
+    int buf_size = ctx->tcp_ctx->message_len;
+    const char *buf = ctx->tcp_ctx->message;
+    
     printf("Bytes received: %d\n",buf_size);
     printf("Message received:");
     for(int i=0;i<buf_size;i++)

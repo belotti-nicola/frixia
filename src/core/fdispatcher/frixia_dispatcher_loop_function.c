@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include "frixia_dispatcher_handler.h"
 #include "frixia_dispatcher.h"
+#include "../callback_suite/callback_data/frixia_callback_context.h"
 
 #include "frixia_dispatcher_loop_function.h"
 
@@ -37,7 +38,7 @@ int frixia_dispatcher_loop_function(void *arg)
         void *(*fun)(void *) = NULL;
         void   *arg          = NULL;
         get_callback_type(convoy,fepoll,fd,fun,arg);
-        //bound_robin_add_task_to_one_worker(bound_robin,fun,arg);
+        bound_robin_add_task_to_one_worker(bound_robin,fun,arg);
     }
 
     printf("frixia_dispatcher_loop_function: END.\n");

@@ -375,7 +375,7 @@ void convoy_register_noprotocol_tcp_callback(convoy_t *convoy,const char *ip,int
     }
     if( index == -1 )
     {
-        printf("NOPROTOCOL TCP Entry not present! %s %d %d\n",ip,port);
+        printf("NOPROTOCOL TCP Entry not present! %s %d\n",ip,port);
         return;
     }
 

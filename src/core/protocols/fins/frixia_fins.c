@@ -4,7 +4,7 @@
 
 int parse_fins_message(char *s, size_t buffer_length, fins_message_t *message)
 {
-    printf("Parsing FINS message: %d bytes\n",buffer_length);
+    printf("Parsing FINS message: %ld bytes\n",buffer_length);
     if ( buffer_length % 2 == 1)
     {
         fprintf(stderr, "Error: Buffer odd length for FINS message\n");

@@ -50,6 +50,7 @@ FUTURE DEVELOPMENT
         1. bound_robin
         2. static scheduling
         3. task stealing
+    UDP/TCP payload only
 
 CHECK
     nothing.

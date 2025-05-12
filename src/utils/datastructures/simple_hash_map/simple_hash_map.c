@@ -27,7 +27,7 @@ void add_entry(HashMap_t *hm, HashEntry_t *entry)
 {
     if(hm->size >= hm->maximum_size)
     {
-        printf("Error::add_entry::size: %d %d\n",hm->size,hm->maximum_size);
+        printf("Error::add_entry::size: %ld %ld\n",hm->size,hm->maximum_size);
         return;
     }
 

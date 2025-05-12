@@ -29,16 +29,17 @@ int path_concrete_length(const char *tmp, const char find_this, int size)
     return size;
 }
 
-int http_callback(int fd, int read_size, convoy_t *convoy,frixia_epoll_t *fepoll)
-{
+void *http_callback(http_callback_context_t *ctx)
+{   
+    int fd = ctx->fd;
+    int read_size = ctx->read_size;
+    convoy_t *convoy = ctx->convoy;
+    frixia_epoll_t *fepoll = ctx->fepoll;
+
     char buffer[read_size];
     int reply;
     int rc = -1;
     rc = accept_tcp(fd, &reply);
-    if ( rc < 0 )
-    {
-        return -1;
-    }
 
     const char *trg_str;
     int trg_prt;
@@ -59,11 +60,15 @@ int http_callback(int fd, int read_size, convoy_t *convoy,frixia_epoll_t *fepoll
 
     insert_event(fepoll->fd,reply); 
     
-    return 0;
+    return NULL;
 }
 
-int httpclient_callback(int fd, int read_size, convoy_t *convoy)
+void *httpclient_callback(httpclient_callback_context_t *ctx)
 {   
+    int fd = ctx->fd;
+    int read_size = ctx->read_size;
+    convoy_t *convoy = ctx->convoy;
+
     char buffer[read_size];
     int bytes_read = read_tcp(fd,
                               buffer,
@@ -128,5 +133,36 @@ int httpclient_callback(int fd, int read_size, convoy_t *convoy)
 
     fun(fd, fhttp_2.path, fhttp_2.path_len, (void *)fhttp_2.headers, fhttp_2.num_headers, arg);
 
-    return 0;
+    return NULL;
+}
+
+http_callback_context_t *create_http_callback_context(int fd,int read_size, convoy_t *convoy, frixia_epoll_t *fepoll)
+{
+    http_callback_context_t *ptr = malloc(sizeof(http_callback_context_t));
+    if ( ptr == NULL )
+    {
+        printf("Error mallocing http_callback_context_t\n");
+        return NULL;
+    }
+    ptr->fd = fd;
+    ptr->read_size = read_size;
+    ptr->convoy = convoy;
+    ptr->fepoll = fepoll;
+
+    return ptr;
+}
+httpclient_callback_context_t *create_httpclient_callback_context(int fd,int read_size, convoy_t *convoy, frixia_epoll_t *fepoll)
+{
+    httpclient_callback_context_t *ptr = malloc(sizeof(httpclient_callback_context_t));
+    if ( ptr == NULL )
+    {
+        printf("Error mallocing httpclient_callback_context_t\n");
+        return NULL;
+    }
+    ptr->fd = fd;
+    ptr->read_size = read_size;
+    ptr->convoy = convoy;
+    ptr->fepoll = fepoll;
+
+    return ptr;
 }

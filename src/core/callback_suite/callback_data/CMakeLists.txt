@@ -9,6 +9,8 @@ add_library(callback_data_structure
     frixia_http_key.h
     frixia_fins_key.c
     frixia_fins_key.c
+    frixia_callback_context.c
+    frixia_callback_context.h
     )
 
 target_link_libraries(callback_data_structure
