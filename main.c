@@ -23,13 +23,14 @@
 #include "src/core/filedescriptor/types/udp/frixia_udp.h"
 
 
-void *foo(frixia_callback_context_t *ctx, int *n)
+void *foo(frixia_callback_context_t *ctx, void *sss)
 {
+    int *n = (int *)sss;
     int fd = ctx->tcp_ctx->reply;
     const char *fullpath = ctx->http_ctx->path;
     int fullpath_len = ctx->http_ctx->path_len;
     int headers_number = ctx->http_ctx->num_headers;
-    const char *headers = 
+    const char *headers = ctx->http_ctx->headers;
 
     *n = *n+1;
 

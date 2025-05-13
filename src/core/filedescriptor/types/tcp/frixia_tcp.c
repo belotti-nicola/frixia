@@ -85,7 +85,7 @@ int read_tcp(int filedescriptor,char buf[], int size, int *error)
     int read_bytes = read(filedescriptor, buf, size);
     if (read_bytes < 0)
     {
-        *error = errno;
+        printf("Errno:%d(fd:%d)\n",errno,filedescriptor);
         return ERR_FTCP_READING;
     }
     return read_bytes;

@@ -8,7 +8,52 @@
 
 #include "frixia_dispatcher_handler.h"
 
-void get_callback_type(convoy_t *convoy, frixia_epoll_t *fepoll, int fd,void *(*fun)(void *),void *arg)
+
+protocol_callback get_callback_fun(convoy_t *convoy, frixia_epoll_t *fepoll, int fd)
+{
+    int size = convoy->size;
+    for(int i=0;i<size;i++)
+    {
+        frixia_file_descriptor_t frixia_fd = convoy->filedescriptors[i];
+        int size = -1;
+        if( frixia_fd.fd == fd)
+        {
+            switch(frixia_fd.protocol)
+            {
+                case HTTP:
+                {
+                    return http_callback;
+                }
+                case FINS:
+                {
+                    return fins_callback;
+                }
+                case NO_PROTOCOL:
+                {
+                    return no_protocol_callback;
+                }
+                case HTTPCLIENT:
+                {
+                    return httpclient_callback; 
+                }
+                case FINSCLIENT:
+                {
+                    return fins_callback; 
+                }
+                default:
+                {
+                    printf("UNSUPPORTED FRIXIA PROTOCOL %d",frixia_fd.protocol);
+                    return NULL;
+                }
+            }
+        }
+    }
+
+    printf("CONVOY ENTRY fun NOT FOUND %d",fd);
+    return NULL;
+}
+
+void *get_callback_arg(convoy_t *convoy, frixia_epoll_t *fepoll, int fd)
 {
     int size = convoy->size;
     for(int i=0;i<size;i++)
@@ -22,62 +67,44 @@ void get_callback_type(convoy_t *convoy, frixia_epoll_t *fepoll, int fd,void *(*
                 case HTTP:
                 {
                     size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
-                    fun = http_callback;
-                    arg = (void *)create_http_callback_context(fd,size,convoy,fepoll);
-                    return;
+                    http_callback_context_t *http = create_http_callback_context(fd,size,convoy,fepoll);
+                    frixia_tcp_context_t *tcp = malloc(sizeof(frixia_tcp_context_t));
+                    frixia_callback_context_t *ctx = malloc(sizeof(frixia_callback_context_t));
+                    ctx->http_ctx = http;
+                    ctx->tcp_ctx  = tcp;
+                    return (void *)ctx;
                 }
                 case FINS:
                 {
-                    enum FrixiaFDType type = convoy->filedescriptors[i].type;
-                    if( type == TCP )
-                    {
-                        size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
-                    }
-                    if( type == UDP )
-                    {
-                        size = convoy->filedescriptors[i].type_data->udp_info->read_size;
-                    }
-                    fun = fins_callback;
-                    arg = NULL;
-                    return;
+                    return NULL;
                 }
                 case NO_PROTOCOL:
                 {
-                    enum FrixiaFDType type = convoy->filedescriptors[i].type;
-                    if( type == TCP )
-                    {
-                        size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
-                    }
-                    if( type == UDP )
-                    {
-                        size = convoy->filedescriptors[i].type_data->udp_info->read_size;
-                    }
-                    fun = no_protocol_callback;
-                    arg = NULL;
-                    return;
+                    return NULL;
                 }
                 case HTTPCLIENT:
                 {
                     size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
-                    fun = httpclient_callback;
-                    arg = (void *)create_httpclient_callback_context(fd,size,convoy,fepoll);
-                    return; 
+                    httpclient_callback_context_t *http = create_httpclient_callback_context(fd,size,convoy,fepoll);
+                    frixia_tcp_context_t *tcp = malloc(sizeof(frixia_tcp_context_t));
+                    frixia_callback_context_t *ctx = malloc(sizeof(frixia_callback_context_t));
+                    ctx->http_ctx = http;
+                    ctx->tcp_ctx  = tcp;
+                    return (void *)ctx;
                 }
                 case FINSCLIENT:
                 {
-                    size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
-                    fun = httpclient_callback;
-                    arg = NULL;
-                    return; 
+                    return NULL;
                 }
                 default:
                 {
                     printf("UNSUPPORTED FRIXIA PROTOCOL %d",frixia_fd.protocol);
-                    return;
+                    return NULL;
                 }
             }
         }
     }
 
-    printf("CONVOY ENTRY NOT FOUND %d",fd);
+    printf("CONVOY ENTRY arg NOT FOUND %d",fd);
+    return NULL;
 }

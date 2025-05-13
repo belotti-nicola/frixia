@@ -59,6 +59,8 @@ void *http_callback(http_callback_context_t *ctx)
     convoy_add_tcp_filedescriptor(convoy,reply,trg_str,trg_prt,read_size,HTTPCLIENT);
 
     insert_event(fepoll->fd,reply); 
+
+    printf("Reply::%d\n",reply);
     
     return NULL;
 }
@@ -126,12 +128,12 @@ void *httpclient_callback(httpclient_callback_context_t *ctx)
         close_tcp(fd);
         return 0;
     }
-    void (*fun)(int a, const char *fullpath, int fullpath_len, void *headers, int headers_size, void *) =
-        (void (*)(int, const char *, int, void *, int, void *))cb->function;
+    void (*fun)(httpclient_callback_context_t *, void *) =
+        (void (*)(httpclient_callback_context_t *, void *))cb->function;
     void *arg =
         cb->argument;
 
-    fun(fd, fhttp_2.path, fhttp_2.path_len, (void *)fhttp_2.headers, fhttp_2.num_headers, arg);
+    fun(ctx,arg);
 
     return NULL;
 }

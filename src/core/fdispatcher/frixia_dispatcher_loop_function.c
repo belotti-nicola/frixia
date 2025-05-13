@@ -35,9 +35,8 @@ int frixia_dispatcher_loop_function(void *arg)
         }
         printf("EVENT POPPED BY DISPATCHER::fd::%d\n",fd);
 
-        void *(*fun)(void *) = NULL;
-        void   *arg          = NULL;
-        get_callback_type(convoy,fepoll,fd,fun,arg);
+        void *(*fun)(void *) = get_callback_fun(convoy,fepoll,fd);
+        void   *arg          = get_callback_arg(convoy,fepoll,fd);
         bound_robin_add_task_to_one_worker(bound_robin,fun,arg);
     }
 
