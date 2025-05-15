@@ -2,6 +2,8 @@
 #define FRIXIA_CALLBACK_CONTEXT_H
 
 #include "../../../../deps/picohttpparser/picohttpparser.h"
+#include "../../convoy/convoy.h"
+#include "../../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include <netinet/in.h>
 
 #define IS_VALID_TCP_CTX(ctx) ((ctx) && (ctx)->tcp_ctx && !(ctx)->udp_ctx)
@@ -9,9 +11,10 @@
 
 typedef struct frixia_tcp_context
 {
-    int   reply;
-    char *message;
-    int   message_len;
+    int     fd;
+    ssize_t maximum_size;
+    char   *message;
+    int     message_len;
 
 } frixia_tcp_context_t;
 
@@ -60,6 +63,8 @@ typedef struct frixia_callback_context
     frixia_udp_context_t *udp_ctx;
     frixia_http_context_t *http_ctx;
     frixia_fins_context_t *fins_ctx;
+    frixia_epoll_t        *fepoll_ctx;
+    convoy_t              *convoy_ctx;
 
 } frixia_callback_context_t;
 

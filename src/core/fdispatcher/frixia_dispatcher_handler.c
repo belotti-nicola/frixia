@@ -6,6 +6,8 @@
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "../callback_suite/callback_data/frixia_callback_context.h"
 
+#include <stdlib.h>
+
 #include "frixia_dispatcher_handler.h"
 
 
@@ -72,6 +74,10 @@ void *get_callback_arg(convoy_t *convoy, frixia_epoll_t *fepoll, int fd)
                     frixia_callback_context_t *ctx = malloc(sizeof(frixia_callback_context_t));
                     ctx->http_ctx = http;
                     ctx->tcp_ctx  = tcp;
+                    tcp->fd = fd;
+                    tcp->maximum_size = size;
+                    ctx->convoy_ctx = convoy;
+                    ctx->fepoll_ctx = fepoll;
                     return (void *)ctx;
                 }
                 case FINS:
@@ -90,6 +96,11 @@ void *get_callback_arg(convoy_t *convoy, frixia_epoll_t *fepoll, int fd)
                     frixia_callback_context_t *ctx = malloc(sizeof(frixia_callback_context_t));
                     ctx->http_ctx = http;
                     ctx->tcp_ctx  = tcp;
+                    ctx->tcp_ctx  = tcp;
+                    tcp->fd = fd;
+                    tcp->maximum_size = size;
+                    ctx->convoy_ctx = convoy;
+                    ctx->fepoll_ctx = NULL;
                     return (void *)ctx;
                 }
                 case FINSCLIENT:

@@ -23,10 +23,10 @@
 #include "src/core/filedescriptor/types/udp/frixia_udp.h"
 
 
-void *foo(frixia_callback_context_t *ctx, void *sss)
+void *foo(frixia_callback_context_t *ctx, void *arg)
 {
-    int *n = (int *)sss;
-    int fd = ctx->tcp_ctx->reply;
+    int *n = (int *)arg;
+    int fd = ctx->tcp_ctx->fd;
     const char *fullpath = ctx->http_ctx->path;
     int fullpath_len = ctx->http_ctx->path_len;
     int headers_number = ctx->http_ctx->num_headers;
@@ -63,7 +63,7 @@ void *foo(frixia_callback_context_t *ctx, void *sss)
 
 void *goo(frixia_callback_context_t *ctx, int *n)
 {
-    int fd = ctx->tcp_ctx->reply;
+    int fd = ctx->tcp_ctx->fd;
     const char *fullpath = ctx->http_ctx->path;
     int fullpath_len = ctx->http_ctx->path_len;
     
@@ -86,7 +86,7 @@ void moo(frixia_callback_context_t *ctx, int fd_to_reply)
 
 void too(frixia_callback_context_t *ctx)
 {
-    int fd_to_reply = ctx->tcp_ctx->reply;
+    int fd_to_reply = ctx->tcp_ctx->fd;
     printf("too function called %d\n",fd_to_reply);
 }
 
@@ -111,7 +111,7 @@ void *timer_callback(frixia_callback_context_t *ctx,int fd)
 
 void *woo_tcp(frixia_callback_context_t *ctx, void *arg)
 {
-    int tcp_rep = ctx->tcp_ctx->reply;
+    int tcp_rep = ctx->tcp_ctx->fd;
     printf("woo_tcp called\n");
     char *s = "frixia answer";
     int dim = strlen(s);
@@ -129,7 +129,7 @@ void *woo_udp(frixia_callback_context_t *ctx, void *arg)
 void noprotocol_tcp_cb(frixia_callback_context_t *ctx, void *arg)
 //void noprotocol_tcp_cb(int fd,int tcp_rep,const unsigned char *buf, int buf_size, void *arg)
 {
-    int tcp_rep = ctx->tcp_ctx->reply;
+    int tcp_rep = ctx->tcp_ctx->fd;
     int buf_size = ctx->tcp_ctx->message_len;
     const char *buf = ctx->tcp_ctx->message;
     

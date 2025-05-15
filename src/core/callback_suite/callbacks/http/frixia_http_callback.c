@@ -9,6 +9,7 @@
 #include "../../../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "../../../convoy/convoy.h"
 #include "../../../filedescriptor/fd_monitor/epoll/fepoll.h"
+#include "../../../callback_suite/callback_data/frixia_callback_context.h"
 
 #include "frixia_http_callback.h"
 
@@ -29,12 +30,12 @@ int path_concrete_length(const char *tmp, const char find_this, int size)
     return size;
 }
 
-void *http_callback(http_callback_context_t *ctx)
+void *http_callback(frixia_callback_context_t *fctx)
 {   
-    int fd = ctx->fd;
-    int read_size = ctx->read_size;
-    convoy_t *convoy = ctx->convoy;
-    frixia_epoll_t *fepoll = ctx->fepoll;
+    int fd = fctx->tcp_ctx->fd;
+    int read_size = fctx->tcp_ctx->maximum_size;
+    convoy_t *convoy = fctx->convoy_ctx;
+    frixia_epoll_t *fepoll = fctx->fepoll_ctx;
 
     char buffer[read_size];
     int reply;
@@ -65,11 +66,11 @@ void *http_callback(http_callback_context_t *ctx)
     return NULL;
 }
 
-void *httpclient_callback(httpclient_callback_context_t *ctx)
+void *httpclient_callback(frixia_callback_context_t *ctx)
 {   
-    int fd = ctx->fd;
-    int read_size = ctx->read_size;
-    convoy_t *convoy = ctx->convoy;
+    int fd = ctx->tcp_ctx->fd;
+    int read_size = ctx->tcp_ctx->maximum_size;
+    convoy_t *convoy = ctx->convoy_ctx;
 
     char buffer[read_size];
     int bytes_read = read_tcp(fd,
