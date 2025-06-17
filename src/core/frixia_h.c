@@ -505,3 +505,23 @@ void frixia_register_noprotocol_tcp_callback(frixia_environment_t *env, const ch
     convoy_t *convoy = env->convoy;
     convoy_register_noprotocol_tcp_callback(convoy,ip,port,fun,arg);
 }
+
+frixia_environment_t *frixia_environment_create()
+{
+    frixia_environment_t *retVal = malloc(sizeof(frixia_environment_t));
+    if ( retVal == NULL )
+    {
+        printf("Error creating frixia_environment");
+        return NULL;
+    }
+
+    frixia_epoll_t *fepoll = create_frixia_epoll();
+    start_fepoll(fepoll);
+
+    convoy_t *convoy = convoy_create();
+
+
+    retVal->fepoll = fepoll;
+    retVal->convoy = convoy;
+    return retVal;
+}

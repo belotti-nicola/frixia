@@ -52,3 +52,5 @@ int frixia_read_event_data(frixia_event_t *fe,
                            thread_pool_data_t *c_arg,
                            int *r);
 
+frixia_environment_t *frixia_environment_create();
+

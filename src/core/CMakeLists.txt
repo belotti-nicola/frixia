@@ -31,7 +31,6 @@ target_link_libraries(core
   tcp
   fifo
   udp
-  callback_suite
   picohttpparser
   frixia_monitor
   fsetup
@@ -46,4 +45,5 @@ target_link_libraries(core
   eventfd
   inode
   bound_robin
+  callback_suite
 )

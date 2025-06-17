@@ -388,3 +388,24 @@ void convoy_register_timer_callback(convoy_t *c,const char *id,void *fun,void *a
 {
 
 }                                            
+
+
+convoy_t *convoy_create()
+{
+    convoy_t *retVal = malloc(sizeof(convoy_t));
+    if( retVal == NULL )
+    {
+        printf("Error creating convoy!\n");
+        return NULL;
+    }
+
+    retVal->size = 0;
+    retVal->maximum_size = MAXIMUM_FD_NUMBER;
+
+    for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
+    {
+        //TODO
+    }
+
+    return retVal;
+}
