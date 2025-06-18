@@ -402,10 +402,26 @@ convoy_t *convoy_create()
     retVal->size = 0;
     retVal->maximum_size = MAXIMUM_FD_NUMBER;
 
+    
+    frixia_file_descriptor_t *ptr = malloc(MAXIMUM_FD_NUMBER * sizeof(frixia_file_descriptor_t));
+    if ( ptr == NULL )
+    {
+        printf("Error creating frixia_file_descriptors\n");
+        return NULL;
+    }
     for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
     {
-        //TODO
+        ptr[i].fd = 0;
+        ptr[i].protocol = UNDEFINED;
+        ptr[i].protocol_data = NULL;
+        ptr[i].type = TCP;
+        ptr[i].type_data = malloc(sizeof(frixia_fd_args_t));
     }
+    for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
+    {
+        retVal->filedescriptors[i] = ptr[i];
+    }
+
 
     return retVal;
 }
