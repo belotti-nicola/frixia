@@ -1,5 +1,7 @@
 #include "fsm.h"
 
+#include <stdio.h>
+
 void sfsm_add_transition(simple_fsm_t *fsm,int state,int event, int new_state)
 {
     if( state >= NUM_STATES )
@@ -21,16 +23,33 @@ void sfsm_add_transition(simple_fsm_t *fsm,int state,int event, int new_state)
 }
 void sfsm_step(simple_fsm_t *fsm,int event)
 {
-    if( event >= NUM_EVENTS )
+    if( event >= NUM_EVENTS || event < 0 )
     {
-        printf("ERROR sfsm_add_transition event >= NUM_EVENTS\n");
+        printf("WRN sfsm_add_transition event >= NUM_EVENTS\n (%d >= %d)\n",event,NUM_EVENTS);
+        return;
+    }
+    
+    int curr_state = fsm->curr_state;
+    int index = event * NUM_STATES + curr_state;
+
+
+    int new_state = fsm->transitions[index];
+    if( new_state == -1 )
+    {
         return;
     }
 
-    int state = fsm->curr_state;
-    int index = event * NUM_STATES + state;
-    int new_state = fsm->transitions[index];
-
     fsm->curr_state = new_state;
     return;
+}
+
+simple_fsm_t sfsm_create()
+{
+    simple_fsm_t fsm;
+    for(int i=0;i<NUM_EVENTS*NUM_STATES;i++)
+    {
+        fsm.transitions[i] = -1;
+    }
+
+    return fsm;
 }

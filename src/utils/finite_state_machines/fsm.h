@@ -13,4 +13,6 @@ typedef struct simple_fsm_t
 void sfsm_add_transition(simple_fsm_t *fsm,int state,int event, int new_state);
 void sfsm_step(simple_fsm_t *fsm, int event);
 
+simple_fsm_t sfsm_create();
+
 #endif
