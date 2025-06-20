@@ -1,1 +1,2 @@
 add_subdirectory(datastructures)
+add_subdirectory(finite_state_machines)

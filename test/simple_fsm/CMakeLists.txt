@@ -1,0 +1,4 @@
+add_executable(TestInstantiatorSimpleFSM test_fsm.c)
+target_link_libraries(TestInstantiatorSimpleFSM simple_fsm)
+add_test(NAME TestInstantiatorSimpleFSM
+    COMMAND TestInstantiatorSimpleFSM)
