@@ -40,12 +40,13 @@ void sfsm_step(simple_fsm_t *fsm,int event)
     }
 
     fsm->curr_state = new_state;
+
     return;
 }
 
 simple_fsm_t sfsm_create()
 {
-    simple_fsm_t fsm;
+    simple_fsm_t fsm = {0};
     for(int i=0;i<NUM_EVENTS*NUM_STATES;i++)
     {
         fsm.transitions[i] = -1;

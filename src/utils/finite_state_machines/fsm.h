@@ -6,7 +6,7 @@
 typedef struct simple_fsm_t
 {
     int curr_state;
-    int transitions[NUM_EVENTS * NUM_STATES]
+    int transitions[NUM_EVENTS * NUM_STATES];
 
 } simple_fsm_t;
 

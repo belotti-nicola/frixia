@@ -2,11 +2,7 @@
 
 int main()
 {
-    simple_fsm_t fsm;
-    for(int i=0;i<NUM_EVENTS*NUM_STATES;i++)
-    {
-        fsm.transitions[i] = -1;
-    }
+    simple_fsm_t fsm = sfsm_create();
     sfsm_add_transition(&fsm,0,0,1);
     sfsm_add_transition(&fsm,1,1,2);
     sfsm_add_transition(&fsm,2,2,3);
