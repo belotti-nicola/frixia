@@ -54,3 +54,8 @@ simple_fsm_t sfsm_create()
 
     return fsm;
 }
+
+void sfsm_reset(simple_fsm_t *fsm)
+{
+    fsm->curr_state = 0;
+}
