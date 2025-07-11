@@ -20,7 +20,7 @@
 #include "../../../frixia_common.h"
 #include "../../../fevent/frixia_event.h"
 #include "../../../fevent/frixia_events_queue.h"
-#include <errno.h>
+#include "../../../frixia_h.h"
 
 #include "fepoll.h"
 
@@ -87,7 +87,8 @@ FRIXIA_EPOLL_CODE_T fepoll_stop(frixia_epoll_t *fe)
     int fd = fe->stop_fd;
     ssize_t n = write(fd, &value, sizeof(value));
     if (n == -1) {
-        perror("write");
+        PRINT_ERRNO("write");
+        printf("ERRORR!!\n");
         return 1;
     }
 

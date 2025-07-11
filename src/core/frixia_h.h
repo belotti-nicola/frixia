@@ -9,6 +9,12 @@
 #include "crono/crono.h"
 #include "../core/fdispatcher/frixia_dispatcher.h"
 #include "../core/thread_pool/bound_robin/bound_robin.h"
+#include <errno.h>
+#include <string.h>
+
+#define PRINT_ERRNO(prefix) \
+    printf("%s: %s (errno: %d)\n", prefix, strerror(errno), errno)
+
 
 typedef struct frixia_environment
 {
