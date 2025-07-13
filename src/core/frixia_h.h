@@ -12,8 +12,9 @@
 #include <errno.h>
 #include <string.h>
 
+//TODO DO LOGGER
 #define PRINT_ERRNO(prefix) \
-    printf("%s: %s (errno: %d)\n", prefix, strerror(errno), errno)
+    printf("[DEBUG] %s: %s (errno: %d, %s:%d (%s))\n", prefix,strerror(errno), errno, __FILE__, __LINE__,__func__)
 
 
 typedef struct frixia_environment
