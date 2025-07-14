@@ -28,11 +28,20 @@ void main_loop(void *th_arg)
 
 
 int main(int argc, char *argv[])
-{  
+{      
     bool b = true;
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
     fadd_stop_filedescriptor(fepoll);
+    
+    int tcp_fd = start_tcp_listening(8081);
+    if (tcp_fd <= 0 )
+    {
+        return -1;
+    }
+    int insert_code = insert_event(fepoll->fd,tcp_fd);
+    printf("%d for %d\n",insert_code,tcp_fd);
+    
 
     pthread_t th;
     th_arg_t data;
@@ -40,7 +49,7 @@ int main(int argc, char *argv[])
     data.keep_looping = &b;
     pthread_create(&th,NULL,main_loop,&data);
     
-    sleep(1);
+    sleep(10);
     b = false;
     fepoll_stop(fepoll);
     int join_value = pthread_join(th,NULL);
