@@ -20,7 +20,11 @@ void main_loop(void *th_arg)
     while(*keep_looping)
     {
         int n = frixia_epoll_wait(fepoll,events);
-        printf("Event intercepted!(num %d fd %d)\n",n,events[0].fd);
+        printf("Events intercepted:%d\n",n);
+        for(int i=0;i<n;i++)
+        {
+            printf("fd number %d\n",events[i].fd);
+        }
     }
 
     printf("Ended\n");
@@ -40,8 +44,11 @@ int main(int argc, char *argv[])
         return -1;
     }
     int insert_code = insert_event(fepoll->fd,tcp_fd);
-    printf("%d for %d\n",insert_code,tcp_fd);
-    
+    if( insert_code < 0)
+    {
+        printf("Error insert event\n");
+        return -1;
+    }    
 
     pthread_t th;
     th_arg_t data;

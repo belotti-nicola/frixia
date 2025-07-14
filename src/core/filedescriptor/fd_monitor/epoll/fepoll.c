@@ -116,6 +116,23 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, int fd)
     return FEPOLL_OK;
 }
 
+FRIXIA_EPOLL_CODE_T modify_event(int epoll, int fd)
+{
+    printf("MODIFY EVENT epoll_fd %d target_fd:%d\n",epoll,fd);
+
+    struct epoll_event ev;
+    ev.events =  EPOLLIN | EPOLLET;
+    ev.data.fd = fd;
+    int return_code = epoll_ctl(epoll, EPOLL_CTL_MOD, fd, &ev);
+    if( return_code != 0) 
+    {
+        printf("Add error!! (%d errno::%d) %d %d\n",return_code, errno,epoll,fd);
+		return -1;
+    }
+    printf("Epoll_ctl :: %d (fd added: %d)\n",epoll,fd);
+    return FEPOLL_OK;
+}
+
 
 int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents)
 {

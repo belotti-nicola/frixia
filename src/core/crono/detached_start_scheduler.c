@@ -26,7 +26,7 @@ void crono_main_loop(crono_t *crono)
     ev.data.fd = fd;
 
     int crono_fd = create_epoll();
-    add_fd_listener(crono_fd,fd,&ev);
+    add_fd(crono_fd,fd,&ev);
 
     frixia_event_t events[10];
     while( crono->keep_looping )

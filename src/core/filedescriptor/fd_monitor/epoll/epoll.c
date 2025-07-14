@@ -17,60 +17,31 @@ int create_epoll()
     int epoll_fd = epoll_create(KERNEL_HINT);
 	if (epoll_fd == -1) 
     {
-		return errno;
+        return errno;
 	}
     return epoll_fd;
 }
 
-int start_epoll(int fd)
+int wait_epoll_events(int epoll_fd, int max_events, frixia_event_t *fevents)
 {
-    struct epoll_event event, events[10];
-
-    char *read_buffer[64 + 1];
-    int events_number = -1;
-    bool keep_looping = true;
-    while(keep_looping)
-    {
-        events_number = epoll_wait(fd, events, 10, -1);
-        if (events_number == -1)
-        {
-            return -1;
-        }
-        for (int i = 0; i < events_number; i++)
-        {
-            printf("EVENT::%d\n",events[i].data.fd);
-        }
-        printf("EVENT FOR ENDED\n");
-    }
-    return -1;
-}
-int stop_epoll(int fd)
-{
-    if( fd < 0)
-    {
-        return 0;
-    }
-}
-int wait_epoll_events(int epoll_fd, int max, frixia_event_t *fevents)
-{
-    if(epoll_fd<=0)
+    if( epoll_fd<=0 )
     {
         printf("Error::wait_epoll_events:: epoll filedescriptor %d (<=0)\n",epoll_fd);
         return -1;
     }
-    if(max<=0)
+    if( max_events<=0) 
     {
-        printf("Error::wait_epoll_events:: epoll events number %d (<=0)\n",max);
+        printf("Error::wait_epoll_events:: epoll events number %d (<=0)\n",max_events);
         return -1;
     }
-    struct epoll_event events[max];
-    int events_number = epoll_wait(epoll_fd, events, max, -1);
+    struct epoll_event events[max_events];
+    int events_number = epoll_wait(epoll_fd, events, max_events, -1);
     if(events_number <= 0)
     {
-        printf("Error::wait_epoll_events:: epoll events waited number %d (<=0)\n",max);
+        printf("Error::wait_epoll_events:: epoll events waited number %d (<=0)\n",max_events);
         return -1;
     }
-    for(int i=0;i<events_number;i++)
+    for(int i=0;i<events_number && i<max_events;i++)
     {
         fevents[i].fd = events[i].data.fd;
     }
@@ -78,9 +49,9 @@ int wait_epoll_events(int epoll_fd, int max, frixia_event_t *fevents)
     return events_number;
 }
 
-int add_fd_listener(int epoll,
-                    int fd,
-                    struct epoll_event *ev)
+int add_fd(int epoll,
+           int fd,
+           struct epoll_event *ev)
 {
     if( epoll < 0)
     {
@@ -92,8 +63,8 @@ int add_fd_listener(int epoll,
     }    
     return fd;
 }
-int stop_fd_listener(int epoll_fd,
-                     int closing_fd)
+int stop_fd(int epoll_fd,
+            int closing_fd)
 {
     if( closing_fd < 0)
     {
