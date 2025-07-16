@@ -20,5 +20,6 @@ target_link_libraries(frixia
   picohttpparser
   threadsafe_simple_queue
   simple_queue
+  simple_valid_callback
 )
 

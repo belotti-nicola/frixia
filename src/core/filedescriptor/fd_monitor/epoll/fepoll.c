@@ -39,6 +39,16 @@ frixia_epoll_t* create_frixia_epoll()
     
     frixia_epoll->stop_fd = -1;
     
+    
+    sv_callback_t *cbs = malloc(MAXIMUM_FILEDESCRIPTORS_NUMBER * sizeof(sv_callback_t));
+    for (int i=0;i++;i<MAXIMUM_FILEDESCRIPTORS_NUMBER)
+    {
+        cbs->is_valid = false;
+        cbs->argument = NULL;
+        cbs->function = NULL;
+    }
+    frixia_epoll->callbacks_data = cbs;
+
     return frixia_epoll;
 }
 FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
@@ -88,7 +98,7 @@ FRIXIA_EPOLL_CODE_T fepoll_stop(frixia_epoll_t *fe)
     ssize_t n = write(fd, &value, sizeof(value));
     if (n == -1) {
         PRINT_ERRNO("write");
-        printf("ERRORR!!\n");
+        printf("ERRORR!!%d\n",fd);
         return 1;
     }
 

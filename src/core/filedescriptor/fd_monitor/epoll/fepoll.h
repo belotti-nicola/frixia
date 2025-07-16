@@ -5,6 +5,7 @@
 #include "../../../fevent/frixia_events_queue.h"
 #include "fepoll_codes.h"
 #include "fepoll_pool.h"
+#include "../../../../utils/valid_callback/simple_valid_callback.h"
 
 
 typedef struct frixia_epoll 
@@ -16,6 +17,9 @@ typedef struct frixia_epoll
     int                      stop_fd;
     frixia_events_queue_t   *events_queue;
     pthread_t               *th;
+
+    sv_callback_t           *callbacks_data;
+
 
 } frixia_epoll_t;
 

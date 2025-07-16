@@ -37,10 +37,9 @@ void main_loop(void *th_arg)
         printf("Events intercepted:%d\n",n);
         for(int i=0;i<n;i++)
         {
-            void *(*cb_fun)(int, int, void *) = arg->fun[i];
-            void   *cb_arg          = arg->arg[i];
-
-            cb_fun(n,events[i].fd,cb_arg);
+            int fd = events[i].fd;
+            sv_callback_t cb = fepoll->callbacks_data[fd];
+            sv_do_callback(&cb);
         }
     }
 }
@@ -52,8 +51,8 @@ int main(int argc, char *argv[])
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
     
-    int tcp_fd = start_tcp_listening(8081);
-    if (tcp_fd <= 0 )
+    int logger_fd = start_tcp_listening(8081);
+    if (logger_fd <= 0 )
     {
         return -1;
     }
@@ -64,8 +63,8 @@ int main(int argc, char *argv[])
     }
 
 
-    int insert_code_tcp = insert_event(fepoll->fd,tcp_fd);
-    if( insert_code_tcp < 0)
+    int insert_code_logger = insert_event(fepoll->fd,logger_fd);
+    if( insert_code_logger < 0)
     {
         printf("Error insert event\n");
         return -1;
@@ -75,19 +74,21 @@ int main(int argc, char *argv[])
     {
         printf("Error insert event\n");
         return -1;
-    }     
+    }
+
+    fepoll->callbacks_data[4].is_valid = true;
+    fepoll->callbacks_data[4].function = logger;
+    fepoll->callbacks_data[4].argument = NULL;
+    fepoll->callbacks_data[5].is_valid = true;
+    fepoll->callbacks_data[5].function = fepoll_stop;
+    fepoll->callbacks_data[5].argument = fepoll;
+
 
     pthread_t th;
     th_arg_t data;
     data.fepoll = fepoll;
     data.keep_looping = &b;
-    
-    
-    data.fun[4] = logger;
-    data.arg[4] = NULL;
-    data.fun[4] = fepoll_stop;
-    data.arg[5] = fepoll;
-    
+       
     
     pthread_create(&th,NULL,main_loop,&data);
     
