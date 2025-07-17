@@ -11,24 +11,33 @@ typedef struct th_arg
     bool *keep_looping;
     frixia_epoll_t *fepoll;
 
-    void *(*fun[FILDESCRIPTORS_MAX_INDEX])(void *);
-    void   *arg[FILDESCRIPTORS_MAX_INDEX];
-
 } th_arg_t;
 
-void logger(int n,int fd,void *arg)
+void logger()
 {
-    char *str = (char *)arg;
-    printf("called %d %d %s\n",n,fd,str);
+    printf("called logger\n");
 }
+
+typedef struct ctx_stopping
+{
+    frixia_epoll_t *cb_fepoll;
+    bool           *cb_keep_looping;
+
+} ctx_stopping_t;
+
+void new_fepoll_stop(ctx_stopping_t *ctx)
+{
+    ctx->cb_keep_looping = false;
+    frixia_wake(ctx->cb_fepoll);
+    printf("new_fepoll_stop\n");
+}
+
 
 void main_loop(void *th_arg)
 {
     th_arg_t *arg = (th_arg_t *)th_arg;
     bool *keep_looping = arg->keep_looping;
     frixia_epoll_t *fepoll = arg->fepoll;
-
-
     
     frixia_event_t events[10];
     while(*keep_looping)
@@ -38,18 +47,21 @@ void main_loop(void *th_arg)
         for(int i=0;i<n;i++)
         {
             int fd = events[i].fd;
+            printf("fd: %d\n",fd);
             sv_callback_t cb = fepoll->callbacks_data[fd];
             sv_do_callback(&cb);
         }
     }
+    printf("End\n");
 }
 
 
 int main(int argc, char *argv[])
 {      
-    bool b = true;
+    bool keep_looping = true;
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
+    fadd_stop_filedescriptor(fepoll);
     
     int logger_fd = start_tcp_listening(8081);
     if (logger_fd <= 0 )
@@ -76,18 +88,29 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    fepoll->callbacks_data[4].is_valid = true;
-    fepoll->callbacks_data[4].function = logger;
+    ctx_stopping_t ctx;
+    ctx.cb_fepoll = fepoll;
+    ctx.cb_keep_looping = &keep_looping;
+    fepoll->callbacks_data[4].is_valid = false;
+    fepoll->callbacks_data[4].function = NULL;
     fepoll->callbacks_data[4].argument = NULL;
+
+
+
     fepoll->callbacks_data[5].is_valid = true;
-    fepoll->callbacks_data[5].function = fepoll_stop;
-    fepoll->callbacks_data[5].argument = fepoll;
+    fepoll->callbacks_data[5].function = logger;
+    fepoll->callbacks_data[5].argument = NULL;
+
+
+    fepoll->callbacks_data[6].is_valid = true;
+    fepoll->callbacks_data[6].function = new_fepoll_stop;
+    fepoll->callbacks_data[6].argument = &ctx;
 
 
     pthread_t th;
     th_arg_t data;
     data.fepoll = fepoll;
-    data.keep_looping = &b;
+    data.keep_looping = &keep_looping;
        
     
     pthread_create(&th,NULL,main_loop,&data);

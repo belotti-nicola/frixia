@@ -14,7 +14,6 @@ typedef struct frixia_epoll
     int                      maximum_filedescriptors;
     int                      filedescriptors_number;
     fepoll_pool_t           *fd_pool;
-    int                      stop_fd;
     frixia_events_queue_t   *events_queue;
     pthread_t               *th;
 

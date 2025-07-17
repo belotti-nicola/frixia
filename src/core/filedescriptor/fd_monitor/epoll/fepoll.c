@@ -34,11 +34,7 @@ frixia_epoll_t* create_frixia_epoll()
     }
     
     frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));
-    frixia_epoll->fd_pool = l;
-
-    
-    frixia_epoll->stop_fd = -1;
-    
+    frixia_epoll->fd_pool = l;   
     
     sv_callback_t *cbs = malloc(MAXIMUM_FILEDESCRIPTORS_NUMBER * sizeof(sv_callback_t));
     for (int i=0;i++;i<MAXIMUM_FILEDESCRIPTORS_NUMBER)
@@ -75,7 +71,6 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
         return FERR_ADD_STOP_FILEDESCRIPTOR;
     }
 
-    fepoll->stop_fd = efd;
     printf("Stop filedescriptor:%d\n",efd);
     return efd;
 }
@@ -94,7 +89,7 @@ FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
 FRIXIA_EPOLL_CODE_T fepoll_stop(frixia_epoll_t *fe)
 {    
     uint64_t value = 1;
-    int fd = fe->stop_fd;
+    int fd = -1;
     ssize_t n = write(fd, &value, sizeof(value));
     if (n == -1) {
         PRINT_ERRNO("write");
@@ -167,11 +162,11 @@ frixia_fd_t *search_fepoll(frixia_epoll_t *fepoll,int search_fd)
 
 void frixia_wake(frixia_epoll_t *fepoll)
 {
-    int wake_fd = fepoll->stop_fd;
+    int wake_fd = 4; //TODO 
     int rc = eventfd_write(wake_fd,1);
     if( rc < 0 )
     {
-        printf("Errorr!!%d\n",errno);
+        printf("Errorr!! %d\n",errno);
     }
 }
 

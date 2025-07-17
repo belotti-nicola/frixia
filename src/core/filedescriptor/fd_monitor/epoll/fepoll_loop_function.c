@@ -10,7 +10,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
 {
     frixia_epoll_t *fepoll = th_data->fepoll;
 
-    int stop_fd = fepoll->stop_fd;
+    int stop_fd = -1; //TODO ELIMINATE
     bool keep_looping = true;
     while( keep_looping )
     {
