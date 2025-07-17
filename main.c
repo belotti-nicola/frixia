@@ -29,7 +29,6 @@ void new_fepoll_stop(ctx_stopping_t *ctx)
 {
     bool *b = ctx->cb_keep_looping;
     *b = false;
-    frixia_wake(ctx->cb_fepoll);
     printf("new_fepoll_stop\n");
 }
 
@@ -117,6 +116,10 @@ int main(int argc, char *argv[])
     
     pthread_create(&th,NULL,main_loop,&data);
     
+    sleep(2);
+    keep_looping=false;
+    frixia_wake(fepoll);
+
     int join_value = pthread_join(th,NULL);
     printf("Join:%d\n",join_value);
     return 0;

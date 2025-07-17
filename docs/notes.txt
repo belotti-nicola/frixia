@@ -1,0 +1,2 @@
+frixia_epoll: wake
+thread_epoll: termination
