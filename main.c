@@ -27,7 +27,8 @@ typedef struct ctx_stopping
 
 void new_fepoll_stop(ctx_stopping_t *ctx)
 {
-    ctx->cb_keep_looping = false;
+    bool *b = ctx->cb_keep_looping;
+    *b = false;
     frixia_wake(ctx->cb_fepoll);
     printf("new_fepoll_stop\n");
 }
@@ -51,6 +52,7 @@ void main_loop(void *th_arg)
             sv_callback_t cb = fepoll->callbacks_data[fd];
             sv_do_callback(&cb);
         }
+        printf("*keep looping:%d\n",*keep_looping);
     }
     printf("End\n");
 }
