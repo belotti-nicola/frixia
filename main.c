@@ -118,39 +118,15 @@ int main(int argc, char *argv[])
     bool keep_looping = true;
     frixia_epoll_t *fepoll = create_frixia_epoll();
     start_fepoll(fepoll);
+    
+    
     int pipe_fd = start_fifo_listening("my_pipe");
     if (pipe_fd <= 0 )
     {
         return -1;
-    }
-
-    
-    int logger_fd = start_tcp_listening(8081);
-    if (logger_fd <= 0 )
-    {
-        return -1;
-    }
-    int stop_fd = start_tcp_listening(8082);
-    if (stop_fd <= 0 )
-    {
-        return -1;
-    }
-
+    }    
     int insert_code_pipe = insert_event(fepoll->fd,pipe_fd);
     if( insert_code_pipe < 0 )
-    {
-        printf("Error insert event %d\n",__LINE__);
-        return -1;
-    }
-
-    int insert_code_logger = insert_event(fepoll->fd,logger_fd);
-    if( insert_code_logger < 0)
-    {
-        printf("Error insert event %d\n",__LINE__);
-        return -1;
-    }
-    int insert_code_stop = insert_event(fepoll->fd,stop_fd);
-    if( insert_code_stop < 0)
     {
         printf("Error insert event %d\n",__LINE__);
         return -1;
@@ -160,27 +136,10 @@ int main(int argc, char *argv[])
     ctx4.cb_fd     = 4;
     ctx4.cb_fepoll = fepoll;
     ctx4.cb_keep_looping = &keep_looping;
-    sv_callback_t *sv_4 = wrapper_sv_create_callback(new_fepoll_stop,&ctx5);
-    fepoll->callbacks_data[4] = *sv_4;
+    fepoll->callbacks_data[4].is_valid = true;
+    fepoll->callbacks_data[4].function = new_fepoll_stop;
+    fepoll->callbacks_data[4].argument = &ctx4;
     
-
-    cb_ctx_t ctx5;
-    ctx5.cb_fd     = 5;
-    ctx5.cb_fepoll = fepoll;
-    ctx5.cb_keep_looping = &keep_looping;
-    fepoll->callbacks_data[5].is_valid = true;
-    sv_callback_t *sv_5 = wrapper_sv_create_callback(new_fepoll_stop,&ctx5);
-    fepoll->callbacks_data[5] = *sv_5;
-
-
-
-    cb_ctx_t ctx6;
-    ctx6.cb_fd     = 6;
-    ctx6.cb_fepoll = fepoll;
-    ctx6.cb_keep_looping = &keep_looping;
-    fepoll->callbacks_data[6].is_valid = true;
-    sv_callback_t *sv_6 = wrapper_sv_create_callback(new_fepoll_stop,&ctx6);
-    fepoll->callbacks_data[6] = *sv_6;
 
 
     pthread_t th;
