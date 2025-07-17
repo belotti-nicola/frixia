@@ -1,8 +1,9 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "simple_valid_callback.h"
 
-sv_callback_t *sv_create_callback(callback_func_t f, void *a )
+sv_callback_t *sv_create_callback(void *(*f)(void *), void *a )
 {
     sv_callback_t *ptr = malloc(sizeof(sv_callback_t));
     if ( ptr == NULL )
@@ -36,9 +37,10 @@ void sv_do_callback(sv_callback_t *p)
         return;
     }
 
-    callback_func_t cb = p->function;
     void *arg = p->argument;
-    cb(arg);
+    callback_func_t *fun = p->function;
+
+    (*fun)(arg);
 
 }
 

@@ -1,2 +1,20 @@
 frixia_epoll: wake
 thread_epoll: termination
+filedescriptors: close them
+    If you use an event cache or store all the file descriptors
+    returned from epoll_wait(2), then make sure to provide a way to
+    mark its closure dynamically (i.e., caused by a previous
+    event's processing).  Suppose you receive 100 events from
+    epoll_wait(2), and in event #47 a condition causes event #13 to
+    be closed.  If you remove the structure and close(2) the file
+    descriptor for event #13, then your event cache might still say
+    there are events waiting for that file descriptor causing
+    confusion.
+
+    One solution for this is to call, during the processing of
+    event 47, epoll_ctl(EPOLL_CTL_DEL) to delete file descriptor 13
+    and close(2), then mark its associated data structure as
+    removed and link it to a cleanup list.  If you find another
+    event for file descriptor 13 in your batch processing, you will
+    discover the file descriptor had been previously removed and
+    there will be no confusion.
