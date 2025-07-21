@@ -51,7 +51,6 @@ typedef union callback_data
 typedef struct signature_data
 {
     callback_type_t type;
-    return_type_t ret;
     callback_data_t cb;
 
 } signature_data_t;

@@ -89,20 +89,7 @@ typedef struct wrapper_sv_cb
     };
 } wrapper_sv_cb_t;
 
-wrapper_sv_cb_t make_wrapped_fepoll(void *(*fun)(void *),void *arg)
-{
-    
-    wrapper_sv_cb_t obj = 
-    {
-        .type = FEPOLL_CTXS,
-        .fepoll_ctx = 
-        {
-            .function = fun,
-            .argument = arg
-        }
-    };
-    return obj;
-}
+
 void execute_callback(wrapper_sv_cb_t cb)
 {
     if( cb.type == FEPOLL_CTXS )
