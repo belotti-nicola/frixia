@@ -31,18 +31,20 @@ typedef struct cb_ctx
 void new_fepoll_stop(cb_ctx_t *ctx)
 {
     //logger(ctx); POSSIBLE!!!
-    printf("called logger %d\n",ctx->cb_fd);
+    char buf[10];
+    int n = read_fifo(ctx->cb_fd,buf,10);
+    printf("called logger %d :'",ctx->cb_fd);
+    for (int i =0; i<n; i++)
+    {
+        printf("%c", buf[i]);
+    }
+
+    printf("'\n");
+
     bool *b = ctx->cb_keep_looping;
     *b = false;
     printf("new_fepoll_stop\n");
 }
-
-void logger(cb_ctx_t *cb_data)
-{
-    int event_fd = cb_data->cb_fd;
-    printf("called logger %d\n",event_fd);
-}
-
 
 void *main_loop(void *th_arg)
 {
@@ -65,40 +67,6 @@ void *main_loop(void *th_arg)
     }
     printf("End\n");
 }
-
-typedef enum contexts
-{
-    FEPOLL_CTXS
-
-} contexts_t;
-
-
-typedef void *(fepoll_ctx_function)(cb_ctx_t *);
-typedef struct wrapper_sv_cb
-{
-    contexts_t type;
-    union
-    {
-        struct 
-        {
-            fepoll_ctx_function *function;
-            void                *argument;
-
-        } fepoll_ctx;
-
-    };
-} wrapper_sv_cb_t;
-
-
-void execute_callback(wrapper_sv_cb_t cb)
-{
-    if( cb.type == FEPOLL_CTXS )
-    {
-        cb.fepoll_ctx.function(cb.fepoll_ctx.argument);
-    }
-}
-
-
 
 int main(int argc, char *argv[])
 {      
@@ -125,8 +93,7 @@ int main(int argc, char *argv[])
     ctx4.cb_keep_looping = &keep_looping;
     fepoll->callbacks_data[4].is_valid = true;
     fepoll->callbacks_data[4].function = new_fepoll_stop;
-    fepoll->callbacks_data[4].argument = &ctx4;
-    
+    fepoll->callbacks_data[4].argument = &ctx4;    
 
 
     pthread_t th;
