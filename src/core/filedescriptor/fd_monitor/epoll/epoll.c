@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include "../../../fevent/frixia_event.h"
 
+
 #include "epoll.h"
 
 int create_epoll()
@@ -43,7 +44,8 @@ int wait_epoll_events(int epoll_fd, int max_events, frixia_event_t *fevents)
     }
     for(int i=0;i<events_number && i<max_events;i++)
     {
-        fevents[i].fd = events[i].data.fd;
+        fevents[i].fd          = events[i].data.fd;
+        fevents[i].events_maks = events[i].events;
     }
 
     return events_number;

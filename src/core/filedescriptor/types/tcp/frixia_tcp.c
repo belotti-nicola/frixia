@@ -9,6 +9,7 @@
 
 #include "frixia_tcp.h"
 #include "../../../../core/frixia_codes.h"
+#include "../../../../core/frixia_h.h"
 #include <fcntl.h>
 
 int start_tcp_listening(int port)
@@ -85,7 +86,7 @@ int read_tcp(int filedescriptor,char buf[], int size, int *error)
     int read_bytes = read(filedescriptor, buf, size);
     if (read_bytes < 0)
     {
-        printf("Errno:%d(fd:%d)\n",errno,filedescriptor);
+        PRINT_ERRNO("Error reading TCP");
         return ERR_FTCP_READING;
     }
     return read_bytes;

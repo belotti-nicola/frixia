@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define FILEDESCRIPTORS 10
 #define FILDESCRIPTORS_MAX_INDEX 10+3
@@ -11,6 +12,8 @@
 #include "src/core/filedescriptor/types/fifo/frixia_fifo.h"
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
 #include "src/core/filedescriptor/types/udp/frixia_udp.h"
+#include <sys/epoll.h>
+#include <inttypes.h>:
 
 
 typedef struct th_arg
@@ -23,6 +26,7 @@ typedef struct th_arg
 typedef struct cb_ctx
 {
     int             cb_fd;
+    uint32_t        cb_event_mask;
     frixia_epoll_t *cb_fepoll;
     bool           *cb_keep_looping;
 
@@ -49,6 +53,65 @@ void *new_fepoll_stop(void *cast_me_to_ctx)
     return NULL;
 }
 
+void print_epoll_events(uint32_t events) {
+    printf("Eventi epoll (0x%" PRIx32 "):\n", events);
+    
+    if (events & EPOLLIN)       printf("  EPOLLIN - dati disponibili per lettura\n");
+    if (events & EPOLLOUT)      printf("  EPOLLOUT - possibile scrivere senza bloccare\n");
+    if (events & EPOLLERR)      printf("  EPOLLERR - errore sul fd\n");
+    if (events & EPOLLHUP)      printf("  EPOLLHUP - hangup sul fd\n");
+    if (events & EPOLLPRI)      printf("  EPOLLPRI - dati urgenti disponibili\n");
+    if (events & EPOLLET)       printf("  EPOLLET - edge-triggered\n");
+    if (events & EPOLLONESHOT)  printf("  EPOLLONESHOT - one-shot\n");
+    if (events & EPOLLRDHUP)    printf("  EPOLLRDHUP - peer ha chiuso connessione\n");
+    
+    if (events == 0) printf("  Nessun evento\n");
+}
+
+void *adder_tcp(void *cast_me_to_ctx)
+{
+    cb_ctx_t *ctx = (cb_ctx_t *)cast_me_to_ctx;
+    int ret_code = -1;
+    int reply;
+
+    print_epoll_events(ctx->cb_event_mask);
+    ret_code = accept_tcp(ctx->cb_fd,&reply);
+    if ( ret_code < 0)
+    {
+        printf("Error accepting!(%d %d)\n",ctx->cb_fepoll->fd, ctx->cb_fd);
+        return NULL;
+    }
+
+    int fepoll_fd = ctx->cb_fepoll->fd;
+    int new_event_fd = reply;
+    ret_code = insert_event(fepoll_fd,new_event_fd);
+    if ( ret_code < 0)
+    {
+        printf("Error inserting!\n");
+        return NULL;
+    }
+}
+
+void *logger(void *cast_me_to_ctx)
+{
+    cb_ctx_t *ctx = (cb_ctx_t *)cast_me_to_ctx;
+    int fd = ctx->cb_fd;
+    char tmp[256];
+    int error=-1;
+
+    
+    int n = read_tcp(fd,tmp,256,&error);
+    if ( n < 0)
+    {
+        printf("Error reading!(%d)\n",fd);
+        return NULL;
+    }
+    printf("Event: %d read: %s\n",ctx->cb_fd,tmp);
+
+    close(fd);
+    return NULL;
+}
+
 void *main_loop(void *th_arg)
 {
     th_arg_t *arg = (th_arg_t *)th_arg;
@@ -64,6 +127,13 @@ void *main_loop(void *th_arg)
         {
             int fd = events[i].fd;
             sv_callback_t cb = fepoll->callbacks_data[fd];
+            
+            //TODO THIS SUCKS
+            uint32_t mask = events[i].events_maks;
+            cb_ctx_t *ctx = (cb_ctx_t *)cb.argument;
+            ctx->cb_event_mask = mask;
+            ctx->cb_fd = fd;
+
             sv_do_callback(&cb);
         }
         printf("*keep looping:%d\n",*keep_looping);
@@ -96,7 +166,37 @@ int main(int argc, char *argv[])
     ctx4.cb_keep_looping = &keep_looping;
     fepoll->callbacks_data[4].is_valid = true;
     fepoll->callbacks_data[4].function = new_fepoll_stop;
-    fepoll->callbacks_data[4].argument = &ctx4;    
+    fepoll->callbacks_data[4].argument = &ctx4;
+    
+    
+    
+    int tcp_fd = start_tcp_listening(8081);
+    if (tcp_fd <= 0 )
+    {
+        return -1;
+    }    
+    int insert_code_tcp = insert_event(fepoll->fd,tcp_fd);
+    if( insert_code_tcp < 0 )
+    {
+        printf("Error insert event %d\n",__LINE__);
+        return -1;
+    }
+    cb_ctx_t ctx5;
+    ctx5.cb_fd     = 5;
+    ctx5.cb_fepoll = fepoll;
+    ctx5.cb_keep_looping = &keep_looping;
+    fepoll->callbacks_data[5].is_valid = true;
+    fepoll->callbacks_data[5].function = adder_tcp;
+    fepoll->callbacks_data[5].argument = &ctx5;
+
+    cb_ctx_t ctx6;
+    ctx5.cb_fd     = 6;
+    ctx5.cb_fepoll = fepoll;
+    ctx5.cb_keep_looping = &keep_looping;
+    fepoll->callbacks_data[6].is_valid = true;
+    fepoll->callbacks_data[6].function = logger;
+    fepoll->callbacks_data[6].argument = &ctx6;
+
 
 
     pthread_t th;
