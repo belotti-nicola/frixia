@@ -28,8 +28,9 @@ typedef struct cb_ctx
 
 } cb_ctx_t;
 
-void new_fepoll_stop(cb_ctx_t *ctx)
+void *new_fepoll_stop(void *cast_me_to_ctx)
 {
+    cb_ctx_t *ctx = (cb_ctx_t *)cast_me_to_ctx;
     //logger(ctx); POSSIBLE!!!
     char buf[10];
     int n = read_fifo(ctx->cb_fd,buf,10);
@@ -44,6 +45,8 @@ void new_fepoll_stop(cb_ctx_t *ctx)
     bool *b = ctx->cb_keep_looping;
     *b = false;
     printf("new_fepoll_stop\n");
+
+    return NULL;
 }
 
 void *main_loop(void *th_arg)

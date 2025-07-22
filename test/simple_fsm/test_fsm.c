@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "../../src/utils/finite_state_machines/fsm.h"
 
 int main()

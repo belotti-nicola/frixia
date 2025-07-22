@@ -51,6 +51,7 @@ FUTURE DEVELOPMENT
         2. static scheduling
         3. task stealing
     UDP/TCP payload only
+    library -> COMPILETIME/RUNTIME CHECKS FOR TYPE SAFETY (LEAVE OUT ALL THE CASTS) 
 
 CHECK
     nothing.
