@@ -106,7 +106,7 @@ void *logger(void *cast_me_to_ctx)
         printf("Error reading!(%d)\n",fd);
         return NULL;
     }
-    printf("Event: %d read: %s\n",ctx->cb_fd,tmp);
+    printf("Event: %d read: %.*s\n",ctx->cb_fd,n,tmp);
 
     close(fd);
     return NULL;
@@ -190,9 +190,9 @@ int main(int argc, char *argv[])
     fepoll->callbacks_data[5].argument = &ctx5;
 
     cb_ctx_t ctx6;
-    ctx5.cb_fd     = 6;
-    ctx5.cb_fepoll = fepoll;
-    ctx5.cb_keep_looping = &keep_looping;
+    ctx6.cb_fd     = 6;
+    ctx6.cb_fepoll = fepoll;
+    ctx6.cb_keep_looping = &keep_looping;
     fepoll->callbacks_data[6].is_valid = true;
     fepoll->callbacks_data[6].function = logger;
     fepoll->callbacks_data[6].argument = &ctx6;
