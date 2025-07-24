@@ -1,11 +1,13 @@
 TODO   
+    do API for epollcallbacks
+    build ctx in a propert way
+    
     CALLBACKS SIZE IS KNOWN AT compile time known
     valgrind support
     debug level prints
     convoy is shared -> make it threadsafe
     simplify API start
     remove unnecessary elements
-
     moving any function to the thread_pool might be functional
     http/fins calling
     mallocing convoy to simplify api
@@ -39,6 +41,7 @@ CHOICES
     handle mini tasks (HTTP: 1.read 2.decode req 3.do magic 4.reply to client)
 
 FUTURE DEVELOPMENT
+    strong type safety for callbacks
     icon
     python integration
     HTTPS (integrabile->2.0.0)

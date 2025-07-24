@@ -106,9 +106,9 @@ void *logger(void *cast_me_to_ctx)
         printf("Error reading!(%d)\n",fd);
         return NULL;
     }
-    printf("Event: %d read: %.*s\n",ctx->cb_fd,n,tmp);
-
-    close(fd);
+    print_epoll_events(ctx->cb_event_mask);
+    printf("fd:%d, events:0x%" PRIx32 ",read:%.*s",ctx->cb_fd,ctx->cb_event_mask,n,tmp);
+    //close(fd);
     return NULL;
 }
 
