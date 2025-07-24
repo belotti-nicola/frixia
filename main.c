@@ -17,7 +17,7 @@
 
 
 //forward declaration:
-void SETUP_THE_FEPOLL(frixia_epoll_t *fepoll, bool *keep_looping, int fd);
+void SETUP_THE_FEPOLL(frixia_epoll_t *fepoll, bool *keep_looping, int fd, void *anything);
 
 typedef struct th_arg
 {
@@ -32,6 +32,8 @@ typedef struct cb_ctx
     uint32_t        cb_event_mask;
     frixia_epoll_t *cb_fepoll;
     bool           *cb_keep_looping;
+
+    void *anything;
 
 } cb_ctx_t;
 
@@ -86,11 +88,10 @@ void *adder_tcp(void *cast_me_to_ctx)
     }
 
 
-    SETUP_THE_FEPOLL(ctx->cb_fepoll,ctx->cb_keep_looping,reply);
+    SETUP_THE_FEPOLL(ctx->cb_fepoll,ctx->cb_keep_looping,reply,ctx->anything);
 
     int fepoll_fd = ctx->cb_fepoll->fd;
-    int new_event_fd = reply;
-    ret_code = insert_event(fepoll_fd,new_event_fd);
+    ret_code = insert_event(fepoll_fd,reply);
     if ( ret_code < 0)
     {
         printf("Error inserting!\n");
@@ -121,7 +122,7 @@ void *logger(void *cast_me_to_ctx)
 void *main_loop(void *th_arg)
 {
     th_arg_t *arg = (th_arg_t *)th_arg;
-    bool *keep_looping = arg->keep_looping;
+    bool *keep_looping     = arg->keep_looping;
     frixia_epoll_t *fepoll = arg->fepoll;
     
     frixia_event_t events[10];
@@ -131,15 +132,29 @@ void *main_loop(void *th_arg)
         printf("Events intercepted:%d\n",n);
         for(int i=0;i<n;i++)
         {
-            int fd = events[i].fd;
-            sv_callback_t cb = fepoll->callbacks_data[fd];
-            
-            //TODO THIS SUCKS
+            int       fd  = events[i].fd;
             uint32_t mask = events[i].events_maks;
+            sv_callback_t cb = fepoll->callbacks_data[fd];
             cb_ctx_t *ctx = (cb_ctx_t *)cb.argument;
-            ctx->cb_event_mask = mask;
-            ctx->cb_fd = fd;
+            if ( ctx )
+            {
+                ctx->cb_fd = fd;
+                ctx->cb_event_mask = mask;
+                ctx->cb_fepoll = fepoll;
+                ctx->cb_keep_looping = keep_looping;
+            }
+            else 
+            {
+                cb_ctx_t tmp = 
+                {
+                    .cb_fd = fd,
+                    .cb_fepoll = fepoll,
+                    .cb_keep_looping = keep_looping,
+                    .cb_event_mask = mask
 
+                };
+                cb.argument = &tmp;
+            }
             sv_do_callback(&cb);
         }
         printf("*keep looping:%d\n",*keep_looping);
@@ -147,20 +162,20 @@ void *main_loop(void *th_arg)
     printf("End\n");
 }
 
-void SETUP_THE_FEPOLL(frixia_epoll_t *fepoll, bool *keep_looping, int fd)
+void SETUP_THE_FEPOLL(frixia_epoll_t *fepoll, bool *keep_looping, int fd, void *anything)
 {
     if ( fd < 0 )
     {
         printf("Error:SETUP_THE_FEPOLL\n");
         return;
     }
+
+
     cb_ctx_t ctx6;
-    ctx6.cb_fd     = 6;
+    ctx6.cb_fd     = fd;
     ctx6.cb_fepoll = fepoll;
     ctx6.cb_keep_looping = keep_looping;
-    fepoll->callbacks_data[fd].is_valid = true;
-    fepoll->callbacks_data[fd].function = logger;
-    fepoll->callbacks_data[fd].argument = &ctx6;
+    fepoll->callbacks_data[fd] = *((sv_callback_t *)anything);
 }
 
 int main(int argc, char *argv[])
@@ -202,9 +217,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     cb_ctx_t ctx5;
-    ctx5.cb_fd     = 5;
-    ctx5.cb_fepoll = fepoll;
-    ctx5.cb_keep_looping = &keep_looping;
+    ctx5.anything = sv_create_callback(logger,NULL);
     fepoll->callbacks_data[5].is_valid = true;
     fepoll->callbacks_data[5].function = adder_tcp;
     fepoll->callbacks_data[5].argument = &ctx5;
