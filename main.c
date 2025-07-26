@@ -145,6 +145,7 @@ void *main_loop(void *th_arg)
             }
             else 
             {
+                printf("No succ\n");
                 cb_ctx_t tmp = 
                 {
                     .cb_fd = fd,
@@ -166,16 +167,27 @@ void SETUP_THE_FEPOLL(frixia_epoll_t *fepoll, bool *keep_looping, int fd, void *
 {
     if ( fd < 0 )
     {
-        printf("Error:SETUP_THE_FEPOLL\n");
+        printf("Error:SETUP_THE_FEPOLL fd < 0\n");
         return;
     }
 
+    //TODO: THIS IS BAD THING.
+    //PLUS NO DESTRUCTION/FREE.
+    cb_ctx_t *ctx = malloc(sizeof(cb_ctx_t));
+    if ( ctx == NULL )
+    {
+        printf("Error:SETUP_THE_FEPOLL ctx == NULL\n");
+        return NULL;
+    }
+    ctx->cb_fd = fd;
+    ctx->cb_fepoll = fepoll;
+    ctx->cb_keep_looping = keep_looping;
+    sv_callback_t *cb = sv_create_callback(
+        ((sv_callback_t *)anything)->function,
+        ctx
+    );
 
-    cb_ctx_t ctx6;
-    ctx6.cb_fd     = fd;
-    ctx6.cb_fepoll = fepoll;
-    ctx6.cb_keep_looping = keep_looping;
-    fepoll->callbacks_data[fd] = *((sv_callback_t *)anything);
+    fepoll->callbacks_data[fd] = *cb;
 }
 
 int main(int argc, char *argv[])
