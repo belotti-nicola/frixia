@@ -106,15 +106,22 @@ void *logger(void *cast_me_to_ctx)
     char tmp[256];
     int error=-1;
 
+    print_epoll_events(ctx->cb_event_mask);
     
     int n = read_tcp(fd,tmp,256,&error);
     if ( n < 0)
     {
-        printf("Error reading!(%d)\n",fd);
+        printf("Error reading fd:%d\n",fd);
         return NULL;
     }
-    print_epoll_events(ctx->cb_event_mask);
+    if ( n == 0 )
+    {
+        printf("Empty read on fd:%d)\n",fd);
+        return NULL;
+    }
+
     printf("fd:%d, events:0x%" PRIx32 ",read:%.*s",ctx->cb_fd,ctx->cb_event_mask,n,tmp);
+    
     //close(fd);
     return NULL;
 }
@@ -190,6 +197,100 @@ void SETUP_THE_FEPOLL(frixia_epoll_t *fepoll, bool *keep_looping, int fd, void *
     fepoll->callbacks_data[fd] = *cb;
 }
 
+void *adder_http_handler(cb_ctx_t *ctx)
+{
+    th_arg_t *arg = (th_arg_t *)ctx;
+    bool *keep_looping     = arg->keep_looping;
+    frixia_epoll_t *fepoll = arg->fepoll;
+    int reply;
+
+
+    print_epoll_events(ctx->cb_event_mask);
+    int ret_code = accept_tcp(ctx->cb_fd,&reply);
+    if ( ret_code < 0)
+    {
+        printf("Error accepting!(%d %d)\n",ctx->cb_fepoll->fd, ctx->cb_fd);
+        return NULL;
+    }
+
+    SETUP_THE_FEPOLL(ctx->cb_fepoll,ctx->cb_keep_looping,reply,ctx->anything);
+
+    int fepoll_fd = ctx->cb_fepoll->fd;
+    ret_code = insert_event(fepoll_fd,reply);
+    if ( ret_code < 0)
+    {
+        printf("Error inserting!\n");
+        return NULL;
+    }
+}
+
+void *http_handler(cb_ctx_t *ctx)
+{
+    th_arg_t *arg = (th_arg_t *)ctx;
+    bool *keep_looping     = arg->keep_looping;
+    frixia_epoll_t *fepoll = arg->fepoll;
+
+    int fd = ctx->cb_fd;
+    char tmp[256];
+    int error;
+    size_t bytes_read = read_tcp(fd,tmp,256,&error);
+    if ( bytes_read < 0)
+    {
+        printf("Error reading fd:%d\n",fd);
+        return NULL;
+    }
+    if ( bytes_read == 0 )
+    {
+        printf("Empty read on fd:%d)\n",fd);
+        return NULL;
+    }
+
+    FHTTP_t fhttp = frixia_parse_request(tmp,bytes_read);
+    printf("event: %d, http_callback bytes_read %d(fd:%d,headers:%d, readsize %d)\n", fd, bytes_read, fd, fhttp.num_headers, 256);
+    if ( fhttp.exit_code == false )
+    {
+        char end_response[] =
+                 "HTTP/1.1 400 Bad Request\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "\r\n";
+        write_tcp(fd,end_response,strlen(end_response));
+        close(fd);
+        return NULL;
+    }
+
+    if ( strncmp(fhttp.path,"/end",fhttp.path_len) == 0 )
+    {
+        char end_response[] =
+                 "HTTP/1.1 200 OK\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "Content-Length: 23\r\n"
+                 "Connection: close\r\n"
+                 "\r\n"
+                 "About to end connection";
+        write_tcp(fd,end_response,strlen(end_response));
+        close(fd);
+        return NULL;
+    }
+
+    char *greetings = "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/plain\r\n"
+                "Content-Length: 13\r\n"
+                "\r\n"
+                "Hello, World!";
+    int bytesWritten = write_tcp(fd,greetings,strlen(greetings));
+    if ( bytesWritten < 0 )
+    {
+        printf("Error writing!\n");
+    }
+    else 
+    {
+        printf("Wrote %d bytes!\n",bytesWritten);
+    }
+
+    return NULL;
+}
+
+
 int main(int argc, char *argv[])
 {      
     bool keep_looping = true;
@@ -212,9 +313,7 @@ int main(int argc, char *argv[])
     ctx4.cb_fd     = 4;
     ctx4.cb_fepoll = fepoll;
     ctx4.cb_keep_looping = &keep_looping;
-    fepoll->callbacks_data[4].is_valid = true;
-    fepoll->callbacks_data[4].function = new_fepoll_stop;
-    fepoll->callbacks_data[4].argument = &ctx4;
+    fepoll->callbacks_data[4] = *sv_create_callback(new_fepoll_stop,&ctx4);
 
     
     int tcp_fd = start_tcp_listening(8081);
@@ -230,9 +329,23 @@ int main(int argc, char *argv[])
     }
     cb_ctx_t ctx5;
     ctx5.anything = sv_create_callback(logger,NULL);
-    fepoll->callbacks_data[5].is_valid = true;
-    fepoll->callbacks_data[5].function = adder_tcp;
-    fepoll->callbacks_data[5].argument = &ctx5;
+    fepoll->callbacks_data[5] = *sv_create_callback(adder_tcp,&ctx5);
+
+
+    int tcp_fd_2 = start_tcp_listening(8082);
+    if (tcp_fd_2 <= 0 )
+    {
+        return -1;
+    }    
+    int insert_code_tcp_2 = insert_event(fepoll->fd,tcp_fd_2);
+    if( insert_code_tcp_2 < 0 )
+    {
+        printf("Error insert event %d\n",__LINE__);
+        return -1;
+    }
+    cb_ctx_t ctx6;
+    ctx6.anything = sv_create_callback(http_handler,NULL);
+    fepoll->callbacks_data[6] = *sv_create_callback(adder_http_handler,&ctx6);
 
     
     pthread_t th;
