@@ -1,6 +1,5 @@
 TODO   
     do API for epollcallbacks
-    build ctx in a propert way
     
     CALLBACKS SIZE IS KNOWN AT compile time known
     valgrind support

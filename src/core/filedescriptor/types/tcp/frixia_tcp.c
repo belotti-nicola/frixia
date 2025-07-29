@@ -37,7 +37,7 @@ int start_tcp_listening(int port)
 
     struct sockaddr_in serveraddr;
     serveraddr.sin_family = AF_INET;
-    serveraddr.sin_addr.s_addr = INADDR_ANY;
+    serveraddr.sin_addr.s_addr = 0x7F000001;
     serveraddr.sin_port = htons(port);
     int retVal = bind(tcp_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
     if (retVal < 0)

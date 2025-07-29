@@ -211,7 +211,7 @@ void *http_handler(void *cast_me_to_ctx)
     frixia_epoll_t *fepoll = ctx->cb_fepoll;
 
     int fd = ctx->cb_fd;
-    char tmp[256];
+    char tmp[256] = "";
     int error;
     size_t bytes_read = read_tcp(fd,tmp,256,&error);
     if ( bytes_read < 0)
@@ -229,6 +229,7 @@ void *http_handler(void *cast_me_to_ctx)
     printf("event: %d, http_callback bytes_read %ld(fd:%d,headers:%d, readsize %d)\n", fd, bytes_read, fd, fhttp.num_headers, 256);
     if ( fhttp.exit_code == false )
     {
+        printf("Error parsing request.\n");
         char end_response[] =
                  "HTTP/1.1 400 Bad Request\r\n"
                  "Content-Type: text/plain\r\n"
@@ -241,6 +242,7 @@ void *http_handler(void *cast_me_to_ctx)
             printf("Error parsing request (%d)!\n",__LINE__);
             return NULL;
         }
+        return NULL;
     }
 
     HashMap_t *hm = (HashMap_t *)ctx->anything;
@@ -256,7 +258,7 @@ void *http_handler(void *cast_me_to_ctx)
                  "\r\n";
                  "404 Not Found";
         int rc = write_tcp(fd,response_404,strlen(response_404));
-        printf("404 Bad Request %d\n",__LINE__); return NULL;
+        printf("404 Bad Request %d (%s)\n",__LINE__,key); return NULL;
     }
 
     sv_callback_t *cb = he->value;
@@ -334,6 +336,7 @@ int main(int argc, char *argv[])
     int pipe_fd = start_fifo_listening("my_pipe");
     if (pipe_fd <= 0 )
     {
+        printf("Error!!! start_fifo_listening\n");
         return -1;
     }    
     int insert_code_pipe = insert_event(fepoll->fd,pipe_fd);
@@ -348,6 +351,7 @@ int main(int argc, char *argv[])
     int tcp_fd = start_tcp_listening(8081);
     if (tcp_fd <= 0 )
     {
+        printf("Error!!! start_tcp_listening\n");
         return -1;
     }    
     int insert_code_tcp = insert_event(fepoll->fd,tcp_fd);
@@ -363,6 +367,7 @@ int main(int argc, char *argv[])
     int tcp_fd_2 = start_tcp_listening(8082);
     if (tcp_fd_2 <= 0 )
     {
+        printf("Error!!! start_tcp_listening\n");
         return -1;
     }    
     int insert_code_tcp_2 = insert_event(fepoll->fd,tcp_fd_2);
@@ -376,7 +381,7 @@ int main(int argc, char *argv[])
     sv_callback_t *foo_cb = sv_create_callback(foo,&count_foo);
     sv_callback_t *goo_cb = sv_create_callback(goo,NULL);
     HashEntry_t *he1 = create_hash_entry("GET/foo",foo_cb);add_entry(hm,he1);
-    HashEntry_t *he2 = create_hash_entry("GET/moo",goo_cb);add_entry(hm,he2);
+    HashEntry_t *he2 = create_hash_entry("GET/goo",goo_cb);add_entry(hm,he2);
     sv_callback_t *svcb6 = sv_create_callback(http_handler,hm);
     fepoll->callbacks_data[6] = *sv_create_callback(adder_http_handler,svcb6);
     
