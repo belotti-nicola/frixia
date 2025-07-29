@@ -174,13 +174,11 @@ void *main_loop(void *th_arg)
     printf("main_loop thread ended\n");
 }
 
-void *adder_http_handler(cb_ctx_t *ctx)
+void *adder_http_handler(void *cast_me_to_ctx)
 {
-    th_arg_t *arg = (th_arg_t *)ctx;
-    bool *keep_looping     = arg->keep_looping;
-    frixia_epoll_t *fepoll = arg->fepoll;
+    cb_ctx_t *ctx = (cb_ctx_t *)cast_me_to_ctx;
+    frixia_epoll_t *fepoll = ctx->cb_fepoll;
     int reply;
-
 
     print_epoll_events(ctx->cb_event_mask);
     int ret_code = accept_tcp(ctx->cb_fd,&reply);
@@ -206,11 +204,11 @@ void *adder_http_handler(cb_ctx_t *ctx)
     return NULL;
 }
 
-void *http_handler(cb_ctx_t *ctx)
+void *http_handler(void *cast_me_to_ctx)
 {
-    th_arg_t *arg = (th_arg_t *)ctx;
-    bool *keep_looping     = arg->keep_looping;
-    frixia_epoll_t *fepoll = arg->fepoll;
+    cb_ctx_t *ctx = (cb_ctx_t *)cast_me_to_ctx;
+    bool *keep_looping     = ctx->cb_keep_looping;
+    frixia_epoll_t *fepoll = ctx->cb_fepoll;
 
     int fd = ctx->cb_fd;
     char tmp[256];
@@ -251,7 +249,14 @@ void *http_handler(cb_ctx_t *ctx)
     HashEntry_t *he = get_entry_value(hm,key);
     if ( he == NULL )
     {
-        printf("Error: he null! %d\n",__LINE__); return NULL;
+        char response_404[] =
+                 "HTTP/1.1 404 Not Found\r\n"
+                 "Content-Type: text/plain\r\n"
+                 "Content-Length: 13\r\n"
+                 "\r\n";
+                 "404 Not Found";
+        int rc = write_tcp(fd,response_404,strlen(response_404));
+        printf("404 Bad Request %d\n",__LINE__); return NULL;
     }
 
     sv_callback_t *cb = he->value;
@@ -313,7 +318,7 @@ void *foo(void *cast_this_to_ctx)
     printf("Counter foo:%d\n",*count);
     return NULL;
 }
-void *moo(void *ctx)
+void *goo(void *ctx)
 {
     new_fepoll_stop(ctx);
     return NULL;
@@ -369,7 +374,7 @@ int main(int argc, char *argv[])
     HashMap_t *hm = create_hash_map(10);
     int count_foo = 0;
     sv_callback_t *foo_cb = sv_create_callback(foo,&count_foo);
-    sv_callback_t *goo_cb = sv_create_callback(moo,NULL);
+    sv_callback_t *goo_cb = sv_create_callback(goo,NULL);
     HashEntry_t *he1 = create_hash_entry("GET/foo",foo_cb);add_entry(hm,he1);
     HashEntry_t *he2 = create_hash_entry("GET/moo",goo_cb);add_entry(hm,he2);
     sv_callback_t *svcb6 = sv_create_callback(http_handler,hm);
