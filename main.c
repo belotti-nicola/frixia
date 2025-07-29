@@ -14,6 +14,7 @@
 #include "src/core/filedescriptor/types/udp/frixia_udp.h"
 #include <sys/epoll.h>
 #include <inttypes.h>
+#include "src/utils/datastructures/simple_hash_map/simple_hash_map.h"
 
 typedef struct th_arg
 {
@@ -33,19 +34,27 @@ typedef struct cb_ctx
 
 } cb_ctx_t;
 
+void frixia_compute_http_key(char *key, int size, const char *method, int method_len, const char *url, int url_len)
+{
+    strncat(key,method,method_len);
+    strncat(key+method_len,url,url_len);
+    return;
+}
+
 void *new_fepoll_stop(void *cast_me_to_ctx)
 {
     cb_ctx_t *ctx = (cb_ctx_t *)cast_me_to_ctx;
-    //logger(ctx); POSSIBLE!!!
+
     char buf[10];
     int n = read_fifo(ctx->cb_fd,buf,10);
-    printf("called logger %d :'",ctx->cb_fd);
+    printf("called logger for %d",ctx->cb_fd);
+    printf("'");
     for (int i =0; i<n; i++)
     {
         printf("%c", buf[i]);
     }
-
-    printf("'\n");
+    printf("'");
+    printf("\n");
 
     bool *b = ctx->cb_keep_looping;
     *b = false;
@@ -123,7 +132,6 @@ void *logger(void *cast_me_to_ctx)
 
     printf("fd:%d, events:0x%" PRIx32 ",read:%.*s",ctx->cb_fd,ctx->cb_event_mask,n,tmp);
     
-    //close(fd);
     return NULL;
 }
 
@@ -155,7 +163,7 @@ void *main_loop(void *th_arg)
             void   *a          = (void *)&ctx;
             if ( f == NULL )
             {
-                printf("Porcoddio\n");
+                printf("NULL f, %d\n",__LINE__);
                 continue;
             }
             f(a);
@@ -163,12 +171,11 @@ void *main_loop(void *th_arg)
         }
         printf("*keep looping:%d\n",*keep_looping);
     }
-    printf("End\n");
+    printf("main_loop thread ended\n");
 }
 
 void *adder_http_handler(cb_ctx_t *ctx)
 {
-    printf("s\n");
     th_arg_t *arg = (th_arg_t *)ctx;
     bool *keep_looping     = arg->keep_looping;
     frixia_epoll_t *fepoll = arg->fepoll;
@@ -183,10 +190,11 @@ void *adder_http_handler(cb_ctx_t *ctx)
         return NULL;
     }
 
-    sv_callback_t *tmp =  ctx->anything;
-    fepoll->callbacks_data[reply].is_valid = true;
-    fepoll->callbacks_data[reply].function = tmp->function;
-    fepoll->callbacks_data[reply].argument = tmp->argument;
+    sv_callback_t *tmp =  (sv_callback_t *)ctx->anything;
+    fepoll->callbacks_data[reply] = *sv_create_callback(
+        tmp->function,
+        tmp->argument
+    );
 
     int fepoll_fd = ctx->cb_fepoll->fd;
     ret_code = insert_event(fepoll_fd,reply);
@@ -195,6 +203,7 @@ void *adder_http_handler(cb_ctx_t *ctx)
         printf("Error inserting!\n");
         return NULL;
     }
+    return NULL;
 }
 
 void *http_handler(cb_ctx_t *ctx)
@@ -225,44 +234,90 @@ void *http_handler(cb_ctx_t *ctx)
         char end_response[] =
                  "HTTP/1.1 400 Bad Request\r\n"
                  "Content-Type: text/plain\r\n"
+                 "Content-Length: 15\r\n"
                  "\r\n";
-        write_tcp(fd,end_response,strlen(end_response));
-        close(fd);
-        return NULL;
+                 "400 Bad Request";
+        int rc = write_tcp(fd,end_response,strlen(end_response));
+        if ( rc < 0 )
+        {
+            printf("Error parsing request (%d)!\n",__LINE__);
+            return NULL;
+        }
     }
 
-    if ( strncmp(fhttp.path,"/end",fhttp.path_len) == 0 )
+    HashMap_t *hm = (HashMap_t *)ctx->anything;
+    char key[50] = "";
+    frixia_compute_http_key(key,50,fhttp.method,fhttp.method_len,fhttp.path,fhttp.path_len);
+    HashEntry_t *he = get_entry_value(hm,key);
+    if ( he == NULL )
     {
-        char end_response[] =
-                 "HTTP/1.1 200 OK\r\n"
-                 "Content-Type: text/plain\r\n"
-                 "Content-Length: 23\r\n"
-                 "Connection: close\r\n"
-                 "\r\n"
-                 "About to end connection";
-        write_tcp(fd,end_response,strlen(end_response));
-        close(fd);
-        return NULL;
+        printf("Error: he null! %d\n",__LINE__); return NULL;
     }
 
-    char *greetings = "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/plain\r\n"
-                "Content-Length: 13\r\n"
-                "\r\n"
-                "Hello, World!";
-    int bytesWritten = write_tcp(fd,greetings,strlen(greetings));
-    if ( bytesWritten < 0 )
+    sv_callback_t *cb = he->value;
+
+    cb_ctx_t cb_ctx =
     {
-        printf("Error writing!\n");
-    }
-    else 
-    {
-        printf("Wrote %d bytes!\n",bytesWritten);
-    }
+        .cb_fd =ctx->cb_fd,
+        .cb_event_mask = ctx->cb_event_mask,
+        .cb_fepoll = fepoll,
+        .cb_keep_looping = keep_looping,
+        .anything = cb->argument
+    };
+    cb->function(&cb_ctx);
 
     return NULL;
 }
 
+int build_http_response(int counter,char *response) {
+    // Buffer per il corpo del messaggio ("foo counter is: ")
+    char body[64];
+    snprintf(body, sizeof(body), "foo counter is: %d", counter);
+
+    // Calcolo della lunghezza del contenuto
+    int content_length = strlen(body);
+
+    // Costruzione della risposta completa
+    const char* header_template =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/plain\r\n"
+        "Content-Length: %d\r\n"
+        "\r\n"
+        "%s";
+
+    // Calcolo della dimensione necessaria
+    int total_length = snprintf(NULL, 0, header_template, content_length, body) + 1;
+
+    // Scrittura finale della stringa
+    snprintf(response, total_length, header_template, content_length, body);
+
+    return total_length; 
+}
+
+void *foo(void *cast_this_to_ctx)
+{
+    cb_ctx_t *ctx = (cb_ctx_t *)cast_this_to_ctx;
+    int *count = (int *)ctx->anything;
+
+    *count = *count +1;
+
+    char *buf = malloc(sizeof(char) * 256);
+    int size = build_http_response(*count,buf);
+    int rc = write_tcp(ctx->cb_fd,buf,size);
+    free(buf);
+    if ( rc < 0 )
+    {
+        printf("Error!%d\n",__LINE__);
+        return NULL;
+    }
+    printf("Counter foo:%d\n",*count);
+    return NULL;
+}
+void *moo(void *ctx)
+{
+    new_fepoll_stop(ctx);
+    return NULL;
+}
 
 int main(int argc, char *argv[])
 {      
@@ -299,7 +354,7 @@ int main(int argc, char *argv[])
     sv_callback_t *svcb = sv_create_callback(logger,NULL);
     fepoll->callbacks_data[5] = *sv_create_callback(adder_tcp,svcb);
     
-    /*
+    
     int tcp_fd_2 = start_tcp_listening(8082);
     if (tcp_fd_2 <= 0 )
     {
@@ -311,10 +366,15 @@ int main(int argc, char *argv[])
         printf("Error insert event %d\n",__LINE__);
         return -1;
     }
-    cb_ctx_t ctx6;
-    ctx6.anything = sv_create_callback(http_handler,NULL);
-    fepoll->callbacks_data[6] = *sv_create_callback(adder_http_handler,&ctx6);
-    */
+    HashMap_t *hm = create_hash_map(10);
+    int count_foo = 0;
+    sv_callback_t *foo_cb = sv_create_callback(foo,&count_foo);
+    sv_callback_t *goo_cb = sv_create_callback(moo,NULL);
+    HashEntry_t *he1 = create_hash_entry("GET/foo",foo_cb);add_entry(hm,he1);
+    HashEntry_t *he2 = create_hash_entry("GET/moo",goo_cb);add_entry(hm,he2);
+    sv_callback_t *svcb6 = sv_create_callback(http_handler,hm);
+    fepoll->callbacks_data[6] = *sv_create_callback(adder_http_handler,svcb6);
+    
     
     pthread_t th;
     th_arg_t data;
