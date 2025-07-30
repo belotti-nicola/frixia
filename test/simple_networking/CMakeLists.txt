@@ -1,0 +1,14 @@
+add_executable(TestInstantiatorSimpleNetworking_goods_ip test_goods_ips.c)
+target_link_libraries(TestInstantiatorSimpleNetworking_goods_ip 
+    simple_networking
+)
+add_test(NAME TestInstantiatorSimpleNetworking_goods_ip
+    COMMAND TestInstantiatorSimpleNetworking_goods_ip)
+
+
+add_executable(TestInstantiatorSimpleNetworking_bads_ip test_bads_ips.c)
+target_link_libraries(TestInstantiatorSimpleNetworking_bads_ip 
+    simple_networking
+)
+add_test(NAME TestInstantiatorSimpleNetworking_bads_ip
+    COMMAND TestInstantiatorSimpleNetworking_bads_ip)

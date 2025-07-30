@@ -1,3 +1,4 @@
 add_subdirectory(datastructures)
 add_subdirectory(finite_state_machines)
 add_subdirectory(valid_callback)
+add_subdirectory(networking)
