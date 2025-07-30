@@ -16,10 +16,12 @@ enum FTCP_CODE {
     ERR_FTCP_STOP_MALFORMED_EPOLL_FD = -11,
     ERR_FTCP_STOP_MALFORMED_TARGET_FD = -12,
     ERR_FTCP_WRITE = -13,
-    ERR_FTCP_FNCTL = -14
+    ERR_FTCP_FNCTL = -14,
+    ERR_FTCP_INET_PTON = -15,
+    ERR_FTCP_IP_NOT_VALID = -16
 };
 
-int start_tcp_listening(int port);
+int start_tcp_listening(const char *ip, int port);
 int stop_tcp_listening(int fd);
 int read_tcp(int fd,char buf[], int size, int *error);
 

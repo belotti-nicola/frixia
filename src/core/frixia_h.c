@@ -376,7 +376,7 @@ int frixia_read_event_data(frixia_event_t *fe,
 
 void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
-    int fd = start_tcp_listening(port);
+    int fd = start_tcp_listening("0.0.0.0",port);
     if(fd < 0)
     {
         return;

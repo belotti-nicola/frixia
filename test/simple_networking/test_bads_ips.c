@@ -63,5 +63,29 @@ int main()
         return 1;
     }
 
+    if ( is_valid_ipv4("108.274.2.41") == true )
+    {
+        printf("error test_goods_ips: line%d\n",__LINE__);
+        return 1;
+    }
+
+    if ( is_valid_ipv4("75.1.723.41") == true )
+    {
+        printf("error test_goods_ips: line%d\n",__LINE__);
+        return 1;
+    }
+
+    if ( is_valid_ipv4("75.1.2..41") == true )
+    {
+        printf("error test_goods_ips: line%d\n",__LINE__);
+        return 1;
+    }
+
+    if ( is_valid_ipv4("36.1.2.257") == true )
+    {
+        printf("error test_goods_ips: line%d\n",__LINE__);
+        return 1;
+    }
+
     return 0;
 }

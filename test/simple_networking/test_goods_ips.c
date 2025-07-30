@@ -69,5 +69,11 @@ int main()
         return 1;
     }
 
+    if ( is_valid_ipv4("18.74.2.41") == false )
+    {
+        printf("error test_goods_ips: line%d\n",__LINE__);
+        return 1;
+    }
+
     return 0;
 }

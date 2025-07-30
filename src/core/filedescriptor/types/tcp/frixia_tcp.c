@@ -10,9 +10,10 @@
 #include "frixia_tcp.h"
 #include "../../../../core/frixia_codes.h"
 #include "../../../../core/frixia_h.h"
+#include "../../../../utils/networking/network.h"
 #include <fcntl.h>
 
-int start_tcp_listening(int port)
+int start_tcp_listening(const char *s, int port)
 {
     if (port < 0 || port > 65535)
     {
@@ -37,7 +38,16 @@ int start_tcp_listening(int port)
 
     struct sockaddr_in serveraddr;
     serveraddr.sin_family = AF_INET;
-    serveraddr.sin_addr.s_addr = 0x7F000001;
+    
+    if ( is_valid_ipv4(s) == false )
+    {
+        return ERR_FTCP_IP_NOT_VALID;
+    }
+
+    if ( inet_pton(AF_INET, s, &serveraddr.sin_addr) < 0 )
+    {
+        return ERR_FTCP_INET_PTON;
+    } 
     serveraddr.sin_port = htons(port);
     int retVal = bind(tcp_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
     if (retVal < 0)

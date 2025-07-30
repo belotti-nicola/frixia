@@ -348,10 +348,10 @@ int main(int argc, char *argv[])
     fepoll->callbacks_data[4] = *sv_create_callback(new_fepoll_stop,NULL);
 
     
-    int tcp_fd = start_tcp_listening(8081);
+    int tcp_fd = start_tcp_listening("0.0.0.0",8081);
     if (tcp_fd <= 0 )
     {
-        printf("Error!!! start_tcp_listening\n");
+        printf("Error!!! start_tcp_listening (err:%d, line:%d)\n",tcp_fd,__LINE__);
         return -1;
     }    
     int insert_code_tcp = insert_event(fepoll->fd,tcp_fd);
@@ -364,10 +364,10 @@ int main(int argc, char *argv[])
     fepoll->callbacks_data[5] = *sv_create_callback(adder_tcp,svcb);
     
     
-    int tcp_fd_2 = start_tcp_listening(8082);
+    int tcp_fd_2 = start_tcp_listening("0.0.0.0",8082);
     if (tcp_fd_2 <= 0 )
     {
-        printf("Error!!! start_tcp_listening\n");
+        printf("Error!!! start_tcp_listening (err:%d, line:%d)\n",tcp_fd,__LINE__);
         return -1;
     }    
     int insert_code_tcp_2 = insert_event(fepoll->fd,tcp_fd_2);

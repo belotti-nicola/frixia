@@ -12,7 +12,7 @@ int start_appropriate_fd(enum FrixiaFDType t, frixia_fd_arg_t arg)
    {
     case TCP:
     {
-        return start_tcp_listening(arg.port); 
+        return start_tcp_listening("0.0.0.0",arg.port); 
     }
     case UDP:
     {
@@ -41,7 +41,7 @@ int add_appropriate_fd(enum FrixiaFDType t, frixia_fd_arg_t arg)
    {
     case TCP:
     {
-        return start_tcp_listening(arg.port); 
+        return start_tcp_listening("0.0.0.0",arg.port); 
     }
     case UDP:
     {

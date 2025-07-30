@@ -4,6 +4,7 @@
 
 #include "network.h"
 
+//TODO KEEP IN COMMON
 bool included_in(char c, char less, char more)
 {
     if (c < less)
@@ -31,504 +32,606 @@ bool is_valid_ipv4(char *s)
     {
         switch (state)
         {
-        case 1:
-        {
-            if (!isdigit(*s))
+            case 1:
             {
-                return false;
-            }
+                if (!isdigit(*s))
+                {
+                    return false;
+                }
 
-            if (included_in(*s, '3', '9'))
+                if (included_in(*s, '3', '9'))
+                {
+                    state = 4;
+                    break;
+                }
+                if (*s == '0')
+                {
+                    state = 10;
+                    break;
+                }
+                if (*s == '1')
+                {
+                    state = 2;
+                    break;
+                }
+                if (*s == '2')
+                {
+                    state = 3;
+                    break;
+                }
+            }
+            case 2:
             {
-                state = 4;
+                if (*s == '.')
+                {
+                    state = 11;
+                    break;
+                }
+                if (isdigit(*s))
+                {
+                    state = 5;
+                    break;
+                }
                 break;
             }
-            if (*s == '1')
+            case 3:
             {
-                state = 2;
-                break;
-            }
-            if (*s == '2')
-            {
-                state = 3;
-                break;
-            }
-        }
-        case 2:
-        {
-            if (*s == '.')
-            {
-                state = 11;
-                break;
-            }
-            if (isdigit(*s))
-            {
-                state = 5;
-                break;
-            }
-            break;
-        }
-        case 3:
-        {
-            if (*s == '.')
-            {
-                state = 11;
-                break;
-            }
-            if (included_in(*s, '0', '5'))
-            {
-                state = 6;
-                break;
-            }
-            if (included_in(*s, '6', '9'))
-            {
-                state = 9;
-                break;
-            }
-            return false;
-        }
-        case 4:
-        {
-            if (*s == '.')
-            {
-                state = 11;
-                break;
-            }
-            if (isdigit(*s))
-            {
-                state = 7;
-                break;
-            }
-            return false;
-        }
-        case 5:
-        {
-            if (*s == '.')
-            {
-                state = 11;
-                break;
-            }
-            if (isdigit(*s))
-            {
-                state = 8;
-                break;
-            }
-            return false;
-        }
-        case 6:
-        {
-            if (*s == '.')
-            {
-                state = 11;
-                break;
-            }
-            if (included_in(*s, '0', '5'))
-            {
-                state = 9;
-                break;
-            }
-            return false;
-        }
-        case 7:
-        {
-            if (*s == '.')
-            {
-                state = 11;
-                break;
-            }
-            return false;
-        }
-        case 8:
-        {
-            if (*s == '.')
-            {
-                state = 11;
-                break;
-            }
-            return false;
-        }
-        case 9:
-        {
-            if (*s == '.')
-            {
-                state = 11;
-                break;
-            }
-            return false;
-        }
-        case 11:
-        {
-            if (!isdigit(*s))
-            {
+                if (*s == '.')
+                {
+                    state = 11;
+                    break;
+                }
+                if (included_in(*s, '0', '5'))
+                {
+                    state = 6;
+                    break;
+                }
+                if (included_in(*s, '6', '9'))
+                {
+                    state = 9;
+                    break;
+                }
                 return false;
             }
+            case 4:
+            {
+                if (*s == '.')
+                {
+                    state = 11;
+                    break;
+                }
+                if (isdigit(*s))
+                {
+                    state = 7;
+                    break;
+                }
+                return false;
+            }
+            case 5:
+            {
+                if (*s == '.')
+                {
+                    state = 11;
+                    break;
+                }
+                if (isdigit(*s))
+                {
+                    state = 8;
+                    break;
+                }
+                return false;
+            }
+            case 6:
+            {
+                if (*s == '.')
+                {
+                    state = 11;
+                    break;
+                }
+                if (included_in(*s, '0', '5'))
+                {
+                    state = 9;
+                    break;
+                }
+                return false;
+            }
+            case 7:
+            {
+                if (*s == '.')
+                {
+                    state = 11;
+                    break;
+                }
+                return false;
+            }
+            case 8:
+            {
+                if (*s == '.')
+                {
+                    state = 11;
+                    break;
+                }
+                return false;
+            }
+            case 9:
+            {
+                if (*s == '.')
+                {
+                    state = 11;
+                    break;
+                }
+                return false;
+            }
+            case 10:
+            {
+                if(*s == '.')
+                {
+                    state = 20;
+                    break;
+                }
+                return false;
+            }
+            case 11:
+            {
+                if (included_in(*s, '3', '9'))
+                {
+                    state = 14;
+                    break;
+                }
+                if (*s == '0')
+                {
+                    state = 44;
+                    break;
+                }
+                if (*s == '1')
+                {
+                    state = 12;
+                    break;
+                }
+                if (*s == '2')
+                {
+                    state = 13;
+                    break;
+                }
+                return false;
+            }
+            case 12:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                }
+                if (isdigit(*s))
+                {
+                    state = 15;
+                }
+                break;
+            }
+            case 13:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                    break;
+                }
+                if (included_in(*s, '0', '5'))
+                {
+                    state = 16;
+                    break;
+                }
+                if (included_in(*s, '6', '9'))
+                {
+                    state = 19;
+                    break;
+                }
+                return false;
+            }
+            case 14:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                    break;
+                }
+                if (isdigit(*s))
+                {
+                    state = 17;
+                    break;
+                }
+                return false;
+            }
+            case 15:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                    break;
+                }
+                if (isdigit(*s))
+                {
+                    state = 18;
+                    break;
+                }
+                return false;
+            }
+            case 16:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                    break;
+                }
+                if (included_in(*s, '0', '5'))
+                {
+                    state = 19;
+                    break;
+                }
+                return false;
+            }
+            case 17:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                    break;
+                }
+                return false;
+            }
+            case 18:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                    break;
+                }
+                return false;
+            }
+            case 19:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                    break;
+                }
+                return false;
+            }
+            case 20:
+            {
+                if (*s == '0')
+                {
+                    state = 30;
+                    break;
+                }
+                return false;
+            }
+            case 21:
+            {
+                if (!isdigit(*s))
+                {
+                    return false;
+                }
 
-            if (included_in(*s, '3', '9'))
-            {
-                state = 14;
-            }
-            if (*s == '1')
-            {
-                state = 12;
-            }
-            if (*s == '2')
-            {
-                state = 13;
-            }
-            break;
-        }
-        case 12:
-        {
-            if (*s == '.')
-            {
-                state = 21;
-            }
-            if (isdigit(*s))
-            {
-                state = 15;
-            }
-            break;
-        }
-        case 13:
-        {
-            if (*s == '.')
-            {
-                state = 21;
-                break;
-            }
-            if (included_in(*s, '0', '5'))
-            {
-                state = 16;
-                break;
-            }
-            if (included_in(*s, '6', '9'))
-            {
-                state = 19;
-                break;
-            }
-            return false;
-        }
-        case 14:
-        {
-            if (*s == '.')
-            {
-                state = 21;
-                break;
-            }
-            if (isdigit(*s))
-            {
-                state = 17;
-                break;
-            }
-            return false;
-        }
-        case 15:
-        {
-            if (*s == '.')
-            {
-                state = 21;
-                break;
-            }
-            if (isdigit(*s))
-            {
-                state = 18;
-                break;
-            }
-            return false;
-        }
-        case 16:
-        {
-            if (*s == '.')
-            {
-                state = 21;
-                break;
-            }
-            if (included_in(*s, '0', '5'))
-            {
-                state = 19;
-                break;
-            }
-            return false;
-        }
-        case 17:
-        {
-            if (*s == '.')
-            {
-                state = 21;
-                break;
-            }
-            return false;
-        }
-        case 18:
-        {
-            if (*s == '.')
-            {
-                state = 21;
-                break;
-            }
-            return false;
-        }
-        case 19:
-        {
-            if (*s == '.')
-            {
-                state = 21;
-                break;
-            }
-            return false;
-        }
-        case 21:
-        {
-            if (!isdigit(*s))
-            {
-                return false;
-            }
+                if (included_in(*s, '3', '9'))
+                {
+                    state = 24;
+                    break;
+                }
+                if (*s == '0')
+                {
+                    state = 45;
+                    break;
+                }
 
-            if (included_in(*s, '3', '9'))
-            {
-                state = 24;
-                break;
+                if (*s == '1')
+                {
+                    state = 22;
+                    break;
+                }
+                if (*s == '2')
+                {
+                    state = 23;
+                    break;
+                }
             }
-            if (*s == '1')
+            case 22:
             {
-                state = 22;
-                break;
+                if (*s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                if (isdigit(*s))
+                {
+                    state = 25;
+                    break;
+                }
             }
-            if (*s == '2')
+            case 23:
             {
-                state = 23;
-                break;
+                if (*s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                if (included_in(*s, '0', '5'))
+                {
+                    state = 26;
+                    break;
+                }
+                if (included_in(*s, '6', '9'))
+                {
+                    state = 29;
+                    break;
+                }
+                return false;
             }
-        }
-        case 22:
-        {
-            if (*s == '.')
+            case 24:
             {
-                state = 31;
-                break;
+                if (*s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                if (isdigit(*s))
+                {
+                    state = 27;
+                    break;
+                }
+                return false;
             }
-            if (isdigit(*s))
+            case 25:
             {
-                state = 25;
-                break;
+                if (*s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                if (isdigit(*s))
+                {
+                    state = 28;
+                    break;
+                }
+                return false;
             }
-        }
-        case 23:
-        {
-            if (*s == '.')
+            case 26:
             {
-                state = 31;
-                break;
+                if (*s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                if (included_in(*s, '0', '5'))
+                {
+                    state = 29;
+                    break;
+                }
+                return false;
             }
-            if (included_in(*s, '0', '5'))
+            case 27:
             {
-                state = 26;
-                break;
+                if (*s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                return false;
             }
-            if (included_in(*s, '6', '9'))
+            case 28:
             {
-                state = 29;
-                break;
+                if (*s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                return false;
             }
-            return false;
-        }
-        case 24:
-        {
-            if (*s == '.')
+            case 29:
             {
-                state = 31;
-                break;
+                if (*s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                return false;
             }
-            if (isdigit(*s))
+            case 30:
             {
-                state = 27;
-                break;
+                if (*s == '.')
+                {
+                    state = 40;
+                    break;
+                }
             }
-            return false;
-        }
-        case 25:
-        {
-            if (*s == '.')
+            case 31:
             {
-                state = 31;
-                break;
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                if (included_in(*s, '3', '9'))
+                {
+                    state = 34;
+                    break;
+                }
+                if (*s == '0')
+                {
+                    state = 50;
+                    break;
+                }
+                if (*s == '1')
+                {
+                    state = 32;
+                    break;
+                }
+                if (*s == '2')
+                {
+                    state = 33;
+                    break;
+                }
+                return false;
             }
-            if (isdigit(*s))
+            case 32:
             {
-                state = 28;
-                break;
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                if (isdigit(*s))
+                {
+                    state = 35;
+                    break;
+                }
+                return false;
             }
-            return false;
-        }
-        case 26:
-        {
-            if (*s == '.')
+            case 33:
             {
-                state = 31;
-                break;
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                if (included_in(*s, '0', '5'))
+                {
+                    state = 36;
+                    break;
+                }
+                if (included_in(*s, '6', '9'))
+                {
+                    state = 9;
+                    break;
+                }
+                return false;
             }
-            if (included_in(*s, '0', '5'))
+            case 34:
             {
-                state = 29;
-                break;
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                if (isdigit(*s))
+                {
+                    state = 37;
+                    break;
+                }
+                return false;
             }
-            return false;
-        }
-        case 27:
-        {
-            if (*s == '.')
+            case 35:
             {
-                state = 31;
-                break;
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                if (isdigit(*s))
+                {
+                    state = 38;
+                    break;
+                }
+                return false;
             }
-            return false;
-        }
-        case 28:
-        {
-            if (*s == '.')
+            case 36:
             {
-                state = 31;
-                break;
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                if (included_in(*s, '0', '5'))
+                {
+                    state = 39;
+                    break;
+                }
+                return false;
             }
-            return false;
-        }
-        case 29:
-        {
-            if (*s == '.')
+            case 37:
             {
-                state = 31;
-                break;
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
-        }
-        case 31:
-        {
-            if (*s == '\0')
+            case 38:
             {
-                break;
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                return false;
             }
-            if (!isdigit(*s))
+            case 39:
+            {
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                return false;
+            }
+            case 40:
+            {
+                if (*s == '0')
+                {
+                    state = 41;
+                    break;
+                }
+                return false;
+            }
+            case 41:
+            {
+                if (*s == '.')
+                {
+                    state = 42;
+                    break;
+                }
+                return false;
+            }
+            case 42:
+            {
+                if (*s == '0')
+                {
+                    state = 43;
+                    break;
+                }
+                return false;
+            }
+            case 43:
+            {
+                if (*s == '\0')
+                {
+                    return true;
+                }
+                return false;
+            }
+            case 44:
+            {
+                if (*s == '.')
+                {
+                    state = 21;
+                    break;
+                }
+                return false;
+            }
+            case 45:
+            {
+                if( *s == '.')
+                {
+                    state = 31;
+                    break;
+                }
+                return false;
+            }
+            case 50:
+            {
+                if( *s == '\0')
+                {
+                    return true;
+                }
+                return false;
+            }
+            default:
             {
                 return false;
             }
-            if (included_in(*s, '3', '9'))
-            {
-                state = 34;
-                break;
-            }
-            if (*s == '1')
-            {
-                state = 32;
-                break;
-            }
-            if (*s == '2')
-            {
-                state = 33;
-                break;
-            }
-            break;
-        }
-        case 32:
-        {
-            if (*s == '\0')
-            {
-                return true;
-            }
-            if (isdigit(*s))
-            {
-                state = 35;
-                break;
-            }
-            return false;
-        }
-        case 33:
-        {
-            if (*s == '\0')
-            {
-                return true;
-            }
-            if (included_in(*s, '0', '5'))
-            {
-                state = 36;
-                break;
-            }
-            if (included_in(*s, '6', '9'))
-            {
-                state = 9;
-                break;
-            }
-            return false;
-        }
-        case 34:
-        {
-            if (*s == '\0')
-            {
-                return true;
-            }
-            if (isdigit(*s))
-            {
-                state = 37;
-                break;
-            }
-            return false;
-        }
-        case 35:
-        {
-            if (*s == '\0')
-            {
-                return true;
-            }
-            if (isdigit(*s))
-            {
-                state = 38;
-                break;
-            }
-            return false;
-        }
-        case 36:
-        {
-            if (*s == '\0')
-            {
-                return true;
-            }
-            if (included_in(*s, '0', '5'))
-            {
-                state = 39;
-                break;
-            }
-            return false;
-        }
-        case 37:
-        {
-            if (*s == '\0')
-            {
-                return true;
-            }
-            return false;
-        }
-        case 38:
-        {
-            if (*s == '\0')
-            {
-                return true;
-            }
-            return false;
-        }
-        case 39:
-        {
-            if (*s == '\0')
-            {
-                return true;
-            }
-            return true;
-        }
-        default:
-        {
-            return false;
-        }
         
-    }
-    s++;
+        }
+        s++;
     }
     return false;
 }
