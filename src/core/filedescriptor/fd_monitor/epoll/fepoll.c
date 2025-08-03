@@ -34,6 +34,16 @@ frixia_epoll_t* create_frixia_epoll()
     }
     
     frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));
+    if ( frixia_epoll == NULL )
+    {
+        return FERR_FRIXIA_EPOLL_PTR;
+    }
+    int fd_epoll = create_epoll();
+    if(fd_epoll < 0)
+    {
+        return FERR_CREATE_EPOLL;
+    }
+    frixia_epoll->fd = fd_epoll;
     frixia_epoll->fd_pool = l;   
     
     sv_callback_t *cbs = malloc(MAXIMUM_FILEDESCRIPTORS_NUMBER * sizeof(sv_callback_t));
@@ -75,17 +85,6 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
     return efd;
 }
 
-FRIXIA_EPOLL_CODE_T start_fepoll(frixia_epoll_t *fepoll)
-{
-    int fd_epoll = create_epoll();
-    if(fd_epoll < 0)
-    {
-        return FERR_EPOLL_CREATE;
-    }
-    fepoll->fd = fd_epoll;
-    printf("EPOLL CREATE :: %d\n",fd_epoll);
-    return FEPOLL_OK;
-}
 FRIXIA_EPOLL_CODE_T fepoll_stop(frixia_epoll_t *fe)
 {    
     uint64_t value = 1;

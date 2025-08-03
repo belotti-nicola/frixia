@@ -516,7 +516,6 @@ frixia_environment_t *frixia_environment_create()
     }
 
     frixia_epoll_t *fepoll = create_frixia_epoll();
-    start_fepoll(fepoll);
 
     convoy_t *convoy = convoy_create();
 

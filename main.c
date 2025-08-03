@@ -330,8 +330,11 @@ int main(int argc, char *argv[])
 {      
     bool keep_looping = true;
     frixia_epoll_t *fepoll = create_frixia_epoll();
-    start_fepoll(fepoll);
-    
+    if ( fepoll == NULL)
+    {
+        printf("Error!!! create_frixia_epoll\n");
+        return -1;
+    }   
     
     int pipe_fd = start_fifo_listening("my_pipe");
     if (pipe_fd <= 0 )
