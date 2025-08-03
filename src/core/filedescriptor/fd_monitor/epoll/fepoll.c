@@ -169,3 +169,56 @@ void frixia_wake(frixia_epoll_t *fepoll)
     }
 }
 
+FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, const char *ip,int port)
+{
+    int fd = start_tcp_listening(ip,port);
+    if ( fd < 0 )
+    {
+        return (FRIXIA_EPOLL_CODE_T)fd;
+    }
+
+    int fepoll_fd = fepoll->fd;
+    int rc = insert_event(fepoll_fd,fd);
+    if ( rc != FEPOLL_OK)
+    {
+        return FERR_INSERT_EVENT;
+    }
+
+    return FEPOLL_OK;
+}
+
+FRIXIA_EPOLL_CODE_T fepoll_add_udp_socket_listening(frixia_epoll_t *fepoll, const char *ip,int port)
+{
+    int fd = start_udp_listening(port);
+    if ( fd < 0 )
+    {
+        return (FRIXIA_EPOLL_CODE_T)fd;
+    }
+
+    int fepoll_fd = fepoll->fd;
+    int rc = insert_event(fepoll_fd,fd);
+    if ( rc != FEPOLL_OK)
+    {
+        return FERR_INSERT_EVENT;
+    }
+    
+    return FEPOLL_OK;
+}
+FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, const char *fifo)
+{
+    int fd = start_fifo_listening(fifo);
+    if ( fd < 0 )
+    {
+        return (FRIXIA_EPOLL_CODE_T)fd;
+    }
+
+    int fepoll_fd = fepoll->fd;
+    int rc = insert_event(fepoll_fd,fd);
+    if ( rc != FEPOLL_OK)
+    {
+        return FERR_INSERT_EVENT;
+    }
+    
+    return FEPOLL_OK;
+}
+

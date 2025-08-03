@@ -328,6 +328,7 @@ void *goo(void *ctx)
 
 int main(int argc, char *argv[])
 {      
+    FRIXIA_EPOLL_CODE_T rc;
     bool keep_looping = true;
     frixia_epoll_t *fepoll = create_frixia_epoll();
     if ( fepoll == NULL)
@@ -336,49 +337,21 @@ int main(int argc, char *argv[])
         return -1;
     }   
     
-    int pipe_fd = start_fifo_listening("my_pipe");
-    if (pipe_fd <= 0 )
+    rc = fepoll_add_fifo_socket_listening(fepoll,"my_pipe");
+    if ( rc != FEPOLL_OK )
     {
-        printf("Error!!! start_fifo_listening\n");
-        return -1;
-    }    
-    int insert_code_pipe = insert_event(fepoll->fd,pipe_fd);
-    if( insert_code_pipe < 0 )
-    {
-        printf("Error insert event %d\n",__LINE__);
+        printf("Error!!! fepoll_add_fifo_socket_listening\n");
         return -1;
     }
     fepoll->callbacks_data[4] = *sv_create_callback(new_fepoll_stop,NULL);
 
     
-    int tcp_fd = start_tcp_listening("0.0.0.0",8081);
-    if (tcp_fd <= 0 )
-    {
-        printf("Error!!! start_tcp_listening (err:%d, line:%d)\n",tcp_fd,__LINE__);
-        return -1;
-    }    
-    int insert_code_tcp = insert_event(fepoll->fd,tcp_fd);
-    if( insert_code_tcp < 0 )
-    {
-        printf("Error insert event %d\n",__LINE__);
-        return -1;
-    }
+    rc = fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",8081);
     sv_callback_t *svcb = sv_create_callback(logger,NULL);
     fepoll->callbacks_data[5] = *sv_create_callback(adder_tcp,svcb);
     
     
-    int tcp_fd_2 = start_tcp_listening("0.0.0.0",8082);
-    if (tcp_fd_2 <= 0 )
-    {
-        printf("Error!!! start_tcp_listening (err:%d, line:%d)\n",tcp_fd,__LINE__);
-        return -1;
-    }    
-    int insert_code_tcp_2 = insert_event(fepoll->fd,tcp_fd_2);
-    if( insert_code_tcp_2 < 0 )
-    {
-        printf("Error insert event %d\n",__LINE__);
-        return -1;
-    }
+    rc = fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",8082);
     HashMap_t *hm = create_hash_map(10);
     int count_foo = 0;
     sv_callback_t *foo_cb = sv_create_callback(foo,&count_foo);
