@@ -50,7 +50,7 @@ frixia_epoll_t* create_frixia_epoll()
     for (int i=0;i++;i<MAXIMUM_FILEDESCRIPTORS_NUMBER)
     {
         cbs->is_valid = false;
-        cbs->argument = NULL;
+        cbs->auxiliary = NULL;
         cbs->function = NULL;
     }
     frixia_epoll->callbacks_data = cbs;
