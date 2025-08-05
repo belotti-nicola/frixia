@@ -235,7 +235,7 @@ int frixia_start(frixia_environment_t *env)
 
     set_frixia_dispatcher_thread_pool(dispatcher->dispatcher,th_pool);
     
-    frixia_detached_start_monitor(fsuite);
+    detached_start_epoll(fsuite);
     detached_start_frixia_dispatcher(dispatcher);
 
 
@@ -253,14 +253,14 @@ int frixia_stop(frixia_environment_t *environment)
     frixia_epoll_t *fe = environment->fepoll;
     fepoll_stop(fe);
 
-    crono_t *cr = environment->crono;
-    crono_stop(cr);
+    //crono_t *cr = environment->crono;
+    //crono_stop(cr);
 
-    frixia_dispatcher_t *dispatcher = environment->dispatcher;
-    dispatcher_stop(dispatcher);
+    //frixia_dispatcher_t *dispatcher = environment->dispatcher;
+    //dispatcher_stop(dispatcher);
 
-    bound_robin_t *br = environment->bound_robin;
-    bound_robin_stop(br);
+    //bound_robin_t *br = environment->bound_robin;
+    //bound_robin_stop(br);
 
 }
 
@@ -385,8 +385,8 @@ void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     frixia_epoll_t *fepoll = env->fepoll;
     insert_event(fepoll->fd,fd);   
 
-    convoy_t *c = env->convoy;
-    convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read,HTTP);
+    //convoy_t *c = env->convoy;
+    //convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read,HTTP);
 
 }
 void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
@@ -401,8 +401,8 @@ void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     frixia_epoll_t *fepoll = env->fepoll;
     insert_event(fepoll->fd,fd);
 
-    convoy_t *c = env->convoy;
-    convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
+    //convoy_t *c = env->convoy;
+    //convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
 }
 void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
 {
@@ -415,8 +415,8 @@ void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_re
     frixia_epoll_t *fepoll = env->fepoll;
     insert_event(fepoll->fd,fd);
 
-    convoy_t *c = env->convoy;
-    convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
+    //convoy_t *c = env->convoy;
+    //convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
 }
 void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
 {
@@ -428,8 +428,8 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
     frixia_epoll_t *fepoll = env->fepoll;
     insert_event(fepoll->fd,fd);
 
-    convoy_t *c = env->convoy;
-    convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
+    //convoy_t *c = env->convoy;
+    //convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
 }
 
 void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
@@ -445,8 +445,8 @@ void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
     frixia_epoll_t *fepoll = env->fepoll;
     insert_event(fepoll->fd,fd);
 
-    convoy_t *c = env->convoy;
-    convoy_add_scheduler_filedescriptor(c,fd,tick_size);
+    //convoy_t *c = env->convoy;
+    //convoy_add_scheduler_filedescriptor(c,fd,tick_size);
 }
 
 void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, int interval)
@@ -461,8 +461,8 @@ void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, i
     frixia_epoll_t *fepoll = env->fepoll;
     insert_event(fepoll->fd,fd);
 
-    convoy_t *c = env->convoy;
-    convoy_add_scheduled_timer_filedescriptor(c,fd);
+    //convoy_t *c = env->convoy;
+    //convoy_add_scheduled_timer_filedescriptor(c,fd);
 
 }
 
@@ -478,32 +478,32 @@ void frixia_add_inode(frixia_environment_t *env, char *filepath)
     frixia_epoll_t *fepoll = env->fepoll;
     insert_event(fepoll->fd,fd);
 
-    convoy_t *c = env->convoy;
-    convoy_add_add_inode_filedescriptor(c,fd,filepath);
+    //convoy_t *c = env->convoy;
+    //convoy_add_add_inode_filedescriptor(c,fd,filepath);
 }
 
 void frixia_register_http_method_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg)
 {
-    convoy_t *convoy = env->convoy;
-    convoy_register_http_method_callback(convoy,ip,port,method,path,fun,arg);
+    //convoy_t *convoy = env->convoy;
+    //convoy_register_http_method_callback(convoy,ip,port,method,path,fun,arg);
 }
 
 void frixia_register_fins_command_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second, void *(*fun)(void *), void *arg)
 {
-    convoy_t *convoy = env->convoy;
-    convoy_register_fins_command_callback(convoy,type,ip,port,first,second,fun,arg);
+    //convoy_t *convoy = env->convoy;
+    //convoy_register_fins_command_callback(convoy,type,ip,port,first,second,fun,arg);
 }
 
 void frixia_register_noprotocol_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second, void *(*fun)(void *), void *arg)
 {
-    convoy_t *convoy = env->convoy;
-    convoy_register_fins_command_callback(convoy,type,ip,port,first,second,fun,arg);
+    //convoy_t *convoy = env->convoy;
+    //convoy_register_fins_command_callback(convoy,type,ip,port,first,second,fun,arg);
 }
 
 void frixia_register_noprotocol_tcp_callback(frixia_environment_t *env, const char *ip, int port, void *(*fun)(void *),void *arg)
 {
-    convoy_t *convoy = env->convoy;
-    convoy_register_noprotocol_tcp_callback(convoy,ip,port,fun,arg);
+    //convoy_t *convoy = env->convoy;
+    //convoy_register_noprotocol_tcp_callback(convoy,ip,port,fun,arg);
 }
 
 frixia_environment_t *frixia_environment_create()
@@ -521,6 +521,6 @@ frixia_environment_t *frixia_environment_create()
 
 
     retVal->fepoll = fepoll;
-    retVal->convoy = convoy;
+    //retVal->convoy = convoy;
     return retVal;
 }

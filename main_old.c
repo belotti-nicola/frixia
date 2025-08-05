@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
     fepoll_data.fepoll = fepoll;
     fepoll_data.events = events_queue;
     fepoll_data.started = started;
-    frixia_detached_start_monitor(&fepoll_data);
+    detached_start_epoll(&fepoll_data);
     frixia_detached_start_crono(&crono);
 
     int count_foo = 3;
@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
     detached_join_frixia_dispatcher_new(&d_data);
     printf("Dispatcher ended.\n");
     
-    frixia_detached_wait_monitor(&fepoll_data);
+    detached_stop_epoll(&fepoll_data);
     printf("Fepoll ended.\n");
     
     frixia_wait_crono(&crono);
@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
     fadd_stop_filedescriptor(fepoll);
     fadd_stop_filedescriptor(fepoll);
     fadd_stop_filedescriptor(fepoll);
-    frixia_detached_start_monitor(suite);
+    detached_start_epoll(suite);
 
 
     threadsafe_simple_timer_wheel_t tw = ts_timer_wheel_create(1);
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
     suite->fepoll = fepoll;
     fepoll->events_queue = frixia_events_queue_create();
     suite->events_q = frixia_events_queue_create();
-    frixia_detached_start_monitor(suite);
+    detached_start_epoll(suite);
 
     char buf[8];
     fadd_stop_filedescriptor(fepoll);

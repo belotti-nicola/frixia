@@ -9,6 +9,7 @@
 #include "crono/crono.h"
 #include "../core/fdispatcher/frixia_dispatcher.h"
 #include "../core/thread_pool/bound_robin/bound_robin.h"
+#include "../core/fenv/frixia_environment.h"
 #include <errno.h>
 #include <string.h>
 
@@ -16,18 +17,6 @@
 #define PRINT_ERRNO(prefix) \
     printf("[DEBUG] %s: %s (errno: %d, %s:%d (%s))\n", prefix,strerror(errno), errno, __FILE__, __LINE__,__func__)
 
-
-typedef struct frixia_environment
-{
-    convoy_t *convoy;
-    frixia_epoll_t *fepoll;
-    frixia_events_queue_t *events;
-    crono_t *crono;
-    frixia_dispatcher_t *dispatcher;
-    frixia_thread_pool_t *th_pool;
-    bound_robin_t *bound_robin;
-
-} frixia_environment_t;
 
 void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
 void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);

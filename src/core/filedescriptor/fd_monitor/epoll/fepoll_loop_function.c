@@ -10,10 +10,10 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
 {
     frixia_epoll_t *fepoll = th_data->fepoll;
 
-    int stop_fd = -1; //TODO ELIMINATE
     bool keep_looping = true;
     while( keep_looping )
     {
+        printf("Waiting\n");
         frixia_event_t ev_q[FRIXIA_EPOLL_MAXIMUM_EVENTS];
         int events_number = frixia_epoll_wait(fepoll,ev_q);
         printf("events_number :: %d\n",events_number);
@@ -30,12 +30,10 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
             int event_fd = ev_q->fd;
             if( event_fd == stop_fd)
             {
-                //possible mapping of callbacks
-                //perform some operations based on FDs type 
                 keep_looping = false;
             }
-            frixia_event_t *e = create_event(event_fd);
-            frixia_events_queue_push(th_data->events,e);
+            //todo implement.
+            printf("DONE!\n");
         }
     }
 

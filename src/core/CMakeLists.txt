@@ -18,6 +18,7 @@ add_subdirectory(fdispatcher)
 add_subdirectory(fthread_pool)
 add_subdirectory(convoy)
 add_subdirectory(crono)
+add_subdirectory(fenv)
 
 target_link_libraries(core 
   ctl_parser
@@ -46,4 +47,5 @@ target_link_libraries(core
   inode
   bound_robin
   callback_suite
+  fenv
 )

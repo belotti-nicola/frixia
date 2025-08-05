@@ -1,15 +1,10 @@
 TODO   
-    do API for epollcallbacks
+    fepoll callback!
     
-    CALLBACKS SIZE IS KNOWN AT compile time known
     valgrind support
     debug level prints
-    convoy is shared -> make it threadsafe
-    simplify API start
+    convoy is shared -> make it threadsafe if necessary
     remove unnecessary elements
-    moving any function to the thread_pool might be functional
-    http/fins calling
-    mallocing convoy to simplify api
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

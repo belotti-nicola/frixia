@@ -174,7 +174,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, cons
     int fd = start_tcp_listening(ip,port);
     if ( fd < 0 )
     {
-        return (FRIXIA_EPOLL_CODE_T)fd;
+        return -104;
     }
 
     int fepoll_fd = fepoll->fd;

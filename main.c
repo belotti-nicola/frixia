@@ -7,6 +7,8 @@
 #define FILEDESCRIPTORS 10
 #define FILDESCRIPTORS_MAX_INDEX 10+3
 
+#include "src/core/fenv/frixia_environment.h"
+
 
 //REMOVE THEM TODO
 #include "src/core/filedescriptor/types/fifo/frixia_fifo.h"
@@ -328,49 +330,14 @@ void *goo(void *ctx)
 
 int main(int argc, char *argv[])
 {      
-    FRIXIA_EPOLL_CODE_T rc;
-    bool keep_looping = true;
-    frixia_epoll_t *fepoll = create_frixia_epoll();
-    if ( fepoll == NULL)
-    {
-        printf("Error!!! create_frixia_epoll\n");
-        return -1;
-    }   
-    
-    rc = fepoll_add_fifo_socket_listening(fepoll,"my_pipe");
-    if ( rc != FEPOLL_OK )
-    {
-        printf("Error!!! fepoll_add_fifo_socket_listening\n");
-        return -1;
-    }
-    fepoll->callbacks_data[4] = *sv_create_callback(new_fepoll_stop,NULL);
+    frixia_environment_t *env = fenv_create(20);
+    fenv_start_tcp_listening(env,"0.0.0.0",18080);
+    fenv_start_udp_listening(env,"0.0.0.0",19600);
+
+
+    fenv_run_engine(env);
 
     
-    rc = fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",8081);
-    sv_callback_t *svcb = sv_create_callback(logger,NULL);
-    fepoll->callbacks_data[5] = *sv_create_callback(adder_tcp,svcb);
-    
-    
-    rc = fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",8082);
-    HashMap_t *hm = create_hash_map(10);
-    int count_foo = 0;
-    sv_callback_t *foo_cb = sv_create_callback(foo,&count_foo);
-    sv_callback_t *goo_cb = sv_create_callback(goo,NULL);
-    HashEntry_t *he1 = create_hash_entry("GET/foo",foo_cb);add_entry(hm,he1);
-    HashEntry_t *he2 = create_hash_entry("GET/goo",goo_cb);add_entry(hm,he2);
-    sv_callback_t *svcb6 = sv_create_callback(http_handler,hm);
-    fepoll->callbacks_data[6] = *sv_create_callback(adder_http_handler,svcb6);
-    
-    
-    pthread_t th;
-    th_arg_t data;
-    data.fepoll = fepoll;
-    data.keep_looping = &keep_looping;
-       
-    
-    pthread_create(&th,NULL,main_loop,&data);
-    int join_value = pthread_join(th,NULL);
-    printf("Join:%d\n",join_value);
-    
+    fenv_destroy(env);
     return 0;
 }
