@@ -6,6 +6,26 @@
 
 #include "fepoll_loop_function.h"
 
+void do_callback_wrapper(sv_callback_t *sv)
+{
+    if ( sv == NULL )
+    {
+        printf("WRN:do_callback NULL!\n");
+        return;
+    }
+
+    if ( ! sv_is_valid( sv ) )
+    {
+        printf("WRN:do_callback is not valid!\n");
+        return;
+    }
+
+    void *(*fun)(void *) = sv->function;
+    void *aux            = sv->auxiliary;
+
+    printf("%p %p\n",fun,aux);
+}
+
 int fepoll_loop_function(fepoll_th_data_t *th_data)
 {
     frixia_epoll_t *fepoll = th_data->fepoll;
@@ -28,12 +48,10 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
         {
             printf("event_fd %d(%d events occured), pushing to events_queue\n",ev_q->fd,events_number);
             int event_fd = ev_q->fd;
-            if( event_fd == stop_fd)
-            {
-                keep_looping = false;
-            }
-            //todo implement.
-            printf("DONE!\n");
+            //printf("FOUND :: %p %p %d!\n",sv.function, sv.auxiliary, sv.is_valid);
+
+            sv_callback_t sv = fepoll->callbacks_data[event_fd];
+            do_callback_wrapper(&sv);
         }
     }
 
