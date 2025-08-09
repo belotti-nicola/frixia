@@ -333,10 +333,9 @@ int main(int argc, char *argv[])
     frixia_environment_t *env = fenv_create(20);
     fenv_start_tcp_listening(env,"0.0.0.0",18080);
     fenv_start_udp_listening(env,"0.0.0.0",19600);
-
+    fenv_start_fifo_listening(env,"my_pipe");   
 
     fenv_run_engine(env);
-
     
     fenv_destroy(env);
     return 0;

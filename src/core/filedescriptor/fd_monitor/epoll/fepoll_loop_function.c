@@ -2,21 +2,13 @@
 #include "../../../frixia_common.h"
 #include "epoll.h"
 #include "../../../fevent/frixia_event.h"
+#include "../../../filedescriptor/fd_monitor/epoll/fepoll_context.c"
 #include <unistd.h>
 
 #include "fepoll_loop_function.h"
 
-typedef struct fepoll_ctx
-{
-    int fd;
-    uint32_t events;
 
-    threadsafe_simple_queue_t *queue;
-    bool                      *keep_looping;
-
-} fepoll_ctx_t;
-
-void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t events, threadsafe_simple_queue_t *q, bool *b)
+void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_queue_t *q, bool *b)
 {
     if ( sv == NULL )
     {
@@ -38,10 +30,9 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t events, threadsafe_
     fepoll_ctx_t ctx = 
     {
         .fd = fd,
-        .events = events,
-        .queue = q,
+        .mask = m,
+        .events = q,
         .keep_looping = b
-
     };
     fun(&ctx);
 }
@@ -72,7 +63,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
             //printf("FOUND :: %p %p %d!\n",sv.function, sv.auxiliary, sv.is_valid);
 
             sv_callback_t sv = fepoll->callbacks_data[event_fd];
-            //do_callback_wrapper(&sv,event_fd,mask,th_data->events,&keep_looping);
+            do_callback_wrapper(&sv,event_fd,mask,th_data->events,&keep_looping);
         }
     }
 
