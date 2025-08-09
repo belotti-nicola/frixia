@@ -14,6 +14,11 @@ void fenv_push_event_from_fepoll(fepoll_ctx_t *ctx)
     fepoll_context_push_event(ctx);
 }
 
+void fenv_stop_event(fepoll_ctx_t *ctx)
+{
+    fepoll_context_stop(ctx);
+}
+
 void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port)
 {
     if ( env == NULL )
@@ -38,6 +43,9 @@ void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port
     fepoll->callbacks_data[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,rc);
+
     env->filedescriptors += 1; 
 }
 void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port)
@@ -55,6 +63,7 @@ void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port
     int rc = start_udp_listening(port);
     if ( rc <= 0 )
     {
+        printf("Error! %d\n",rc);
         return;
     }
 
@@ -63,6 +72,8 @@ void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port
     fepoll->callbacks_data[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,rc);
     env->filedescriptors += 1;
 }
 
@@ -85,10 +96,12 @@ void fenv_start_fifo_listening(frixia_environment_t *env, const char *pipe)
     }
 
     frixia_epoll_t *fepoll = env->fepoll;
-    sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
+    sv_callback_t *sv = sv_create_callback(fenv_stop_event,NULL);
     fepoll->callbacks_data[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,rc);
     env->filedescriptors += 1;
 }
 

@@ -87,13 +87,21 @@ FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll)
 
 FRIXIA_EPOLL_CODE_T fepoll_stop(frixia_epoll_t *fe)
 {    
-    uint64_t value = 1;
-    int fd = -1;
-    ssize_t n = write(fd, &value, sizeof(value));
-    if (n == -1) {
-        PRINT_ERRNO("write");
-        printf("ERRORR!!%d\n",fd);
-        return 1;
+    simple_list_t      *l = fe->fd_pool->l;
+    simple_list_elem_t *curr = l->first;    
+    while( curr !=  NULL)
+    {
+        int *ptr_fd = (int *)curr->val;
+        int fd = *ptr_fd;
+        int rc = close(fd);
+        if ( rc < 0 )
+        {
+            printf("Error closing %d fd\n",fd);
+            curr = curr->next;
+            continue;
+        }
+        printf("closed fd: %d\n",fd);
+        curr = curr->next;
     }
 
     return FEPOLL_OK;    
