@@ -38,7 +38,6 @@ void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port
     }
 
     frixia_epoll_t *fepoll = env->fepoll;
-    frixia_events_queue_t *fepoll_events = env->fepoll_events;
     sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
     fepoll->callbacks_data[rc] = *sv;
 
