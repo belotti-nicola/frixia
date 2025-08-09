@@ -6,7 +6,17 @@
 
 #include "fepoll_loop_function.h"
 
-void do_callback_wrapper(sv_callback_t *sv)
+typedef struct fepoll_ctx
+{
+    int fd;
+    uint32_t events;
+
+    threadsafe_simple_queue_t *queue;
+    bool                      *keep_looping;
+
+} fepoll_ctx_t;
+
+void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t events, threadsafe_simple_queue_t *q, bool *b)
 {
     if ( sv == NULL )
     {
@@ -24,6 +34,16 @@ void do_callback_wrapper(sv_callback_t *sv)
     void *aux            = sv->auxiliary;
 
     printf("%p %p\n",fun,aux);
+
+    fepoll_ctx_t ctx = 
+    {
+        .fd = fd,
+        .events = events,
+        .queue = q,
+        .keep_looping = b
+
+    };
+    fun(&ctx);
 }
 
 int fepoll_loop_function(fepoll_th_data_t *th_data)
@@ -48,10 +68,11 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
         {
             printf("event_fd %d(%d events occured), pushing to events_queue\n",ev_q->fd,events_number);
             int event_fd = ev_q->fd;
+            uint32_t mask = ev_q->events_maks;
             //printf("FOUND :: %p %p %d!\n",sv.function, sv.auxiliary, sv.is_valid);
 
             sv_callback_t sv = fepoll->callbacks_data[event_fd];
-            do_callback_wrapper(&sv);
+            //do_callback_wrapper(&sv,event_fd,mask,th_data->events,&keep_looping);
         }
     }
 

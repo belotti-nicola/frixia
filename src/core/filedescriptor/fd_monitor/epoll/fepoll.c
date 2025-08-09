@@ -174,7 +174,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, cons
     int fd = start_tcp_listening(ip,port);
     if ( fd < 0 )
     {
-        return -104;
+        return (FRIXIA_EPOLL_CODE_T)fd;
     }
 
     int fepoll_fd = fepoll->fd;
@@ -184,6 +184,8 @@ FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, cons
         return FERR_INSERT_EVENT;
     }
 
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,fd);
     return FEPOLL_OK;
 }
 
@@ -202,6 +204,9 @@ FRIXIA_EPOLL_CODE_T fepoll_add_udp_socket_listening(frixia_epoll_t *fepoll, cons
         return FERR_INSERT_EVENT;
     }
     
+
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,fd);
     return FEPOLL_OK;
 }
 FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, const char *fifo)

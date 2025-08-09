@@ -19,13 +19,13 @@ void destroy_fepoll_pool(fepoll_pool_t *p)
     destroy_simple_list(p->l);
     free(p);
 }
-void add_filedescriptor(fepoll_pool_t *fe, int fd)
+void fepoll_pool_add_fd(fepoll_pool_t *fe, int fd)
 {
     simple_list_t *l = fe->l;
     fepoll_data_t *d = create_fepoll_data(fd);
     add_item(l,d);
 }
-void remove_filedescriptor(fepoll_pool_t *fe, int index)
+void fepoll_pool_remove_fd(fepoll_pool_t *fe, int index)
 {
     simple_list_t *l = fe->l;
     remove_item(l,index);

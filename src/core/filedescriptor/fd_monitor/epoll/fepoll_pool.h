@@ -12,8 +12,8 @@ typedef struct fepoll_pool
 
 fepoll_pool_t *create_fepoll_pool();
 void           destroy_fepoll_pool(fepoll_pool_t *p);
-void           add_filedescriptor(fepoll_pool_t *p, int fd);
-void           remove_filedescriptor(fepoll_pool_t *p, int index);
+void           fepoll_pool_add_fd(fepoll_pool_t *p, int fd);
+void           fepoll_pool_remove_fd(fepoll_pool_t *p, int index);
 
 
 #endif

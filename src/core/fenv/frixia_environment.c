@@ -51,7 +51,7 @@ void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port
 
     frixia_epoll_t *fepoll = env->fepoll;
     frixia_events_queue_t *fepoll_events = env->fepoll_events;
-    sv_callback_t *sv = sv_create_callback(frixia_events_queue_push,fepoll_events);
+    sv_callback_t *sv = sv_create_callback(frixia_events_queue_push,NULL);
     fepoll->callbacks_data[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
