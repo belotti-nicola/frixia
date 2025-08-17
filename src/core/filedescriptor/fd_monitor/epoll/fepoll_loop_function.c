@@ -8,6 +8,8 @@
 #include "fepoll_loop_function.h"
 
 
+
+
 void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_queue_t *q, bool *b)
 {
     if ( sv == NULL )
@@ -32,7 +34,8 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_qu
         .fd = fd,
         .mask = m,
         .events = q,
-        .keep_looping = b
+        .keep_looping = b,
+        .counter = (int *)aux
     };
     fun(&ctx);
 }

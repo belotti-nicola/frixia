@@ -27,3 +27,18 @@ void fepoll_context_stop(fepoll_ctx_t *ctx)
     
     return;
 }
+
+void fepoll_context_counter(fepoll_ctx_t *ctx)
+{
+    if( ctx == NULL )
+    {
+        printf("Error! CTX IS NULL");
+        return;
+    }
+
+    int *a = ctx->counter;
+
+    *a = *a + 1;
+    printf("counter: %d\n",*a);
+    return;
+}

@@ -24,6 +24,7 @@ void fenv_destroy(frixia_environment_t *fenv);
 void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port);
 void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port);
 void fenv_start_fifo_listening(frixia_environment_t *env, const char *pipe);
+void fenv_set_custom_tcp_callback(frixia_environment_t *env,const char *ip, int port, void *(*fun)(void *), void *arg);
 
 void fenv_run_engine(frixia_environment_t *fenv);
 void wait_all_components(frixia_environment_t *fenv);

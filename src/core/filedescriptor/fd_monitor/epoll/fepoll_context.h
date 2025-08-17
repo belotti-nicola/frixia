@@ -11,11 +11,13 @@ typedef struct fepoll_ctx
 
     frixia_events_queue_t     *events;
     bool                      *keep_looping;
+    int                       *counter;
 
 } fepoll_ctx_t;
 
 
 void fepoll_context_push_event(fepoll_ctx_t *ctx);
 void fepoll_context_stop(fepoll_ctx_t *ctx);
+void fepoll_context_counter(fepoll_ctx_t *ctx);
 
 #endif

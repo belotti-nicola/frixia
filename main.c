@@ -17,6 +17,7 @@
 #include <sys/epoll.h>
 #include <inttypes.h>
 #include "src/utils/datastructures/simple_hash_map/simple_hash_map.h"
+#include "src/core/filedescriptor/fd_monitor/epoll/fepoll_context.h"
 
 typedef struct th_arg
 {
@@ -333,7 +334,17 @@ int main(int argc, char *argv[])
     frixia_environment_t *env = fenv_create(20);
     fenv_start_tcp_listening(env,"0.0.0.0",18080);
     fenv_start_udp_listening(env,"0.0.0.0",19600);
-    fenv_start_fifo_listening(env,"my_pipe");   
+    fenv_start_fifo_listening(env,"my_pipe");
+
+
+    //STOP
+    fenv_set_custom_tcp_callback(env,"0.0.0.0",18081,fepoll_context_stop,NULL);
+    
+    
+    //INCREMENT: DO NOT SHARE WITH THREADS
+    int counter = 0;
+    fenv_set_custom_tcp_callback(env,"0.0.0.0",18082,fepoll_context_counter,&counter);
+
 
     fenv_run_engine(env);
     
