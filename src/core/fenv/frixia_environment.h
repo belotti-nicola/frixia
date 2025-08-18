@@ -2,13 +2,14 @@
 #define FRIXIA_ENVIRONMENT_H
 
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
+#include "../fdispatcher/frixia_dispatcher.h"
 
 typedef struct frixia_environment
 {
     int maximum_filedescriptors;
     int filedescriptors;
     frixia_epoll_t *fepoll;
-    //fdispatcher
+    frixia_dispatcher_t *fdispatcher;
     //thread_pool
     
 
@@ -26,7 +27,7 @@ void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port
 void fenv_start_fifo_listening(frixia_environment_t *env, const char *pipe);
 void fenv_set_custom_tcp_callback(frixia_environment_t *env,const char *ip, int port, void *(*fun)(void *), void *arg);
 void fenv_set_custom_udp_callback(frixia_environment_t *env,const char *ip, int port, void *(*fun)(void *), void *arg);
-void fenv_set_custom_fifo_callback(frixia_environment_t *env,const char *ip, int port, void *(*fun)(void *), void *arg);
+void fenv_set_custom_fifo_callback(frixia_environment_t *env,const char *path, void *(*fun)(void *), void *arg);
 
 
 void fenv_run_engine(frixia_environment_t *fenv);

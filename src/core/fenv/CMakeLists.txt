@@ -8,4 +8,5 @@ target_link_libraries(fenv
     udp
     fevent
     fepoll
+    fdispatcher
 )

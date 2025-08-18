@@ -46,7 +46,7 @@ int detached_start_epoll(fepoll_th_data_t *fepoll_obj)
     return 0;
 }
 
-int detached_stop_epoll(fepoll_th_data_t *fepoll_obj)
+int detached_join_epoll(fepoll_th_data_t *fepoll_obj)
 {
     pthread_join(fepoll_obj->th, NULL);
 }

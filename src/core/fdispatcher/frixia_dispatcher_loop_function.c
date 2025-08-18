@@ -8,8 +8,24 @@
 int frixia_dispatcher_loop_function(void *arg)
 {
     printf("frixia_dispatcher_loop_function started\n");
-    frixia_dispatcher_t   *dispatcher   = (frixia_dispatcher_t *)arg;
+    frixia_dispatcher_t *dispatcher   = (frixia_dispatcher_t *)arg;
     frixia_events_queue_t *events_queue = dispatcher->tasks;
+    frixia_event_t *event;
+    bool *keep_looping = dispatcher->keep_looping;
+    while(*keep_looping)
+    {
+        event = frixia_events_queue_pop(events_queue);
+        if(event == NULL)
+        {
+            printf("ERROR POPPING EVENTS QUEUE\n");
+            continue;
+        }
+        printf("dispatcher loop. fd event:%d\n",event->fd);
+    }
+
+    /*
+    frixia_dispatcher_t   *dispatcher   = (frixia_dispatcher_t *)arg;
+    
     bound_robin_t         *bound_robin  = dispatcher->bound_robin; 
     convoy_t              *convoy       = dispatcher->convoy;
     frixia_epoll_t        *fepoll       = dispatcher->fepoll;
@@ -39,7 +55,7 @@ int frixia_dispatcher_loop_function(void *arg)
         void   *arg          = get_callback_arg(convoy,fepoll,fd);
         bound_robin_add_task_to_one_worker(bound_robin,fun,arg);
     }
-
+    */
     printf("frixia_dispatcher_loop_function: END.\n");
     return 0;
 }
