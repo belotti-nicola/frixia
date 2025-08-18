@@ -132,6 +132,61 @@ void fenv_set_custom_tcp_callback(frixia_environment_t *env,const char *ip, int 
     env->filedescriptors += 1;
 }
 
+void fenv_set_custom_udp_callback(frixia_environment_t *env,const char *ip, int port, void *(*fun)(void *), void *arg)
+{
+    if ( env == NULL )
+    {
+        return;
+    }
+    if ( env->filedescriptors >= env->maximum_filedescriptors)
+    {
+        printf("Error!\n");
+        return;
+    }
+
+    int rc = start_udp_listening(ip);
+    if ( rc <= 0 )
+    {
+        return;
+    }
+
+    frixia_epoll_t *fepoll = env->fepoll;
+    sv_callback_t *sv = sv_create_callback(fun,arg);
+    fepoll->callbacks_data[rc] = *sv;
+
+    insert_event(fepoll->fd,rc);
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,rc);
+    env->filedescriptors += 1;
+}
+void fenv_set_custom_fifo_callback(frixia_environment_t *env,const char *path, void *(*fun)(void *), void *arg)
+{
+    if ( env == NULL )
+    {
+        return;
+    }
+    if ( env->filedescriptors >= env->maximum_filedescriptors)
+    {
+        printf("Error!\n");
+        return;
+    }
+
+    int rc = start_fifo_listening(path);
+    if ( rc <= 0 )
+    {
+        return;
+    }
+
+    frixia_epoll_t *fepoll = env->fepoll;
+    sv_callback_t *sv = sv_create_callback(fun,arg);
+    fepoll->callbacks_data[rc] = *sv;
+
+    insert_event(fepoll->fd,rc);
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,rc);
+    env->filedescriptors += 1;
+}
+
 frixia_environment_t *fenv_create(int maximum_filedescriptors)
 {
     frixia_environment_t *p = malloc(sizeof(frixia_environment_t));
@@ -153,6 +208,13 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
         return NULL;
     }
     p->fepoll_events = q;
+
+    frixia_dispatcher_t *fdispatcher = create_frixia_dispatcher(1,-1);
+    if ( fdispatcher == NULL )
+    {
+        return NULL;
+    }
+    p->fdispatcher = fdispatcher;
 
     p->maximum_filedescriptors = maximum_filedescriptors;
     p->filedescriptors = 0;
