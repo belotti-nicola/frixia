@@ -33,7 +33,6 @@ target_link_libraries(core
   fifo
   udp
   picohttpparser
-  frixia_monitor
   fsetup
   simple_list
   fsuite
@@ -48,4 +47,6 @@ target_link_libraries(core
   bound_robin
   callback_suite
   fenv
+  frixia_monitor
+
 )

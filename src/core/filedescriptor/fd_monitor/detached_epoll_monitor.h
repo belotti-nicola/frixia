@@ -13,6 +13,7 @@ typedef struct fepoll_th_data
     frixia_events_queue_t *events;
     pthread_t th;
     bool started;
+    bool keep_looping;
 
 } fepoll_th_data_t;
 
@@ -22,6 +23,7 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll);
 void *fepoll_th_data_destroy(fepoll_th_data_t *p);
 
 int detached_start_epoll(fepoll_th_data_t *fepoll);
+int detached_stop_epoll(fepoll_th_data_t *fepoll);
 int detached_join_epoll(fepoll_th_data_t *fepoll);
 
 #endif

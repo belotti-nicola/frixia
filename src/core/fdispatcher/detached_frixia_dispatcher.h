@@ -9,4 +9,4 @@ typedef struct waitable_frixia_dispatcher
 
 waitable_frixia_dispatcher_t *create_waitable_frixia_dispatcher(int workers);
 int detached_start_frixia_dispatcher(waitable_frixia_dispatcher_t *dispatcher);
-int detached_stop_frixia_dispatcher(waitable_frixia_dispatcher_t *dispatcher);
+int detached_stop_dispatcher(waitable_frixia_dispatcher_t *dispatcher);

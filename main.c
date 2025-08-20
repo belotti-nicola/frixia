@@ -18,6 +18,8 @@
 #include <inttypes.h>
 #include "src/utils/datastructures/simple_hash_map/simple_hash_map.h"
 #include "src/core/filedescriptor/fd_monitor/epoll/fepoll_context.h"
+#include "src/core/fdispatcher/detached_frixia_dispatcher.h"
+#include "src/core/filedescriptor/fd_monitor/detached_epoll_monitor.h"
 
 typedef struct th_arg
 {
@@ -329,6 +331,15 @@ void *goo(void *ctx)
     return NULL;
 }
 
+void *stop_frixia(void *arg)
+{
+    frixia_environment_t *env = (frixia_environment_t *)arg;
+    detached_stop_epoll(NULL);
+    detached_stop_dispatcher(NULL);
+
+    return NULL;
+}
+
 int main(int argc, char *argv[])
 {      
     frixia_environment_t *env = fenv_create(20);
@@ -338,7 +349,7 @@ int main(int argc, char *argv[])
 
 
     //STOP
-    fenv_set_custom_tcp_callback(env,"0.0.0.0",18081,fepoll_context_stop,NULL);
+    fenv_set_custom_tcp_callback(env,"0.0.0.0",18081,stop_frixia,NULL);
     
     
     //INCREMENT: DO NOT SHARE WITH THREADS

@@ -18,6 +18,7 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll)
     }
 
     p->fepoll = fepoll;
+    p->keep_looping = true;
 
     return p;
 }
@@ -43,6 +44,12 @@ int detached_start_epoll(fepoll_th_data_t *fepoll_obj)
     fepoll_obj->th      = epoll_thread;
     fepoll_obj->started = true;
 
+    return 0;
+}
+
+int detached_stop_epoll(fepoll_th_data_t *fepoll_obj)
+{   
+    fepoll_obj->keep_looping = false;
     return 0;
 }
 

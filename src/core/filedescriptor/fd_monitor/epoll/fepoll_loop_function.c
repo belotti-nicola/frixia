@@ -44,7 +44,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
 {
     frixia_epoll_t *fepoll = th_data->fepoll;
 
-    bool keep_looping = true;
+    bool keep_looping = th_data->keep_looping;
     while( keep_looping )
     {
         printf("Waiting\n");

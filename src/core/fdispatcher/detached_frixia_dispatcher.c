@@ -31,7 +31,7 @@ int detached_start_frixia_dispatcher(waitable_frixia_dispatcher_t *dispatcher)
     return 0;
 }
 
-int detached_stop_frixia_dispatcher(waitable_frixia_dispatcher_t *wait_disp)
+int detached_stop_dispatcher(waitable_frixia_dispatcher_t *wait_disp)
 {
     pthread_t *t = wait_disp->thread;
     int rc = pthread_join(*t,NULL);
