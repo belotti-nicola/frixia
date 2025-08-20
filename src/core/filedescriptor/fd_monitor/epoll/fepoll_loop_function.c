@@ -2,7 +2,8 @@
 #include "../../../frixia_common.h"
 #include "epoll.h"
 #include "../../../fevent/frixia_event.h"
-#include "../../../filedescriptor/fd_monitor/epoll/fepoll_context.c"
+#include "../../../fcontexts/fctx.h"
+#include "../../../fcontexts/fevent_ctx.h"
 #include <unistd.h>
 
 #include "fepoll_loop_function.h"
@@ -29,15 +30,8 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_qu
 
     printf("%p %p\n",fun,aux);
 
-    fepoll_ctx_t ctx = 
-    {
-        .fd = fd,
-        .mask = m,
-        .events = q,
-        .keep_looping = b,
-        .counter = (int *)aux
-    };
-    fun(&ctx);
+    //todo implement
+    //fun(&ctx);
 }
 
 int fepoll_loop_function(fepoll_th_data_t *th_data)

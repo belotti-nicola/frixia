@@ -1,22 +1,28 @@
-#include "fepoll_context.h"
+#include "fctx.h"
+
+#include "fepoll_ctx.h"
 
 void *fepoll_context_push_event(void *arg)
 {
-    fepoll_ctx_t *ctx = (fepoll_ctx_t *)arg;
+    /*
+    fctx_t *ctx = (fctx_t *)arg;
     if( ctx == NULL )
     {
         printf("Error! CTX IS NULL");
         return NULL;
     }
+    int fd = ctx->
     
-    frixia_events_queue_t *q = ctx->events;
+    frixia_events_queue_t *q = ctx->;
     frixia_event_t *ev = create_event(ctx->fd);
     frixia_events_queue_push(q,ev);
+    */
 
     return NULL;
 }
 void *fepoll_context_stop(void *arg)
 {
+    /*
     fepoll_ctx_t *ctx = (fepoll_ctx_t *)arg;
     if( ctx == NULL )
     {
@@ -26,12 +32,14 @@ void *fepoll_context_stop(void *arg)
     
     bool *keep_looping = ctx->keep_looping;
     *keep_looping = false;
-    
+    */
+
     return NULL;
 }
 
 void *fepoll_context_counter(void *arg)
 {
+    /*
     fepoll_ctx_t *ctx = (fepoll_ctx_t *)arg;
     if( ctx == NULL )
     {
@@ -43,5 +51,7 @@ void *fepoll_context_counter(void *arg)
 
     *a = *a + 1;
     printf("counter: %d\n",*a);
+    */
+   
     return NULL;
 }

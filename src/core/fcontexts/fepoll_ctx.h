@@ -2,13 +2,10 @@
 #define FEPOLL_CONTEXT_H
 
 #include <stdint.h>
-#include "../../../fevent/frixia_events_queue.h"
+#include "../fevent/frixia_events_queue.h"
 
 typedef struct fepoll_ctx
 {
-    int fd;
-    uint32_t mask;
-
     frixia_events_queue_t     *events;
     bool                      *keep_looping;
     int                       *counter;

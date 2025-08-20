@@ -19,6 +19,7 @@ add_subdirectory(fthread_pool)
 add_subdirectory(convoy)
 add_subdirectory(crono)
 add_subdirectory(fenv)
+add_subdirectory(fcontexts)
 
 target_link_libraries(core 
   ctl_parser
@@ -48,5 +49,6 @@ target_link_libraries(core
   callback_suite
   fenv
   frixia_monitor
+  frixia_contexts
 
 )
