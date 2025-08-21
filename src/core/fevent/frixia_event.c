@@ -3,7 +3,7 @@
 #include "../protocols/frixia_supported_protocols.h"
 #include <stdlib.h>
 
-frixia_event_t* create_event(int fd)
+frixia_event_t* create_event(int fd, uint32_t mask)
 {
     if(fd < 0)
     {
@@ -15,6 +15,8 @@ frixia_event_t* create_event(int fd)
         return NULL;
     }
     fe->fd = fd;
+    fe->events_maks = mask;
+    
     return fe;
 }
 

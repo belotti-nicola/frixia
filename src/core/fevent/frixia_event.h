@@ -4,6 +4,7 @@
 #include "../frixia_common.h"
 #include <stdint.h>
 #include "../protocols/frixia_supported_protocols.h"
+#include <stdint.h>
 
 typedef struct frixia_event
 {
@@ -12,7 +13,7 @@ typedef struct frixia_event
 
 } frixia_event_t;
 
-frixia_event_t *create_event(int fd);
+frixia_event_t *create_event(int fd, uint32_t mask);
 void destroy_event(frixia_event_t *e);
 
 #endif
