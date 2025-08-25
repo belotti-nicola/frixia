@@ -11,7 +11,7 @@
 
 
 
-void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_queue_t *q, bool *b)
+void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_queue_t *q, frixia_epoll_t *fepoll,bool *keep_looping)
 {
     if ( sv == NULL )
     {
@@ -32,9 +32,15 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_qu
     {
         .event = create_event(fd,m)
     };
+    fepoll_ctx_t fepoll_ctx = 
+    {
+        .fepoll = fepoll,
+        .keep_looping = keep_looping
+    };
     fctx_t ctx = 
     {
-        .ev_ctx = &ev_ctx
+        .ev_ctx = &ev_ctx,
+        .fep_ctx = &fepoll_ctx
     };
     fun(&ctx);
 }
@@ -65,7 +71,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
             //printf("FOUND :: %p %p %d!\n",sv.function, sv.auxiliary, sv.is_valid);
 
             sv_callback_t sv = fepoll->callbacks_data[event_fd];
-            do_callback_wrapper(&sv,event_fd,mask,th_data->events,&keep_looping);
+            do_callback_wrapper(&sv,event_fd,mask,th_data->events,fepoll,&keep_looping);
         }
     }
 
