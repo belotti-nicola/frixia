@@ -341,11 +341,13 @@ void *stop_frixia(void *arg)
     printf("stop_frixia fd:%d\n",event->fd);
     print_epoll_events(event->events_maks);
     printf("epoll fd:%d max fds:%d\n",fepoll->fd,fepoll->maximum_filedescriptors);
+    printf("ENV : %d\n",ctx->env->maximum_filedescriptors);
     printf("*********************************\n");
-    
-    
-    //detached_stop_epoll(NULL);
-    //detached_stop_dispatcher(NULL);
+      
+    //this needs to refactor the frixia_env by doing thread data wrappers
+    //detached_stop_epoll(TODO_THREAD_DATA);
+    //detached_stop_dispatcher(TODO_THREAD_DATA);
+    //detached_stop_thread_pool(TODO_THREAD_DATA)
 
     return NULL;
 }

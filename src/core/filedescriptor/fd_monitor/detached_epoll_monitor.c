@@ -8,7 +8,7 @@
 
 #include "detached_epoll_monitor.h"
 
-fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll)
+fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, frixia_environment_t *fenv)
 {
     fepoll_th_data_t *p = malloc(sizeof(fepoll_th_data_t));
     if ( p == NULL )
@@ -19,6 +19,7 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll)
 
     p->fepoll = fepoll;
     p->keep_looping = true;
+    p->fenv = fenv;
 
     return p;
 }

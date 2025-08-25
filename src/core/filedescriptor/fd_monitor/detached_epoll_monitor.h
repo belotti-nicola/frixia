@@ -5,6 +5,7 @@
 #include "../../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include <pthread.h>
 #include <stdbool.h>
+#include "../../fenv/frixia_environment.h"
 
 typedef struct fepoll_th_data
 {
@@ -15,11 +16,13 @@ typedef struct fepoll_th_data
     bool started;
     bool keep_looping;
 
+    frixia_environment_t *fenv;
+
 } fepoll_th_data_t;
 
 
 
-fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll);
+fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, frixia_environment_t *fenv);
 void *fepoll_th_data_destroy(fepoll_th_data_t *p);
 
 int detached_start_epoll(fepoll_th_data_t *fepoll);

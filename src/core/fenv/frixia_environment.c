@@ -235,7 +235,7 @@ void fenv_run_engine(frixia_environment_t *fenv)
     frixia_epoll_t *fepoll = fenv->fepoll;
     frixia_dispatcher_t *dispatcher = fenv->fdispatcher;
 
-    fepoll_th_data_t *fepoll_th = fepoll_th_data_create(fepoll);
+    fepoll_th_data_t *fepoll_th = fepoll_th_data_create(fepoll,fenv);
     fepoll_th->events = fenv->fepoll_events;
     detached_start_epoll(fepoll_th);
     
