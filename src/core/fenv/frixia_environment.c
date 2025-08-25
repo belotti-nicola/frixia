@@ -12,14 +12,14 @@
 //todo
 #include "../fcontexts/fctx.h"
 
-void fenv_push_event_from_fepoll(fepoll_ctx_t *ctx)
+void fenv_push_event_from_fepoll(fctx_t *ctx)
 {
-    fepoll_context_push_event(ctx);
+    //fepoll_context_push_event(ctx);
 }
 
-void fenv_stop_event(fepoll_ctx_t *ctx)
+void fenv_stop_event(fctx_t *ctx)
 {
-    fepoll_context_stop(ctx);
+    //fepoll_context_stop(ctx);
 }
 
 void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port)
