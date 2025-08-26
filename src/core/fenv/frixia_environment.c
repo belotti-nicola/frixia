@@ -236,22 +236,8 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
 
 void fenv_run_engine(frixia_environment_t *fenv)
 {
-    frixia_epoll_t *fepoll = fenv->fepoll;
-    frixia_dispatcher_t *dispatcher = fenv->fdispatcher;
-
-    fepoll_th_data_t *fepoll_th = fepoll_th_data_create(fepoll,fenv);
-    fepoll_th->events = fenv->fepoll_events;
-    detached_start_epoll(fepoll_th);
-    
-    dispatcher->fepoll = fepoll;
-    dispatcher->tasks = fenv->fepoll_events;
-    waitable_frixia_dispatcher_t dispatcher_data;
-    dispatcher_data.dispatcher = dispatcher;
-    detached_start_frixia_dispatcher(&dispatcher_data);
-
     //TODO HERE
-    detached_join_epoll(fepoll_th);
-    detached_stop_dispatcher(fepoll_th);
+    detached_join_epoll(fenv->fepoll_ctx);
 }
 
 void fenv_destroy(frixia_environment_t *fenv)

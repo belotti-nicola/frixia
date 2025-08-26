@@ -33,7 +33,8 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_qu
     fctx_t ctx = 
     {
         .ev_ctx = &ev_ctx,
-        .env = fenv
+        .env = fenv,
+        .arg = aux
     };
     fun(&ctx);
 }
@@ -41,10 +42,10 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_qu
 int fepoll_loop_function(fepoll_th_data_t *th_data)
 {
     frixia_epoll_t *fepoll = th_data->fepoll;
-    frixia_environment_t *fenv = th_data->fenv;
+    frixia_environment_t *fenv = (frixia_environment_t *)th_data->context;
 
-    bool keep_looping = th_data->keep_looping;
-    while( keep_looping )
+    bool *keep_looping = th_data->keep_looping;
+    while( *keep_looping )
     {
         printf("Waiting\n");
         frixia_event_t ev_q[FRIXIA_EPOLL_MAXIMUM_EVENTS];
@@ -65,11 +66,10 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
             //printf("FOUND :: %p %p %d!\n",sv.function, sv.auxiliary, sv.is_valid);
 
             sv_callback_t sv = fepoll->callbacks_data[event_fd];
-            do_callback_wrapper(&sv,event_fd,mask,th_data->events,fepoll,&keep_looping,fenv);
+            do_callback_wrapper(&sv,event_fd,mask,th_data->events,fepoll,keep_looping,fenv);
         }
     }
 
     fepoll_stop(fepoll);
-    printf("fepoll finished.\n");
     return 0;
 }

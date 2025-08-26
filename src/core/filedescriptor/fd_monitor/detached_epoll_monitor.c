@@ -8,7 +8,7 @@
 
 #include "detached_epoll_monitor.h"
 
-fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, frixia_environment_t *fenv)
+fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, bool *b,void *ctx)
 {
     fepoll_th_data_t *p = malloc(sizeof(fepoll_th_data_t));
     if ( p == NULL )
@@ -18,8 +18,8 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, frixia_environme
     }
 
     p->fepoll = fepoll;
-    p->keep_looping = true;
-    p->fenv = fenv;
+    p->keep_looping = b;
+    p->context = (void *)ctx;
 
     return p;
 }
@@ -33,7 +33,7 @@ int detached_start_epoll(fepoll_th_data_t *fepoll_obj)
     pthread_t epoll_thread;
     int rc = pthread_create( &epoll_thread,
                              NULL,
-                             (void *)&fepoll_loop_function,
+                             (void *)fepoll_loop_function,
                              fepoll_obj);
     if(rc != 0) 
     { 
@@ -56,7 +56,12 @@ int detached_stop_epoll(fepoll_th_data_t *fepoll_obj)
 
 int detached_join_epoll(fepoll_th_data_t *fepoll_obj)
 {
-    pthread_join(fepoll_obj->th, NULL);
+    int rc = pthread_join(fepoll_obj->th, NULL);
+    if(rc != 0) 
+    { 
+        printf("ERRORCODE2::%d\n",rc);
+    }
+    return rc;
 }
 
 
