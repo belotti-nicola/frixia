@@ -30,17 +30,11 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_events_qu
     {
         .event = create_event(fd,m)
     };
-    fepoll_ctx_t fepoll_ctx = 
-    {
-        .fepoll = fepoll,
-        .keep_looping = keep_looping
-    };
     fctx_t ctx = 
     {
         .ev_ctx = &ev_ctx,
-        .fep_ctx = &fepoll_ctx
+        .env = fenv
     };
-    ctx.env = fenv;
     fun(&ctx);
 }
 

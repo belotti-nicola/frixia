@@ -335,12 +335,10 @@ void *stop_frixia(void *arg)
 {
     fctx_t *ctx = (fctx_t *)arg;
     frixia_event_t *event = ctx->ev_ctx->event;
-    frixia_epoll_t *fepoll = ctx->fep_ctx->fepoll;
 
     printf("*********************************\n");
     printf("stop_frixia fd:%d\n",event->fd);
     print_epoll_events(event->events_maks);
-    printf("epoll fd:%d max fds:%d\n",fepoll->fd,fepoll->maximum_filedescriptors);
     printf("ENV : %d\n",ctx->env->maximum_filedescriptors);
     printf("*********************************\n");
       

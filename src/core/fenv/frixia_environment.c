@@ -12,14 +12,18 @@
 //todo
 #include "../fcontexts/fctx.h"
 
-void fenv_push_event_from_fepoll(fctx_t *ctx)
+void *fenv_push_event_from_fepoll(void *arg)
 {
+    fctx_t *ctx = (fctx_t *)arg;
     //fepoll_context_push_event(ctx);
+    return NULL;
 }
 
-void fenv_stop_event(fctx_t *ctx)
+void *fenv_stop_event(void *arg)
 {
+    fctx_t *ctx = (fctx_t *)arg;
     //fepoll_context_stop(ctx);
+    return NULL;
 }
 
 void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port)
@@ -111,18 +115,18 @@ void *fenv_set_custom_tcp_callback(frixia_environment_t *env,const char *ip, int
 {
     if ( env == NULL )
     {
-        return;
+        return NULL;
     }
     if ( env->filedescriptors >= env->maximum_filedescriptors)
     {
         printf("Error!\n");
-        return;
+        return NULL;
     }
 
     int rc = start_tcp_listening(ip,port);
     if ( rc <= 0 )
     {
-        return;
+        return NULL;
     }
 
     frixia_epoll_t *fepoll = env->fepoll;
@@ -141,18 +145,18 @@ void *fenv_set_custom_udp_callback(frixia_environment_t *env,const char *ip, int
 {
     if ( env == NULL )
     {
-        return;
+        return NULL;
     }
     if ( env->filedescriptors >= env->maximum_filedescriptors)
     {
         printf("Error!\n");
-        return;
+        return NULL;
     }
 
-    int rc = start_udp_listening(ip);
+    int rc = start_udp_listening(port);
     if ( rc <= 0 )
     {
-        return;
+        return NULL;
     }
 
     frixia_epoll_t *fepoll = env->fepoll;
@@ -170,18 +174,18 @@ void *fenv_set_custom_fifo_callback(frixia_environment_t *env,const char *path, 
 {
     if ( env == NULL )
     {
-        return;
+        return NULL;
     }
     if ( env->filedescriptors >= env->maximum_filedescriptors)
     {
         printf("Error!\n");
-        return;
+        return NULL;
     }
 
     int rc = start_fifo_listening(path);
     if ( rc <= 0 )
     {
-        return;
+        return NULL;
     }
 
     frixia_epoll_t *fepoll = env->fepoll;
@@ -245,6 +249,7 @@ void fenv_run_engine(frixia_environment_t *fenv)
     dispatcher_data.dispatcher = dispatcher;
     detached_start_frixia_dispatcher(&dispatcher_data);
 
+    //TODO HERE
     detached_join_epoll(fepoll_th);
     detached_stop_dispatcher(fepoll_th);
 }
