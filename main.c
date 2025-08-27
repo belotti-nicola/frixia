@@ -344,9 +344,9 @@ void *stop_frixia(void *arg)
       
     //this needs to refactor the frixia_env by doing thread data wrappers
     fepoll_th_data_t *data = (fepoll_th_data_t *)ctx->arg;
-    printf("fepoll data %d\n",data->keep_looping);
+    printf("fepoll data %d\n",*(data->keep_looping));
     detached_stop_epoll(data);
-    printf("fepoll data %d\n",data->keep_looping);
+    printf("fepoll data %d\n",*(data->keep_looping));
     //detached_stop_dispatcher(ctx->arg);
     //detached_stop_thread_pool(TODO_THREAD_DATA)
 

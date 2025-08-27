@@ -50,7 +50,8 @@ int detached_start_epoll(fepoll_th_data_t *fepoll_obj)
 
 int detached_stop_epoll(fepoll_th_data_t *fepoll_obj)
 {   
-    fepoll_obj->keep_looping = false;
+    bool *b = fepoll_obj->keep_looping;
+    *b = false;
     return 0;
 }
 
