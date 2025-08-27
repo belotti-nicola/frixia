@@ -371,9 +371,6 @@ int main(int argc, char *argv[])
     //INCREMENT: DO NOT SHARE WITH THREADS
     //int counter = 0;
     //fenv_set_custom_tcp_callback(env,"0.0.0.0",18082,fepoll_context_counter,&counter);
-
-
-    detached_start_epoll(data);
     
     fenv_run_engine(env);
 

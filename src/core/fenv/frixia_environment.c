@@ -234,10 +234,14 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
     return p;
 }
 
-void fenv_run_engine(frixia_environment_t *fenv)
+int fenv_run_engine(frixia_environment_t *fenv)
 {
-    //TODO HERE
-    detached_join_epoll(fenv->fepoll_ctx);
+    fepoll_th_data_t *fepoll_ctx = fenv->fepoll_ctx;
+    detached_start_epoll(fepoll_ctx);
+    
+    detached_join_epoll(fepoll_ctx);
+
+    return 0;
 }
 
 void fenv_destroy(frixia_environment_t *fenv)

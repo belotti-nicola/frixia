@@ -33,7 +33,7 @@ void *fenv_set_custom_udp_callback(frixia_environment_t *env,const char *ip, int
 void *fenv_set_custom_fifo_callback(frixia_environment_t *env,const char *path, void *(*fun)(void *), void *arg);
 
 
-void fenv_run_engine(frixia_environment_t *fenv);
+int fenv_run_engine(frixia_environment_t *fenv);
 void wait_all_components(frixia_environment_t *fenv);
 
 #endif
