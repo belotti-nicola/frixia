@@ -5,10 +5,11 @@
 #include "epoll/fepoll.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "detached_epoll_monitor.h"
 
-fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, bool *b,void *ctx)
+fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, void *ctx)
 {
     fepoll_th_data_t *p = malloc(sizeof(fepoll_th_data_t));
     if ( p == NULL )
@@ -18,13 +19,22 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, bool *b,void *ct
     }
 
     p->fepoll = fepoll;
-    p->keep_looping = b;
     p->context = (void *)ctx;
+
+
+    bool *b = malloc(sizeof(bool));
+    if ( b == NULL )
+    {
+        printf("Error creating fepoll b\n");
+        return NULL;
+    }
+    p->keep_looping = b;
 
     return p;
 }
 void *fepoll_th_data_destroy(fepoll_th_data_t *p)
 {
+    free(p->keep_looping);
     free(p);
 }
 

@@ -250,7 +250,7 @@ int frixia_start(frixia_environment_t *env)
 
 int frixia_stop(frixia_environment_t *environment)
 {
-    frixia_epoll_t *fe = environment->fepoll;
+    frixia_epoll_t *fe = environment->fepoll_ctx->fepoll;
     fepoll_stop(fe);
 
     //crono_t *cr = environment->crono;
@@ -382,7 +382,7 @@ void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
         return;
     }
     
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);   
 
     //convoy_t *c = env->convoy;
@@ -398,7 +398,7 @@ void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     }
     
     //TODO FIX THIS SHIT
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
     //convoy_t *c = env->convoy;
@@ -412,7 +412,7 @@ void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_re
         return;
     }
     //TODO FIX THIS SHIT
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
     //convoy_t *c = env->convoy;
@@ -425,7 +425,7 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
     {
         return;
     }
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
     //convoy_t *c = env->convoy;
@@ -442,7 +442,7 @@ void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
         return;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
     //convoy_t *c = env->convoy;
@@ -458,7 +458,7 @@ void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, i
         return;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
     //convoy_t *c = env->convoy;
@@ -475,7 +475,7 @@ void frixia_add_inode(frixia_environment_t *env, char *filepath)
         return;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
     //convoy_t *c = env->convoy;
@@ -520,7 +520,7 @@ frixia_environment_t *frixia_environment_create()
     convoy_t *convoy = convoy_create();
 
 
-    retVal->fepoll = fepoll;
+    retVal->fepoll_ctx->fepoll = fepoll;
     //retVal->convoy = convoy;
     return retVal;
 }

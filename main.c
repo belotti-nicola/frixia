@@ -343,13 +343,25 @@ void *stop_frixia(void *arg)
     printf("*********************************\n");
       
     //this needs to refactor the frixia_env by doing thread data wrappers
-    fepoll_th_data_t *data = (fepoll_th_data_t *)ctx->arg;
+    fepoll_th_data_t *data = ctx->env->fepoll_ctx;
     printf("fepoll data %d\n",*(data->keep_looping));
     detached_stop_epoll(data);
     printf("fepoll data %d\n",*(data->keep_looping));
     //detached_stop_dispatcher(ctx->arg);
     //detached_stop_thread_pool(TODO_THREAD_DATA)
 
+    return NULL;
+}
+
+void *fepoll_context_counter(void *arg)
+{
+    fctx_t *ctx = (fctx_t *)arg;
+    frixia_event_t *event = ctx->ev_ctx->event;
+
+    int *c = ctx->arg;
+    *c = *c+1;
+
+    printf("fepoll_context_counter %d\n",*c);
     return NULL;
 }
 
@@ -363,14 +375,11 @@ int main(int argc, char *argv[])
 
 
     //STOP FD
-    bool keep_looping = true;
-    fepoll_th_data_t *data = fepoll_th_data_create(env->fepoll,&keep_looping,env);
-    env->fepoll_ctx = data;
-    fenv_set_custom_tcp_callback(env,"0.0.0.0",18081,stop_frixia,data);
+    fenv_set_custom_tcp_callback(env,"0.0.0.0",18081,stop_frixia,NULL);
 
-    //INCREMENT: DO NOT SHARE WITH THREADS
-    //int counter = 0;
-    //fenv_set_custom_tcp_callback(env,"0.0.0.0",18082,fepoll_context_counter,&counter);
+    //INCREMENT: DO NOT SHARE WITH THREADS SINCE NO CONCURRECY SAFETY
+    int counter = 0;
+    fenv_set_custom_tcp_callback(env,"0.0.0.0",18082,fepoll_context_counter,&counter);
     
     fenv_run_engine(env);
 

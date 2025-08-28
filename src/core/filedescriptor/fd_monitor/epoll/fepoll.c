@@ -36,12 +36,14 @@ frixia_epoll_t* create_frixia_epoll()
     frixia_epoll_t *frixia_epoll = (frixia_epoll_t *)malloc(sizeof(frixia_epoll_t));
     if ( frixia_epoll == NULL )
     {
-        return FERR_FRIXIA_EPOLL_PTR;
+        printf("frixia_epoll_t malloc NULL!!\n");
+        return NULL;
     }
     int fd_epoll = create_epoll();
     if(fd_epoll < 0)
     {
-        return FERR_CREATE_EPOLL;
+        printf("fd_epoll < 0!!\n");
+        return NULL;
     }
     frixia_epoll->fd = fd_epoll;
     frixia_epoll->fd_pool = l;   

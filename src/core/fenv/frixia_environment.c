@@ -44,7 +44,7 @@ void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port
         return;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
     fepoll->callbacks_data[rc] = *sv;
 
@@ -73,7 +73,7 @@ void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port
         return;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
     fepoll->callbacks_data[rc] = *sv;
 
@@ -101,7 +101,7 @@ void fenv_start_fifo_listening(frixia_environment_t *env, const char *pipe)
         return;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
     fepoll->callbacks_data[rc] = *sv;
 
@@ -129,7 +129,7 @@ void *fenv_set_custom_tcp_callback(frixia_environment_t *env,const char *ip, int
         return NULL;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fun,arg);
     fepoll->callbacks_data[rc] = *sv;
 
@@ -159,7 +159,7 @@ void *fenv_set_custom_udp_callback(frixia_environment_t *env,const char *ip, int
         return NULL;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fun,arg);
     fepoll->callbacks_data[rc] = *sv;
 
@@ -188,7 +188,7 @@ void *fenv_set_custom_fifo_callback(frixia_environment_t *env,const char *path, 
         return NULL;
     }
 
-    frixia_epoll_t *fepoll = env->fepoll;
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fun,arg);
     fepoll->callbacks_data[rc] = *sv;
 
@@ -213,7 +213,8 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
     {
         return NULL;
     }
-    p->fepoll = fepoll;
+    fepoll_th_data_t *fepoll_ctx = fepoll_th_data_create(fepoll,p);
+    p->fepoll_ctx = fepoll_ctx;
 
     frixia_events_queue_t *q = frixia_events_queue_create();
     if ( q == NULL )
@@ -236,6 +237,7 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
 
 int fenv_run_engine(frixia_environment_t *fenv)
 {
+    *(fenv->fepoll_ctx->keep_looping) = true;
     fepoll_th_data_t *fepoll_ctx = fenv->fepoll_ctx;
     detached_start_epoll(fepoll_ctx);
     
@@ -246,5 +248,6 @@ int fenv_run_engine(frixia_environment_t *fenv)
 
 void fenv_destroy(frixia_environment_t *fenv)
 {
-    destroy_frixia_epoll(fenv->fepoll);
+    fepoll_th_data_t *fepoll_ctx = fenv->fepoll_ctx;
+    destroy_frixia_epoll(fepoll_ctx->fepoll);
 }
