@@ -9,11 +9,7 @@
 typedef struct frixia_environment
 {
     int maximum_filedescriptors;
-    int filedescriptors;
-
-    frixia_dispatcher_t *fdispatcher;
-    //thread_pool
-    
+    int filedescriptors; 
 
     frixia_events_queue_t *fepoll_events;
     //dispatcher_events
