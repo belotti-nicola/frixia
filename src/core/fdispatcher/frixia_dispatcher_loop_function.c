@@ -14,6 +14,7 @@ int frixia_dispatcher_loop_function(void *arg)
     bool *keep_looping = dispatcher->keep_looping;
     while(*keep_looping)
     {
+        printf("dispatcher loop. waiting\n");
         event = frixia_events_queue_pop(events_queue);
         if(event == NULL)
         {

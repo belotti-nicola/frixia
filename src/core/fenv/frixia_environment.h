@@ -1,6 +1,7 @@
 #ifndef FRIXIA_ENVIRONMENT_H
 #define FRIXIA_ENVIRONMENT_H
 
+#include "../fdispatcher/detached_frixia_dispatcher_new.h"
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "../filedescriptor/fd_monitor/detached_epoll_monitor.h"
 #include "../fdispatcher/frixia_dispatcher.h"
@@ -18,6 +19,7 @@ typedef struct frixia_environment
     //dispatcher_events
 
     fepoll_th_data_t *fepoll_ctx;
+    frixia_dispatcher_data_t *fdispatcher_ctx;
 
 } frixia_environment_t;
 

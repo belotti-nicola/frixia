@@ -15,7 +15,9 @@
 void *fenv_push_event_from_fepoll(void *arg)
 {
     fctx_t *ctx = (fctx_t *)arg;
-    //fepoll_context_push_event(ctx);
+    frixia_events_queue_t *q = ctx->env->fepoll_events;
+    frixia_event_t *e = ctx->ev_ctx->event;
+    frixia_events_queue_push(q,e);
     return NULL;
 }
 
@@ -214,6 +216,7 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
         return NULL;
     }
     fepoll_th_data_t *fepoll_ctx = fepoll_th_data_create(fepoll,p);
+    *fepoll_ctx->keep_looping = true;
     p->fepoll_ctx = fepoll_ctx;
 
     frixia_events_queue_t *q = frixia_events_queue_create();
@@ -223,12 +226,9 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
     }
     p->fepoll_events = q;
 
-    frixia_dispatcher_t *fdispatcher = create_frixia_dispatcher(1,-1);
-    if ( fdispatcher == NULL )
-    {
-        return NULL;
-    }
-    p->fdispatcher = fdispatcher;
+    p->fdispatcher_ctx = create_frixia_dispatcher_data();
+    p->fdispatcher_ctx->dispatcher->tasks = q;
+
 
     p->maximum_filedescriptors = maximum_filedescriptors;
     p->filedescriptors = 0;
@@ -237,11 +237,14 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
 
 int fenv_run_engine(frixia_environment_t *fenv)
 {
-    *(fenv->fepoll_ctx->keep_looping) = true;
     fepoll_th_data_t *fepoll_ctx = fenv->fepoll_ctx;
     detached_start_epoll(fepoll_ctx);
     
+    frixia_dispatcher_data_t *disp_ctx = fenv->fdispatcher_ctx;
+    detached_start_frixia_dispatcher_new(disp_ctx);
+
     detached_join_epoll(fepoll_ctx);
+    detached_join_frixia_dispatcher_new(disp_ctx);
 
     return 0;
 }

@@ -50,3 +50,22 @@ int detached_stop_frixia_dispatcher_new(frixia_dispatcher_data_t *data)
     frixia_dispatcher_t *disp = data->dispatcher;
     *(disp->keep_looping) = false;
 }
+
+frixia_dispatcher_data_t *create_frixia_dispatcher_data()
+{
+    frixia_dispatcher_data_t *p = malloc(sizeof(frixia_dispatcher_data_t));
+    if ( p == NULL ) 
+    {
+        printf("Error frixia_dispatcher_data_t NULL\n");
+        return NULL;
+    }
+
+    p->dispatcher = create_frixia_dispatcher(1,1);
+    p->started = false;
+    
+    return p;
+}
+void destroy_frixia_dispatcher_data(frixia_dispatcher_data_t *p)
+{
+    free(p);
+}
