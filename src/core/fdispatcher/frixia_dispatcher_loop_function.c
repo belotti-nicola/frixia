@@ -18,7 +18,7 @@ int frixia_dispatcher_loop_function(void *arg)
         event = frixia_events_queue_pop(events_queue);
         if(event == NULL)
         {
-            printf("ERROR POPPING EVENTS QUEUE\n");
+            printf("WARNING: POPPING EVENTS QUEUE: element is NULL\n");
             continue;
         }
         printf("dispatcher loop. fd event:%d\n",event->fd);

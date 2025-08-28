@@ -347,7 +347,11 @@ void *stop_frixia(void *arg)
     printf("fepoll data %d\n",*(data->keep_looping));
     detached_stop_epoll(data);
     printf("fepoll data %d\n",*(data->keep_looping));
-    //detached_stop_dispatcher(ctx->arg);
+
+    frixia_dispatcher_data_t *disp_data = ctx->env->fdispatcher_ctx;
+    printf("fdisp data %d\n",*(disp_data->dispatcher->keep_looping));
+    detached_stop_frixia_dispatcher_new(disp_data);
+    printf("fdisp data %d\n",*(disp_data->dispatcher->keep_looping));
     //detached_stop_thread_pool(TODO_THREAD_DATA)
 
     return NULL;

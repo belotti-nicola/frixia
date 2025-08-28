@@ -49,6 +49,9 @@ int detached_stop_frixia_dispatcher_new(frixia_dispatcher_data_t *data)
 {
     frixia_dispatcher_t *disp = data->dispatcher;
     *(disp->keep_looping) = false;
+
+    frixia_events_queue_t *q = data->dispatcher->tasks;
+    frixia_events_queue_push(q,NULL);
 }
 
 frixia_dispatcher_data_t *create_frixia_dispatcher_data()
