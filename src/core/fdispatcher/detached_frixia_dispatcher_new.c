@@ -70,5 +70,7 @@ frixia_dispatcher_data_t *create_frixia_dispatcher_data()
 }
 void destroy_frixia_dispatcher_data(frixia_dispatcher_data_t *p)
 {
+    frixia_dispatcher_t *disp = p->dispatcher;
+    destroy_frixia_dispatcher(disp);
     free(p);
 }

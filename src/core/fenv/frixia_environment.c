@@ -251,6 +251,16 @@ int fenv_run_engine(frixia_environment_t *fenv)
 
 void fenv_destroy(frixia_environment_t *fenv)
 {
+    if ( fenv == NULL )
+    {
+        printf("Error fenv_destroy pointer is null!\n");
+        return;
+    }
     fepoll_th_data_t *fepoll_ctx = fenv->fepoll_ctx;
+    if ( fepoll_ctx == NULL )
+    {
+        printf("Error fepoll_ctx pointer is null!\n");
+        return;
+    }
     destroy_frixia_epoll(fepoll_ctx->fepoll);
 }
