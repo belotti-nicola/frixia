@@ -1,4 +1,5 @@
 add_subdirectory(bound_robin)
+add_subdirectory(shinsu_senju)
 
 add_library(thread_pool
   fthread_pool.c
