@@ -5,6 +5,13 @@
 #include <inttypes.h>
 #include <sys/socket.h>
 
+char HTTP_OK[] = 
+    "HTTP/1.1 200 OK\r\n"
+    "Content-Type: text/plain\r\n"
+    "Content-Length: 28\r\n"
+    "\r\n"
+    "Greetings from frixia engine";
+
 int main(int argc, char *argv[])
 {      
     frixia_epoll_t *fepoll = create_frixia_epoll();
@@ -31,13 +38,16 @@ int main(int argc, char *argv[])
                 continue;
             }
             printf("New fd: %d\n",reply);
-            int bytes_wrote = write_tcp(reply,"OK",2);
-            printf("wrote %d bytes on fd %d\n",bytes_wrote,reply);
+            
+            int bytes_wrote = write_tcp(reply,HTTP_OK,strlen(HTTP_OK));
+            close_tcp(reply);
+            printf("wrote %d bytes on fd %d (strlen %d)\n",bytes_wrote,reply,strlen(HTTP_OK));
         }
 
     }
     
-    
+    close_tcp(4);//yes, no fd list
+    fepoll_stop(fepoll);
     destroy_frixia_epoll(fepoll);
     printf("Ended\n");
 }
