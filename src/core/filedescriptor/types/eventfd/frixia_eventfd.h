@@ -11,7 +11,7 @@
 
 int start_eventfd_listening();
 int read_eventfd(int fd);
-int stop_eventfd_listening(int fd);
+int close_eventfd(int fd);
 int write_eventfd(int fd);
 
 #endif

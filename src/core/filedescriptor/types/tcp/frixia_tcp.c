@@ -116,8 +116,12 @@ int write_tcp( int reply_fd,char buffer[],int size )
 
 int close_tcp(int fd)
 {
-    close(fd);
-    return FTCP_OK;
+    int ret_code = close(fd);
+    if ( ret_code < 0)
+    {
+        printf("errno! %d\n",errno);
+    }
+    return ret_code;
 }
 
 char* get_ftcp_code_string(enum FTCP_CODE c){

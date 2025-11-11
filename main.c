@@ -1,5 +1,6 @@
 #include "src/core/filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
+#include "src/core/filedescriptor/types/eventfd/frixia_eventfd.h"
 #include <sys/eventfd.h>
 #include <sys/epoll.h>
 #include <stdint.h>
@@ -25,7 +26,7 @@ int utility_event_fd_wake(int efd)
     struct epoll_event ev = { .events = EPOLLIN, .data.fd = waker_fd };
     epoll_ctl(efd, EPOLL_CTL_ADD, waker_fd, &ev);
 
-    printf("Waker fd:%d\n",waker_fd);
+    printf("Waker fd:%d for epoll %d\n",waker_fd,efd);
 
     return waker_fd;
 }
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
 
     }
     
-    close_tcp(4);//yes, no fd list
+    close_eventfd(5); 
     fepoll_stop(fepoll);
     destroy_frixia_epoll(fepoll);
     printf("Ended\n");

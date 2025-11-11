@@ -44,7 +44,7 @@ int write_eventfd(int fd)
     return 0;
 }
 
-int stop_eventfd_listening(int fd)
+int close_eventfd(int fd)
 {
     int rc = close(fd);
     if(rc != 0)
