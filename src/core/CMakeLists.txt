@@ -38,7 +38,6 @@ target_link_libraries(core
   fthread_pool
   convoy
   crono
-  inode
   bound_robin
   callback_suite
   fenv

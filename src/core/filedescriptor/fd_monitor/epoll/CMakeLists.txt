@@ -21,4 +21,5 @@ target_link_libraries(fepoll
     udp
     timer
     eventfd
+    signalfd
 )

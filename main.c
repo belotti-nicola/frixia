@@ -62,11 +62,11 @@ void *waker_th(void *arg)
 
 int main(int argc, char *argv[])
 {      
-    frixia_epoll_t *fepoll = create_frixia_epoll();
+    frixia_epoll_t *fepoll = create_frixia_epoll();//3
 
-    fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",10800);
-    fepoll_add_eventfd_socket_listening(fepoll);
-    
+    fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",10800);//4
+    fepoll_add_eventfd_socket_listening(fepoll);//5
+    fepoll_add_signalfd_socket_listening(fepoll);//6
 
     pthread_t th;
     int arg = ITERATIONS; //YES
@@ -82,31 +82,40 @@ int main(int argc, char *argv[])
         }
         for(int j=0;j<fevents_dim;j++)
         {
-            if ( fevents[j].fd == 4 )
+            int event_file_descriptor = fevents[j].fd;
+            switch ( event_file_descriptor )
             {
-
-                printf("fd %d mask %" PRIu32 "\n",fevents[j].fd,fevents[j].events_maks);
-                int ans = accept_tcp(fevents[j].fd,&reply);
-                if ( ans != 0 )
+                case 4: 
                 {
-                    printf("errno! %d for fd %d\n",ans,fevents[j].fd);
-                    continue;
+                    printf("fd %d mask %" PRIu32 "\n",fevents[j].fd,fevents[j].events_maks);
+                    int ans = accept_tcp(fevents[j].fd,&reply);
+                    if ( ans != 0 )
+                    {
+                        printf("errno! %d for fd %d\n",ans,fevents[j].fd);
+                        continue;
+                    }
+                    printf("New fd: %d\n",reply);
+                    
+                    int bytes_wrote = write_tcp(reply,HTTP_OK,strlen(HTTP_OK));
+                    close_tcp(reply);
+                    printf("wrote %d bytes on fd %d (strlen %ld)\n",bytes_wrote,reply,strlen(HTTP_OK));
+                    break;
                 }
-                printf("New fd: %d\n",reply);
-                
-                int bytes_wrote = write_tcp(reply,HTTP_OK,strlen(HTTP_OK));
-                close_tcp(reply);
-                printf("wrote %d bytes on fd %d (strlen %ld)\n",bytes_wrote,reply,strlen(HTTP_OK));
-            }
-            else 
-            {
-                uint64_t val;
-                ssize_t n = read(fevents[j].fd, &val, sizeof(val));
-                printf("%ld (%ld bytes read)\n",val,n);
+                case 5:
+                {
+                    uint64_t val;
+                    ssize_t n = read(fevents[j].fd, &val, sizeof(val));
+                    printf("%ld (%ld bytes read)\n",val,n);
+                    break;
+                }
+                case 6:
+                {
+                    printf("SIGNALFD\n");
+                    break;
+                }
             }
         }
-
-    }
+   }
     
     fepoll_stop(fepoll);
     destroy_frixia_epoll(fepoll);
