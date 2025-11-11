@@ -34,6 +34,10 @@ void                frixia_wake(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, const char *ip,int port);
 FRIXIA_EPOLL_CODE_T fepoll_add_udp_socket_listening(frixia_epoll_t *fepoll, const char *ip,int port);
 FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, const char *fifo);
+FRIXIA_EPOLL_CODE_T fepoll_add_eventfd_socket_listening(frixia_epoll_t *fepoll);
+FRIXIA_EPOLL_CODE_T fepoll_add_timer_socket_listening(frixia_epoll_t *fepoll, const char *fifo, int delay, int interval );
+
+
 
 
 #endif

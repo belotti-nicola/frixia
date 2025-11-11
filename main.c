@@ -65,12 +65,12 @@ int main(int argc, char *argv[])
     frixia_epoll_t *fepoll = create_frixia_epoll();
 
     fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",10800);
-    int wfd = utility_event_fd_wake(fepoll->fd);
+    fepoll_add_eventfd_socket_listening(fepoll);
     
 
     pthread_t th;
-    void *arg = (void *)&wfd;
-    pthread_create(&th,NULL,waker_th,arg);
+    int arg = ITERATIONS; //YES
+    pthread_create(&th,NULL,waker_th,&arg);
     for(int i=0;i<ITERATIONS;i++)
     {
         frixia_event_t fevents[10];
@@ -108,7 +108,6 @@ int main(int argc, char *argv[])
 
     }
     
-    close_eventfd(5); 
     fepoll_stop(fepoll);
     destroy_frixia_epoll(fepoll);
     printf("Ended\n");

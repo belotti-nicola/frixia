@@ -26,13 +26,9 @@ target_link_libraries(core
   fd_pool
   fqueue
   thread_pool
-  fevent
   proto_callbacks
   proto_filedescriptor
   protocols
-  tcp
-  fifo
-  udp
   picohttpparser
   fsetup
   simple_list
@@ -40,15 +36,12 @@ target_link_libraries(core
   threadsafe_simple_queue
   fdispatcher
   fthread_pool
-  timer
   convoy
   crono
-  eventfd
   inode
   bound_robin
   callback_suite
   fenv
   frixia_monitor
   frixia_contexts
-
 )

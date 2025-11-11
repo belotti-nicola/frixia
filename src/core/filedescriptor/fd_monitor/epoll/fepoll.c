@@ -5,6 +5,8 @@
 #include "../../../filedescriptor/types/tcp/frixia_tcp.h"
 #include "../../../filedescriptor/types/udp/frixia_udp.h"
 #include "../../../filedescriptor/types/fifo/frixia_fifo.h"
+#include "../../../filedescriptor/types/eventfd/frixia_eventfd.h"
+#include "../../../filedescriptor/types/timer/frixia_timer.h"
 #include "../../../../setup/proto_filedescriptor/proto_fds_queue.h"
 #include "../../../frixia_common.h"
 #include "fepoll_codes.h"
@@ -234,6 +236,45 @@ FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, con
         return FERR_INSERT_EVENT;
     }
     
+    return FEPOLL_OK;
+}
+
+FRIXIA_EPOLL_CODE_T fepoll_add_eventfd_socket_listening(frixia_epoll_t *fepoll)
+{
+    int fd = start_eventfd_listening();
+    if ( fd < 0 )
+    {
+        return (FRIXIA_EPOLL_CODE_T)fd;
+    }
+
+    int fepoll_fd = fepoll->fd;
+    int rc = insert_event(fepoll_fd,fd);
+    if ( rc != FEPOLL_OK)
+    {
+        return FERR_INSERT_EVENT;
+    }
+    
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,fd);
+    return FEPOLL_OK;
+}
+FRIXIA_EPOLL_CODE_T fepoll_add_timer_socket_listening(frixia_epoll_t *fepoll, const char *fifo, int delay, int interval )
+{
+    int fd = start_timer_listening(delay,interval);
+    if ( fd < 0 )
+    {
+        return (FRIXIA_EPOLL_CODE_T)fd;
+    }
+
+    int fepoll_fd = fepoll->fd;
+    int rc = insert_event(fepoll_fd,fd);
+    if ( rc != FEPOLL_OK)
+    {
+        return FERR_INSERT_EVENT;
+    }
+    
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,fd);
     return FEPOLL_OK;
 }
 

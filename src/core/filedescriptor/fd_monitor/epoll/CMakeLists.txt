@@ -19,4 +19,6 @@ target_link_libraries(fepoll
     tcp
     fifo
     udp
+    timer
+    eventfd
 )
