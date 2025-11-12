@@ -6,7 +6,7 @@
 #include "fepoll_codes.h"
 #include "fepoll_pool.h"
 #include "../../../../utils/valid_callback/simple_valid_callback.h"
-
+#include "../../../filedescriptor/types/signalfd/frixia_signals.h"
 
 typedef struct frixia_epoll 
 {
@@ -36,7 +36,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_udp_socket_listening(frixia_epoll_t *fepoll, cons
 FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, const char *fifo);
 FRIXIA_EPOLL_CODE_T fepoll_add_eventfd_socket_listening(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T fepoll_add_timer_socket_listening(frixia_epoll_t *fepoll, const char *fifo, int delay, int interval );
-FRIXIA_EPOLL_CODE_T fepoll_add_signalfd_socket_listening(frixia_epoll_t *fepoll);
+FRIXIA_EPOLL_CODE_T fepoll_add_signalfd_socket_listening(frixia_epoll_t *fepoll, FRIXIA_SIGNALS_T fsig);
 
 
 #endif

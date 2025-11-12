@@ -1,6 +1,7 @@
 #include "src/core/filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
 #include "src/core/filedescriptor/types/eventfd/frixia_eventfd.h"
+#include "src/core/filedescriptor/fd_monitor/epoll/../../../filedescriptor/types/signalfd/frixia_signalfd.h"
 #include <sys/eventfd.h>
 #include <sys/epoll.h>
 #include <stdint.h>
@@ -66,7 +67,7 @@ int main(int argc, char *argv[])
 
     fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",10800);//4
     fepoll_add_eventfd_socket_listening(fepoll);//5
-    fepoll_add_signalfd_socket_listening(fepoll);//6
+    fepoll_add_signalfd_socket_listening(fepoll,FSIGNAL_ALL);//6
 
     pthread_t th;
     int arg = ITERATIONS; //YES
@@ -110,7 +111,7 @@ int main(int argc, char *argv[])
                 }
                 case 6:
                 {
-                    printf("SIGNALFD\n");
+                    read_signalfd(fevents[j].fd);
                     break;
                 }
             }

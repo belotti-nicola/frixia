@@ -279,9 +279,9 @@ FRIXIA_EPOLL_CODE_T fepoll_add_timer_socket_listening(frixia_epoll_t *fepoll, co
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_signalfd_socket_listening(frixia_epoll_t *fepoll)
+FRIXIA_EPOLL_CODE_T fepoll_add_signalfd_socket_listening(frixia_epoll_t *fepoll, FRIXIA_SIGNALS_T fsig)
 {
-    int fd = start_signalfd_listening();
+    int fd = start_signalfd_listening(fsig);
     if ( fd < 0 )
     {
         return (FRIXIA_EPOLL_CODE_T)fd;
