@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         printf("Error signalfd\n");
         return -1;
     }
-    exit_code = fepoll_add_inodefd_listening(fepoll);//7
+    exit_code = fepoll_add_inodefd_listening(fepoll,".");//7
     if ( exit_code < 0 )
     {
         printf("Error signalfd\n");

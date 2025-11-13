@@ -304,9 +304,9 @@ FRIXIA_EPOLL_CODE_T fepoll_add_signalfd_socket_listening(frixia_epoll_t *fepoll,
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_inodefd_listening(frixia_epoll_t *fepoll)
+FRIXIA_EPOLL_CODE_T fepoll_add_inodefd_listening(frixia_epoll_t *fepoll, const char *path)
 {
-    int fd = start_inode_listening("/home/tvm/work/nicola/frixia/build/");
+    int fd = start_inode_listening(path);
     if ( fd < 0 )
     {
         printf("Error!%d\n",fd);

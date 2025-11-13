@@ -1,5 +1,3 @@
-#include "frixia_inode.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/epoll.h>
@@ -8,6 +6,9 @@
 #include <limits.h>
 #include <errno.h>
 #include <string.h>
+#include "frixia_inode_flags.h"
+
+#include "frixia_inode.h"
 
 int start_inode_listening(char *path)
 {
@@ -17,9 +18,20 @@ int start_inode_listening(char *path)
         return FERR_START_INODE_INOTIFY_INIT;
     }
 
-    //TODO IN_CREATE COME COMPOSIZIONE DI FLAG
-    int wd = inotify_add_watch(inotify_fd, path, IN_CREATE );
-    if (wd == -1) {
+    int computed_mask = 0;
+    FRIXIA_INODE_FLAG_T mask = FINODE_CREATE | FINODE_MASK_CREATE;
+    for( int i=0;i<32;i++)
+    {
+        FRIXIA_INODE_FLAG_T f = (FRIXIA_INODE_FLAG_T)(1u << i);
+        if ( mask & f)
+        {
+            computed_mask |= FRIXIA_TO_INODE_FLAG(f);
+        }
+    }
+
+    int wd = inotify_add_watch(inotify_fd, path, computed_mask );
+    if (wd == -1) 
+    {
         printf("inotify_init :: %s(errno %d)\n",path,errno);
         return FERR_START_INODE_INOTIFY_ADD_WATCHDOG;
     }
