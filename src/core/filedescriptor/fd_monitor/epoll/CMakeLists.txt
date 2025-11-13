@@ -22,4 +22,5 @@ target_link_libraries(fepoll
     timer
     eventfd
     signalfd
+    inode
 )

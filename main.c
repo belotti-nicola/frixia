@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 
-#define ITERATIONS 5
+#define ITERATIONS 10
 
 char HTTP_OK[] = 
     "HTTP/1.1 200 OK\r\n"
@@ -51,7 +51,7 @@ void *waker_th(void *arg)
         int bytes_written = write(*fd, &one, sizeof(one));
         if ( bytes_written <= 0 )
         {
-            printf("Error %d!\n",*fd);
+            printf("Error writing on eventfd %d!\n",*fd);
         }
     }
 
@@ -84,9 +84,15 @@ int main(int argc, char *argv[])
         printf("Error signalfd\n");
         return -1;
     }
+    exit_code = fepoll_add_inodefd_listening(fepoll);//7
+    if ( exit_code < 0 )
+    {
+        printf("Error signalfd\n");
+        return -1;
+    }
 
     pthread_t th;
-    int arg = ITERATIONS; //YES
+    int arg = 5; //YES
     pthread_create(&th,NULL,waker_th,&arg);
     for(int i=0;i<ITERATIONS;i++)
     {
@@ -128,6 +134,11 @@ int main(int argc, char *argv[])
                 case 6:
                 {
                     read_signalfd(fevents[j].fd);
+                    break;
+                }
+                case 7:
+                {
+                    printf("++++++INODE++++++++\n");
                     break;
                 }
             }

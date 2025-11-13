@@ -8,6 +8,7 @@
 #include "../../../filedescriptor/types/eventfd/frixia_eventfd.h"
 #include "../../../filedescriptor/types/timer/frixia_timer.h"
 #include "../../../filedescriptor/types/signalfd/frixia_signalfd.h"
+#include "../../../filedescriptor/types/inode/frixia_inode.h"
 #include "../../../../setup/proto_filedescriptor/proto_fds_queue.h"
 #include "../../../frixia_common.h"
 #include "fepoll_codes.h"
@@ -190,7 +191,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, cons
     int fd = start_tcp_listening(ip,port);
     if ( fd < 0 )
     {
-        printf("Error %d",fd);
+        printf("Error %d\n",fd);
         return FERR_TCP_LISTENING;
     }
 
@@ -289,6 +290,26 @@ FRIXIA_EPOLL_CODE_T fepoll_add_signalfd_socket_listening(frixia_epoll_t *fepoll,
     if ( fd < 0 )
     {
         return (FRIXIA_EPOLL_CODE_T)fd;
+    }
+
+    int fepoll_fd = fepoll->fd;
+    int rc = insert_event(fepoll_fd,fd);
+    if ( rc != FEPOLL_OK)
+    {
+        return FERR_INSERT_EVENT;
+    }
+    
+    fepoll_pool_t *fpool = fepoll->fd_pool;
+    fepoll_pool_add_fd(fpool,fd);
+    return FEPOLL_OK;
+}
+
+FRIXIA_EPOLL_CODE_T fepoll_add_inodefd_listening(frixia_epoll_t *fepoll)
+{
+    int fd = start_inode_listening("/home/tvm/work/nicola/frixia/build/");
+    if ( fd < 0 )
+    {
+        printf("Error!%d\n",fd);
     }
 
     int fepoll_fd = fepoll->fd;

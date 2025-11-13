@@ -17,6 +17,7 @@ int start_inode_listening(char *path)
         return FERR_START_INODE_INOTIFY_INIT;
     }
 
+    //TODO IN_CREATE COME COMPOSIZIONE DI FLAG
     int wd = inotify_add_watch(inotify_fd, path, IN_CREATE );
     if (wd == -1) {
         printf("inotify_init :: %s(errno %d)\n",path,errno);
