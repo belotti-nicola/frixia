@@ -65,9 +65,25 @@ int main(int argc, char *argv[])
 {      
     frixia_epoll_t *fepoll = create_frixia_epoll();//3
 
-    fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",10800);//4
-    fepoll_add_eventfd_socket_listening(fepoll);//5
-    fepoll_add_signalfd_socket_listening(fepoll,FSIGNAL_ALL);//6
+    FRIXIA_EPOLL_CODE_T exit_code;
+    exit_code = fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",10800);//4
+    if ( exit_code < 0 )
+    {
+        printf("Error TCP\n");
+        return -1;
+    }
+    exit_code = fepoll_add_eventfd_socket_listening(fepoll);//5
+    if ( exit_code < 0 )
+    {
+        printf("Error eventfd\n");
+        return -1;
+    }
+    exit_code = fepoll_add_signalfd_socket_listening(fepoll,FSIGNAL_ALL);//6
+    if ( exit_code < 0 )
+    {
+        printf("Error signalfd\n");
+        return -1;
+    }
 
     pthread_t th;
     int arg = ITERATIONS; //YES
