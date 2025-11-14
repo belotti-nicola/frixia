@@ -1,6 +1,8 @@
 #ifndef FRIXIA_INODE_H
 #define FRIXIA_INODE_H
 
+#include "frixia_inode_flags.h"
+
 typedef enum FINODE_T
 {
     FERR_START_INODE_INOTIFY_INIT=-1,
@@ -11,7 +13,7 @@ typedef enum FINODE_T
 } FINODE_T;
 
 
-int start_inode_listening(char *path);
+int start_inode_listening(char *path, FRIXIA_INODE_FLAG_T mask);
 int stop_inode_listening(int fd);
 int read_inode(int fd,char *buf,int max_size);
 #endif

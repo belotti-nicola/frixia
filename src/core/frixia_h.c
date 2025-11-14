@@ -48,7 +48,6 @@
 #include "../setup/proto_callbacks/pc_http/proto_callback_http.h"
 #include "../utils/datastructures/threadsafe_timer_wheel/ts_timer_wheel.h"
 #include "../core/filedescriptor/types/eventfd/frixia_eventfd.h"
-#include "../core/filedescriptor/types/inode/frixia_inode.h"
 
 #include "fsuite/frixia_suite.h"
 
@@ -466,9 +465,9 @@ void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, i
 
 }
 
-void frixia_add_inode(frixia_environment_t *env, char *filepath)
+void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG_T mask)
 {
-    int fd = start_inode_listening(filepath);
+    int fd = start_inode_listening(filepath,mask);
     if( fd < 0)
     {
         printf("Error::frixia_add_inode. (rc:%d,file %s)\n",fd,filepath);

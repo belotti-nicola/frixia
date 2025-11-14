@@ -10,6 +10,7 @@
 #include "../core/fdispatcher/frixia_dispatcher.h"
 #include "../core/thread_pool/bound_robin/bound_robin.h"
 #include "../core/fenv/frixia_environment.h"
+#include "../core/filedescriptor/types/inode/frixia_inode.h"
 #include <errno.h>
 #include <string.h>
 
@@ -24,7 +25,7 @@ void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_re
 void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval);
 void frixia_add_scheduler(frixia_environment_t *env, int tick_size);
 void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, int interval);
-void frixia_add_inode(frixia_environment_t *env, char *filepath);
+void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG_T mask);
 
 void frixia_register_http_method_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg);
 void frixia_register_fins_command_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg);

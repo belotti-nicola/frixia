@@ -6,20 +6,19 @@
 #include <limits.h>
 #include <errno.h>
 #include <string.h>
-#include "frixia_inode_flags.h"
 
 #include "frixia_inode.h"
 
-int start_inode_listening(char *path)
+int start_inode_listening(char *path, FRIXIA_INODE_FLAG_T mask)
 {
     int inotify_fd = inotify_init();
-    if (inotify_fd == -1) {
+    if (inotify_fd == -1) 
+    {
         printf("inotify_init :: errno %d\n",errno);
         return FERR_START_INODE_INOTIFY_INIT;
     }
 
     int computed_mask = 0;
-    FRIXIA_INODE_FLAG_T mask = FINODE_CREATE | FINODE_MASK_CREATE;
     for( int i=0;i<32;i++)
     {
         FRIXIA_INODE_FLAG_T f = (FRIXIA_INODE_FLAG_T)(1u << i);
@@ -29,6 +28,7 @@ int start_inode_listening(char *path)
         }
     }
 
+    printf("\n\nComputed mask %d\n\n",mask);
     int wd = inotify_add_watch(inotify_fd, path, computed_mask );
     if (wd == -1) 
     {

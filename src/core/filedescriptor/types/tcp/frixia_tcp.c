@@ -148,7 +148,8 @@ char* get_ftcp_code_string(enum FTCP_CODE c){
         }
     }
 }
-int get_ftcp_code_string_from_string(char *s){
+int get_ftcp_code_string_from_string(char *s)
+{
     if(strcmp("FTCP_OK",s) == 0)                                 { return FTCP_OK; }
     else if(strcmp("ERR_FTCP_SOCKET",s) == 0)                    { return ERR_FTCP_SOCKET;}
     else if(strcmp("ERR_FTCP_SETSOCKETOPT",s) == 0)              { return ERR_FTCP_SETSOCKETOPT;}
