@@ -2,43 +2,15 @@
 #include <sys/signal.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdbool.h>
 
-typedef struct test_data
-{
-    uint64_t test_case;
-    uint64_t test_value;
-
-} test_data_t;
-
-int main()
-{
-    test_data_t tests[] = 
-    { 
-        {
-            .test_case  = FSIGNAL_INT | FSIGNAL_HUP,
-            .test_value = SIGINT      | SIGHUP
-        },
-    };
-
-    size_t dim = sizeof(tests)/sizeof(test_data_t);
-    for (size_t i = 0; i < dim; i++)
-    {
-        if (tests[i].test_case != tests[i].test_value) 
-        {
-            printf("Check number %d failed: %lu != %lu\n",i, tests[i].test_case, tests[i].test_value);
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-/*
+//Just to make the "for line" works
+#define MAX_SIGNALS 5
 
 typedef struct flags_list
 {
     size_t    dim;
-    uint64_t *values;
+    uint64_t values[MAX_SIGNALS];
 
 } flags_list_t ;
 
@@ -49,39 +21,66 @@ typedef struct test_data
 
 } test_data_t;
 
+
+
 int main()
 {
     test_data_t tests[] = 
     { 
         {
-            .test_case  = FINODE_ACCESS | FINODE_MODIFY,
+            .test_case  = FSIGNAL_INT | FSIGNAL_HUP,
             .test_value = 
-            { 
+            {
                 .dim = 2,
-                .values = {IN_ACCESS,IN_MODIFY} 
-            }
-        }, 
-        {
-            .test_case  = FINODE_ACCESS | FINODE_CLOSE | FINODE_CLOSE_NOWRITE ,
-            .test_value = 
-            { 
-                .dim = 3,
-                .values = {IN_ACCESS,IN_CLOSE,IN_CLOSE_NOWRITE} 
+                .values = {SIGINT, SIGHUP}
             }
         },
-        
+        {
+            .test_case  = FSIGNAL_ALRM | FSIGNAL_INT,
+            .test_value = 
+            {
+                .dim = 2,
+                .values = {SIGALRM, SIGINT}
+            }
+        }
     };
 
+    //following line works only with unit64_t arrays of fixed size
     size_t dim = sizeof(tests)/sizeof(test_data_t);
     for (size_t i = 0; i < dim; i++)
     {
-        for(int j=0;i<32;i++)
-        {
+        uint64_t frixia_mask   = tests[i].test_case;
+        size_t test_values_dim = tests[i].test_value.dim;
 
-        }        
+        bool found = false;
+        for(int j=0;j<64;j++)
+        {
+            uint64_t computed_mask = frixia_mask & (1<<j);
+            if ( computed_mask == 0)
+            {
+                continue;
+            }
+
+            found = false;
+            for(int z=0;z<test_values_dim;z++)
+            {
+                int unix_sig = frixia_signal_to_unix(computed_mask);
+                if ( unix_sig == tests[i].test_value.values[z])
+                {
+                    found = true;
+                    break;
+                }
+
+
+            }
+            if ( !found )
+            {
+                printf("Error: no found values for test case number %d!!!\n",i);
+                return 1;
+            }
+            
+        }       
     }
 
     return 0;
 }
-
-*/

@@ -3,11 +3,6 @@
 
 #include <signal.h>
 
-/*
-* 
-
-*/
-
 typedef enum FRIXIA_SIGNALS
 {
     FSIGNAL_NONE      = 0,         // Nessun segnale
