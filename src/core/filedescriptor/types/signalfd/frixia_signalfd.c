@@ -11,13 +11,13 @@ int start_signalfd_listening(FRIXIA_SIGNALS_T fsig)
     sigset_t mask;
     sigemptyset(&mask);
     
-    for (int i = 0; i < 21; i++)
+    for (int i = 0; i < 64; i++)
     {
         if (fsig & (1 << i))
         {
             FRIXIA_SIGNALS_T f = (1 << i);
-            int signo = FRIXIA_to_unix_signal(f);
-            if (signo != 0)
+            int signo = frixia_signal_to_unix(f);
+            if (signo > 0 )
                 sigaddset(&mask, signo);
         }
     } 

@@ -18,18 +18,8 @@ int start_inode_listening(char *path, FRIXIA_INODE_FLAG_T mask)
         return FERR_START_INODE_INOTIFY_INIT;
     }
 
-    int computed_mask = 0;
-    for( int i=0;i<32;i++)
-    {
-        FRIXIA_INODE_FLAG_T f = (FRIXIA_INODE_FLAG_T)(1u << i);
-        if ( mask & f)
-        {
-            computed_mask |= FRIXIA_TO_INODE_FLAG(f);
-        }
-    }
-
     printf("\n\nComputed mask %d\n\n",mask);
-    int wd = inotify_add_watch(inotify_fd, path, computed_mask );
+    int wd = inotify_add_watch(inotify_fd, path, mask );
     if (wd == -1) 
     {
         printf("inotify_init :: %s(errno %d)\n",path,errno);
