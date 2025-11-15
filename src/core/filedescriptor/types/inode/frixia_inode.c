@@ -18,11 +18,11 @@ int start_inode_listening(char *path, FRIXIA_INODE_FLAG_T mask)
         return FERR_START_INODE_INOTIFY_INIT;
     }
 
-    printf("\n\nComputed mask %d\n\n",mask);
+    printf("Computed mask %d\n\n",mask);
     int wd = inotify_add_watch(inotify_fd, path, mask );
     if (wd == -1) 
     {
-        printf("inotify_init :: %s(errno %d)\n",path,errno);
+        printf("inotify_init :: %s(mask %d, errno %d)\n",path,mask,errno);
         return FERR_START_INODE_INOTIFY_ADD_WATCHDOG;
     }
 
@@ -40,7 +40,7 @@ int stop_inode_listening(int fd)
     return 0;
     
 }
-int read_inode(int fd,char *buf,int max_size)
+int read_inode(int fd,char buf[],int max_size)
 {
     int bytes_read = read(fd, buf, max_size);
     if (bytes_read < 0)
@@ -48,5 +48,15 @@ int read_inode(int fd,char *buf,int max_size)
         printf("start_inode_listening :: read_inode :: errno %d\n",errno);
         return FERR_READ_INODE; 
     }
+
+    //if you use it instead of buff it's profit
+    struct inotify_event *event = (struct inotify_event *)buf;
+    printf("%d %d %d %s\n",
+        event->wd,
+        event->mask,
+        event->cookie,
+        event->name
+    );
+
     return bytes_read;
 }

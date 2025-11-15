@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         printf("Error signalfd\n");
         return -1;
     }
-    exit_code = fepoll_add_inodefd_listening(fepoll,".",FINODE_ACCESS);//7
+    exit_code = fepoll_add_inodefd_listening(fepoll,".",FINODE_CREATE);//7
     if ( exit_code < 0 )
     {
         printf("Error signalfd\n");
@@ -133,12 +133,28 @@ int main(int argc, char *argv[])
                 }
                 case 6:
                 {
-                    read_signalfd(fevents[j].fd);
+                    int signal;
+                    read_signalfd(fevents[j].fd,&signal);
+                    printf("Signal received: %d\n",signal);
                     break;
                 }
                 case 7:
                 {
-                    printf("++++++INODE++++++++\n");
+                    char buf[128] = {0};
+                    int ret = read_inode(fevents[j].fd,buf,128);
+                    
+                    printf("wd %02x%02x%02x%02x\n",buf[0],buf[1],buf[2],buf[3]);
+                    printf("ma %02x%02x%02x%02x\n",buf[4],buf[5],buf[6],buf[7]);
+                    printf("co %02x%02x%02x%02x\n",buf[8],buf[9],buf[10],buf[11]);
+                    printf("da: ");
+                    for (int i = 12; i < ret; i++)
+                        printf("%02x", (unsigned char)buf[i]);
+                    printf("\n");
+                    break;
+                }
+                default:
+                {
+                    printf("Something happened for %d\n",event_file_descriptor);
                     break;
                 }
             }

@@ -49,7 +49,7 @@ int stop_signalfd_listening(int closing_fd)
     return 0;
 }
 
-int read_signalfd(int fd)
+int read_signalfd(int fd, int *signal)
 {
     struct signalfd_siginfo si;
     ssize_t r = read(fd, &si, sizeof(si));
@@ -58,25 +58,5 @@ int read_signalfd(int fd)
         return 0;
     }
     
-    switch (si.ssi_signo)
-    {
-        case SIGINT:
-            printf("Ricevuto SIGINT (Ctrl+C)\n");
-            break;
-        case SIGTERM:
-            printf("Ricevuto SIGTERM — terminazione richiesta\n");
-            break;
-        case SIGHUP:
-            printf("Ricevuto SIGHUP — ricarico configurazione\n");
-            break;
-        case SIGUSR1:
-            printf("Ricevuto SIGUSR1 — segnale utente 1\n");
-            break;
-        case SIGUSR2:
-            printf("Ricevuto SIGUSR2 — segnale utente 2\n");
-            break;
-        default:
-            printf("Segnale non gestito: %d\n", si.ssi_signo);
-            break;
-    }
+    *signal = si.ssi_signo;
 }
