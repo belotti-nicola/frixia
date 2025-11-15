@@ -6,9 +6,9 @@
 typedef enum FRIXIA_SIGNALS
 {
     FSIGNAL_NONE      = 0,         // Nessun segnale
-    FSIGNAL_TERMINATE = (1 << 0),  // 1   -> Segnale interno di terminazione controllata
+    FSIGNAL_HUP       = (1 << 0),  // 1   -> Segnale interno di terminazione controllata
     FSIGNAL_INT       = (1 << 1),  // 2   -> Mappa a SIGINT
-    FSIGNAL_HUP       = (1 << 2),  // 4   -> Mappa a SIGHUP
+    FSIGNAL_TERMINATE = (1 << 2),  // 4   -> Mappa a SIGHUP
     FSIGNAL_USR1      = (1 << 3),  // 8   -> Mappa a SIGUSR1
     FSIGNAL_USR2      = (1 << 4),  // 16  -> Mappa a SIGUSR2
     FSIGNAL_TERM      = (1 << 5),  // 32  -> Mappa a SIGTERM
@@ -28,6 +28,7 @@ typedef enum FRIXIA_SIGNALS
     FSIGNAL_TRAP      = (1 << 19), // 524288 -> Mappa a SIGTRAP
     FSIGNAL_PWR       = (1 << 20), // 1048576 -> Mappa a SIGPWR
     FSIGNAL_WINCH     = (1 << 21), // 2097152 -> Mappa a SIGWINCH
+    FSIGNAL_KILL      = (1 << 22), // 4194304 -> Mappa a SIGWINCH
 
     FSIGNAL_ALL       = 0xFFFFFFFF // Maschera per tutti i segnali
 

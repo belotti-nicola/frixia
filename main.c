@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         printf("Error eventfd\n");
         return -1;
     }
-    exit_code = fepoll_add_signalfd_socket_listening(fepoll,FSIGNAL_ALL);//6
+    exit_code = fepoll_add_signalfd_socket_listening(fepoll,FSIGNAL_SEGV | FSIGNAL_KILL);//6
     if ( exit_code < 0 )
     {
         printf("Error signalfd\n");
