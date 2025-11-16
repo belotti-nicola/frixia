@@ -1,6 +1,7 @@
 #include "src/core/filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
 #include "src/core/filedescriptor/types/eventfd/frixia_eventfd.h"
+#include "src/utils/valid_callback/simple_valid_callback.h"
 #include "src/core/filedescriptor/fd_monitor/epoll/../../../filedescriptor/types/signalfd/frixia_signalfd.h"
 #include <sys/eventfd.h>
 #include <sys/epoll.h>
@@ -14,6 +15,11 @@
 #define ITERATIONS 5
 #define DELAY 10
 
+typedef struct custom 
+{
+    bool *keep_looping;
+    frixia_epoll_t *fepoll;
+} custom_t;
 
 char HTTP_OK[] = 
     "HTTP/1.1 200 OK\r\n"
@@ -59,9 +65,60 @@ void *waker_th(void *arg)
     return NULL;
 }
 
+typedef struct epoll_ctx_t
+{
+    frixia_event_t ev;
+    void          *arg;
+
+} epoll_ctx_t;
+
+void *epoll_cb(int fd, uint32_t mask, sv_callback_t cbs)
+{
+    if ( fd <= 3 )
+    {
+        printf("Error in FD:%d\n",fd);
+        return NULL;
+    }
+
+    frixia_event_t ev = 
+    {
+        .fd = fd,
+        .events_maks = mask
+    };
+    void *arg = cbs.auxiliary;
+    epoll_ctx_t ctx = 
+    {
+        .ev = ev,
+        .arg = arg
+    };
+
+    cbs.function(&ctx); 
+    return NULL;
+}
+
+void *push_the_q(void *arg)
+{
+    epoll_ctx_t *ctx = (epoll_ctx_t *)arg;
+    frixia_events_queue_t *q = (frixia_events_queue_t *)ctx->arg;
+    frixia_event_t *ev = create_event(ctx->arg,ctx);
+    frixia_events_queue_push(q,ev);
+    return NULL;
+}
+void *end_the_loop(void *arg)
+{
+    epoll_ctx_t *ctx = (epoll_ctx_t *)arg;
+    custom_t *cus = ctx->arg;
+    bool *b = cus->keep_looping;
+    *b = false;
+    fepoll_stop(cus->fepoll);
+    return NULL;
+}
 
 int main(int argc, char *argv[])
 {        
+    frixia_events_queue_t *events = frixia_events_queue_create();
+    bool keep_looping = true;
+
     frixia_epoll_t *fepoll = create_frixia_epoll();//3
 
     FRIXIA_EPOLL_CODE_T exit_code;
@@ -97,10 +154,22 @@ int main(int argc, char *argv[])
     }
 
 
+    sv_callback_t handlers[10];
+    handlers[4] = *sv_create_callback(push_the_q,events);
+    handlers[5] = *sv_create_callback(push_the_q,events);
+    handlers[6] = *sv_create_callback(push_the_q,events);
+    handlers[7] = *sv_create_callback(push_the_q,events);
+    custom_t custom = 
+    {
+        .keep_looping = &keep_looping,
+        .fepoll       = fepoll
+    };
+    handlers[8] = *sv_create_callback(end_the_loop,&custom);
+
+
     pthread_t th;
     int arg = 5; //YES
     pthread_create(&th,NULL,waker_th,&arg);
-    bool keep_looping = true;
     while(keep_looping)
     {
         frixia_event_t fevents[10];
@@ -112,65 +181,7 @@ int main(int argc, char *argv[])
         }
         for(int j=0;j<fevents_dim;j++)
         {
-            int event_file_descriptor = fevents[j].fd;
-            switch ( event_file_descriptor )
-            {
-                case 4: 
-                {
-                    printf("fd %d mask %" PRIu32 "\n",fevents[j].fd,fevents[j].events_maks);
-                    int ans = accept_tcp(fevents[j].fd,&reply);
-                    if ( ans != 0 )
-                    {
-                        printf("errno! %d for fd %d\n",ans,fevents[j].fd);
-                        continue;
-                    }
-                    printf("New fd: %d\n",reply);
-                    
-                    int bytes_wrote = write_tcp(reply,HTTP_OK,strlen(HTTP_OK));
-                    close_tcp(reply);
-                    printf("wrote %d bytes on fd %d (strlen %ld)\n",bytes_wrote,reply,strlen(HTTP_OK));
-                    break;
-                }
-                case 5:
-                {
-                    uint64_t val;
-                    ssize_t n = read(fevents[j].fd, &val, sizeof(val));
-                    printf("%ld (%ld bytes read)\n",val,n);
-                    break;
-                }
-                case 6:
-                {
-                    int signal;
-                    read_signalfd(fevents[j].fd,&signal);
-                    printf("Signal received: %d\n",signal);
-                    break;
-                }
-                case 7:
-                {
-                    char buf[128] = {0};
-                    int ret = read_inode(fevents[j].fd,buf,128);
-                    
-                    printf("wd %02x%02x%02x%02x\n",buf[0],buf[1],buf[2],buf[3]);
-                    printf("ma %02x%02x%02x%02x\n",buf[4],buf[5],buf[6],buf[7]);
-                    printf("co %02x%02x%02x%02x\n",buf[8],buf[9],buf[10],buf[11]);
-                    printf("da: ");
-                    for (int i = 12; i < ret; i++)
-                        printf("%02x", (unsigned char)buf[i]);
-                    printf("\n");
-                    break;
-                }
-                case 8:
-                {
-                    fepoll_stop(fepoll);
-                    keep_looping = false;
-                    break;
-                }
-                default:
-                {
-                    printf("Something happened for %d\n",event_file_descriptor);
-                    break;
-                }
-            }
+            epoll_cb(fevents[j].fd,fevents[j].events_maks,handlers[fevents[j].fd]);          
         }
    }
     
