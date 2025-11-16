@@ -11,7 +11,9 @@
 #include <unistd.h>
 
 
-#define ITERATIONS 10
+#define ITERATIONS 5
+#define DELAY 10
+
 
 char HTTP_OK[] = 
     "HTTP/1.1 200 OK\r\n"
@@ -34,25 +36,22 @@ int utility_event_fd_wake(int efd)
 
 void *waker_th(void *arg)
 {
-    int sleep_time = ITERATIONS;
-    int sleep_duration = 1;
+    int sleep_delay = ITERATIONS;
 
-    int *fd = (int *)arg;
-
-    printf("Thread started. Will wake epoll in %d. Countdown about to start\n",sleep_time);
-    while ( sleep_time > 0 )
+    printf("Thread started. Will wake epoll in %d. Countdown about to start\n",sleep_delay);
+    while ( sleep_delay > 0 )
     {
-        printf("\t-%d seconds to wake...\n",sleep_time);
-        sleep(1);
-        sleep_time -= 1;
-        printf("About to waking epoll...\n");
-        int *fd = (int *)arg;
-        uint64_t one = 1;
-        int bytes_written = write(*fd, &one, sizeof(one));
-        if ( bytes_written <= 0 )
-        {
-            printf("Error writing on eventfd %d!\n",*fd);
-        }
+        printf("\t-%d seconds to wake...\n",sleep_delay);
+        sleep(1);        
+        sleep_delay -= 1;
+    }
+    
+    int *fd = (int *)arg;
+    uint64_t one = 1;
+    int bytes_written = write(*fd, &one, sizeof(one));
+    if ( bytes_written <= 0 )
+    {
+        printf("Error writing on eventfd %d!\n",*fd);
     }
 
     
@@ -62,7 +61,7 @@ void *waker_th(void *arg)
 
 
 int main(int argc, char *argv[])
-{      
+{        
     frixia_epoll_t *fepoll = create_frixia_epoll();//3
 
     FRIXIA_EPOLL_CODE_T exit_code;
@@ -90,11 +89,19 @@ int main(int argc, char *argv[])
         printf("Error signalfd\n");
         return -1;
     }
+    exit_code = fepoll_add_timer_socket_listening(fepoll,DELAY,0);//8
+    if ( exit_code < 0 )
+    {
+        printf("Error timer fd\n");
+        return -1;
+    }
+
 
     pthread_t th;
     int arg = 5; //YES
     pthread_create(&th,NULL,waker_th,&arg);
-    for(int i=0;i<ITERATIONS;i++)
+    bool keep_looping = true;
+    while(keep_looping)
     {
         frixia_event_t fevents[10];
         int reply=1;
@@ -152,6 +159,12 @@ int main(int argc, char *argv[])
                     printf("\n");
                     break;
                 }
+                case 8:
+                {
+                    fepoll_stop(fepoll);
+                    keep_looping = false;
+                    break;
+                }
                 default:
                 {
                     printf("Something happened for %d\n",event_file_descriptor);
@@ -161,7 +174,6 @@ int main(int argc, char *argv[])
         }
    }
     
-    fepoll_stop(fepoll);
     destroy_frixia_epoll(fepoll);
     printf("Ended\n");
 }

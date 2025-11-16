@@ -264,7 +264,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_eventfd_socket_listening(frixia_epoll_t *fepoll)
     fepoll_pool_add_fd(fpool,fd);
     return FEPOLL_OK;
 }
-FRIXIA_EPOLL_CODE_T fepoll_add_timer_socket_listening(frixia_epoll_t *fepoll, const char *fifo, int delay, int interval )
+FRIXIA_EPOLL_CODE_T fepoll_add_timer_socket_listening(frixia_epoll_t *fepoll, int delay, int interval )
 {
     int fd = start_timer_listening(delay,interval);
     if ( fd < 0 )
