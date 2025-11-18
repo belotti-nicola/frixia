@@ -124,7 +124,7 @@ int close_tcp(int fd)
     return ret_code;
 }
 
-char* get_ftcp_code_string(enum FTCP_CODE c){
+char* get_ftcp_code_string(FTCP_CODE_T c){
     switch(c)
     {
         case FTCP_OK:                           return "FTCP_OK";
