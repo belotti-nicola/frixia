@@ -30,4 +30,13 @@ typedef enum {
 } FTCP_CODE_T ;
 
 
+const char* ftcp_code_to_string(FTCP_CODE_T code) {
+    switch(code) {
+#define X(name) case name: return #name;
+        FTCP_CODES_LIST
+#undef X
+    }
+    return "UNKNOWN_FTCP_CODE";
+
+
 #endif
