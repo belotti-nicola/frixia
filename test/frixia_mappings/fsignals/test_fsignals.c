@@ -64,15 +64,13 @@ int main()
             found = false;
             for(int z=0;z<test_values_dim;z++)
             {
-                FRIXIA_SIGNALS_T s = FSIGNAL_BUS; //TODO
-                int unix_sig = frixia_signal_to_unix(s);
+                FRIXIA_SIGNALS_T s = computed_mask; //TODO
+                int  unix_sig = frixia_signal_to_unix(s);
                 if ( unix_sig == tests[i].test_value.values[z])
                 {
                     found = true;
                     break;
                 }
-
-
             }
             if ( !found )
             {
