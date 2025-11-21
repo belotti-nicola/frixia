@@ -38,7 +38,10 @@ int main()
     {
         if (tests[i].test_case != tests[i].test_value) 
         {
-            printf("Test case number %d failed: %lu != %lu\n",i, tests[i].test_case, tests[i].test_value);
+            printf("Test case number %ld failed: %lu != %lu\n",
+                i,
+                tests[i].test_case,
+                tests[i].test_value);
             return 1;
         }  
     }

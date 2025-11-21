@@ -9,7 +9,7 @@
 
 #include "frixia_inode.h"
 
-int start_inode_listening(char *path, FRIXIA_INODE_FLAG_T mask)
+int start_inode_listening(const char *path, FRIXIA_INODE_FLAG_T mask)
 {
     int inotify_fd = inotify_init();
     if (inotify_fd == -1) 

@@ -4,6 +4,7 @@
 #include <sys/signalfd.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "frixia_signals.h"
 
 int start_signalfd_listening(FRIXIA_SIGNALS_T fsig)

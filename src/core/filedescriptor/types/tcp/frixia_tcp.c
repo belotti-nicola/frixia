@@ -6,34 +6,35 @@
 #include <sys/eventfd.h>
 #include <sys/epoll.h>
 #include <unistd.h>
-
 #include "frixia_tcp.h"
+#include "frixia_tcp_result.h"
 #include "../../../../core/frixia_codes.h"
 #include "../../../../core/frixia_h.h"
 #include "../../../../utils/networking/network.h"
 #include <fcntl.h>
+#include <arpa/inet.h>
 
-int start_tcp_listening(const char *s, int port)
+FRIXIA_TCP_RESULT start_tcp_listening(const char *s, int port)
 {
     if (port < 0 || port > 65535)
     {
-        return ERR_FTCP_START_MALFORMED_PORT;
+        return  ftcp_create_result(-1,ERR_FTCP_START_MALFORMED_PORT,errno);
     }
     
     int tcp_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (tcp_fd == -1)
     {
-        return ERR_FTCP_SOCKET;
+        return ftcp_create_result(-1,ERR_FTCP_SOCKET,errno);
     }
 
     int reuse = 1;
     if (setsockopt(tcp_fd, SOL_SOCKET, SO_REUSEADDR, (void *)&reuse, sizeof(reuse)) < 0)
     {
-        return ERR_FTCP_SETSOCKETOPT;
+        return ftcp_create_result(-1,ERR_FTCP_SETSOCKETOPT,errno);
     }
     if ( fcntl(tcp_fd, F_SETFL, fcntl(tcp_fd, F_GETFL, 0) | O_NONBLOCK) < 0 )
     {
-        return ERR_FTCP_FNCTL;
+        return ftcp_create_result(-1,ERR_FTCP_FNCTL,errno);
     }
 
     struct sockaddr_in serveraddr;
@@ -41,25 +42,25 @@ int start_tcp_listening(const char *s, int port)
     
     if ( is_valid_ipv4(s) == false )
     {
-        return ERR_FTCP_IP_NOT_VALID;
+        return ftcp_create_result(-1,ERR_FTCP_IP_NOT_VALID,errno);
     }
 
     if ( inet_pton(AF_INET, s, &serveraddr.sin_addr) < 0 )
     {
-        return ERR_FTCP_INET_PTON;
+        return ftcp_create_result(-1,ERR_FTCP_INET_PTON,errno);
     } 
     serveraddr.sin_port = htons(port);
     int retVal = bind(tcp_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr));
     if (retVal < 0)
     {
-        return ERR_FTCP_BIND;
+        return ftcp_create_result(-1,ERR_FTCP_BIND,errno);
     }
 
     if (listen(tcp_fd, 10) == -1)
     {
-        return ERR_FTCP_LISTEN;
+        return ftcp_create_result(-1,ERR_FTCP_LISTEN,errno);
     }   
-    return tcp_fd;
+    return ftcp_create_result(tcp_fd,FTCP_OK,-1);
 }
 
 int stop_tcp_listening(int closing_fd)
@@ -110,7 +111,6 @@ int write_tcp( int reply_fd,char buffer[],int size )
         close(reply_fd);
         return ERR_FTCP_WRITE;
     }
-    //close(reply_fd);
     return ret_code;
 }
 
@@ -122,51 +122,4 @@ int close_tcp(int fd)
         printf("errno! %d\n",errno);
     }
     return ret_code;
-}
-
-char* get_ftcp_code_string(FTCP_CODE_T c){
-    switch(c)
-    {
-        case FTCP_OK:                           return "FTCP_OK";
-        case ERR_FTCP_SOCKET:                   return "ERR_FTCP_SOCKET";
-        case ERR_FTCP_SETSOCKETOPT:             return "ERR_FTCP_SETSOCKETOPT";
-        case ERR_FTCP_BIND:                     return "ERR_FTCP_BIND";
-        case ERR_FTCP_LISTEN:                   return "ERR_FTCP_LISTEN";
-        case ERR_FTCP_START_EPOLLCTL_ADD:       return "ERR_FTCP_START_EPOLLCTL_ADD";
-        case ERR_FTCP_STOP_EPOLLCTL_DEL:        return "ERR_FTCP_STOP_EPOLLCTL_DEL";
-        case ERR_FTCP_ACCEPTING:                return "ERR_FTCP_ACCEPTING";
-        case ERR_FTCP_READING:                  return "ERR_FTCP_READING";
-        case ERR_FTCP_START_MALFORMED_EPOLL_FD: return "ERR_FTCP_START_MALFORMED_EPOLL_FD";
-        case ERR_FTCP_START_MALFORMED_PORT:     return "ERR_FTCP_START_MALFORMED_PORT";
-        case ERR_FTCP_STOP_MALFORMED_EPOLL_FD:  return "ERR_FTCP_STOP_MALFORMED_EPOLL_FD";
-        case ERR_FTCP_STOP_MALFORMED_TARGET_FD: return "ERR_FTCP_STOP_MALFORMED_TARGET_FD";
-        case ERR_FTCP_WRITE:                    return "ERR_FTCP_WRITE";
-        default: 
-        {
-            printf("get_ftcp_code_string: %d\n",c);
-            return "UNKNOWN CODE";
-        }
-    }
-}
-int get_ftcp_code_string_from_string(char *s)
-{
-    if(strcmp("FTCP_OK",s) == 0)                                 { return FTCP_OK; }
-    else if(strcmp("ERR_FTCP_SOCKET",s) == 0)                    { return ERR_FTCP_SOCKET;}
-    else if(strcmp("ERR_FTCP_SETSOCKETOPT",s) == 0)              { return ERR_FTCP_SETSOCKETOPT;}
-    else if(strcmp("ERR_FTCP_BIND",s) == 0)                      { return ERR_FTCP_BIND;}
-    else if(strcmp("ERR_FTCP_LISTEN",s) == 0)                    { return ERR_FTCP_LISTEN;}
-    else if(strcmp("ERR_FTCP_START_EPOLLCTL_ADD",s) == 0)        { return ERR_FTCP_START_EPOLLCTL_ADD;}
-    else if(strcmp("ERR_FTCP_STOP_EPOLLCTL_DEL",s) == 0)         { return ERR_FTCP_STOP_EPOLLCTL_DEL;}
-    else if(strcmp("ERR_FTCP_ACCEPTING",s) == 0)                 { return ERR_FTCP_ACCEPTING;}
-    else if(strcmp("ERR_FTCP_READING",s) == 0)                   { return ERR_FTCP_READING;}
-    else if(strcmp("ERR_FTCP_START_MALFORMED_EPOLL_FD",s) == 0)  { return ERR_FTCP_READING;}
-    else if(strcmp("ERR_FTCP_START_MALFORMED_PORT",s) == 0)      { return ERR_FTCP_READING;}
-    else if(strcmp("ERR_FTCP_STOP_MALFORMED_EPOLL_FD",s) == 0)   { return ERR_FTCP_READING;}
-    else if(strcmp("ERR_FTCP_STOP_MALFORMED_TARGET_FD",s) == 0)  { return ERR_FTCP_READING;}
-    else if(strcmp("ERR_FTCP_WRITE",s)==0)                       { return ERR_FTCP_WRITE; }
-    else 
-    {
-        printf("get_ftcp_code_string: unknown string %s\n",s);
-        return -1;
-    }
 }

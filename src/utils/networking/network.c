@@ -18,7 +18,7 @@ bool included_in(char c, char less, char more)
     return true;
 }
 
-bool is_valid_ipv4(char *s)
+bool is_valid_ipv4(const char *s)
 {
     if (s == NULL)
     {
@@ -633,5 +633,17 @@ bool is_valid_ipv4(char *s)
         }
         s++;
     }
+    return false;
+}
+bool is_valid_ipv6(const char* ip_str)
+{
+    return false;
+}
+bool is_valid_port(int port)
+{
+    return false;
+}
+bool is_valid_mac_address(const char* mac_str)
+{
     return false;
 }

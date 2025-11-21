@@ -1,6 +1,7 @@
 #include "frixia_dispatcher_loop_function.h"
 #include <stdio.h>
 #include "frixia_dispatcher.h"
+#include <stdlib.h>
 
 #include "detached_frixia_dispatcher_new.h"
 

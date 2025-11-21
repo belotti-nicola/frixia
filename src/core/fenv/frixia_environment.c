@@ -1,10 +1,11 @@
 #include "../filedescriptor/types/tcp/frixia_tcp.h"
 #include "../filedescriptor/types/udp/frixia_udp.h"
 #include "../filedescriptor/types/fifo/frixia_fifo.h"
-#include "../filedescriptor/fd_monitor/detached_epoll_monitor.c"
+#include "../filedescriptor/fd_monitor/detached_epoll_monitor.h"
 #include "../fdispatcher/frixia_dispatcher.h"
 #include "../fdispatcher/detached_frixia_dispatcher.h"
 #include <stdlib.h>
+#include "../../core/filedescriptor/types/tcp/frixia_tcp_result.c"
 
 #include "frixia_environment.h"
 
@@ -40,19 +41,19 @@ void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port
         return;
     }
 
-    int rc = start_tcp_listening(ip,port);
-    if ( rc <= 0 )
+    FRIXIA_TCP_RESULT res = start_tcp_listening(ip,port);
+    if ( res.exit_code != FTCP_OK )
     {
         return;
     }
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
-    fepoll->callbacks_data[rc] = *sv;
+    fepoll->callbacks_data[res.fd] = *sv;
 
-    insert_event(fepoll->fd,rc);
+    insert_event(fepoll->fd,res.fd);
     fepoll_pool_t *fpool = fepoll->fd_pool;
-    fepoll_pool_add_fd(fpool,rc);
+    fepoll_pool_add_fd(fpool,res.fd);
 
     env->filedescriptors += 1; 
 }
@@ -125,7 +126,8 @@ void *fenv_set_custom_tcp_callback(frixia_environment_t *env,const char *ip, int
         return NULL;
     }
 
-    int rc = start_tcp_listening(ip,port);
+    FRIXIA_TCP_RESULT res = start_tcp_listening(ip,port);
+    int rc = res.fd;
     if ( rc <= 0 )
     {
         return NULL;

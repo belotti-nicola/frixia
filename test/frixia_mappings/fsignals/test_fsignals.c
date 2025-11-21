@@ -64,7 +64,8 @@ int main()
             found = false;
             for(int z=0;z<test_values_dim;z++)
             {
-                int unix_sig = frixia_signal_to_unix(computed_mask);
+                FRIXIA_SIGNALS_T s = FSIGNAL_BUS; //TODO
+                int unix_sig = frixia_signal_to_unix(s);
                 if ( unix_sig == tests[i].test_value.values[z])
                 {
                     found = true;
@@ -75,7 +76,7 @@ int main()
             }
             if ( !found )
             {
-                printf("Error: no found values for test case number %d!!!\n",i);
+                printf("Error: no found values for test case number %ld!!!\n",i);
                 return 1;
             }
             

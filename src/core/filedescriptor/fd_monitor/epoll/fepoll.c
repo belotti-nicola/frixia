@@ -188,7 +188,8 @@ void frixia_wake(frixia_epoll_t *fepoll)
 
 FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, const char *ip,int port)
 {
-    int fd = start_tcp_listening(ip,port);
+    FRIXIA_TCP_RESULT result = start_tcp_listening(ip,port);
+    int fd = result.fd;
     if ( fd < 0 )
     {
         printf("Error %d\n",fd);

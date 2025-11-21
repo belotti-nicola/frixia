@@ -13,7 +13,7 @@ typedef enum FINODE_T
 } FINODE_T;
 
 
-int start_inode_listening(char *path, FRIXIA_INODE_FLAG_T mask);
+int start_inode_listening(const char *path, FRIXIA_INODE_FLAG_T mask);
 int stop_inode_listening(int fd);
 int read_inode(int fd,char buf[],int max_size);
 #endif

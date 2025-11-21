@@ -100,8 +100,8 @@ void *push_the_q(void *arg)
 {
     epoll_ctx_t *ctx = (epoll_ctx_t *)arg;
     frixia_events_queue_t *q = (frixia_events_queue_t *)ctx->arg;
-    frixia_event_t *ev = create_event(ctx->arg,ctx);
-    frixia_events_queue_push(q,ev);
+    frixia_event_t ev = ctx->ev;
+    frixia_events_queue_push(q,&ev);
     return NULL;
 }
 void *end_the_loop(void *arg)

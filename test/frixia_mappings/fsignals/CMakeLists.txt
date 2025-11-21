@@ -1,4 +1,4 @@
 add_executable(TestInstantiatorSignals test_fsignals.c)
-
+target_link_libraries(TestInstantiatorSignals core)
 add_test(NAME TestInstantiatorSignals
     COMMAND TestInstantiatorSignals)
