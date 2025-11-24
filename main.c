@@ -152,6 +152,12 @@ int main(int argc, char *argv[])
         printf("Error timer fd\n");
         return -1;
     }
+    exit_code = fepoll_add_udp_socket_listening(fepoll,"0.0.0.0",19600);//9
+    if ( exit_code < 0 )
+    {
+        printf("Error udp fd\n");
+        return -1;
+    }
 
 
     sv_callback_t handlers[10];
