@@ -40,8 +40,8 @@ void *http_callback(frixia_callback_context_t *fctx)
     char buffer[read_size];
     int reply;
     int rc = -1;
-    rc = accept_tcp(fd, &reply);
-
+    //rc = accept_tcp(fd, &reply);
+    rc = 0;
     const char *trg_str;
     int trg_prt;
     void **trg_protocol_data;
@@ -73,9 +73,7 @@ void *httpclient_callback(frixia_callback_context_t *ctx)
     convoy_t *convoy = ctx->convoy_ctx;
 
     char buffer[read_size];
-    int bytes_read = read_tcp(fd,
-                              buffer,
-                              read_size, NULL);
+    int bytes_read = 0;
 
     FHTTP_t fhttp_2 = frixia_parse_request(buffer, bytes_read);
     printf("event: %d, http_callback bytes_read %d(fd:%d,headers:%d, readsize %d)\n", fd, bytes_read, fd, fhttp_2.num_headers, read_size);

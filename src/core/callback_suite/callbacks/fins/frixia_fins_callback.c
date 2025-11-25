@@ -31,19 +31,11 @@ int fins_callback(int fd, int fd_dimension, enum FrixiaFDType type, convoy_t *co
     int bytes_read = -1;
     if(type == TCP)
     {
-        bytes_read = read_tcp(fd,
-            buffer,
-            fd_dimension,
-            NULL
-        );
+        bytes_read = 0;
     }
     if(type == UDP)
     {
-        bytes_read = read_udp(fd,
-            buffer,
-            fd_dimension,
-            &udp_reply
-        );
+        bytes_read = 0;
     }
     if ( bytes_read < 0 )
     {

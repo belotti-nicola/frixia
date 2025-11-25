@@ -353,17 +353,17 @@ int frixia_read_event_data(frixia_event_t *fe,
     {
         case TCP:
         {
-            int bytes_read = read_tcp(fd,message,1024,NULL);
+            int bytes_read = 0;
             return bytes_read;
         }
         case UDP:
         {
-            int bytes_read = read_udp(fd,message,1024,NULL);
+            int bytes_read = 0;
             return bytes_read;
         }
         case FIFO:
         {
-            int bytes_read = read_fifo(fd,message,1024);
+            int bytes_read = 0;
             return bytes_read;
         }
         default: 
@@ -375,7 +375,7 @@ int frixia_read_event_data(frixia_event_t *fe,
 
 void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
-    FRIXIA_TCP_RESULT res = start_tcp_listening("0.0.0.0",port);
+    FRIXIA_TCP_FD_RESULT res = start_tcp_listening("0.0.0.0",port);
     int fd = res.fd;
     if(fd < 0)
     {

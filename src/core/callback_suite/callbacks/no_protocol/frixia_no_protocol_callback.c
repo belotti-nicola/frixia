@@ -18,7 +18,7 @@
 int no_protocol_callback(int fd, int dim, convoy_t *convoy)
 {
     int fd_to_reply = -1;
-    int accept_code = accept_tcp(fd,&fd_to_reply);
+    int accept_code = 0;
     if ( accept_code < 0 )
     {
         printf("Error accepting tcp fd!!! %d (fd:%d)\n",accept_code,fd);
@@ -30,9 +30,7 @@ int no_protocol_callback(int fd, int dim, convoy_t *convoy)
     int err = 0;
     while (1)
     {
-        int bytes_read = read_tcp(fd_to_reply,
-                                  buffer+counter,
-                                  dim-counter,&err);       
+        int bytes_read = 0;
         
         if ( bytes_read < 0 && ( err == EAGAIN || err == EWOULDBLOCK) )
         {

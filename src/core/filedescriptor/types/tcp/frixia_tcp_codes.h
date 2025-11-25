@@ -18,7 +18,8 @@
     X(ERR_FTCP_WRITE) \
     X(ERR_FTCP_FNCTL) \
     X(ERR_FTCP_INET_PTON) \
-    X(ERR_FTCP_IP_NOT_VALID) 
+    X(ERR_FTCP_IP_NOT_VALID) \
+    X(FTCP_CLOSE_ERROR)
 
 typedef enum {
 #define X(name) name,

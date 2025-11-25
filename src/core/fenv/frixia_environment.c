@@ -5,7 +5,7 @@
 #include "../fdispatcher/frixia_dispatcher.h"
 #include "../fdispatcher/detached_frixia_dispatcher.h"
 #include <stdlib.h>
-#include "../../core/filedescriptor/types/tcp/frixia_tcp_result.c"
+#include "../../core/filedescriptor/types/tcp/frixia_tcp_fd_result.h"
 
 #include "frixia_environment.h"
 
@@ -41,8 +41,8 @@ void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port
         return;
     }
 
-    FRIXIA_TCP_RESULT res = start_tcp_listening(ip,port);
-    if ( res.exit_code != FTCP_OK )
+    FRIXIA_TCP_FD_RESULT res = start_tcp_listening(ip,port);
+    if ( res.res.exit_code != FTCP_OK )
     {
         return;
     }
@@ -126,7 +126,7 @@ void *fenv_set_custom_tcp_callback(frixia_environment_t *env,const char *ip, int
         return NULL;
     }
 
-    FRIXIA_TCP_RESULT res = start_tcp_listening(ip,port);
+    FRIXIA_TCP_FD_RESULT res = start_tcp_listening(ip,port);
     int rc = res.fd;
     if ( rc <= 0 )
     {
