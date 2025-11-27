@@ -113,6 +113,13 @@ void *end_the_loop(void *arg)
     fepoll_stop(cus->fepoll);
     return NULL;
 }
+void *echoudp(void *arg)
+{
+    epoll_ctx_t *ctx = (epoll_ctx_t *)arg;
+    printf("fd: %d\n",ctx->ev.fd);
+
+    return NULL;
+}
 
 int main(int argc, char *argv[])
 {        
@@ -122,37 +129,37 @@ int main(int argc, char *argv[])
     frixia_epoll_t *fepoll = create_frixia_epoll();//3
 
     FRIXIA_EPOLL_CODE_T exit_code;
-    exit_code = fepoll_add_tcp_socket_listening(fepoll,"0.0.0.0",10800);//4
+    exit_code = fepoll_add_tcp(fepoll,"0.0.0.0",10800);//4
     if ( exit_code < 0 )
     {
         printf("Error TCP\n");
         return -1;
     }
-    exit_code = fepoll_add_eventfd_socket_listening(fepoll);//5
+    exit_code = fepoll_add_eventfd(fepoll);//5
     if ( exit_code < 0 )
     {
         printf("Error eventfd\n");
         return -1;
     }
-    exit_code = fepoll_add_signalfd_socket_listening(fepoll,FSIGNAL_SEGV | FSIGNAL_KILL);//6
+    exit_code = fepoll_add_signalfd(fepoll,FSIGNAL_SEGV | FSIGNAL_KILL);//6
     if ( exit_code < 0 )
     {
         printf("Error signalfd\n");
         return -1;
     }
-    exit_code = fepoll_add_inodefd_listening(fepoll,".",FINODE_CREATE);//7
+    exit_code = fepoll_add_inodefd(fepoll,".",FINODE_CREATE);//7
     if ( exit_code < 0 )
     {
         printf("Error signalfd\n");
         return -1;
     }
-    exit_code = fepoll_add_timer_socket_listening(fepoll,DELAY,0);//8
+    exit_code = fepoll_add_timer(fepoll,DELAY,0);//8
     if ( exit_code < 0 )
     {
         printf("Error timer fd\n");
         return -1;
     }
-    exit_code = fepoll_add_udp_socket_listening(fepoll,"0.0.0.0",19600);//9
+    exit_code = fepoll_add_udp(fepoll,"0.0.0.0",19600);//9
     if ( exit_code < 0 )
     {
         printf("Error udp fd\n");
@@ -171,6 +178,7 @@ int main(int argc, char *argv[])
         .fepoll       = fepoll
     };
     handlers[8] = *sv_create_callback(end_the_loop,&custom);
+    handlers[9] = *sv_create_callback(echoudp,NULL);
 
 
     pthread_t th;

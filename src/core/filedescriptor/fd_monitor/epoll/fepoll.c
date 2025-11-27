@@ -186,7 +186,7 @@ void frixia_wake(frixia_epoll_t *fepoll)
     }
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, const char *ip,int port)
+FRIXIA_EPOLL_CODE_T fepoll_add_tcp(frixia_epoll_t *fepoll, const char *ip,int port)
 {
     FRIXIA_TCP_FD_RESULT result = start_tcp_listening(ip,port);
     int fd = result.fd;
@@ -208,7 +208,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_tcp_socket_listening(frixia_epoll_t *fepoll, cons
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_udp_socket_listening(frixia_epoll_t *fepoll, const char *ip,int port)
+FRIXIA_EPOLL_CODE_T fepoll_add_udp(frixia_epoll_t *fepoll, const char *ip,int port)
 {
     int fd = start_udp_listening(port);
     if ( fd < 0 )
@@ -246,7 +246,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, con
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_eventfd_socket_listening(frixia_epoll_t *fepoll)
+FRIXIA_EPOLL_CODE_T fepoll_add_eventfd(frixia_epoll_t *fepoll)
 {
     int fd = start_eventfd_listening();
     if ( fd < 0 )
@@ -265,7 +265,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_eventfd_socket_listening(frixia_epoll_t *fepoll)
     fepoll_pool_add_fd(fpool,fd);
     return FEPOLL_OK;
 }
-FRIXIA_EPOLL_CODE_T fepoll_add_timer_socket_listening(frixia_epoll_t *fepoll, int delay, int interval )
+FRIXIA_EPOLL_CODE_T fepoll_add_timer(frixia_epoll_t *fepoll, int delay, int interval )
 {
     int fd = start_timer_listening(delay,interval);
     if ( fd < 0 )
@@ -285,7 +285,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_timer_socket_listening(frixia_epoll_t *fepoll, in
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_signalfd_socket_listening(frixia_epoll_t *fepoll, FRIXIA_SIGNALS_T fsig)
+FRIXIA_EPOLL_CODE_T fepoll_add_signalfd(frixia_epoll_t *fepoll, FRIXIA_SIGNALS_T fsig)
 {
     int fd = start_signalfd_listening(fsig);
     if ( fd < 0 )
@@ -305,7 +305,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_signalfd_socket_listening(frixia_epoll_t *fepoll,
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_inodefd_listening(frixia_epoll_t *fepoll, const char *path, FRIXIA_INODE_FLAG_T mask)
+FRIXIA_EPOLL_CODE_T fepoll_add_inodefd(frixia_epoll_t *fepoll, const char *path, FRIXIA_INODE_FLAG_T mask)
 {
     int fd = start_inode_listening(path,mask);
     if ( fd < 0 )
