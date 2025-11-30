@@ -325,3 +325,13 @@ FRIXIA_EPOLL_CODE_T fepoll_add_inodefd(frixia_epoll_t *fepoll, const char *path,
     return FEPOLL_OK;
 }
 
+void fepoll_register_callback(int fd, void *(fun)(void *),void *arg)
+{
+    if ( fd < 0 )
+    {
+        printf("Error registering callback!");
+        return;
+    }
+}
+
+
