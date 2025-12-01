@@ -1,3 +1,4 @@
+
 #include "fepoll.h"
 #include "../../../frixia_common.h"
 #include "epoll.h"
@@ -65,7 +66,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
             uint32_t mask = ev_q->events_maks;
             //printf("FOUND :: %p %p %d!\n",sv.function, sv.auxiliary, sv.is_valid);
 
-            sv_callback_t sv = fepoll->callbacks_data[event_fd];
+            sv_callback_t sv = fepoll->fepoll_handlers[event_fd];
             do_callback_wrapper(&sv,event_fd,mask,th_data->events,fepoll,keep_looping,fenv);
         }
     }

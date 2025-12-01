@@ -18,7 +18,7 @@ typedef struct frixia_epoll
     frixia_events_queue_t   *events_queue;
     pthread_t               *th;   
     
-    sv_callback_t           *callbacks_data;
+    sv_callback_t           *fepoll_handlers;
 
 } frixia_epoll_t;
 
@@ -39,7 +39,7 @@ int fepoll_add_eventfd(frixia_epoll_t *fepoll);
 int fepoll_add_timer(frixia_epoll_t *fepoll, int delay, int interval );
 int fepoll_add_signalfd(frixia_epoll_t *fepoll, FRIXIA_SIGNALS_T fsig);
 int fepoll_add_inodefd(frixia_epoll_t *fepoll,const char *path, FRIXIA_INODE_FLAG_T mask);
-void fepoll_register_callback(int fd, void *(fun)(void *),void *arg);
+void fepoll_register_callback(frixia_epoll_t *fepoll, int fd, void *(fun)(void *),void *arg);
 
 
 #endif

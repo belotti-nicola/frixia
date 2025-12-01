@@ -172,12 +172,12 @@ int main(int argc, char *argv[])
         .keep_looping = &keep_looping,
         .fepoll       = fepoll
     };
-    fepoll_register_callback(4,push_the_q,events);
-    fepoll_register_callback(5,push_the_q,events);
-    fepoll_register_callback(6,push_the_q,events);
-    fepoll_register_callback(7,push_the_q,events);
-    fepoll_register_callback(8,end_the_loop,&custom);
-    fepoll_register_callback(8,echoudp,NULL);
+    fepoll_register_callback(fepoll,4,push_the_q,events);
+    fepoll_register_callback(fepoll,5,push_the_q,events);
+    fepoll_register_callback(fepoll,6,push_the_q,events);
+    fepoll_register_callback(fepoll,7,push_the_q,events);
+    fepoll_register_callback(fepoll,8,end_the_loop,&custom);
+    fepoll_register_callback(fepoll,9,echoudp,NULL);
 
 
     pthread_t th;
@@ -194,7 +194,8 @@ int main(int argc, char *argv[])
         }
         for(int j=0;j<fevents_dim;j++)
         {
-            //epoll_cb(fevents[j].fd,fevents[j].events_maks,handlers[fevents[j].fd]);          
+            int index = fevents[j].fd;
+            epoll_cb(fevents[j].fd,fevents[j].events_maks,fepoll->fepoll_handlers[index]);          
         }
    }
     

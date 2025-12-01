@@ -23,4 +23,5 @@ target_link_libraries(fepoll
     eventfd
     signalfd
     inode
+    simple_valid_callback
 )

@@ -99,7 +99,7 @@ void *adder_tcp(void *cast_me_to_ctx)
 
     sv_callback_t *tmp = (sv_callback_t *)ctx->anything;
     frixia_epoll_t *fepoll = ctx->cb_fepoll;
-    fepoll->callbacks_data[reply] = *sv_create_callback(
+    fepoll->fepoll_handlers[reply] = *sv_create_callback(
         tmp->function,
         tmp->auxiliary
     );
@@ -155,7 +155,7 @@ void *main_loop(void *th_arg)
         {
             int       fd  = events[i].fd;
             uint32_t mask = events[i].events_maks;
-            void *anything = fepoll->callbacks_data[fd].auxiliary;
+            void *anything = fepoll->fepoll_handlers[fd].auxiliary;
             cb_ctx_t ctx = 
             {
                 .cb_fd = fd,
@@ -164,7 +164,7 @@ void *main_loop(void *th_arg)
                 .cb_keep_looping = keep_looping,
                 .anything = anything
             };
-            void *(*f)(void *) = (void *(*)(void *))fepoll->callbacks_data[fd].function;
+            void *(*f)(void *) = (void *(*)(void *))fepoll->fepoll_handlers[fd].function;
             void   *a          = (void *)&ctx;
             if ( f == NULL )
             {
@@ -194,7 +194,7 @@ void *adder_http_handler(void *cast_me_to_ctx)
     }
 
     sv_callback_t *tmp =  (sv_callback_t *)ctx->anything;
-    fepoll->callbacks_data[reply] = *sv_create_callback(
+    fepoll->fepoll_handlers[reply] = *sv_create_callback(
         tmp->function,
         tmp->auxiliary
     );

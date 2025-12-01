@@ -49,7 +49,7 @@ void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
-    fepoll->callbacks_data[res.fd] = *sv;
+    fepoll->fepoll_handlers[res.fd] = *sv;
 
     insert_event(fepoll->fd,res.fd);
     fepoll_pool_t *fpool = fepoll->fd_pool;
@@ -78,7 +78,7 @@ void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
-    fepoll->callbacks_data[rc] = *sv;
+    fepoll->fepoll_handlers[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
     fepoll_pool_t *fpool = fepoll->fd_pool;
@@ -106,7 +106,7 @@ void fenv_start_fifo_listening(frixia_environment_t *env, const char *pipe)
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fenv_push_event_from_fepoll,NULL);
-    fepoll->callbacks_data[rc] = *sv;
+    fepoll->fepoll_handlers[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
     fepoll_pool_t *fpool = fepoll->fd_pool;
@@ -135,7 +135,7 @@ void *fenv_set_custom_tcp_callback(frixia_environment_t *env,const char *ip, int
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fun,arg);
-    fepoll->callbacks_data[rc] = *sv;
+    fepoll->fepoll_handlers[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
     fepoll_pool_t *fpool = fepoll->fd_pool;
@@ -165,7 +165,7 @@ void *fenv_set_custom_udp_callback(frixia_environment_t *env,const char *ip, int
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fun,arg);
-    fepoll->callbacks_data[rc] = *sv;
+    fepoll->fepoll_handlers[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
     fepoll_pool_t *fpool = fepoll->fd_pool;
@@ -194,7 +194,7 @@ void *fenv_set_custom_fifo_callback(frixia_environment_t *env,const char *path, 
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     sv_callback_t *sv = sv_create_callback(fun,arg);
-    fepoll->callbacks_data[rc] = *sv;
+    fepoll->fepoll_handlers[rc] = *sv;
 
     insert_event(fepoll->fd,rc);
     fepoll_pool_t *fpool = fepoll->fd_pool;
