@@ -69,7 +69,7 @@ void fenv_start_udp_listening(frixia_environment_t *env,const char *ip, int port
         return;
     }
 
-    int rc = start_udp_listening(port);
+    int rc = 0;
     if ( rc <= 0 )
     {
         printf("Error! %d\n",rc);
@@ -157,7 +157,7 @@ void *fenv_set_custom_udp_callback(frixia_environment_t *env,const char *ip, int
         return NULL;
     }
 
-    int rc = start_udp_listening(port);
+    int rc = 0;
     if ( rc <= 0 )
     {
         return NULL;

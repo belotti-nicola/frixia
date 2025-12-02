@@ -391,7 +391,7 @@ void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
 }
 void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
-    int fd = start_udp_listening(port);
+    int fd = 0;
     if(fd < 0)
     {
         return;

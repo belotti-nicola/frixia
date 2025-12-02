@@ -39,7 +39,7 @@ int start_filedescriptors_monitoring(frixia_epoll_t            *fepoll,
             }
             case UDP:
             {
-                fd = start_udp_listening(pffd->port);
+                fd = -1;
                 if(fd < 0)
                 {
                     printf("ERROR: ERRNO::%d",errno);

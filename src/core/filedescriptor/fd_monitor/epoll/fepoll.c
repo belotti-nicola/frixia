@@ -185,50 +185,62 @@ void frixia_wake(frixia_epoll_t *fepoll)
         printf("Errorr!! %d\n",errno);
     }
 }
+FRIXIA_FEPOLL_ADD_RESULT create_fepoll_add_result(int fd, FRIXIA_EPOLL_CODE_T code, int errno_code)
+{
+    FRIXIA_FEPOLL_ADD_RESULT retVal = 
+    {
+        .fd = fd,
+        .errno_code = errno_code,
+        .fepoll_code = code,
+    };
+    return retVal;
+}
 
-FRIXIA_EPOLL_CODE_T fepoll_add_tcp(frixia_epoll_t *fepoll, const char *ip,int port)
+
+FRIXIA_FEPOLL_ADD_RESULT fepoll_add_tcp(frixia_epoll_t *fepoll, const char *ip,int port)
 {
     FRIXIA_TCP_FD_RESULT result = start_tcp_listening(ip,port);
     int fd = result.fd;
     if ( fd < 0 )
     {
         printf("Error %d\n",fd);
-        return FERR_TCP_LISTENING;
+        return create_fepoll_add_result(-1,FERR_TCP_LISTENING,result.res.errno_code);
     }
 
     int fepoll_fd = fepoll->fd;
     int rc = insert_event(fepoll_fd,fd);
     if ( rc != FEPOLL_OK)
     {
-        return FERR_INSERT_EVENT;
+        return create_fepoll_add_result(-1,FERR_INSERT_EVENT,result.res.errno_code);
     }
 
     fepoll_pool_t *fpool = fepoll->fd_pool;
     fepoll_pool_add_fd(fpool,fd);
-    return FEPOLL_OK;
+    return create_fepoll_add_result(fd,FEPOLL_OK,-1);
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_udp(frixia_epoll_t *fepoll, const char *ip,int port)
+FRIXIA_FEPOLL_ADD_RESULT fepoll_add_udp(frixia_epoll_t *fepoll, const char *ip,int port)
 {
-    int fd = start_udp_listening(port);
+    FRIXIA_UDP_FD_RESULT res = start_udp_listening(port);
+    int fd = res.fd;
     if ( fd < 0 )
     {
-        return (FRIXIA_EPOLL_CODE_T)fd;
+        return create_fepoll_add_result(-1,FERR_UDP_LISTENING,res.res.errno_code);
     }
 
     int fepoll_fd = fepoll->fd;
     int rc = insert_event(fepoll_fd,fd);
     if ( rc != FEPOLL_OK)
     {
-        return FERR_INSERT_EVENT;
+        return create_fepoll_add_result(-1,FERR_INSERT_EVENT,res.res.errno_code);
     }
     
 
     fepoll_pool_t *fpool = fepoll->fd_pool;
     fepoll_pool_add_fd(fpool,fd);
-    return FEPOLL_OK;
+    return create_fepoll_add_result(fd,FEPOLL_OK,-1);
 }
-FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, const char *fifo)
+FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket(frixia_epoll_t *fepoll, const char *fifo)
 {
     int fd = start_fifo_listening(fifo);
     if ( fd < 0 )
@@ -246,7 +258,7 @@ FRIXIA_EPOLL_CODE_T fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, con
     return FEPOLL_OK;
 }
 
-FRIXIA_EPOLL_CODE_T fepoll_add_eventfd(frixia_epoll_t *fepoll)
+int fepoll_add_eventfd(frixia_epoll_t *fepoll)
 {
     int fd = start_eventfd_listening();
     if ( fd < 0 )

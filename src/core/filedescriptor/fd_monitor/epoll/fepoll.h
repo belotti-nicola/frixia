@@ -22,6 +22,15 @@ typedef struct frixia_epoll
 
 } frixia_epoll_t;
 
+typedef struct FRIXIA_FEPOLL_ADD_RESULT
+{
+    int fd;
+    FRIXIA_EPOLL_CODE_T fepoll_code;
+    int errno_code;
+
+} FRIXIA_FEPOLL_ADD_RESULT;
+
+
 frixia_epoll_t     *create_frixia_epoll();
 FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T fadd_stop_filedescriptor(frixia_epoll_t *fepoll);
@@ -32,9 +41,12 @@ int                 frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fe
 frixia_fd_t        *search_fepoll(frixia_epoll_t *fepoll,int fd);
 void                frixia_wake(frixia_epoll_t *fepoll);
 
-FRIXIA_EPOLL_CODE_T fepoll_add_tcp(frixia_epoll_t *fepoll, const char *ip,int port);
-int fepoll_add_udp(frixia_epoll_t *fepoll, const char *ip,int port);
-int fepoll_add_fifo_socket_listening(frixia_epoll_t *fepoll, const char *fifo);
+FRIXIA_FEPOLL_ADD_RESULT create_fepoll_add_result(int fd, FRIXIA_EPOLL_CODE_T code, int errno_code);
+
+
+FRIXIA_FEPOLL_ADD_RESULT fepoll_add_tcp(frixia_epoll_t *fepoll, const char *ip,int port);
+FRIXIA_FEPOLL_ADD_RESULT fepoll_add_udp(frixia_epoll_t *fepoll, const char *ip,int port);
+int fepoll_add_fifo_socket(frixia_epoll_t *fepoll, const char *fifo);
 int fepoll_add_eventfd(frixia_epoll_t *fepoll);
 int fepoll_add_timer(frixia_epoll_t *fepoll, int delay, int interval );
 int fepoll_add_signalfd(frixia_epoll_t *fepoll, FRIXIA_SIGNALS_T fsig);

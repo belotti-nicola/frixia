@@ -1,5 +1,5 @@
 TODO   
-    fepoll/dispatcher callback! (push/test/keep_looping)
+    FEPOLL_TCP CODES
     
     valgrind support
     debug level prints

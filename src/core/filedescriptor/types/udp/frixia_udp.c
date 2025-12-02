@@ -10,11 +10,11 @@
 
 #include "frixia_udp.h"
 
-int start_udp_listening(int port)
+FRIXIA_UDP_FD_RESULT start_udp_listening(int port)
 {
     if (port < 0 || port > 65535)
     {
-        return ERR_FUDP_START_MALFORMED_PORT;
+        return fudp_create_fd_result(-1,ERR_FUDP_START_MALFORMED_PORT,errno);
     }
 
     struct sockaddr_in servaddr, cliaddr;
@@ -22,7 +22,7 @@ int start_udp_listening(int port)
     int udp_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (udp_fd == -1)
     {
-        return ERR_FUDP_START_SOCKET;
+        return fudp_create_fd_result(-1,ERR_FUDP_START_SOCKET,errno);
     }
 
     servaddr.sin_family = AF_INET;
@@ -31,9 +31,9 @@ int start_udp_listening(int port)
     int bind_ret_val = bind(udp_fd, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     if (bind_ret_val == -1)
     {
-        return ERR_FUDP_START_BIND;
+        return fudp_create_fd_result(-1,ERR_FUDP_START_BIND,errno);
     }
-    return udp_fd;
+    return fudp_create_fd_result(udp_fd,F_OK,-1);
 }
 int stop_udp_listening(int closing_fd)
 {

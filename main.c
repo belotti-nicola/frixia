@@ -129,8 +129,9 @@ int main(int argc, char *argv[])
     frixia_epoll_t *fepoll = create_frixia_epoll();//3
 
     FRIXIA_EPOLL_CODE_T exit_code;
-    exit_code = fepoll_add_tcp(fepoll,"0.0.0.0",10800);//4
-    if ( exit_code < 0 )
+    FRIXIA_FEPOLL_ADD_RESULT fadd_res;
+    fadd_res = fepoll_add_tcp(fepoll,"0.0.0.0",10800);//4
+    if ( fadd_res.fepoll_code < 0 )
     {
         printf("Error TCP\n");
         return -1;
@@ -159,8 +160,8 @@ int main(int argc, char *argv[])
         printf("Error timer fd\n");
         return -1;
     }
-    exit_code = fepoll_add_udp(fepoll,"0.0.0.0",19600);//9
-    if ( exit_code < 0 )
+    fadd_res = fepoll_add_udp(fepoll,"0.0.0.0",19600);//9
+    if ( fadd_res.fepoll_code < 0 )
     {
         printf("Error udp fd\n");
         return -1;

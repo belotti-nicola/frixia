@@ -16,7 +16,7 @@ int start_appropriate_fd(enum FrixiaFDType t, frixia_fd_arg_t arg)
     }
     case UDP:
     {
-        return start_udp_listening(arg.port); 
+        return 0; 
     }
     case FIFO:
     {
@@ -45,7 +45,7 @@ int add_appropriate_fd(enum FrixiaFDType t, frixia_fd_arg_t arg)
     }
     case UDP:
     {
-        return start_udp_listening(arg.port); 
+        return 0;
     }
     case FIFO:
     {
