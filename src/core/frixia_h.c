@@ -15,8 +15,6 @@
 #include <arpa/inet.h>
 #include <sys/epoll.h>
 #include <stdint.h>
-
-#include "frixia_h.h"
 #include "frixia_common.h"
 #include "../core/filedescriptor/types/tcp/frixia_tcp.h"
 #include "../core/filedescriptor/types/udp/frixia_udp.h"
@@ -48,8 +46,10 @@
 #include "../setup/proto_callbacks/pc_http/proto_callback_http.h"
 #include "../utils/datastructures/threadsafe_timer_wheel/ts_timer_wheel.h"
 #include "../core/filedescriptor/types/eventfd/frixia_eventfd.h"
-
 #include "fsuite/frixia_suite.h"
+
+#include "frixia_h.h"
+
 
 // max events definition for epoll_wait
 #define FRIXIA_EPOLL_WAIT_MAX_SIZE 10
@@ -249,8 +249,8 @@ int frixia_start(frixia_environment_t *env)
 
 int frixia_stop(frixia_environment_t *environment)
 {
-    frixia_epoll_t *fe = environment->fepoll_ctx->fepoll;
-    fepoll_stop(fe);
+    //frixia_epoll_t *fe = environment->fepoll_ctx->fepoll;
+    //fepoll_stop(fe);
 
     //crono_t *cr = environment->crono;
     //crono_stop(cr);
@@ -517,10 +517,10 @@ frixia_environment_t *frixia_environment_create()
 
     frixia_epoll_t *fepoll = create_frixia_epoll();
 
-    convoy_t *convoy = convoy_create();
+    //convoy_t *convoy = convoy_create();
 
 
-    retVal->fepoll_ctx->fepoll = fepoll;
+    //retVal->fepoll_ctx->fepoll = fepoll;
     //retVal->convoy = convoy;
     return retVal;
 }

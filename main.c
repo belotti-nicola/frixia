@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <unistd.h>
+#include "src/core/frixia_h.h"
 
 
 #define ITERATIONS 5
@@ -123,83 +124,10 @@ void *echoudp(void *arg)
 
 int main(int argc, char *argv[])
 {        
-    frixia_events_queue_t *events = frixia_events_queue_create();
-    bool keep_looping = true;
+    frixia_environment_t *fenv = frixia_environment_create();
+    frixia_add_tcp(fenv,"127.0.0.1","18080",1024);
+    frixia_start(fenv);
+    frixia_stop(fenv);
 
-    frixia_epoll_t *fepoll = create_frixia_epoll();//3
-
-    FRIXIA_EPOLL_CODE_T exit_code;
-    FRIXIA_FEPOLL_ADD_RESULT fadd_res;
-    fadd_res = fepoll_add_tcp(fepoll,"0.0.0.0",10800);//4
-    if ( fadd_res.fepoll_code < 0 )
-    {
-        printf("Error TCP\n");
-        return -1;
-    }
-    exit_code = fepoll_add_eventfd(fepoll);//5
-    if ( exit_code < 0 )
-    {
-        printf("Error eventfd\n");
-        return -1;
-    }
-    exit_code = fepoll_add_signalfd(fepoll,FSIGNAL_SEGV | FSIGNAL_KILL);//6
-    if ( exit_code < 0 )
-    {
-        printf("Error signalfd\n");
-        return -1;
-    }
-    exit_code = fepoll_add_inodefd(fepoll,".",FINODE_CREATE);//7
-    if ( exit_code < 0 )
-    {
-        printf("Error signalfd\n");
-        return -1;
-    }
-    exit_code = fepoll_add_timer(fepoll,DELAY,0);//8
-    if ( exit_code < 0 )
-    {
-        printf("Error timer fd\n");
-        return -1;
-    }
-    fadd_res = fepoll_add_udp(fepoll,"0.0.0.0",19600);//9
-    if ( fadd_res.fepoll_code < 0 )
-    {
-        printf("Error udp fd\n");
-        return -1;
-    }
-
-
-    custom_t custom = 
-    {
-        .keep_looping = &keep_looping,
-        .fepoll       = fepoll
-    };
-    fepoll_register_callback(fepoll,4,push_the_q,events);
-    fepoll_register_callback(fepoll,5,push_the_q,events);
-    fepoll_register_callback(fepoll,6,push_the_q,events);
-    fepoll_register_callback(fepoll,7,push_the_q,events);
-    fepoll_register_callback(fepoll,8,end_the_loop,&custom);
-    fepoll_register_callback(fepoll,9,echoudp,NULL);
-
-
-    pthread_t th;
-    int arg = 5; //YES
-    pthread_create(&th,NULL,waker_th,&arg);
-    while(keep_looping)
-    {
-        frixia_event_t fevents[10];
-        int reply=1;
-        int fevents_dim = frixia_epoll_wait(fepoll,fevents);
-        if ( fevents_dim == 0)
-        {
-            continue;
-        }
-        for(int j=0;j<fevents_dim;j++)
-        {
-            int index = fevents[j].fd;
-            epoll_cb(fevents[j].fd,fevents[j].events_maks,fepoll->fepoll_handlers[index]);          
-        }
-   }
-    
-    destroy_frixia_epoll(fepoll);
-    printf("Ended\n");
+    return 0;
 }
