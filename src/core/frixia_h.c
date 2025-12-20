@@ -524,3 +524,8 @@ frixia_environment_t *frixia_environment_create()
     //retVal->convoy = convoy;
     return retVal;
 }
+
+void frixia_environment_destroy(frixia_environment_t *fenv)
+{
+    free(fenv);
+}

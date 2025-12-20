@@ -127,7 +127,9 @@ int main(int argc, char *argv[])
     frixia_environment_t *fenv = frixia_environment_create();
     frixia_add_tcp(fenv,"127.0.0.1","18080",1024);
     frixia_start(fenv);
-    frixia_stop(fenv);
+    
+    
+    frixia_destroy(fenv);
 
     return 0;
 }

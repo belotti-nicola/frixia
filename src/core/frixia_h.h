@@ -50,4 +50,5 @@ int frixia_read_event_data(frixia_event_t *fe,
                            int *r);
 
 frixia_environment_t *frixia_environment_create();
+void frixia_environment_destroy(frixia_environment_t *fenv);
 
