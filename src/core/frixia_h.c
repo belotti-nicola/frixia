@@ -243,12 +243,19 @@ int frixia_start(frixia_environment_t *env)
 
     
     */
+    fepoll_th_data_t *fep_data = env->fepoll_ctx;
+    detached_start_epoll(fep_data);
+    detached_join_epoll(fep_data);
+
     printf("End\n");
     return OK;
 }
 
 int frixia_stop(frixia_environment_t *environment)
 {
+    frixia_epoll_t *fepoll = environment->fepoll_ctx;
+    detached_stop_epoll(fepoll);
+    
     //frixia_epoll_t *fe = environment->fepoll_ctx->fepoll;
     //fepoll_stop(fe);
 
@@ -482,6 +489,19 @@ void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FL
     //convoy_add_add_inode_filedescriptor(c,fd,filepath);
 }
 
+void frixia_add_eventfd(frixia_environment_t *env)
+{
+    int fd = start_eventfd_listening();
+    if ( fd < 0 )
+    {
+        printf("Error::frixia_add_eventfd");
+        return;
+    }
+
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
+    insert_event(fepoll->fd,fd);
+}
+
 void frixia_register_http_method_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg)
 {
     //convoy_t *convoy = env->convoy;
@@ -516,11 +536,11 @@ frixia_environment_t *frixia_environment_create()
     }
 
     frixia_epoll_t *fepoll = create_frixia_epoll();
-
+    fepoll_th_data_t *fep_data = fepoll_th_data_create(fepoll,NULL);
     //convoy_t *convoy = convoy_create();
 
 
-    //retVal->fepoll_ctx->fepoll = fepoll;
+    retVal->fepoll_ctx = fep_data;
     //retVal->convoy = convoy;
     return retVal;
 }

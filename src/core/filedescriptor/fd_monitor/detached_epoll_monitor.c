@@ -28,7 +28,9 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, void *ctx)
         printf("Error creating fepoll b\n");
         return NULL;
     }
+    *b = true;
     p->keep_looping = b;
+    p->started = false;
 
     return p;
 }
@@ -62,12 +64,15 @@ int detached_stop_epoll(fepoll_th_data_t *fepoll_obj)
 {   
     bool *b = fepoll_obj->keep_looping;
     *b = false;
+    frixia_epoll_t *fepoll = fepoll_obj->fepoll;
+    frixia_wake(fepoll);
     return 0;
 }
 
 int detached_join_epoll(fepoll_th_data_t *fepoll_obj)
 {
-    int rc = pthread_join(fepoll_obj->th, NULL);
+    pthread_t th = fepoll_obj->th;
+    int rc = pthread_join(th, NULL);
     if(rc != 0) 
     { 
         printf("ERRORCODE2::%d\n",rc);

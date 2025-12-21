@@ -122,14 +122,24 @@ void *echoudp(void *arg)
     return NULL;
 }
 
+void *engine_stopper(void *arg)
+{
+    sleep(5);
+
+    frixia_environment_t *fenv = (frixia_environment_t *)arg;
+    frixia_stop(fenv);
+}
+
 int main(int argc, char *argv[])
 {        
     frixia_environment_t *fenv = frixia_environment_create();
+    frixia_add_eventfd(fenv);
     frixia_add_tcp(fenv,"127.0.0.1","18080",1024);
+    
+    pthread_t th;
+    pthread_create(&th,NULL,engine_stopper,fenv);
     frixia_start(fenv);
-    
-    
-    frixia_destroy(fenv);
-
+        
+    frixia_environment_destroy(fenv);
     return 0;
 }

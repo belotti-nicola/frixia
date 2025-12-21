@@ -26,6 +26,8 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
 void frixia_add_scheduler(frixia_environment_t *env, int tick_size);
 void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, int interval);
 void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG_T mask);
+void frixia_add_eventfd(frixia_environment_t *env);
+
 
 void frixia_register_http_method_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg);
 void frixia_register_fins_command_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg);
