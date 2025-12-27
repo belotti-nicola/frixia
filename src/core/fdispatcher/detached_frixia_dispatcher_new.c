@@ -64,7 +64,7 @@ frixia_dispatcher_data_t *create_frixia_dispatcher_data()
         return NULL;
     }
 
-    p->dispatcher = create_frixia_dispatcher(1,1);
+    p->dispatcher = create_frixia_dispatcher(1);
     p->started = false;
     
     return p;

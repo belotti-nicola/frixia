@@ -244,10 +244,14 @@ int frixia_start(frixia_environment_t *env)
     
     */
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
+    frixia_dispatcher_data_t *fdisp_data = env->fdispatcher_ctx;
     detached_start_epoll(fep_data);
+    detached_start_frixia_dispatcher_new(fdisp_data);
+    
+    
     detached_join_epoll(fep_data);
+    //detached_join_frixia_dispatcher_new(fdisp_data);
 
-    printf("End\n");
     return OK;
 }
 
@@ -255,6 +259,8 @@ int frixia_stop(frixia_environment_t *environment)
 {
     frixia_epoll_t *fepoll = environment->fepoll_ctx;
     detached_stop_epoll(fepoll);
+
+    return 0;
     
     //frixia_epoll_t *fe = environment->fepoll_ctx->fepoll;
     //fepoll_stop(fe);
@@ -382,7 +388,7 @@ int frixia_read_event_data(frixia_event_t *fe,
 
 void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
-    FRIXIA_TCP_FD_RESULT res = start_tcp_listening("0.0.0.0",port);
+    FRIXIA_TCP_FD_RESULT res = start_tcp_listening(ip,port);
     int fd = res.fd;
     if(fd < 0)
     {
@@ -394,6 +400,9 @@ void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
 
     //convoy_t *c = env->convoy;
     //convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read,HTTP);
+
+    frixia_events_queue_t *q = env->fepoll_events;
+    fepoll->fepoll_handlers[fd] = *sv_create_callback(frixia_events_queue_push,q);
 
 }
 void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
@@ -539,8 +548,15 @@ frixia_environment_t *frixia_environment_create()
     fepoll_th_data_t *fep_data = fepoll_th_data_create(fepoll,NULL);
     //convoy_t *convoy = convoy_create();
 
+    frixia_events_queue_t *fepoll_events = frixia_events_queue_create();
+
+    frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data();
+    frixia_dispatcher_t *disp = disp_data->dispatcher;
+    set_frixia_dispatcher_tasks(disp,fepoll_events);
 
     retVal->fepoll_ctx = fep_data;
+    retVal->fdispatcher_ctx = disp_data;
+    retVal->fepoll_events = fepoll_events;
     //retVal->convoy = convoy;
     return retVal;
 }

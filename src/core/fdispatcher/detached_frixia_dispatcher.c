@@ -13,7 +13,7 @@ waitable_frixia_dispatcher_t *create_waitable_frixia_dispatcher(int workers)
         return NULL;
     }
 
-    frixia_dispatcher_t *disp = create_frixia_dispatcher(workers,-1);
+    frixia_dispatcher_t *disp = create_frixia_dispatcher(workers);
     wfd->dispatcher = disp;
 
     return wfd;

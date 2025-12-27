@@ -3,7 +3,7 @@
 
 #include "frixia_dispatcher.h"
 
-frixia_dispatcher_t *create_frixia_dispatcher(int workers_number,int stop_fd)
+frixia_dispatcher_t *create_frixia_dispatcher(int workers_number)
 {
     frixia_dispatcher_t *ptr = malloc(sizeof(frixia_dispatcher_t));
     if(ptr == NULL)
@@ -12,7 +12,6 @@ frixia_dispatcher_t *create_frixia_dispatcher(int workers_number,int stop_fd)
         return NULL;
     }
     ptr->workers = workers_number;
-    ptr->stop_fd = stop_fd;
     bool *keep_looping = malloc(sizeof(bool));
     if(ptr == NULL)
     {
