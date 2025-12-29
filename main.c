@@ -131,9 +131,10 @@ void *engine_stopper(void *arg)
     if ( rc != 0 )
     {
         printf("Error engine_stopper!\n");
-        return;
+        return NULL;
     }
     printf("OK engine_stopper!\n");
+    return NULL;
 }
 
 int main(int argc, char *argv[])
@@ -144,8 +145,7 @@ int main(int argc, char *argv[])
     
     pthread_t th;
     pthread_create(&th,NULL,engine_stopper,fenv);
-    
-    
+     
     frixia_start(fenv);
         
     frixia_environment_destroy(fenv);

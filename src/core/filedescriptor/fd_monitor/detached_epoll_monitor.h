@@ -17,6 +17,8 @@ typedef struct fepoll_th_data
 
     void *context;
 
+    sv_callback_t *callbacks;
+
 } fepoll_th_data_t;
 
 
@@ -27,5 +29,7 @@ void *fepoll_th_data_destroy(fepoll_th_data_t *p);
 int detached_start_epoll(fepoll_th_data_t *fepoll);
 int detached_stop_epoll(fepoll_th_data_t *fepoll);
 int detached_join_epoll(fepoll_th_data_t *fepoll);
+
+void register_callback_by_fd(fepoll_th_data_t *th_data, int fd, sv_callback_t *sv );
 
 #endif

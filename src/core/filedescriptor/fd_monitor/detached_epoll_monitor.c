@@ -32,6 +32,13 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, void *ctx)
     p->keep_looping = b;
     p->started = false;
 
+    sv_callback_t *sv = calloc(MAXIMUM_FD_NUMBER,sizeof(sv_callback_t));
+    if ( sv == NULL )
+    {
+        return NULL;
+    }
+    p->callbacks = sv;
+
     return p;
 }
 void *fepoll_th_data_destroy(fepoll_th_data_t *p)
@@ -78,6 +85,12 @@ int detached_join_epoll(fepoll_th_data_t *fepoll_obj)
         printf("ERRORCODE2::%d\n",rc);
     }
     return rc;
+}
+
+void register_callback_by_fd(fepoll_th_data_t *th_data, int fd, sv_callback_t *sv )
+{
+    sv_callback_t *callbacks = th_data->callbacks;
+    callbacks[fd] = *sv;
 }
 
 
