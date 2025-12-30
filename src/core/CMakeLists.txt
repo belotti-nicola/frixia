@@ -43,4 +43,5 @@ target_link_libraries(core
   fenv
   frixia_monitor
   frixia_contexts
+  shinsu_senju
 )

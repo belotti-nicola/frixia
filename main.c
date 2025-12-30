@@ -137,11 +137,18 @@ void *engine_stopper(void *arg)
     return NULL;
 }
 
+void *http_callback(void *arg)
+{
+    //todo
+}
+
 int main(int argc, char *argv[])
 {        
     frixia_environment_t *fenv = frixia_environment_create();
     frixia_add_eventfd(fenv);
     frixia_add_tcp(fenv,"127.0.0.1",18080,1024);
+
+    frixia_register_callback(fenv,5,http_callback,NULL);//todo: frixia_add_* returns
     
     pthread_t th;
     pthread_create(&th,NULL,engine_stopper,fenv);

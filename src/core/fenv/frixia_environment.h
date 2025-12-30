@@ -5,6 +5,7 @@
 #include "../filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "../filedescriptor/fd_monitor/detached_epoll_monitor.h"
 #include "../fdispatcher/frixia_dispatcher.h"
+#include "../thread_pool/shinsu_senju/detached_shinsu_senju.h"
 
 typedef struct frixia_environment
 {
@@ -16,6 +17,7 @@ typedef struct frixia_environment
 
     fepoll_th_data_t *fepoll_ctx;
     frixia_dispatcher_data_t *fdispatcher_ctx;
+    shinsu_senju_data_t *shinsu_senju_ctx;
 
 } frixia_environment_t;
 

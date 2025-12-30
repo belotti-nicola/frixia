@@ -231,7 +231,6 @@ frixia_environment_t *fenv_create(int maximum_filedescriptors)
     p->fdispatcher_ctx = create_frixia_dispatcher_data();
     p->fdispatcher_ctx->dispatcher->tasks = q;
 
-
     p->maximum_filedescriptors = maximum_filedescriptors;
     p->filedescriptors = 0;
     return p;
