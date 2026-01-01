@@ -4,6 +4,7 @@
 #include <sys/signalfd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "frixia_signals.h"
 

@@ -30,6 +30,7 @@ REFACTORING
     setup -> src/setup
     smaller jop pieces (HTTP: read, callback, response)
     HTTP: GET:/foo to search in HashMap is unnecessary (search /foo GET)
+    event hadling
 
 CHOICES
     handle mini tasks (HTTP: 1.read 2.decode req 3.do magic 4.reply to client)

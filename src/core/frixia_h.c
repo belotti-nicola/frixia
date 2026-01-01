@@ -581,7 +581,7 @@ frixia_environment_t *frixia_environment_create()
     disp_data->dispatcher = disp;
     disp_data->dispatcher->tasks = fepoll_events;
 
-    shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(MAXIMUM_FD_NUMBER);
+    shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(MAXIMUM_FD_NUMBER,(void *)retVal);
     
 
     retVal->fepoll_ctx = fep_data;
