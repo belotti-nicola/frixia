@@ -248,12 +248,12 @@ int frixia_start(frixia_environment_t *env)
     
     detached_start_epoll(fep_data);
     detached_start_frixia_dispatcher_new(fdisp_data);
-    detached_start_shinsu_senju(ss_data);
+    detached_shinsu_senju_start(ss_data);
 
     
     detached_join_epoll(fep_data);
     detached_join_frixia_dispatcher_new(fdisp_data);
-    detached_join_shinsu_senju(ss_data);
+    detached_shinsu_senju_join(ss_data);
     return OK;
 }
 
@@ -266,7 +266,7 @@ int frixia_stop(frixia_environment_t *environment)
     detached_stop_frixia_dispatcher_new(fdisp_data);
 
     shinsu_senju_data_t *ssd = environment->shinsu_senju_ctx;
-    detached_stop_shinsu_senju(ssd);
+    detached_shinsu_senju_stop(ssd);
 
     return 0;
     
@@ -559,6 +559,7 @@ void frixia_register_noprotocol_tcp_callback(frixia_environment_t *env, const ch
 void frixia_register_callback(frixia_environment_t *env,int fd,void *(fun)(void *), void *arg)
 {
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
+    detached_shinsu_senju_load(ssd,fd,fun,arg);    
 }
 
 frixia_environment_t *frixia_environment_create()
@@ -580,6 +581,7 @@ frixia_environment_t *frixia_environment_create()
     frixia_dispatcher_t *disp = disp_data->dispatcher;
     disp_data->dispatcher = disp;
     disp_data->dispatcher->tasks = fepoll_events;
+    disp_data->ctx = retVal;
 
     shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(MAXIMUM_FD_NUMBER,(void *)retVal);
     

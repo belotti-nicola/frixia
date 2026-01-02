@@ -108,12 +108,15 @@ FRIXIA_TCP_READ_RESULT read_tcp(int filedescriptor,char buf[], int size)
     return frixia_tcp_read_create(FTCP_OK,read_bytes,-1);
 }
 
-FRIXIA_TCP_WRITE_RESULT write_tcp( int reply_fd,char buffer[],int size )
+FRIXIA_TCP_WRITE_RESULT write_tcp( int fd,char buffer[],int size )
 {
-    int ret_code = write(reply_fd, buffer, size);
+    //NB: 2025/01/02 : writing when clients closes causes crashes
+    //happens with curl
+    //int ret_code = write(fd, buffer, size);
+
+    ssize_t ret_code = send(fd,buffer, size, MSG_NOSIGNAL);
     if(ret_code == -1)
     {
-        close(reply_fd);
         return frixia_tcp_write_create(ERR_FTCP_WRITE,errno);
     }
     

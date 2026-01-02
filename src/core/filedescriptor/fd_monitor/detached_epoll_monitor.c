@@ -6,6 +6,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "../../fenv/frixia_environment.h"
+#include "../../../core/frixia_h.h"
 
 #include "detached_epoll_monitor.h"
 
@@ -93,4 +95,17 @@ void register_callback_by_fd(fepoll_th_data_t *th_data, int fd, sv_callback_t *s
     callbacks[fd] = *sv;
 }
 
+void fepoll_register_push_callback(fepoll_th_data_t *fepoll,int fd)
+{
+    frixia_environment_t *fenv = (frixia_environment_t *)fepoll->context;
+    
+    frixia_events_queue_t *q = fenv->fepoll_events;
+    fepoll_th_data_t *fep_data = fenv->fepoll_ctx;
+    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+    register_callback_by_fd(fep_data,fd,sv);
+
+
+    int epoll_fd = fenv->fepoll_ctx->fepoll->fd;
+    insert_event(epoll_fd,fd);
+}
 

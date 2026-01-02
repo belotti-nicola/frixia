@@ -15,7 +15,7 @@
 // add b
 #define KEY(a, b) ((a << 8 | b))
 
-#define MAXIMUM_FD_NUMBER 10
+#define MAXIMUM_FD_NUMBER 20
 
 //epoll_wait size
 #define FRIXIA_EPOLL_MAXIMUM_EVENTS 10

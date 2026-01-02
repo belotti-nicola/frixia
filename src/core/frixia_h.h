@@ -11,6 +11,7 @@
 #include "../core/thread_pool/bound_robin/bound_robin.h"
 #include "../core/fenv/frixia_environment.h"
 #include "../core/filedescriptor/types/inode/frixia_inode.h"
+#include "../core/fcontexts/fctx.h"
 #include <errno.h>
 #include <string.h>
 
@@ -53,4 +54,7 @@ int frixia_read_event_data(frixia_event_t *fe,
 
 frixia_environment_t *frixia_environment_create();
 void frixia_environment_destroy(frixia_environment_t *fenv);
+
+
+void *handle_fepoll_push(fctx_t *ctx);
 

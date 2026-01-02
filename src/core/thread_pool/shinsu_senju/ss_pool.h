@@ -23,6 +23,6 @@ void ss_stop_thread(shinsu_senju_pool_t *ssp, int key);
 void ss_destroy(shinsu_senju_pool_t *ssp);
 void ss_join(shinsu_senju_pool_t *ssp);
 void ss_thread_ended(shinsu_senju_pool_t *ssp);
-
+void ss_push_thread(shinsu_senju_pool_t *ssp, int key, void *event);
 
 #endif

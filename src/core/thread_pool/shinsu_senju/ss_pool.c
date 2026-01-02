@@ -58,6 +58,7 @@ void ss_start_new_thread(shinsu_senju_pool_t *ssp, int key,void *(fun)(void *),v
     }
     
     ssp->size+=1;
+    printf("Thread started...\n");
 }
 void ss_stop_thread(shinsu_senju_pool_t *ssp, int key)
 {
@@ -107,4 +108,13 @@ void ss_join(shinsu_senju_pool_t *ssp)
     pthread_cond_wait(no_threads_running,mutex);
 
     pthread_mutex_unlock(mutex);
+}
+
+
+void ss_push_thread(shinsu_senju_pool_t *ssp, int key, void *event)
+{
+    frixia_events_queue_t **queues = ssp->queues;
+    frixia_events_queue_t  *queue  = *(queues + key);
+
+    frixia_events_queue_push(queue,event);
 }

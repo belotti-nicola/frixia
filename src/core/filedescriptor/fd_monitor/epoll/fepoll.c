@@ -337,20 +337,5 @@ FRIXIA_EPOLL_CODE_T fepoll_add_inodefd(frixia_epoll_t *fepoll, const char *path,
     return FEPOLL_OK;
 }
 
-void fepoll_register_callback(frixia_epoll_t *fepoll, int fd, void *(fun)(void *),void *arg)
-{
-    if ( fd < 0 )
-    {
-        printf("Error registering callback (fd<0)!\n");
-        return;
-    }
-    if ( fd > MAXIMUM_FD_NUMBER )
-    {
-        printf("Error registering callback (fd<0)!\n");
-        return;
-    }
-
-    fepoll->fepoll_handlers[fd]  = *sv_create_callback(fun,arg);
-}
 
 

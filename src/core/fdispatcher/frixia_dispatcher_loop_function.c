@@ -2,15 +2,22 @@
 #include "frixia_dispatcher_handler.h"
 #include "frixia_dispatcher.h"
 #include "../callback_suite/callback_data/frixia_callback_context.h"
+#include "frixia_dispatcher.h"
+#include "detached_frixia_dispatcher_new.h"
+#include "../fenv/frixia_environment.h"
 
 #include "frixia_dispatcher_loop_function.h"
 
 int frixia_dispatcher_loop_function(void *arg)
 {
     printf("frixia_dispatcher_loop_function started\n");
-    frixia_dispatcher_t *dispatcher   = (frixia_dispatcher_t *)arg;
+    frixia_dispatcher_data_t *dispatcher_data   = (frixia_dispatcher_data_t *)arg;
+    frixia_dispatcher_t *dispatcher = dispatcher_data->dispatcher;
     frixia_events_queue_t *events_queue = dispatcher->tasks;
     frixia_event_t *event;
+    frixia_environment_t *fenv = (frixia_environment_t *)dispatcher_data->ctx;
+    shinsu_senju_data_t *ssd = fenv->shinsu_senju_ctx;
+    
     bool *keep_looping = dispatcher->keep_looping;
     while(*keep_looping)
     {
@@ -21,7 +28,9 @@ int frixia_dispatcher_loop_function(void *arg)
             printf("WARNING: POPPING EVENTS QUEUE: element is NULL\n");
             continue;
         }
-        printf("dispatcher loop. fd event:%d\n",event->fd);
+        printf("\ndispatcher loop. fd event:%d\n\n",event->fd);
+
+        detached_shinsu_senju_push(ssd,event->fd,event);
     }
 
     /*

@@ -11,10 +11,11 @@
 #include <string.h>
 #include <unistd.h>
 #include "src/core/frixia_h.h"
-
+#include "src/core/thread_pool/shinsu_senju/ss_wrapper_function.h"
+#include "src/core/fcontexts/fctx.h"
 
 #define ITERATIONS 5
-#define DELAY 10
+#define DELAY 20
 
 typedef struct custom 
 {
@@ -93,8 +94,7 @@ void *epoll_cb(int fd, uint32_t mask, sv_callback_t cbs)
         .arg = arg
     };
 
-    cbs.function(&ctx); 
-    return NULL;
+    cbs.function(&ctx); return NULL;
 }
 
 void *push_the_q(void *arg)
@@ -137,9 +137,30 @@ void *engine_stopper(void *arg)
     return NULL;
 }
 
+void *concrete_http_callback_by_user(void *arg)
+{
+    ss_worker_ctx_t *ctx = (ss_worker_ctx_t *)arg;
+    int fd = ctx->id;
+    char buf[1024];
+    read_tcp(ctx->id,buf,1024);
+    write_tcp(ctx->id,HTTP_OK,strlen(HTTP_OK));
+}
+
 void *http_callback(void *arg)
 {
-    //todo
+    ss_worker_ctx_t *ctx = (ss_worker_ctx_t *)arg;
+
+    frixia_environment_t *fenv = (frixia_environment_t *)ctx->arg;
+
+    int fd = ctx->id;
+    int reply;
+    accept_tcp(fd,&reply);
+
+    shinsu_senju_data_t *ssd = fenv->shinsu_senju_ctx;
+    detached_shinsu_senju_load(ssd,reply,concrete_http_callback_by_user,NULL);
+
+    fepoll_th_data_t *fepoll_data = fenv->fepoll_ctx;
+    fepoll_register_push_callback(fepoll_data,reply);
 }
 
 int main(int argc, char *argv[])

@@ -9,4 +9,5 @@ add_library(shinsu_senju
 
 target_link_libraries(shinsu_senju
   fevent
+  simple_valid_callback
 )
