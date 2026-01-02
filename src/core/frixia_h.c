@@ -393,8 +393,10 @@ int frixia_read_event_data(frixia_event_t *fe,
 
 }
 
-void *handle_fepoll_push(fctx_t *ctx)
+void *handle_fepoll_push(void *arg)
 {
+    fctx_t *ctx = (fctx_t *)arg;
+
     event_ctx_t *ev = ctx->ev_ctx;
     frixia_events_queue_t *q = ctx->env->fepoll_events;
     frixia_events_queue_push(q,ev->event);

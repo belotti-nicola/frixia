@@ -56,5 +56,5 @@ frixia_environment_t *frixia_environment_create();
 void frixia_environment_destroy(frixia_environment_t *fenv);
 
 
-void *handle_fepoll_push(fctx_t *ctx);
+void *handle_fepoll_push(void *arg);
 
