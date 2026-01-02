@@ -30,6 +30,13 @@ char HTTP_OK[] =
     "\r\n"
     "Greetings from frixia engine";
 
+char HTTP_KO[] =
+    "HTTP/1.1 400 Bad Request\r\n"
+    "Content-Type: text/plain\r\n"
+    "Content-Length: 15\r\n"
+    "\r\n"
+    "400 Bad Request";
+
 int utility_event_fd_wake(int efd)
 {
     int waker_fd = eventfd(0, EFD_NONBLOCK);
@@ -142,8 +149,24 @@ void *concrete_http_callback_by_user(void *arg)
     ss_worker_ctx_t *ctx = (ss_worker_ctx_t *)arg;
     int fd = ctx->id;
     char buf[1024];
-    read_tcp(ctx->id,buf,1024);
+    FRIXIA_TCP_READ_RESULT read_result = read_tcp(ctx->id,buf,1024);
+    if ( read_result.res.exit_code != FTCP_OK )
+    {
+        return NULL;
+    }
+    int bytes_read = read_result.bytes_read;
+    
+
+    FHTTP_t parsed = frixia_parse_request(buf,bytes_read);
+    if ( parsed.exit_code == false )
+    {
+        write_tcp(ctx->id,HTTP_KO,strlen(HTTP_KO));
+        return NULL;
+    }
+
     write_tcp(ctx->id,HTTP_OK,strlen(HTTP_OK));
+
+    return NULL;
 }
 
 void *http_callback(void *arg)
@@ -166,7 +189,7 @@ void *http_callback(void *arg)
 int main(int argc, char *argv[])
 {        
     frixia_environment_t *fenv = frixia_environment_create();
-    frixia_add_eventfd(fenv);
+    frixia_add_eventfd(fenv);//TODO 
     frixia_add_tcp(fenv,"127.0.0.1",18080,1024);
 
     frixia_register_callback(fenv,5,http_callback,NULL);//todo: frixia_add_* returns

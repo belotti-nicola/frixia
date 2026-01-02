@@ -29,32 +29,14 @@ void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, i
 void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG_T mask);
 void frixia_add_eventfd(frixia_environment_t *env);
 
-
-void frixia_register_http_method_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg);
-void frixia_register_fins_command_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg);
-void frixia_register_noprotocol_tcp_callback(frixia_environment_t *env, const char *ip, int port, void *(*fun)(void *),void *arg);
-void frixia_register_callback(frixia_environment_t *env,int fd,void *(fun)(void *), void *arg);
+void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg);
 
 int frixia_start(frixia_environment_t *env);
 int frixia_stop(frixia_environment_t *env);
-
-int set_engine_event(struct FrixiaFD fd,
-                     struct FrixiaFD ffds[],
-                     int size);
-
-int set_program_event(struct FrixiaFD fd,
-                      struct FrixiaFD ffds[],
-                      int size,
-                      FRIXIA_SUPPORTED_PROTOCOL_T protocol);
-
-int frixia_read_event_data(frixia_event_t *fe,
-                           char *message,
-                           thread_pool_data_t *c_arg,
-                           int *r);
 
 frixia_environment_t *frixia_environment_create();
 void frixia_environment_destroy(frixia_environment_t *fenv);
 
 
-void *handle_fepoll_push(void *arg);
+void *handle_fepoll_push(void *arg);//TODO MOVE FROM HERE AND FROM .C FILE
 

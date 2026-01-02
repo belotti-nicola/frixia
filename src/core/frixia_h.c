@@ -534,34 +534,10 @@ void frixia_add_eventfd(frixia_environment_t *env)
     insert_event(fepoll->fd,fd);
 }
 
-void frixia_register_http_method_callback(frixia_environment_t *env, const char *ip, int port, char *method,const char *path,void *(*fun)(void *),void *arg)
-{
-    //convoy_t *convoy = env->convoy;
-    //convoy_register_http_method_callback(convoy,ip,port,method,path,fun,arg);
-}
-
-void frixia_register_fins_command_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second, void *(*fun)(void *), void *arg)
-{
-    //convoy_t *convoy = env->convoy;
-    //convoy_register_fins_command_callback(convoy,type,ip,port,first,second,fun,arg);
-}
-
-void frixia_register_noprotocol_callback(frixia_environment_t *env,enum FrixiaFDType type,const char *ip, int port, uint8_t first, uint8_t second, void *(*fun)(void *), void *arg)
-{
-    //convoy_t *convoy = env->convoy;
-    //convoy_register_fins_command_callback(convoy,type,ip,port,first,second,fun,arg);
-}
-
-void frixia_register_noprotocol_tcp_callback(frixia_environment_t *env, const char *ip, int port, void *(*fun)(void *),void *arg)
-{
-    //convoy_t *convoy = env->convoy;
-    //convoy_register_noprotocol_tcp_callback(convoy,ip,port,fun,arg);
-}
-
-void frixia_register_callback(frixia_environment_t *env,int fd,void *(fun)(void *), void *arg)
+void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg)
 {
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
-    detached_shinsu_senju_load(ssd,fd,fun,arg);    
+    detached_shinsu_senju_load(ssd,fd,fun,NULL);
 }
 
 frixia_environment_t *frixia_environment_create()
