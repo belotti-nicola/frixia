@@ -19,10 +19,12 @@ typedef struct frixia_environment
     frixia_dispatcher_data_t *fdispatcher_ctx;
     shinsu_senju_data_t *shinsu_senju_ctx;
 
+    convoy_t *convoy;
+
 } frixia_environment_t;
 
-frixia_environment_t *fenv_create(int maximum_filedescriptors);
-void fenv_destroy(frixia_environment_t *fenv);
+frixia_environment_t *fenv_create(int maximum_filedescriptors);//TODO REMOVE
+void fenv_destroy(frixia_environment_t *fenv);//TODO REMOVE
 
 
 void fenv_start_tcp_listening(frixia_environment_t *env,const char *ip, int port);

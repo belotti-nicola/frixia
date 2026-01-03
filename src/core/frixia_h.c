@@ -415,8 +415,8 @@ void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);   
 
-    //convoy_t *c = env->convoy;
-    //convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read,HTTP);
+    convoy_t *c = env->convoy;
+    convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read,UNDEFINED);
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -563,11 +563,13 @@ frixia_environment_t *frixia_environment_create()
 
     shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(MAXIMUM_FD_NUMBER,(void *)retVal);
     
+    convoy_t *convoy = convoy_create();
 
     retVal->fepoll_ctx = fep_data;
     retVal->fdispatcher_ctx = disp_data;
     retVal->fepoll_events = fepoll_events;
     retVal->shinsu_senju_ctx = ss_ctx;
+    retVal->convoy = convoy;
     return retVal;
 }
 

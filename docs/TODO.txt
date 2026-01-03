@@ -1,9 +1,9 @@
 TODO   
     FEPOLL_TCP CODES
-    
+    convoy refactoring (make it threadsafe if necessary)
+  
     valgrind support
     debug level prints
-    convoy is shared -> make it threadsafe if necessary
     remove unnecessary elements
 
 ISSUE:

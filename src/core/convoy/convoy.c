@@ -415,7 +415,13 @@ convoy_t *convoy_create()
         ptr[i].protocol = UNDEFINED;
         ptr[i].protocol_data = NULL;
         ptr[i].type = TCP;
-        ptr[i].type_data = malloc(sizeof(frixia_fd_args_t));
+        frixia_fd_args_t *type_data = malloc(sizeof(frixia_fd_args_t));
+        frixia_tcp_t *tcp_info = malloc(sizeof(frixia_tcp_t));
+        tcp_info->ip = "0.0.0.0";
+        tcp_info->port = 9600;
+        tcp_info->read_size = 0;
+        type_data->tcp_info = tcp_info;
+        ptr[i].type_data = type_data;
     }
     for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
     {
@@ -424,4 +430,9 @@ convoy_t *convoy_create()
 
 
     return retVal;
+}
+
+void convoy_destroy(convoy_t *convoy)
+{
+    free(convoy);
 }

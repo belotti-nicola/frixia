@@ -147,8 +147,13 @@ void *engine_stopper(void *arg)
 void *concrete_http_callback_by_user(void *arg)
 {
     ss_worker_ctx_t *ctx = (ss_worker_ctx_t *)arg;
+
+    frixia_environment_t *fenv = (frixia_environment_t *)ctx->arg;
     int fd = ctx->id;
     char buf[1024];
+
+    printf("\n\n SIZE %d \n\n\n",fenv->convoy->filedescriptors[fd].type_data->tcp_info->read_size);
+
     FRIXIA_TCP_READ_RESULT read_result = read_tcp(ctx->id,buf,1024);
     if ( read_result.res.exit_code != FTCP_OK )
     {
