@@ -15,7 +15,7 @@
 #include "src/core/fcontexts/fctx.h"
 
 #define ITERATIONS 5
-#define DELAY 20
+#define DELAY 10
 
 typedef struct custom 
 {
@@ -150,11 +150,13 @@ void *concrete_http_callback_by_user(void *arg)
 
     frixia_environment_t *fenv = (frixia_environment_t *)ctx->arg;
     int fd = ctx->id;
-    char buf[1024];
 
-    printf("\n\n SIZE %d \n\n\n",fenv->convoy->filedescriptors[fd].type_data->tcp_info->read_size);
+    int dim = fenv->convoy->filedescriptors[fd].type_data->tcp_info.read_size;
+    char buf[dim];
 
-    FRIXIA_TCP_READ_RESULT read_result = read_tcp(ctx->id,buf,1024);
+    printf("\n\n SIZE %d \n\n\n",dim);
+
+    FRIXIA_TCP_READ_RESULT read_result = read_tcp(ctx->id,buf,dim);
     if ( read_result.res.exit_code != FTCP_OK )
     {
         return NULL;
@@ -189,6 +191,9 @@ void *http_callback(void *arg)
 
     fepoll_th_data_t *fepoll_data = fenv->fepoll_ctx;
     fepoll_register_push_callback(fepoll_data,reply);
+
+    convoy_t *c = fenv->convoy;
+    convoy_copy_fd(c,fd,reply);
 }
 
 int main(int argc, char *argv[])

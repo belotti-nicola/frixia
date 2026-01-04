@@ -77,6 +77,17 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
         }
     }
 
+    convoy_t *convoy = fenv->convoy;
+    for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
+    {
+        if ( convoy->filedescriptors[i].type != UNDEFINED )
+        {
+            int fd = convoy->filedescriptors[i].fd;
+            close(fd);
+            printf("Closed fd %d\n",fd);
+        }
+    }
+
     fepoll_stop(fepoll);
     return 0;
 }

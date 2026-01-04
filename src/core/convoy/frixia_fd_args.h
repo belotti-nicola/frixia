@@ -49,13 +49,13 @@ typedef struct frixia_inode
 
 typedef union frixia_fd_args
 {
-    frixia_tcp_t *tcp_info;
-    frixia_udp_t *udp_info;
-    frixia_fifo_t *fifo_info;
-    frixia_timer_t *timer_info;
-    frixia_scheduler_t *scheduler_info;
-    frixia_eventfd_t *eventfd_info;
-    frixia_inode_t *inode_info;
+    frixia_tcp_t tcp_info;
+    frixia_udp_t udp_info;
+    frixia_fifo_t fifo_info;
+    frixia_timer_t timer_info;
+    frixia_scheduler_t scheduler_info;
+    frixia_eventfd_t eventfd_info;
+    frixia_inode_t inode_info;
     
 } frixia_fd_args_t;
 

@@ -68,7 +68,7 @@ void *get_callback_arg(convoy_t *convoy, frixia_epoll_t *fepoll, int fd)
             {
                 case HTTP:
                 {
-                    size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
+                    size = 0;
                     http_callback_context_t *http = create_http_callback_context(fd,size,convoy,fepoll);
                     frixia_tcp_context_t *tcp = malloc(sizeof(frixia_tcp_context_t));
                     frixia_callback_context_t *ctx = malloc(sizeof(frixia_callback_context_t));
@@ -90,7 +90,7 @@ void *get_callback_arg(convoy_t *convoy, frixia_epoll_t *fepoll, int fd)
                 }
                 case HTTPCLIENT:
                 {
-                    size = convoy->filedescriptors[i].type_data->tcp_info->read_size;
+                    size = 0;
                     httpclient_callback_context_t *http = create_httpclient_callback_context(fd,size,convoy,fepoll);
                     frixia_tcp_context_t *tcp = malloc(sizeof(frixia_tcp_context_t));
                     frixia_callback_context_t *ctx = malloc(sizeof(frixia_callback_context_t));

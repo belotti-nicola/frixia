@@ -52,8 +52,8 @@ void *http_callback(frixia_callback_context_t *fctx)
         filedescriptor = convoy->filedescriptors[i];
         if ( filedescriptor.fd == fd)
         {
-            trg_str = filedescriptor.type_data->tcp_info->ip;
-            trg_prt = filedescriptor.type_data->tcp_info->port;
+            trg_str = filedescriptor.type_data->tcp_info.ip;
+            trg_prt = filedescriptor.type_data->tcp_info.port;
         }
 
     }
@@ -89,8 +89,8 @@ void *httpclient_callback(frixia_callback_context_t *ctx)
         if ( filedescriptor.fd == fd )
         {
             filedescriptor = convoy->filedescriptors[i];
-            PORT = filedescriptor.type_data->tcp_info->port;
-            IP = filedescriptor.type_data->tcp_info->ip;
+            PORT = filedescriptor.type_data->tcp_info.port;
+            IP = filedescriptor.type_data->tcp_info.ip;
             break;
         }
     }
@@ -102,9 +102,9 @@ void *httpclient_callback(frixia_callback_context_t *ctx)
         {
             continue;
         }
-        frixia_tcp_t *tcp_info = filedescriptor.type_data->tcp_info;
-        if ( strcmp(tcp_info->ip,IP) == 0 && 
-             tcp_info->port == PORT && filedescriptor.fd != fd)
+        frixia_tcp_t tcp_info = filedescriptor.type_data->tcp_info;
+        if ( strcmp(tcp_info.ip,IP) == 0 && 
+             tcp_info.port == PORT && filedescriptor.fd != fd)
         {
             new_fd = convoy->filedescriptors[i].fd;
             break;
