@@ -3,6 +3,7 @@
 
 #include "../frixia_common.h"
 #include <stdint.h>
+#include <pthread.h>
 
 #include "fd.h"
 
@@ -11,6 +12,8 @@ typedef struct convoy
     int maximum_size;
     int size;
     frixia_file_descriptor_t filedescriptors[MAXIMUM_FD_NUMBER];
+
+    pthread_mutex_t *mutex;
 
 } convoy_t;
 

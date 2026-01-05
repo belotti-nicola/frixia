@@ -58,37 +58,6 @@
 // COMMAND LENGTH READING THE FIFO
 #define FRIXIA_READ_SIZE 64
 
-// TODO DESTROY
-void *POC_FUN(void *arg)
-{
-    thread_pool_data_t *c_arg = (thread_pool_data_t *)arg;
-    while (true)
-    {
-        frixia_event_t *fe = pop_q(c_arg->q);
-        if (fe == NULL)
-        {
-            continue;
-        }
-        char message[1024]; // THIS MIGHT DIFFER BASED ON FD
-        int reply;
-        int bytes_read = frixia_read_event_data(fe, message, c_arg,&reply);
-        if( reply < 0 )
-        {
-            continue;
-        }
-        if( bytes_read > 0 )
-        {
-            write_tcp(reply,"OK",2);
-        }
-        else
-        {
-            write_tcp(reply,"KO",2);
-        } 
-        
-    }
-    printf("Thread ended\n");
-}
-
 /*
 void handle_frixia_message(enum FRIXIA_EVENT_DISPATCHER d,
                            char buff[],
@@ -403,7 +372,7 @@ void *handle_fepoll_push(void *arg)
 }
 
 
-void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
+FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
     FRIXIA_TCP_FD_RESULT res = start_tcp_listening(ip,port);
     int fd = res.fd;
@@ -422,6 +391,8 @@ void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
     register_callback_by_fd(fep_data,fd,sv);
+
+    return res;
 }
 
 void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
@@ -575,5 +546,19 @@ frixia_environment_t *frixia_environment_create()
 
 void frixia_environment_destroy(frixia_environment_t *fenv)
 {
+    fepoll_th_data_t *fepoll_data = fenv->fepoll_ctx;
+    destroy_fepoll_data(fepoll_data);
+
+    frixia_dispatcher_data_t *fdisp_data = fenv->fdispatcher_ctx;
+    destroy_frixia_dispatcher_data(fdisp_data);
+
+    shinsu_senju_data_t *ssd = fenv->shinsu_senju_ctx;
+    destroy_shinsu_senju_data(ssd);
+    
+    convoy_t *convoy = fenv->convoy;
+    convoy_destroy(convoy);
+
+    frixia_events_queue_destroy(fenv->fepoll_events);
+    
     free(fenv);
 }

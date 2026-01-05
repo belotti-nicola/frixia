@@ -17,6 +17,8 @@ typedef struct shinsu_senju_data_t
 } shinsu_senju_data_t;
 
 shinsu_senju_data_t *create_shinsu_senju_data(int workers, void *ctx);
+void destroy_shinsu_senju_data(shinsu_senju_data_t *ssd);
+
 int  detached_shinsu_senju_start(shinsu_senju_data_t *fshinsu_senju);
 int  detached_shinsu_senju_stop(shinsu_senju_data_t *fshinsu_senju);
 int  detached_shinsu_senju_join(shinsu_senju_data_t *fshinsu_senju);

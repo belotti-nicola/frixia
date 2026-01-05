@@ -12,9 +12,11 @@
 
 void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes,FRIXIA_SUPPORTED_PROTOCOL_T protocol)
 {
+    pthread_mutex_lock(c->mutex);
     if( c->size == MAXIMUM_FD_NUMBER)
     {
         printf("Convoy reached maximum size.\n");
+        pthread_mutex_unlock(c->mutex);
         return;
     }
 
@@ -23,104 +25,55 @@ void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port
     c->filedescriptors[fd].protocol = protocol;
     set_frixia_tcp_fd(c->filedescriptors[fd].type_data,ip,port,bytes);
     c->size = c->size +1;
+    pthread_mutex_unlock(c->mutex);
 }
 void convoy_add_udp_filedescriptor(convoy_t *c,int fd,const char *ip,int port,int bytes)
 {
-    // if( c->size == MAXIMUM_FD_NUMBER)
-    // {
-    //     printf("Convoy reached maximum size.\n");
-    //     return;
-    // }
-    // if( c->size == 0)
-    // {
-    //     c->filedescriptors[0].fd   = fd;
-    //     c->filedescriptors[0].type = UDP;
-    //     set_frixia_udp_fd(c->filedescriptors[0].type_data,ip,port,bytes);
-    //     c->size = 1;
-    //     return;
-    // }
+    pthread_mutex_lock(c->mutex);
+    if( c->size == MAXIMUM_FD_NUMBER)
+    {
+        printf("Convoy reached maximum size.\n");
+        pthread_mutex_unlock(c->mutex);
+        return;
+    }
 
-    
-    // int target = c->size;
-    // for(int i=0;i<target;i++)
-    // {
-    //     if( c->filedescriptors[i].type == UDP &&
-    //         c->filedescriptors[i].type_data->udp_info->ip == ip &&
-    //         c->filedescriptors[i].type_data->udp_info->port == port)
-    //     {
-    //         printf("Convoy error: udp socket is already present (%s %d).\n",ip,port);
-    //         return;
-    //     }
-    // }
-    // c->filedescriptors[target].fd   = fd;
-    // c->filedescriptors[target].type = UDP;
-    // frixia_fd_args_t *args = c->filedescriptors[target].type_data;
-    // set_frixia_udp_fd(args,ip,port,bytes);
-    // c->size = c->size +1;
+    c->filedescriptors[fd].fd   = fd;
+    c->filedescriptors[fd].type = UDP;
+    set_frixia_udp_fd(c->filedescriptors[fd].type_data,ip,port,bytes);
+    c->size = c->size +1;
+    pthread_mutex_unlock(c->mutex);
 }
 void convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,int bytes)
 {
-//     if( c->size == MAXIMUM_FD_NUMBER)
-//     {
-//         printf("Convoy reached maximum size.\n");
-//         return;
-//     }
-//     if( c->size == 0)
-//     {
-//         c->filedescriptors[0].fd   = fd;
-//         c->filedescriptors[0].type = FIFO;
-//         set_frixia_fifo_fd(c->filedescriptors[0].type_data,path,bytes);
-//         c->size = 1;
-//         return;
-//     }
+    pthread_mutex_lock(c->mutex);
+    if( c->size == MAXIMUM_FD_NUMBER)
+    {
+        printf("Convoy reached maximum size.\n");
+        pthread_mutex_unlock(c->mutex);
+        return;
+    }
 
-    
-//     int target = c->size;
-//     for(int i=0;i<target;i++)
-//     {
-//         if( c->filedescriptors[i].type == FIFO &&
-//             c->filedescriptors[i].type_data->fifo_info->name== path)
-//         {
-//             printf("Convoy error: fifo socket is already present (%s).\n",path);
-//             return;
-//         }
-//     }
-//     c->filedescriptors[target].fd   = fd;
-//     c->filedescriptors[target].type = FIFO;
-//     set_frixia_fifo_fd(c->filedescriptors[target].type_data,path,bytes);
-//     c->size = c->size +1;
+    c->filedescriptors[fd].fd   = fd;
+    c->filedescriptors[fd].type = FIFO;
+    set_frixia_fifo_fd(c->filedescriptors[fd].type_data,path,bytes);
+    c->size = c->size +1;
+    pthread_mutex_unlock(c->mutex);
 }
 void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int delay, int interval)
 {
-    // if( c->size == MAXIMUM_FD_NUMBER)
-    // {
-    //     printf("Convoy reached maximum size.\n");
-    //     return;
-    // }
-    // if( c->size == 0)
-    // {
-    //     c->filedescriptors[0].fd   = fd;
-    //     c->filedescriptors[0].type = TIMER;
-    //     set_frixia_timer_fd(c->filedescriptors[0].type_data,id,delay,interval);
-    //     c->size = 1;
-    //     return;
-    // }
-    
-    // int target = c->size;
-    // for(int i=0;i<target;i++)
-    // {
-    //     if( c->filedescriptors[i].type == TIMER &&
-    //         c->filedescriptors[i].type_data->timer_info->delay == delay &&
-    //         c->filedescriptors[i].type_data->timer_info->interval == interval )
-    //     {
-    //         printf("Convoy error: timer socket is already present (%d %d).\n",delay,interval);
-    //         return;
-    //     }
-    // }
-    // c->filedescriptors[target].fd   = fd;
-    // c->filedescriptors[target].type = TIMER;
-    // set_frixia_timer_fd(c->filedescriptors[target].type_data,id,delay,interval);
-    // c->size = c->size +1;
+    pthread_mutex_lock(c->mutex);
+    if( c->size == MAXIMUM_FD_NUMBER)
+    {
+        printf("Convoy reached maximum size.\n");
+        pthread_mutex_unlock(c->mutex);
+        return;
+    }
+
+    c->filedescriptors[fd].fd   = fd;
+    c->filedescriptors[fd].type = FIFO;
+    set_frixia_timer_fd(c->filedescriptors[fd].type_data,id,delay,interval);
+    c->size = c->size +1;
+    pthread_mutex_unlock(c->mutex);
 }
 void convoy_add_scheduler_filedescriptor(convoy_t *c, int fd, int tick)
 {
@@ -381,6 +334,15 @@ convoy_t *convoy_create()
         return NULL;
     }
 
+    pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
+    if ( mutex == NULL )
+    {
+        printf("Error creating convoy mutex!\n");
+        return NULL;
+    }
+    pthread_mutex_init(mutex,NULL);
+
+    retVal->mutex = mutex;
     retVal->size = 0;
     retVal->maximum_size = MAXIMUM_FD_NUMBER;
 
@@ -417,5 +379,6 @@ convoy_t *convoy_create()
 
 void convoy_destroy(convoy_t *convoy)
 {
+    free(convoy->mutex);
     free(convoy);
 }

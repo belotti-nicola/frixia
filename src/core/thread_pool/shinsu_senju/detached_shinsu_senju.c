@@ -43,6 +43,14 @@ shinsu_senju_data_t *create_shinsu_senju_data(int workers, void *arg)
     return retVal;
 }
 
+void destroy_shinsu_senju_data(shinsu_senju_data_t *ssd)
+{
+    bool *b = ssd->active;
+    free(b);
+    ss_destroy(ssd->pool);
+    free(ssd);
+}
+
 int detached_shinsu_senju_start(shinsu_senju_data_t *shinsu_senju)
 {
     pthread_t ss_thread;

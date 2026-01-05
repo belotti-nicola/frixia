@@ -12,6 +12,7 @@
 #include "../core/fenv/frixia_environment.h"
 #include "../core/filedescriptor/types/inode/frixia_inode.h"
 #include "../core/fcontexts/fctx.h"
+#include "../core/filedescriptor/types/tcp/frixia_tcp_fd_result.h"
 #include <errno.h>
 #include <string.h>
 
@@ -20,7 +21,7 @@
     printf("[DEBUG] %s: %s (errno: %d, %s:%d (%s))\n", prefix,strerror(errno), errno, __FILE__, __LINE__,__func__)
 
 
-void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
+FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
 void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
 void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read);
 void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval);

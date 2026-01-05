@@ -67,9 +67,7 @@ void *waker_th(void *arg)
     if ( bytes_written <= 0 )
     {
         printf("Error writing on eventfd %d!\n",*fd);
-    }
-
-    
+    }  
     
     return NULL;
 }
@@ -200,9 +198,10 @@ int main(int argc, char *argv[])
 {        
     frixia_environment_t *fenv = frixia_environment_create();
     frixia_add_eventfd(fenv);//TODO 
-    frixia_add_tcp(fenv,"127.0.0.1",18080,1024);
+    FRIXIA_TCP_FD_RESULT tcp_fd_res = frixia_add_tcp(fenv,"127.0.0.1",18080,1024);
 
-    frixia_register_callback(fenv,5,http_callback,NULL);//todo: frixia_add_* returns
+    int fd = tcp_fd_res.fd;
+    frixia_register_callback(fenv,fd,http_callback,NULL);//todo: frixia_add_* returns
     
     pthread_t th;
     pthread_create(&th,NULL,engine_stopper,fenv);
@@ -210,5 +209,6 @@ int main(int argc, char *argv[])
     frixia_start(fenv);
         
     frixia_environment_destroy(fenv);
+    printf("End.\n");
     return 0;
 }
