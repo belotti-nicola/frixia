@@ -70,10 +70,10 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
             int event_fd = ev_q->fd;
             uint32_t mask = ev_q->events_maks;
             frixia_events_queue_t *events = fenv->fepoll_events;
-            //printf("FOUND :: %p %p %d!\n",sv.function, sv.auxiliary, sv.is_valid);
 
             sv_callback_t sv = fenv->fepoll_ctx->callbacks[event_fd];
             do_callback_wrapper(&sv,event_fd,mask,fenv);
+            printf("Event fd in epoll %d...\n",event_fd);
         }
     }
 

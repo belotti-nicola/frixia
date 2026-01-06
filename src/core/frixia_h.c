@@ -442,8 +442,13 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
-    //convoy_t *c = env->convoy;
-    //convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
+    convoy_t *c = env->convoy;
+    convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
+
+    frixia_events_queue_t *q = env->fepoll_events;
+    fepoll_th_data_t *fep_data = env->fepoll_ctx;
+    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+    register_callback_by_fd(fep_data,fd,sv);
 }
 
 // void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
@@ -513,10 +518,23 @@ void frixia_add_eventfd(frixia_environment_t *env)
     insert_event(fepoll->fd,fd);
 }
 
+void frixia_add_signal(frixia_environment_t *env,FRIXIA_SIGNALS_T sig)
+{
+    int fd = start_signalfd_listening(sig);
+    if ( fd < 0 )
+    {
+        printf("Error::frixia_add_eventfd");
+        return;
+    }
+
+    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
+    insert_event(fepoll->fd,fd);
+}
+
 void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg)
 {
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
-    detached_shinsu_senju_load(ssd,fd,fun,NULL);
+    detached_shinsu_senju_load(ssd,fd,fun,arg);
 }
 
 frixia_environment_t *frixia_environment_create()

@@ -14,6 +14,7 @@
 #include "../core/fcontexts/fctx.h"
 #include "../core/filedescriptor/types/tcp/frixia_tcp_fd_result.h"
 #include "../core/filedescriptor/types/udp/frixia_udp_fd_result.h"
+#include "../core/filedescriptor/types/signalfd/frixia_signalfd.h"
 #include <errno.h>
 #include <string.h>
 
@@ -27,6 +28,7 @@ FRIXIA_UDP_FD_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,
 void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read);
 void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval);
 void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG_T mask);
+void frixia_add_signal(frixia_environment_t *env, FRIXIA_SIGNALS_T sig);
 void frixia_add_eventfd(frixia_environment_t *env);
 
 void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg);

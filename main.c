@@ -17,6 +17,7 @@
 
 #define ITERATIONS 5
 #define DELAY 10
+#define SLEEP_SECONDS_BEFORE_STOP 20
 
 typedef struct custom 
 {
@@ -130,7 +131,7 @@ void *echoudp(void *arg)
 
 void *engine_stopper(void *arg)
 {
-    sleep(5);
+    sleep(SLEEP_SECONDS_BEFORE_STOP);
 
     frixia_environment_t *fenv = (frixia_environment_t *)arg;
     int rc = frixia_stop(fenv);
@@ -195,16 +196,31 @@ void *http_callback(void *arg)
     convoy_copy_fd(c,fd,reply);
 }
 
+void *timer_callback(void *arg)
+{
+    ss_worker_ctx_t *ctx = (ss_worker_ctx_t *)arg;
+    int fd = ctx->id;
+    int *counter = (int *)ctx->callback.auxiliary;
+    *counter += 1;
+    char buf[8];
+    int bytes_read = read_timer(fd, buf);
+    printf("Timer tick number %d, bytes read %d, buf %s\n",*counter,bytes_read,buf);
+    return NULL;
+}
+
 int main(int argc, char *argv[])
 {        
     frixia_environment_t *fenv = frixia_environment_create();
-    frixia_add_eventfd(fenv);//TODO 
-    FRIXIA_TCP_FD_RESULT tcp_fd_res = frixia_add_tcp(fenv,"127.0.0.1",18080,1024);
-    FRIXIA_UDP_FD_RESULT udp_fd_res = frixia_add_udp(fenv,"127.0.0.1",19600,1024);
+    frixia_add_eventfd(fenv);//4
+    FRIXIA_TCP_FD_RESULT tcp_fd_res = frixia_add_tcp(fenv,"127.0.0.1",18080,1024);//5
+    FRIXIA_UDP_FD_RESULT udp_fd_res = frixia_add_udp(fenv,"127.0.0.1",19600,1024);//6
+    frixia_add_timer(fenv,"periodic",4,2);//7
 
     int fd = tcp_fd_res.fd;
-    frixia_register_callback(fenv,fd,http_callback,NULL);//todo: frixia_add_* returns
-    
+    int counter = 0;
+    frixia_register_callback(fenv,fd,http_callback,NULL);
+    frixia_register_callback(fenv,7,timer_callback,&counter);
+
     pthread_t th;
     pthread_create(&th,NULL,engine_stopper,fenv);
      
