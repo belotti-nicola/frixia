@@ -378,7 +378,7 @@ FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,
     int fd = res.fd;
     if(fd < 0)
     {
-        return;
+        return res;
     }
     
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
@@ -395,21 +395,29 @@ FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,
     return res;
 }
 
-void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
+FRIXIA_UDP_FD_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
-    int fd = 0;
+    FRIXIA_UDP_FD_RESULT udp_res = start_udp_listening(ip,port);
+    int fd = udp_res.fd;
     if(fd < 0)
     {
-        return;
+        return udp_res;
     }
     
-    //TODO FIX THIS SHIT
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
-    //convoy_t *c = env->convoy;
-    //convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
+    convoy_t *c = env->convoy;
+    convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read,UNDEFINED);
+
+    frixia_events_queue_t *q = env->fepoll_events;
+    fepoll_th_data_t *fep_data = env->fepoll_ctx;
+    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+    register_callback_by_fd(fep_data,fd,sv);
+
+    return udp_res;
 }
+
 void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
 {
     int fd = start_fifo_listening(file);
@@ -438,43 +446,43 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
     //convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
 }
 
-void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
-{
-    //TODO not cleaniest but do the works
-    //0 would be FROM_NOW but the fd will not be read causing the engine to stop
-    int fd = start_timer_listening(1,tick_size);
-    if(fd < 0)
-    {
-        return;
-    }
+// void frixia_add_scheduler(frixia_environment_t *env, int tick_size)
+// {
+//     //TODO not cleaniest but do the works
+//     //0 would be FROM_NOW but the fd will not be read causing the engine to stop
+//     int fd = start_timer_listening(1,tick_size);
+//     if(fd < 0)
+//     {
+//         return;
+//     }
 
-    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
-    insert_event(fepoll->fd,fd);
+//     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
+//     insert_event(fepoll->fd,fd);
 
-    //convoy_t *c = env->convoy;
-    //convoy_add_scheduler_filedescriptor(c,fd,tick_size);
-}
+//     //convoy_t *c = env->convoy;
+//     //convoy_add_scheduler_filedescriptor(c,fd,tick_size);
+// }
 
-void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, int interval)
-{
-    int fd = start_eventfd_listening();
-    if(fd < 0)
-    {
-        printf("Error::frixia_add_scheduled_periodic_timer.\n");
-        return;
-    }
+// void frixia_add_scheduled_periodic_timer(frixia_environment_t *env, int delay, int interval)
+// {
+//     int fd = start_eventfd_listening();
+//     if(fd < 0)
+//     {
+//         printf("Error::frixia_add_scheduled_periodic_timer.\n");
+//         return;
+//     }
 
-    frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
-    insert_event(fepoll->fd,fd);
+//     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
+//     insert_event(fepoll->fd,fd);
 
-    //convoy_t *c = env->convoy;
-    //convoy_add_scheduled_timer_filedescriptor(c,fd);
+//     //convoy_t *c = env->convoy;
+//     //convoy_add_scheduled_timer_filedescriptor(c,fd);
 
-    frixia_events_queue_t *q = env->fepoll_events;
-    fepoll_th_data_t *fep_data = env->fepoll_ctx;
-    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
-    register_callback_by_fd(fep_data,fd,sv);
-}
+//     frixia_events_queue_t *q = env->fepoll_events;
+//     fepoll_th_data_t *fep_data = env->fepoll_ctx;
+//     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+//     register_callback_by_fd(fep_data,fd,sv);
+// }
 
 void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG_T mask)
 {
@@ -547,7 +555,7 @@ frixia_environment_t *frixia_environment_create()
 void frixia_environment_destroy(frixia_environment_t *fenv)
 {
     fepoll_th_data_t *fepoll_data = fenv->fepoll_ctx;
-    destroy_fepoll_data(fepoll_data);
+    fepoll_th_data_destroy(fepoll_data);
 
     frixia_dispatcher_data_t *fdisp_data = fenv->fdispatcher_ctx;
     destroy_frixia_dispatcher_data(fdisp_data);

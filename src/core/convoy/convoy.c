@@ -325,6 +325,13 @@ void convoy_copy_fd(convoy_t *c, int source_fd, int destination_fd)
     c->filedescriptors[destination_fd].type_data = c->filedescriptors[source_fd].type_data;   
 }
 
+void convoy_remove_fd(convoy_t *c, int fd)
+{
+    c->filedescriptors[fd].fd        = -1;
+    c->filedescriptors[fd].type      = UNDEFINED;
+    c->filedescriptors[fd].type_data = NO_PROTOCOL;
+}
+
 convoy_t *convoy_create()
 {
     convoy_t *retVal = malloc(sizeof(convoy_t));

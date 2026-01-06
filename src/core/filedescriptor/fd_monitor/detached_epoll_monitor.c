@@ -45,6 +45,7 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, void *ctx)
 }
 void *fepoll_th_data_destroy(fepoll_th_data_t *p)
 {
+    destroy_frixia_epoll(p->fepoll);
     free(p->keep_looping);
     free(p);
 }

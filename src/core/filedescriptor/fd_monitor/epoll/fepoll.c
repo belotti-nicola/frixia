@@ -221,7 +221,7 @@ FRIXIA_FEPOLL_ADD_RESULT fepoll_add_tcp(frixia_epoll_t *fepoll, const char *ip,i
 
 FRIXIA_FEPOLL_ADD_RESULT fepoll_add_udp(frixia_epoll_t *fepoll, const char *ip,int port)
 {
-    FRIXIA_UDP_FD_RESULT res = start_udp_listening(port);
+    FRIXIA_UDP_FD_RESULT res = start_udp_listening(ip,port);
     int fd = res.fd;
     if ( fd < 0 )
     {

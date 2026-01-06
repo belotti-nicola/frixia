@@ -1,5 +1,6 @@
 #include "src/core/filedescriptor/fd_monitor/epoll/fepoll.h"
 #include "src/core/filedescriptor/types/tcp/frixia_tcp.h"
+#include "src/core/filedescriptor/types/udp/frixia_udp.h"
 #include "src/core/filedescriptor/types/eventfd/frixia_eventfd.h"
 #include "src/utils/valid_callback/simple_valid_callback.h"
 #include "src/core/filedescriptor/fd_monitor/epoll/../../../filedescriptor/types/signalfd/frixia_signalfd.h"
@@ -199,6 +200,7 @@ int main(int argc, char *argv[])
     frixia_environment_t *fenv = frixia_environment_create();
     frixia_add_eventfd(fenv);//TODO 
     FRIXIA_TCP_FD_RESULT tcp_fd_res = frixia_add_tcp(fenv,"127.0.0.1",18080,1024);
+    FRIXIA_UDP_FD_RESULT udp_fd_res = frixia_add_udp(fenv,"127.0.0.1",19600,1024);
 
     int fd = tcp_fd_res.fd;
     frixia_register_callback(fenv,fd,http_callback,NULL);//todo: frixia_add_* returns
