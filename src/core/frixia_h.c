@@ -432,7 +432,7 @@ void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_re
     //convoy_t *c = env->convoy;
     //convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
 }
-void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
+void frixia_add_timer(frixia_environment_t *env,int delay, int interval)
 {
     int fd = start_timer_listening(delay,interval);
     if(fd < 0)
@@ -443,7 +443,7 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_timer_filedescriptor(c,fd,id,delay,interval);
+    convoy_add_timer_filedescriptor(c,fd,delay,interval);
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;

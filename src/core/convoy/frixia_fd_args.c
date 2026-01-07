@@ -20,9 +20,8 @@ void set_frixia_fifo_fd(frixia_fd_args_t *fd, const char *name, int read_size)
     fd->fifo_info.read_size = read_size;
 }
 
-void set_frixia_timer_fd(frixia_fd_args_t *fd, const char *id, int delay, int interval)
+void set_frixia_timer_fd(frixia_fd_args_t *fd, int delay, int interval)
 {
-    fd->timer_info.id = id;
     fd->timer_info.delay = delay;
     fd->timer_info.interval = interval;
 }

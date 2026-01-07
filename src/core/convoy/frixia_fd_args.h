@@ -23,7 +23,6 @@ typedef struct frixia_fifo
 } frixia_fifo_t;
 typedef struct frixia_timer
 {
-    const char *id;
     int         delay;
     int         interval;
 
@@ -62,7 +61,7 @@ typedef union frixia_fd_args
 void set_frixia_tcp_fd(frixia_fd_args_t *fd, const char *ip, int port, int read_size);
 void set_frixia_udp_fd(frixia_fd_args_t *fd, const char *ip, int port, int read_size);
 void set_frixia_fifo_fd(frixia_fd_args_t *fd, const char *name, int read_size);
-void set_frixia_timer_fd(frixia_fd_args_t *fd, const char *id, int delay, int interval);
+void set_frixia_timer_fd(frixia_fd_args_t *fd, int delay, int interval);
 void set_frixia_scheduler_fd(frixia_fd_args_t *fd, int tick);
 void set_frixia_eventfd_fd(frixia_fd_args_t *fd, int ev_fd);
 void set_frixia_inode_fd(frixia_fd_args_t *fd, char *filepath);

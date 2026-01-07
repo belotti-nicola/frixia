@@ -26,7 +26,7 @@
 FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
 FRIXIA_UDP_FD_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
 void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read);
-void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval);
+void frixia_add_timer(frixia_environment_t *env, int delay, int interval);
 void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG_T mask);
 void frixia_add_signal(frixia_environment_t *env, FRIXIA_SIGNALS_T sig);
 void frixia_add_eventfd(frixia_environment_t *env);

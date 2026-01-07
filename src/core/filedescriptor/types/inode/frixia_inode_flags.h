@@ -1,5 +1,3 @@
-#include <sys/inotify.h>
-
 /*
  * https://man7.org/linux/man-pages/man7/inotify.7.html
  * THIS IMPLEMENTATION IS OVERKILL BUT IN FUTURE MIGHT BE HANDY AND HELPED ME TO DO THINGS WITH ENUMS

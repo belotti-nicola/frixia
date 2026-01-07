@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.9)
+
+project(frixia VERSION 1.0.0 DESCRIPTION "Engine for filedescriptors.")
+
+add_library( frixia
+    frixia.c 
+)
+
+target_include_directories(frixia
+    PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
+)
+
+***************
+TODO:
+    /frixia/include/internal/ftcp_codes.def

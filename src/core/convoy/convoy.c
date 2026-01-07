@@ -59,7 +59,7 @@ void convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,int byte
     c->size = c->size +1;
     pthread_mutex_unlock(c->mutex);
 }
-void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int delay, int interval)
+void convoy_add_timer_filedescriptor(convoy_t *c,int fd, int delay, int interval)
 {
     pthread_mutex_lock(c->mutex);
     if( c->size == MAXIMUM_FD_NUMBER)
@@ -71,7 +71,7 @@ void convoy_add_timer_filedescriptor(convoy_t *c,int fd,const char *id, int dela
 
     c->filedescriptors[fd].fd   = fd;
     c->filedescriptors[fd].type = FIFO;
-    set_frixia_timer_fd(c->filedescriptors[fd].type_data,id,delay,interval);
+    set_frixia_timer_fd(c->filedescriptors[fd].type_data,delay,interval);
     c->size = c->size +1;
     pthread_mutex_unlock(c->mutex);
 }
