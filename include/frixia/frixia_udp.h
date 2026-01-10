@@ -1,55 +1,29 @@
-#ifndef FRIXIA_TCP_H
-#define FRIXIA_TCP_H
+#ifndef FRIXIA_UDP_H
+#define FRIXIA_UDP_H
 
 
-#define FTCP_CODES_LIST \
-    X(FTCP_OK) \
-    X(ERR_FTCP_SOCKET) \
-    X(ERR_FTCP_SETSOCKETOPT) \
-    X(ERR_FTCP_BIND) \
-    X(ERR_FTCP_LISTEN) \
-    X(ERR_FTCP_START_EPOLLCTL_ADD) \
-    X(ERR_FTCP_STOP_EPOLLCTL_DEL) \
-    X(ERR_FTCP_ACCEPTING) \
-    X(ERR_FTCP_READING) \
-    X(ERR_FTCP_START_MALFORMED_EPOLL_FD) \
-    X(ERR_FTCP_START_MALFORMED_PORT) \
-    X(ERR_FTCP_STOP_MALFORMED_EPOLL_FD) \
-    X(ERR_FTCP_STOP_MALFORMED_TARGET_FD) \
-    X(ERR_FTCP_WRITE) \
-    X(ERR_FTCP_FNCTL) \
-    X(ERR_FTCP_INET_PTON) \
-    X(ERR_FTCP_IP_NOT_VALID) \
-    X(FTCP_CLOSE_ERROR)
-
-typedef enum {
-#define X(name) name,
-    FTCP_CODES_LIST
-#undef X
-} FTCP_CODE_T ;
-
-
-static inline const char* ftcp_code_to_string(FTCP_CODE_T code) {
-    switch(code) {
-#define X(name) case name: return #name;
-        FTCP_CODES_LIST
-#undef X
-    }
-    return "UNKNOWN_FTCP_CODE";
-}
-
-typedef struct FRIXIA_TCP_RESULT
+typedef enum 
 {
-    FTCP_CODE_T exit_code;
+#define X(name) name,
+#include "internal/fudp_codes.def"
+#undef X
+} FUDP_CODE;
+
+
+const char* fudp_code_to_string(FUDP_CODE code);
+
+typedef struct FRIXIA_UDP_RESULT
+{
+    FUDP_CODE exit_code;
     int errno_code;
     
-} FRIXIA_TCP_RESULT;
+} FRIXIA_UDP_RESULT;
 
-typedef struct FRIXIA_TCP_FD_RESULT
+typedef struct FRIXIA_UDP_FD_RESULT
 {
     int fd;
-    FRIXIA_TCP_RESULT res;
+    FRIXIA_UDP_RESULT res;
     
-} FRIXIA_TCP_FD_RESULT;
+} FRIXIA_UDP_FD_RESULT;
 
 #endif
