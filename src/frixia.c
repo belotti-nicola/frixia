@@ -68,7 +68,7 @@ void foo_frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_t
 }
 void foo_frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
 {
-    frixia_add_timer(env,id,delay,interval);
+    frixia_add_timer(env,delay,interval);
 }
 void foo_frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG_T mask)
 {

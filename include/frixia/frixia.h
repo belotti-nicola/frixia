@@ -12,6 +12,7 @@ extern "C" {
 #include <frixia/frixia_timer.h>
 #include <frixia/frixia_eventfd.h>
 #include <frixia/frixia_signal.h>
+#include <frixia/frixia_inode.h>
 
 #ifdef __cplusplus
 }
