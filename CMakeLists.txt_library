@@ -10,7 +10,3 @@ target_include_directories(frixia
     PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
 )
-
-***************
-TODO:
-    /frixia/include/internal/udp_codes.def
