@@ -7,7 +7,9 @@ frixia_environment_t *frixia_environment_create()
     return NULL;
 }
 void frixia_environment_destroy(frixia_environment_t *fenv)
-{}
+{
+
+}
 
 const char* ftcp_code_to_string(FTCP_CODE code)
 {
@@ -32,7 +34,7 @@ switch (code)
         return "FUDP_UNKNOWN_ERROR";
     }
 }
-const char *finode_code_to_string(FRIXIA_INODE_FLAG code)
+const char* finode_code_to_string(FRIXIA_INODE_FLAG code)
 {
 switch (code)
     {
@@ -44,6 +46,47 @@ switch (code)
         return "FUDP_UNKNOWN_ERROR";
     }
 }
+const char* frixia_signal_to_unix(FRIXIA_SIGNAL sig)
+{
+return "";
+}
+const char* ffifo_code_to_string(FFIFO_CODE code)
+{
+    switch (code)
+    {
+#define X(name) case name: return #name;
+#include "internal/ffifo_codes.def"
+#undef X
+
+    default:
+        return "FFIFO_UNKNOWN_CODE";
+    }
+}
+const char* ftimer_code_to_string(TIMER_CODE code)
+{
+    switch (code)
+    {
+#define X(name) case name: return #name;
+#include "internal/ftimer_codes.def"
+#undef X
+
+    default:
+        return "FTIMER_UNKNOWN_CODE";
+    }
+}
+const char* frixia_eventfd_to_string(FEVENTFD_CODE code)
+{
+    switch (code)
+    {
+#define X(name) case name: return #name;
+#include "internal/feventfd_codes.def"
+#undef X
+
+    default:
+        return "FEVENTFD_UNKNOWN_CODE";
+    }
+}
+
 
 int frixia_start(frixia_environment_t *env)
 {return 0;}

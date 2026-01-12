@@ -8,4 +8,6 @@ typedef enum
 #undef X
 } TIMER_CODE;
 
+const char *ftimer_code_to_string(TIMER_CODE code);
+
 #endif
