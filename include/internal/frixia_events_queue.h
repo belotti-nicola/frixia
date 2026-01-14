@@ -1,7 +1,8 @@
 #ifndef FRIXIA_EVENTS_QUEUE_H
 #define FRIXIA_EVENTS_QUEUE_H
 
-#include <utils/include/threadsafe_simple_queue.h>
+#include <threadsafe_simple_queue.h>
+
 #include "frixia_event.h"
 
 typedef struct frixia_events_queue 

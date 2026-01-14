@@ -1,25 +1,26 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.9)
 
-project(frixia C)
-include(CTest)
+project(frixia VERSION 1.0.0 DESCRIPTION "Engine for filedescriptors.")
 
-find_package(Threads REQUIRED)
+add_subdirectory(src/utils)
+#add_subdirectory(src/fepoll/epoll)
 
-set(CMAKE_C_FLAGS -pthread)
-
-add_subdirectory(deps)
-add_subdirectory(src)
-add_subdirectory(test)
-
-add_executable(frixia
-  main.c
+set(FRIXIA_SOURCES
+    frixia.c
+    src/convoy/convoy.c
+    src/fevent/frixia_event.c
+    src/fevent/frixia_events_queue.c
 )
 
-target_link_libraries(frixia 
-  core
-  picohttpparser
-  threadsafe_simple_queue
-  simple_queue
-  simple_valid_callback
+add_library(frixia
+    ${FRIXIA_SOURCES}
 )
 
+target_include_directories(frixia
+    PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
+)
+
+target_link_libraries(frixia
+    PRIVATE frixia_utils
+)
