@@ -92,8 +92,12 @@ int frixia_start(frixia_environment_t *env)
 {return 0;}
 int frixia_stop(frixia_environment_t *env)
 {}
-void frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
-{}
+FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
+{
+    FRIXIA_TCP_FD_RESULT a;
+    return a;
+    
+}
 void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {}
 void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
