@@ -1,12 +1,11 @@
 
 #include "fepoll.h"
-#include "../../../frixia_common.h"
 #include "epoll.h"
-#include "../../../fevent/frixia_event.h"
-#include "../../../fcontexts/fctx.h"
-#include "../../../fcontexts/event_context.h"
+#include <internal/frixia_event.h>
 #include <unistd.h>
-#include "../../../fenv/frixia_environment.h"
+#include <frixia/frixia_environment.h>
+#include "event_context.h"
+#include "fctx.h"
 
 #include "fepoll_loop_function.h"
 
@@ -49,13 +48,13 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_environme
 int fepoll_loop_function(fepoll_th_data_t *th_data)
 {
     frixia_epoll_t *fepoll = th_data->fepoll;
-    frixia_environment_t *fenv = (frixia_environment_t *)th_data->context;
+    frixia_environment_t *fenv = (frixia_environment_t *)th_data->fenv;
 
     bool *keep_looping = th_data->keep_looping;
     while( *keep_looping )
     {
         printf("Waiting\n");
-        frixia_event_t ev_q[FRIXIA_EPOLL_MAXIMUM_EVENTS];
+        frixia_event_t ev_q[50];
         int events_number = frixia_epoll_wait(fepoll,ev_q);
         printf("events_number :: %d\n",events_number);
         if( events_number < 0)
@@ -78,7 +77,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
     }
 
     convoy_t *convoy = fenv->convoy;
-    for(int i=0;i<MAXIMUM_FD_NUMBER;i++)
+    for(int i=0;i<25;i++)
     {
         if ( convoy->filedescriptors[i].type != UNDEFINED )
         {

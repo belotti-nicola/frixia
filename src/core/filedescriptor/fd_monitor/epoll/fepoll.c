@@ -52,8 +52,8 @@ frixia_epoll_t* create_frixia_epoll()
     frixia_epoll->fd = fd_epoll;
     frixia_epoll->fd_pool = l;   
     
-    sv_callback_t *cbs = malloc(MAXIMUM_FILEDESCRIPTORS_NUMBER * sizeof(sv_callback_t));
-    for (int i=0;i++;i<MAXIMUM_FILEDESCRIPTORS_NUMBER)
+    sv_callback_t *cbs = malloc(25 * sizeof(sv_callback_t));
+    for (int i=0;i++;i<25)
     {
         cbs->is_valid = false;
         cbs->auxiliary = NULL;
@@ -157,7 +157,7 @@ FRIXIA_EPOLL_CODE_T modify_event(int epoll, int fd)
 
 int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents)
 {
-    int events_number = wait_epoll_events(fepoll->fd,FRIXIA_EPOLL_MAXIMUM_EVENTS,fevents);
+    int events_number = wait_epoll_events(fepoll->fd,50,fevents);
     return events_number;
 }
 

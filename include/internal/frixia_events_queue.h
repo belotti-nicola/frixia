@@ -1,7 +1,7 @@
 #ifndef FRIXIA_EVENTS_QUEUE_H
 #define FRIXIA_EVENTS_QUEUE_H
 
-#include <threadsafe_simple_queue.h>
+#include <internal/threadsafe_simple_queue.h>
 
 #include "frixia_event.h"
 

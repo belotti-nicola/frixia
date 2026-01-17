@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #include <frixia/frixia_environment.h>
-#include <simple_valid_callback.h>
+#include <internal/simple_valid_callback.h>
 
 typedef struct frixia_epoll frixia_epoll_t;
 

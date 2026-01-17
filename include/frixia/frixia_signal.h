@@ -8,7 +8,7 @@ typedef enum
 #undef X
 } FRIXIA_SIGNAL;
 
-const char * frixia_signal_to_unix(FRIXIA_SIGNAL fsignal);
+int frixia_signal_to_unix(FRIXIA_SIGNAL fsignal);
 
 
 #endif

@@ -6,7 +6,7 @@
 #define FRIXIA_EPOLL_KERNEL_HINT 5
 
 // FD Data Structure size
-#define MAXIMUM_FILEDESCRIPTORS_NUMBER 10
+#define 25 10
 
 
 #endif

@@ -1,5 +1,6 @@
 TODO   
     FEPOLL_TCP CODES
+    HANDLERS CODES
     convoy refactoring (make it threadsafe if necessary)
   
     valgrind support

@@ -1,8 +1,8 @@
 #ifndef THREADSAFE_SIMPLE_QUEUE_H
 #define THREADSAFE_SIMPLE_QUEUE_H
 
-#include <simple_queue.h>
-#include "pthread.h"
+#include <internal/simple_queue.h>
+#include <pthread.h>
 
 typedef struct threadsafe_simple_queue 
 {

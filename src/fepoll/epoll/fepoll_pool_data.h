@@ -1,7 +1,24 @@
 #ifndef FEPOLL_POOL_DATA_H
 #define FEPOLL_POOL_DATA_H
 
-#include "../../../frixia_common.h"
+enum FrixiaFDType
+{
+    UNDEFINED,
+
+    STD_INPUT,
+    STD_OUTPUT,
+    STD_ERR,
+    TCP,
+    UDP,
+    FIFO,
+    TIMER,
+    WAKE,
+    SCHEDULER,
+    EVENTFD,
+    INODE
+
+};
+
 typedef struct fepoll_data
 {
     int               fd;

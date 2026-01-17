@@ -55,7 +55,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
     while( *keep_looping )
     {
         printf("Waiting\n");
-        frixia_event_t ev_q[FRIXIA_EPOLL_MAXIMUM_EVENTS];
+        frixia_event_t ev_q[50];
         int events_number = frixia_epoll_wait(fepoll,ev_q);
         printf("events_number :: %d\n",events_number);
         if( events_number < 0)

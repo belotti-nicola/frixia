@@ -1,7 +1,7 @@
 #ifndef FEPOLL_POOL_H
 #define FEPOLL_POOL_H
 
-#include "../../../../utils/datastructures/simple_list/simple_list.h"
+#include <internal/simple_list.h>
 #include "fepoll_pool_data.h"
 
 typedef struct fepoll_pool

@@ -25,4 +25,18 @@ typedef struct FRIXIA_TCP_FD_RESULT
     
 } FRIXIA_TCP_FD_RESULT;
 
+typedef struct FRIXIA_TCP_READ_RESULT
+{
+    int bytes_read;
+    FRIXIA_TCP_RESULT res;
+    
+} FRIXIA_TCP_READ_RESULT;
+
+typedef struct FRIXIA_TCP_WRITE_RESULT
+{
+    int bytes_written;
+    FRIXIA_TCP_RESULT res;
+    
+} FRIXIA_TCP_WRITE_RESULT;
+
 #endif

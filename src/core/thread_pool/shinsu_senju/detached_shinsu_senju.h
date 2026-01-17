@@ -1,6 +1,6 @@
 
-#ifndef DETACHED_SHINSU_SENJU_H
-#define DETACHED_SHINSU_SENJU_H
+#ifndef DETACHED_SHINSU_SENJU_HA
+#define DETACHED_SHINSU_SENJU_HA
 
 #include "../../thread_pool/shinsu_senju/ss_pool.h"
 #include <stdbool.h>

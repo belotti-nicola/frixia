@@ -6,14 +6,22 @@
 
 #include <internal/frixia_epoll_th.h>
 
-fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, void *ctx)
+fepoll_th_data_t *fepoll_th_data_create()
 {
     fepoll_th_data_t *p = malloc(sizeof(fepoll_th_data_t));
     if ( p == NULL )
     {
-        printf("Error creating fepoll\n");
+        printf("Error creating  pointer\n");
         return NULL;
     }
+
+    frixia_epoll_t *fepoll = create_frixia_epoll();
+    if ( p == NULL )
+    {
+        printf("Error creating fepoll instance\n");
+        return NULL;
+    }
+    p->fepoll = fepoll;
 
     bool *b = malloc(sizeof(bool));
     if ( b == NULL )

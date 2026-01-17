@@ -5,7 +5,6 @@
 
 #include <frixia/frixia_shinsu_senju_th.h>
 
-
 shinsu_senju_data_t *create_shinsu_senju_data(int workers, void *ctx)
 {
     shinsu_senju_data_t *retVal = malloc(sizeof(shinsu_senju_data_t));
