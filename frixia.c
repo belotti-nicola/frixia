@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <internal/frixia_epoll_th.h>
+#include <internal/frixia_events_queue.h>
 
 #include <frixia/frixia.h>
 

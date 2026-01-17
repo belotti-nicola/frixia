@@ -4,13 +4,13 @@
 #include "frixia_inode.h"
 #include "frixia_signal.h"
 
-#include <internal/frixia_epoll_th.h>
 #include <internal/convoy.h>
 #include <frixia/frixia_shinsu_senju_th.h>
 #include <frixia/frixia_dispatcher_th.h>
-#include <internal/frixia_events_queue.h>
 #include <frixia/frixia_tcp.h>
 
+typedef struct fepoll_th_data fepoll_th_data_t;
+typedef struct frixia_events_queue frixia_events_queue_t;
 typedef struct frixia_environment
 {
     int maximum_filedescriptors;

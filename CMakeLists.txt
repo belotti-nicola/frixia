@@ -13,6 +13,7 @@ set(FRIXIA_SOURCES
     src/fevent/frixia_events_queue.c
     src/fdispatcher/frixia_dispatcher_th.c
     src/fshinsu_senju/frixia_shinsu_senju_th.c
+    src/fepoll/frixia_epoll_th.c
 )
 
 add_library(frixia
@@ -26,7 +27,8 @@ target_include_directories(frixia
 )
 
 target_link_libraries(frixia
-    PUBLIC frixia_utils
     PUBLIC shinsu_senju
     PUBLIC fdispatcher
+    PUBLIC fepoll
+    PUBLIC frixia_utils
 )

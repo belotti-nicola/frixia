@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "ss_wrapper_function.h"
 
-#include "ss_pool.h"
+#include <internal/ss_wrapper_function.h>
+#include <internal/ss_pool.h>
 
 shinsu_senju_pool_t *ss_create(int max_threads)
 {

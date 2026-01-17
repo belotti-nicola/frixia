@@ -4,19 +4,19 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+#include <frixia/frixia_environment.h>
 #include <simple_valid_callback.h>
 
 typedef struct frixia_epoll frixia_epoll_t;
-typedef struct frixia_environment frixia_environment_t;
 
 typedef struct fepoll_th_data
 {
-    //frixia_epoll_t *fepoll;
-    // pthread_t th;
+    frixia_epoll_t *fepoll;
+    pthread_t th;
     bool *keep_looping;
     sv_callback_t *callbacks;
 
-    // frixia_environment_t *fenv;
+    frixia_environment_t *fenv;
 
 } fepoll_th_data_t;
 
