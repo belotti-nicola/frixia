@@ -6,6 +6,7 @@ int main()
     frixia_add_eventfd(fenv);
 
     frixia_add_tcp(fenv,"127.0.0.1",18080,1);
+    frixia_start(fenv);
     
     return 0;
 }

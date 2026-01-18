@@ -4,7 +4,7 @@
 #include "simple_hash_entry.h"
 #include "simple_hashing_utility.h"
 
-#include "simple_hash_map.h"
+#include <internal/simple_hash_map.h>
 
 HashMap_t* create_hash_map(int maximum_size)
 {

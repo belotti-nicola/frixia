@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "simple_hash_entry.h"
+#include <internal/simple_hash_entry.h>
 
 HashEntry_t* create_hash_entry(char *key,
                                void *value)

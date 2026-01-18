@@ -53,10 +53,16 @@ set(FRIXIA_SOURCES
     src/fepoll/epoll/finode_handler.c  
     src/fepoll/epoll/event_context.h
     src/fepoll/epoll/event_context.c
+
+    src/utils/network.c
+    src/utils/simple_hash_entry.c
+    src/utils/simple_hash_map.c
+    src/utils/simple_hashing_utility.c
+    src/utils/simple_hashing_utility.h
     src/utils/simple_list_elem.c
     src/utils/simple_list.c
-    src/utils/simple_valid_callback.c
     src/utils/simple_queue.c
+    src/utils/simple_valid_callback.c
     src/utils/threadsafe_simple_queue.c
 )
 
@@ -67,7 +73,6 @@ add_library(frixia
 target_include_directories(frixia
     PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/utils/include
 )
 
 target_link_libraries(frixia

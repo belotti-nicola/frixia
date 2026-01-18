@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 
-// Validazione IPv4
 bool is_valid_ipv4(const char *ip_str);
 bool is_valid_ipv6(const char* ip_str);
 bool is_valid_port(int port);
