@@ -3,7 +3,7 @@
 
 typedef enum 
 {
-#define X(name,value) name,
+#define X(name,value,b) name,
 #include "internal/fsignal_codes.def"
 #undef X
 } FRIXIA_SIGNAL;

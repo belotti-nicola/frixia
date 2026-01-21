@@ -15,6 +15,7 @@
 #include "src/fepoll/epoll/fctx.h"//TODO
 #include "src/fepoll/epoll/fepoll.h"
 #include <signal.h> //TODO ONLY LINUX????
+#include <frixia/frixia_result.h>
 
 #include <frixia/frixia.h>
 
@@ -87,7 +88,7 @@ const char* ftcp_code_to_string(FTCP_CODE code)
 {
     switch (code)
     {
-#define X(name) case name: return #name;
+#define X(name,kind,desc) case name: return #name;
 #include "internal/ftcp_codes.def"
 #undef X
 
@@ -98,7 +99,7 @@ const char* ftcp_code_to_string(FTCP_CODE code)
 const char* fudp_code_to_string(FUDP_CODE code) {
 switch (code)
     {
-#define X(name) case name: return #name;
+#define X(name,kind,desc) case name: return #name;
 #include "internal/fudp_codes.def"
 #undef X
 
@@ -110,7 +111,7 @@ const char* finode_code_to_string(FRIXIA_INODE_FLAG code)
 {
 switch (code)
     {
-#define X(name, value) case name: return #name;
+#define X(name,kind,desc) case name: return #name;
 #include "internal/finode_codes.def"
 #undef X
 
@@ -156,7 +157,7 @@ const char* ffifo_code_to_string(FFIFO_CODE code)
 {
     switch (code)
     {
-#define X(name) case name: return #name;
+#define X(name,kind,desc) case name: return #name;
 #include "internal/ffifo_codes.def"
 #undef X
 
@@ -168,7 +169,7 @@ const char* ftimer_code_to_string(TIMER_CODE code)
 {
     switch (code)
     {
-#define X(name) case name: return #name;
+#define X(name,kind,desc) case name: return #name;
 #include "internal/ftimer_codes.def"
 #undef X
 
@@ -180,7 +181,7 @@ const char* frixia_eventfd_to_string(FEVENTFD_CODE code)
 {
     switch (code)
     {
-#define X(name) case name: return #name;
+#define X(name,kind,desc) case name: return #name;
 #include "internal/feventfd_codes.def"
 #undef X
 
@@ -188,7 +189,6 @@ const char* frixia_eventfd_to_string(FEVENTFD_CODE code)
         return "FEVENTFD_UNKNOWN_CODE";
     }
 }
-
 
 int frixia_start(frixia_environment_t *env)
 {
@@ -239,7 +239,7 @@ FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,
     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
     register_callback_by_fd(fep_data,fd,sv);
 
-    return res;
+    //return res;
     
 }
 void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
@@ -248,7 +248,8 @@ void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     int fd = udp_res.fd;
     if(fd < 0)
     {
-        return udp_res;
+        return;
+        //return udp_res;
     }
     
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;

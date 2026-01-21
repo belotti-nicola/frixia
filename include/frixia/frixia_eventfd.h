@@ -2,7 +2,7 @@
 #define FRIXIA_EVENTFD_H
 
 typedef enum FEVENTFD_CODE {
-#define X(name) name,
+#define X(name,a,b) name,
 #include "internal/feventfd_codes.def"
 #undef X
 } FEVENTFD_CODE;

@@ -4,7 +4,7 @@
 
 typedef enum 
 {
-#define X(name) name,
+#define X(name,a,b) name,
 #include "internal/fudp_codes.def"
 #undef X
 } FUDP_CODE;

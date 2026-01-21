@@ -3,7 +3,7 @@
 
 typedef enum 
 {
-#define X(name) name,
+#define X(name,a,b) name,
 #include "internal/ffifo_codes.def"
 #undef X
 } FFIFO_CODE;

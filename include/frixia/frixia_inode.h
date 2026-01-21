@@ -2,7 +2,7 @@
 #define FRIXIA_INODE_H
 
 typedef enum FRIXIA_INODE_FLAG {
-#define X(name, value) name = value,
+#define X(name, value,desc) name,
 #include "internal/finode_codes.def"
 #undef X
 } FRIXIA_INODE_FLAG;

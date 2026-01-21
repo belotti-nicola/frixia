@@ -3,7 +3,7 @@
 
 typedef enum 
 {
-#define X(name) name,
+#define X(name,a,b) name,
 #include "internal/ftimer_codes.def"
 #undef X
 } TIMER_CODE;
