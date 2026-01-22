@@ -8,6 +8,14 @@ typedef enum
 #undef X
 } FFIFO_CODE;
 
+typedef struct FRIXIA_FIFO_FD_RESULT
+{
+    int        fd;
+    FFIFO_CODE code;
+    int        errno_code;
+
+} FRIXIA_FIFO_FD_RESULT;
+
 const char* ffifo_code_to_string(FFIFO_CODE code);
 
 #endif

@@ -15,25 +15,37 @@
 
 #include <frixia/frixia_fifo.h>
 
-int start_fifo_listening(const char *name)
+FRIXIA_FIFO_FD_RESULT CREATE_FIFO_CODE(int fd,FFIFO_CODE code,int errno_code)
+{
+    FRIXIA_FIFO_FD_RESULT retVal = 
+    {
+        .fd         = fd,
+        .code       = code,
+        .errno_code = errno_code
+    };
+    return retVal;
+}
+
+FRIXIA_FIFO_FD_RESULT start_fifo_listening(const char *name)
 {
     printf("start_fifo_listening '%s'\n", name);
     if (mkfifo(name, 0666) == -1)
     {
-        return ERR_FFIFO_MKFIFO;
+        return CREATE_FIFO_CODE(-1,ERR_FFIFO_MKFIFO,errno);
     }
     int fd = open(name, O_RDONLY | O_NONBLOCK);
     if (fd == -1)
     {
-        return ERR_FFIFO_OPEN;
+        return CREATE_FIFO_CODE(-1,ERR_FFIFO_OPEN,errno);
     }
-    return fd;
+    
+    return CREATE_FIFO_CODE(fd,FFIFO_OK,-1);
 }
 
-int stop_fifo_listening(int closing_fd)
+FRIXIA_FIFO_FD_RESULT stop_fifo_listening(int closing_fd)
 {
     close(closing_fd);
-    return 0;
+    return CREATE_FIFO_CODE(-1,FFIFO_OK,-1);
 }
 
 int read_fifo(int fd,
