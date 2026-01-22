@@ -3,8 +3,8 @@
 
 #include <frixia/frixia_signal.h>
 
-int start_signalfd_listening(FRIXIA_SIGNAL fsig);
-int stop_signalfd_listening(int closing_fd);
+FRIXIA_SIGNAL_ADD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig);
+FRIXIA_SIGNAL_ADD_RESULT stop_signalfd_listening(int closing_fd);
 int read_signalfd(int fd, int *signal);
 
 #endif

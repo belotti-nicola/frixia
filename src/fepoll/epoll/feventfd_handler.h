@@ -8,9 +8,9 @@
 
 #include <frixia/frixia_eventfd.h>
 
-int start_eventfd_listening();
+FRIXIA_ADD_FEVENTFD_RESULT start_eventfd_listening();
 int read_eventfd(int fd);
-int close_eventfd(int fd);
+FRIXIA_ADD_FEVENTFD_RESULT close_eventfd(int fd);
 int write_eventfd(int fd);
 
 #endif

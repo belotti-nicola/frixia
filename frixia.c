@@ -301,7 +301,8 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
 
 void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask)
 {
-    int fd = start_inode_listening(filepath,mask);
+    FRIXIA_INODE_ADD_RESULT res = start_inode_listening(filepath,mask);
+    int fd = res.fd;
     if( fd < 0)
     {
         printf("Error::frixia_add_inode. (rc:%d,file %s)\n",fd,filepath);
@@ -314,7 +315,8 @@ void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FL
 
 void frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL sig)
 {
-    int fd = start_signalfd_listening(sig);
+    FRIXIA_SIGNAL_ADD_RESULT res = start_signalfd_listening(sig);
+    int fd = res.fd;
     if ( fd < 0 )
     {
         printf("Error::frixia_add_eventfd");
@@ -327,7 +329,8 @@ void frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL 
 
 void frixia_add_eventfd(frixia_environment_t *env)
 {
-    int fd = start_eventfd_listening();
+    FRIXIA_ADD_FEVENTFD_RESULT res = start_eventfd_listening();
+    int fd = res.fd;
     if ( fd < 0 )
     {
         printf("Error::frixia_add_eventfd");

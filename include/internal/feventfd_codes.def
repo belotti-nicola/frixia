@@ -1,2 +1,3 @@
 X(FEVENTFD_OK,FRIXIA_OK,"Frixia eventfd success")
 X(FERR_EVENTFD_START,FRIXIA_KO,"Frixia eventfd success")
+X(FERR_EVENTFD_STOP,FRIXIA_KO,"Frixia eventfd success")

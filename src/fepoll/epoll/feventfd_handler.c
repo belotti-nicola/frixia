@@ -5,17 +5,30 @@
 #include <stdio.h>
 #include <unistd.h>
 
-int start_eventfd_listening()
+#include "feventfd_handler.h"
+
+FRIXIA_ADD_FEVENTFD_RESULT CREATE_FRIXIA_ADD_FEVENTFD_RESULT(int fd, FEVENTFD_CODE code, int errno_code)
+{
+    FRIXIA_ADD_FEVENTFD_RESULT res = 
+    {
+        .fd = fd,
+        .code = code,
+        .errno_code = code
+    };
+    return res;
+}
+
+FRIXIA_ADD_FEVENTFD_RESULT start_eventfd_listening()
 {
     const int INITIAL_VALUE = 0;
     int efd = eventfd(INITIAL_VALUE, EFD_NONBLOCK);
     if (efd == -1) 
     {
         printf("Error:start_eventfd_listening::errno:%d\n",errno);
-        return -1;
+        return CREATE_FRIXIA_ADD_FEVENTFD_RESULT(-1,INITIAL_VALUE,errno);
     }
 
-    return efd;
+    return CREATE_FRIXIA_ADD_FEVENTFD_RESULT(efd,FEVENTFD_OK,-1);
 }
 
 int read_eventfd(int fd)
@@ -41,14 +54,14 @@ int write_eventfd(int fd)
     return 0;
 }
 
-int close_eventfd(int fd)
+FRIXIA_ADD_FEVENTFD_RESULT close_eventfd(int fd)
 {
     int rc = close(fd);
     if(rc != 0)
     {
         printf("ERROR stop_eventfd_listening::%d\n",errno);
-        return -1;
+        return CREATE_FRIXIA_ADD_FEVENTFD_RESULT(-1,FERR_EVENTFD_STOP,errno);
     }
 
-    return 0;
+    return CREATE_FRIXIA_ADD_FEVENTFD_RESULT(-1,FEVENTFD_OK,errno);
 }
