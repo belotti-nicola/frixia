@@ -281,7 +281,8 @@ void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_re
 
 void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
 {
-    int fd = start_timer_listening(delay,interval);
+    FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,interval);
+    int fd = res.fd;
     if(fd < 0)
     {
         return;

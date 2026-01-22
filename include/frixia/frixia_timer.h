@@ -8,6 +8,15 @@ typedef enum
 #undef X
 } TIMER_CODE;
 
+typedef struct FRIXIA_TIMER_FD_RESULT
+{
+    int        fd;
+    TIMER_CODE code;
+    int        errno_code;
+
+} FRIXIA_TIMER_FD_RESULT;
+
+
 const char *ftimer_code_to_string(TIMER_CODE code);
 
 #endif

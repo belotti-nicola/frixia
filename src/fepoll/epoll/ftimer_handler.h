@@ -3,8 +3,8 @@
 
 #include <frixia/frixia_timer.h>
 
-int start_timer_listening(int delay, int interval);
-int stop_timer_listening(int fd);
+FRIXIA_TIMER_FD_RESULT start_timer_listening(int delay, int interval);
+FRIXIA_TIMER_FD_RESULT stop_timer_listening(int fd);
 int read_timer(int fd, char buf[8]);
 
 #endif
