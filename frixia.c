@@ -15,7 +15,7 @@
 #include "src/fepoll/epoll/fctx.h"//TODO
 #include "src/fepoll/epoll/fepoll.h"
 #include <signal.h> //TODO ONLY LINUX????
-#include <frixia/frixia_result.h>
+#include <internal/internal_frixia.h>
 
 #include <frixia/frixia.h>
 
@@ -219,13 +219,15 @@ int frixia_stop(frixia_environment_t *env)
     return 0;
 }
 
-FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
+FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
+    FRIXIA_RESULT retVal;
+    
     FRIXIA_TCP_FD_RESULT res = start_tcp_listening(ip,port);
     int fd = res.fd;
     if(fd < 0)
     {
-        return res;
+        return retVal;
     }
     
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
@@ -239,16 +241,18 @@ FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,
     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
     register_callback_by_fd(fep_data,fd,sv);
 
-    //return res;
+    return retVal;
     
 }
-void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
+FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
+    FRIXIA_RESULT retVal;
+    
     FRIXIA_UDP_FD_RESULT udp_res = start_udp_listening(ip,port);
     int fd = udp_res.fd;
     if(fd < 0)
     {
-        return;
+        return retVal;
         //return udp_res;
     }
     
@@ -264,28 +268,33 @@ void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_rea
     register_callback_by_fd(fep_data,fd,sv);
 
     //return udp_res; TODO
+
+    return retVal;
 }
 
-void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
+FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
 {
+    FRIXIA_RESULT retVal;
     FRIXIA_FIFO_FD_RESULT res = start_fifo_listening(file);
     int fd = res.fd;
     if(fd < 0)
     {
-        return;
+        return retVal;
     }
     //TODO FIX THIS SHIT
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
+
+    return retVal;
 }
 
-void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
+FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
 {
     FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,interval);
     int fd = res.fd;
     if(fd < 0)
     {
-        return;
+        return INTERNAL_CREATE_FRIXIA_RESULT(-1,res.code,res.errno_code);
     }
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
@@ -297,52 +306,98 @@ void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int i
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
     register_callback_by_fd(fep_data,fd,sv);
+
+    return INTERNAL_CREATE_FRIXIA_RESULT(fd,res.code,res.errno_code);
 }
 
-void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask)
+FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask)
 {
+    FRIXIA_RESULT retVal;
+    
     FRIXIA_INODE_ADD_RESULT res = start_inode_listening(filepath,mask);
     int fd = res.fd;
     if( fd < 0)
     {
         printf("Error::frixia_add_inode. (rc:%d,file %s)\n",fd,filepath);
-        return;
+        return retVal;
     }
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
+
+    return retVal;
 }
 
-void frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL sig)
+FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL sig)
 {
+    FRIXIA_RESULT retVal;
+    
     FRIXIA_SIGNAL_ADD_RESULT res = start_signalfd_listening(sig);
     int fd = res.fd;
     if ( fd < 0 )
     {
         printf("Error::frixia_add_eventfd");
-        return;
+        return retVal;
     }
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
+    return retVal;
 }
 
-void frixia_add_eventfd(frixia_environment_t *env)
+FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env)
 {
+    FRIXIA_RESULT retVal;
+    
     FRIXIA_ADD_FEVENTFD_RESULT res = start_eventfd_listening();
     int fd = res.fd;
     if ( fd < 0 )
     {
         printf("Error::frixia_add_eventfd");
-        return;
+        return retVal;
     }
 
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
+
+    return retVal;
 }
 
 void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg)
 {
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
     detached_shinsu_senju_load(ssd,fd,fun,arg);
+}
+bool frixia_result_is_ok(FRIXIA_RESULT r)
+{
+    return r.kind == FRIXIA_OK;
+}
+int frixia_result_fd(FRIXIA_RESULT r)
+{
+    return r.fd;
+}
+FRIXIA_ADD_RESULT frixia_result_to_code(FRIXIA_RESULT r)
+{
+    return r.fd;
+}
+
+const char * frixia_result_to_string(FRIXIA_RESULT r)
+{
+    const char *const frixia_add_result_str[] = {
+#define X(name,value,description) [FRIXIA_##name] = description,
+#include <internal/ftcp_codes.def>
+#include <internal/fudp_codes.def>
+#include <internal/ffifo_codes.def>
+#include <internal/finode_codes.def>
+#include <internal/ftimer_codes.def>
+#include <internal/fsignal_codes.def>
+#include <internal/feventfd_codes.def>
+#undef X
+    };
+
+    int index = r.result;
+    if (index < 0 || index >= FRIXIA_ADD_RESULT_COUNT)
+        return "UNKNOWN_FRIXIA_RESULT";
+
+    return frixia_add_result_str[index];
 }

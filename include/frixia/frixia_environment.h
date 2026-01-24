@@ -8,6 +8,7 @@
 #include <frixia/frixia_shinsu_senju_th.h>
 #include <frixia/frixia_dispatcher_th.h>
 #include <frixia/frixia_tcp.h>
+#include <frixia/frixia_result.h>
 
 typedef struct fepoll_th_data fepoll_th_data_t;
 typedef struct frixia_events_queue frixia_events_queue_t;
@@ -32,13 +33,13 @@ void                  frixia_environment_destroy(frixia_environment_t *fenv);
 int                   frixia_start(frixia_environment_t *env);
 int                   frixia_stop(frixia_environment_t *env);
 
-FRIXIA_TCP_FD_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
-void frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
-void frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read);
-void frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval);
-void frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask);
-void frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL mask);
-void frixia_add_eventfd(frixia_environment_t *env);
+FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
+FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
+FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read);
+FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval);
+FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask);
+FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL mask);
+FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env);
 
 void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg);
 

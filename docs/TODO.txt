@@ -6,6 +6,7 @@ TODO
     valgrind support
     debug level prints
     remove unnecessary elements
+    varie xmacro
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

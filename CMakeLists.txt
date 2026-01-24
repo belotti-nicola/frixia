@@ -64,6 +64,8 @@ set(FRIXIA_SOURCES
     src/utils/simple_queue.c
     src/utils/simple_valid_callback.c
     src/utils/threadsafe_simple_queue.c
+
+    src/internal_frixia.c
 )
 
 add_library(frixia
