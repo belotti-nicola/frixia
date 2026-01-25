@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "epoll.h"
 #include <frixia/frixia_tcp.h>
 #include <frixia/frixia_udp.h>

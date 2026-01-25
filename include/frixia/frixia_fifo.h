@@ -1,6 +1,8 @@
 #ifndef FRIXIA_FIFO_H
 #define FRIXIA_FIFO_H
 
+#include <stdbool.h>
+
 typedef enum 
 {
 #define X(name,a,b) name,
@@ -16,6 +18,7 @@ typedef struct FRIXIA_FIFO_FD_RESULT
 
 } FRIXIA_FIFO_FD_RESULT;
 
+bool        ffifo_code_is_ok(FFIFO_CODE code);
 const char* ffifo_code_to_string(FFIFO_CODE code);
 
 #endif

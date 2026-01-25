@@ -1,6 +1,7 @@
 #ifndef FRIXIA_UDP_H
 #define FRIXIA_UDP_H
 
+#include <stdbool.h>
 
 typedef enum 
 {
@@ -9,7 +10,7 @@ typedef enum
 #undef X
 } FUDP_CODE;
 
-
+bool        fudp_code_is_ok(FUDP_CODE code);
 const char* fudp_code_to_string(FUDP_CODE code);
 
 typedef struct FRIXIA_UDP_RESULT

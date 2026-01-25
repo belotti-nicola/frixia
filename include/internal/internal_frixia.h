@@ -1,8 +1,10 @@
 #ifndef INTERNAL_FRIXIA_H
 #define INTERNAL_FRIXIA_H
 
-#include <frixia/frixia_result.h>
+#include <stdbool.h>
+#include <frixia/frixia.h>
 
-FRIXIA_RESULT INTERNAL_CREATE_FRIXIA_RESULT(int fd, FRIXIA_ADD_RESULT res, int errno_code);
+bool          INTERNAL_FRIXIA_TIMER_CODE_IS_OK(FTIMER_CODE t);
+FRIXIA_RESULT INTERNAL_FRIXIA_TIMER_FD_RESULT(FRIXIA_TIMER_FD_RESULT res);
 
 #endif 

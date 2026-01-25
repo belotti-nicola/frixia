@@ -1,6 +1,8 @@
 #ifndef FRIXIA_TCP_H
 #define FRIXIA_TCP_H
 
+#include <stdbool.h>
+
 typedef enum 
 {
 #define X(name,a,b) name,
@@ -8,7 +10,7 @@ typedef enum
 #undef X
 } FTCP_CODE;
 
-
+bool        ftcp_code_is_ok(FTCP_CODE code);
 const char* ftcp_code_to_string(FTCP_CODE code);
 
 typedef struct FRIXIA_TCP_RESULT

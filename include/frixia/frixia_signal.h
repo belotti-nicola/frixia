@@ -1,6 +1,8 @@
 #ifndef FRIXIA_SIGNAL_H
 #define FRIXIA_SIGNAL_H
 
+#include <stdbool.h>
+
 typedef enum 
 {
 #define FRIXIA_SIGNAL_MACRO(name,value) name,
@@ -24,7 +26,8 @@ typedef struct FRIXIA_SIGNAL_ADD_RESULT
     
 } FRIXIA_SIGNAL_ADD_RESULT;
 
-
+#include <stdbool.h>
+bool        fsignal_code_is_ok(FSIGNAL_CODE code);
 int frixia_signal_to_unix(FRIXIA_SIGNAL fsignal);
 
 

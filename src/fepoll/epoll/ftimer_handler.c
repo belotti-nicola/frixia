@@ -11,7 +11,7 @@
 #include <frixia/frixia_timer.h>
 #include "ftimer_handler.h"
 
-FRIXIA_TIMER_FD_RESULT CREATE_FRIXIA_TIMER_FD_RESULT(int fd,TIMER_CODE code, int errno_code)
+FRIXIA_TIMER_FD_RESULT CREATE_FRIXIA_TIMER_FD_RESULT(int fd,FTIMER_CODE code, int errno_code)
 {
     FRIXIA_TIMER_FD_RESULT retVal = 
     {

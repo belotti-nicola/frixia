@@ -84,6 +84,15 @@ void frixia_environment_destroy(frixia_environment_t *fenv)
     free(fenv);
 }
 
+bool        ftcp_code_is_ok(FTCP_CODE code)
+{
+    if ( code == FTCP_OK )
+    {
+        return true;
+    }
+
+    return false;
+}
 const char* ftcp_code_to_string(FTCP_CODE code)
 {
     switch (code)
@@ -96,6 +105,16 @@ const char* ftcp_code_to_string(FTCP_CODE code)
         return "FTCP_UNKNOWN_ERROR";
     }
 }
+
+bool        fudp_code_is_ok(FUDP_CODE code)
+{
+    if ( code == FUDP_OK )
+    {
+        return true;
+    }
+
+    return false;
+}
 const char* fudp_code_to_string(FUDP_CODE code) {
 switch (code)
     {
@@ -106,6 +125,16 @@ switch (code)
     default:
         return "FUDP_UNKNOWN_ERROR";
     }
+}
+
+bool        finode_code_is_ok(FINODE_CODE code)
+{
+    if ( code == FINODE_OK )
+    {
+        return true;
+    }
+
+    return false;
 }
 const char* finode_code_to_string(FRIXIA_INODE_FLAG code)
 {
@@ -119,6 +148,73 @@ switch (code)
         return "FUDP_UNKNOWN_ERROR";
     }
 }
+
+bool        ffifo_code_is_ok(FFIFO_CODE code)
+{
+    if ( code == FFIFO_OK )
+    {
+        return true;
+    }
+
+    return false;
+}
+const char* ffifo_code_to_string(FFIFO_CODE code)
+{
+    switch (code)
+    {
+#define X(name,kind,desc) case name: return #name;
+#include "internal/ffifo_codes.def"
+#undef X
+
+    default:
+        return "FFIFO_UNKNOWN_CODE";
+    }
+}
+
+bool        ftimer_code_is_ok(FTIMER_CODE code)
+{
+    if ( code == TIMER_OK )
+    {
+        return true;
+    }
+
+    return false;
+}
+const char* ftimer_code_to_string(FTIMER_CODE code)
+{
+    switch (code)
+    {
+#define X(name,kind,desc) case name: return #name;
+#include "internal/ftimer_codes.def"
+#undef X
+
+    default:
+        return "FTIMER_UNKNOWN_CODE";
+    }
+}
+
+bool        feventfd_code_is_ok(FEVENTFD_CODE code)
+{
+    if ( code == FEVENTFD_OK )
+    {
+        return true;
+    }
+
+    return false;
+}
+const char* frixia_eventfd_to_string(FEVENTFD_CODE code)
+{
+    switch (code)
+    {
+#define X(name,kind,desc) case name: return #name;
+#include "internal/feventfd_codes.def"
+#undef X
+
+    default:
+        return "FEVENTFD_UNKNOWN_CODE";
+    }
+}
+
 int frixia_signal_to_unix(FRIXIA_SIGNAL sig)
 {
     switch (sig)
@@ -153,42 +249,7 @@ int frixia_signal_to_unix(FRIXIA_SIGNAL sig)
         default: return -1;
     }
 }
-const char* ffifo_code_to_string(FFIFO_CODE code)
-{
-    switch (code)
-    {
-#define X(name,kind,desc) case name: return #name;
-#include "internal/ffifo_codes.def"
-#undef X
 
-    default:
-        return "FFIFO_UNKNOWN_CODE";
-    }
-}
-const char* ftimer_code_to_string(TIMER_CODE code)
-{
-    switch (code)
-    {
-#define X(name,kind,desc) case name: return #name;
-#include "internal/ftimer_codes.def"
-#undef X
-
-    default:
-        return "FTIMER_UNKNOWN_CODE";
-    }
-}
-const char* frixia_eventfd_to_string(FEVENTFD_CODE code)
-{
-    switch (code)
-    {
-#define X(name,kind,desc) case name: return #name;
-#include "internal/feventfd_codes.def"
-#undef X
-
-    default:
-        return "FEVENTFD_UNKNOWN_CODE";
-    }
-}
 
 int frixia_start(frixia_environment_t *env)
 {
@@ -290,11 +351,14 @@ FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int by
 
 FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
 {
+    FRIXIA_RESULT retVal;
+        
     FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,interval);
     int fd = res.fd;
     if(fd < 0)
     {
-        return INTERNAL_CREATE_FRIXIA_RESULT(-1,res.code,res.errno_code);
+        bool b = INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.code);
+        return retVal;
     }
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
@@ -307,7 +371,8 @@ FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int del
     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
     register_callback_by_fd(fep_data,fd,sv);
 
-    return INTERNAL_CREATE_FRIXIA_RESULT(fd,res.code,res.errno_code);
+    //return INTERNAL_FRIXIA_TIMER_FD_RESULT(res);
+    return retVal;
 }
 
 FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask)
