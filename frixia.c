@@ -84,38 +84,70 @@ void frixia_environment_destroy(frixia_environment_t *fenv)
     free(fenv);
 }
 
-bool        ftcp_code_is_ok(FTCP_CODE code)
+FRIXIA_RESULT_KIND ftcp_code_is_ok(FTCP_CODE code)
 {
-    if ( code == FTCP_OK )
+    static FRIXIA_RESULT_KIND ftcp_status_map[] = {
+    #define X(code, status, msg) [code] = status,
+    #include "internal/ftcp_codes.def"
+    #undef X
+    };
+
+    if(code < 0)
     {
-        return true;
+        return FRIXIA_KO;
+    }
+    if(code > __FTCP_SENTINEL__)
+    {
+        return FRIXIA_KO;
     }
 
-    return false;
+    return ftcp_status_map[code];
 }
-const char* ftcp_code_to_string(FTCP_CODE code)
+const char*        ftcp_code_to_string(FTCP_CODE code)
 {
     switch (code)
     {
-#define X(name,kind,desc) case name: return #name;
-#include "internal/ftcp_codes.def"
-#undef X
+        #define X(name,kind,desc) case name: return #name;
+        #include "internal/ftcp_codes.def"
+        #undef X
+
+        default:
+            return "FTCP_UNKNOWN_ERROR";
+    }
+}
+const char*        ftcp_code_description_string(FTCP_CODE code)
+{
+    switch (code)
+    {
+    #define X(name,kind,desc) desc;
+    #include "internal/ftcp_codes.def"
+    #undef X
 
     default:
-        return "FTCP_UNKNOWN_ERROR";
+        return "FTCP string unknown!";
     }
 }
 
-bool        fudp_code_is_ok(FUDP_CODE code)
+FRIXIA_RESULT_KIND fudp_code_is_ok(FUDP_CODE code)
 {
-    if ( code == FUDP_OK )
+    static FRIXIA_RESULT_KIND fudp_status_map[] = {
+    #define X(code, status, msg) [code] = status,
+    #include "internal/fudp_codes.def"
+    #undef X
+    };
+
+    if(code < 0)
     {
-        return true;
+        return FRIXIA_KO;
+    }
+    if(code > __FUDP_SENTINEL__)
+    {
+        return FRIXIA_KO;
     }
 
-    return false;
+    return fudp_status_map[code];
 }
-const char* fudp_code_to_string(FUDP_CODE code) {
+const char*        fudp_code_to_string(FUDP_CODE code) {
 switch (code)
     {
 #define X(name,kind,desc) case name: return #name;
@@ -126,17 +158,39 @@ switch (code)
         return "FUDP_UNKNOWN_ERROR";
     }
 }
-
-bool        finode_code_is_ok(FINODE_CODE code)
+const char*        fudp_code_description_string(FUDP_CODE code)
 {
-    if ( code == FINODE_OK )
+    switch (code)
     {
-        return true;
+        #define X(name,kind,desc) case name: return #name;
+        #include "internal/fudp_codes.def"
+        #undef X
+
+        default:
+        return "FUDP string unknown!";
+    }
+}
+
+FRIXIA_RESULT_KIND finode_code_is_ok(FINODE_CODE code)
+{
+    static FRIXIA_RESULT_KIND finode_status_map[] = {
+    #define X(code, status, msg) [code] = status,
+    #include "internal/finode_codes.def"
+    #undef X
+    };
+
+    if(code < 0)
+    {
+        return FRIXIA_KO;
+    }
+    if(code > __FINODE_SENTINEL__)
+    {
+        return FRIXIA_KO;
     }
 
-    return false;
+    return finode_status_map[code];
 }
-const char* finode_code_to_string(FRIXIA_INODE_FLAG code)
+const char*        finode_code_to_string(FRIXIA_INODE_FLAG code)
 {
 switch (code)
     {
@@ -148,17 +202,39 @@ switch (code)
         return "FUDP_UNKNOWN_ERROR";
     }
 }
-
-bool        ffifo_code_is_ok(FFIFO_CODE code)
+const char*        finode_code_description_string(FINODE_CODE code)
 {
-    if ( code == FFIFO_OK )
+    switch (code)
     {
-        return true;
+        #define X(name,kind,desc) case name: return #name;
+        #include "internal/finode_codes.def"
+        #undef X
+
+        default:
+        return "FINODE string unknown!";
+    }
+}
+
+FRIXIA_RESULT_KIND ffifo_code_is_ok(FFIFO_CODE code)
+{
+    static FRIXIA_RESULT_KIND ffifo_status_map[] = {
+    #define X(code, status, msg) [code] = status,
+    #include "internal/ffifo_codes.def"
+    #undef X
+    };
+
+    if(code < 0)
+    {
+        return FRIXIA_KO;
+    }
+    if(code > __FFIFO_SENTINEL__)
+    {
+        return FRIXIA_KO;
     }
 
-    return false;
+    return ffifo_status_map[code];
 }
-const char* ffifo_code_to_string(FFIFO_CODE code)
+const char*        ffifo_code_to_string(FFIFO_CODE code)
 {
     switch (code)
     {
@@ -170,17 +246,39 @@ const char* ffifo_code_to_string(FFIFO_CODE code)
         return "FFIFO_UNKNOWN_CODE";
     }
 }
-
-bool        ftimer_code_is_ok(FTIMER_CODE code)
+const char*        ffifo_code_description_string(FFIFO_CODE code)
 {
-    if ( code == TIMER_OK )
+    switch (code)
     {
-        return true;
+        #define X(name,kind,desc) case name: return #name;
+        #include "internal/ffifo_codes.def"
+        #undef X
+
+        default:
+        return "FFIFO string unknown!";
+    }
+}
+
+FRIXIA_RESULT_KIND ftimer_code_is_ok(FTIMER_CODE code)
+{
+    static FRIXIA_RESULT_KIND ftimer_status_map[] = {
+    #define X(code, status, msg) [code] = status,
+    #include "internal/ftimer_codes.def"
+    #undef X
+    };
+
+    if(code < 0)
+    {
+        return FRIXIA_KO;
+    }
+    if(code > __FTIMER_SENTINEL__)
+    {
+        return FRIXIA_KO;
     }
 
-    return false;
+    return ftimer_status_map[code];
 }
-const char* ftimer_code_to_string(FTIMER_CODE code)
+const char*        ftimer_code_to_string(FTIMER_CODE code)
 {
     switch (code)
     {
@@ -192,17 +290,39 @@ const char* ftimer_code_to_string(FTIMER_CODE code)
         return "FTIMER_UNKNOWN_CODE";
     }
 }
-
-bool        feventfd_code_is_ok(FEVENTFD_CODE code)
+const char*        ftimer_code_description_string(FTIMER_CODE code)
 {
-    if ( code == FEVENTFD_OK )
+    switch (code)
     {
-        return true;
+        #define X(name,kind,desc) case name: return #name;
+        #include "internal/ftimer_codes.def"
+        #undef X
+
+        default:
+        return "FTIMER string unknown!";
+    }
+}
+
+FRIXIA_RESULT_KIND feventfd_code_is_ok(FEVENTFD_CODE code)
+{
+    static FRIXIA_RESULT_KIND feventfd_status_map[] = {
+    #define X(code, status, msg) [code] = status,
+    #include "internal/feventfd_codes.def"
+    #undef X
+    };
+
+    if(code < 0)
+    {
+        return FRIXIA_KO;
+    }
+    if(code > __FEVENTFD_SENTINEL__)
+    {
+        return FRIXIA_KO;
     }
 
-    return false;
+    return feventfd_status_map[code];
 }
-const char* frixia_eventfd_to_string(FEVENTFD_CODE code)
+const char*        frixia_eventfd_to_string(FEVENTFD_CODE code)
 {
     switch (code)
     {
@@ -214,6 +334,63 @@ const char* frixia_eventfd_to_string(FEVENTFD_CODE code)
         return "FEVENTFD_UNKNOWN_CODE";
     }
 }
+const char*        feventfd_code_description_string(FEVENTFD_CODE code)
+{
+    switch (code)
+    {
+        #define X(name,kind,desc) case name: return #name;
+        #include "internal/feventfd_codes.def"
+        #undef X
+
+        default:
+        return "FEVENTFD string unknown!";
+    }
+}
+
+FRIXIA_RESULT_KIND fsignal_code_is_ok(FSIGNAL_CODE code)
+{
+    static FRIXIA_RESULT_KIND status_map[] = {
+    #define X(code, status, msg) [code] = status,
+    #include "internal/fsignal_codes.def"
+    #undef X
+    };
+
+    if(code < 0)
+    {
+        return FRIXIA_KO;
+    }
+    if(code > __FSIGNAL_SENTINEL__)
+    {
+        return FRIXIA_KO;
+    }
+
+    return status_map[code];
+}
+const char*        frixia_signal_to_string(FSIGNAL_CODE code)
+{
+    switch (code)
+    {
+#define X(name,kind,desc) case name: return #name;
+#include "internal/fsignal_codes.def"
+#undef X
+
+    default:
+        return "FSIGNAL_UNKNOWN_CODE";
+    }
+}
+const char*        fsignal_code_description_string(FEVENTFD_CODE code)
+{
+    switch (code)
+    {
+        #define X(name,kind,desc) case name: return #name;
+        #include "internal/fsignal_codes.def"
+        #undef X
+
+        default:
+        return "FSIGNAL string unknown!";
+    }
+}
+
 
 int frixia_signal_to_unix(FRIXIA_SIGNAL sig)
 {
@@ -281,16 +458,15 @@ int frixia_stop(frixia_environment_t *env)
 }
 
 FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
-{
-    FRIXIA_RESULT retVal;
-    
+{   
     FRIXIA_TCP_FD_RESULT res = start_tcp_listening(ip,port);
-    int fd = res.fd;
-    if(fd < 0)
+    
+    if(INTERNAL_FRIXIA_TCP_CODE_IS_OK(res.res.exit_code))
     {
-        return retVal;
+        return INTERNAL_FRIXIA_TCP_FD_RESULT(res);
     }
     
+    int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
@@ -302,21 +478,18 @@ FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int byt
     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
     register_callback_by_fd(fep_data,fd,sv);
 
-    return retVal;
+    return INTERNAL_FRIXIA_TCP_FD_RESULT(res);
     
 }
 FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
-    FRIXIA_RESULT retVal;
-    
     FRIXIA_UDP_FD_RESULT udp_res = start_udp_listening(ip,port);
-    int fd = udp_res.fd;
-    if(fd < 0)
+    if(INTERNAL_FRIXIA_UDP_CODE_IS_OK(udp_res.res.exit_code))
     {
-        return retVal;
-        //return udp_res;
+        return INTERNAL_FRIXIA_UDP_FD_RESULT(udp_res);
     }
     
+    int fd = udp_res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
@@ -328,38 +501,33 @@ FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int byt
     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
     register_callback_by_fd(fep_data,fd,sv);
 
-    //return udp_res; TODO
-
-    return retVal;
+    return INTERNAL_FRIXIA_UDP_FD_RESULT(udp_res);
 }
 
 FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
 {
-    FRIXIA_RESULT retVal;
     FRIXIA_FIFO_FD_RESULT res = start_fifo_listening(file);
-    int fd = res.fd;
-    if(fd < 0)
+    if(INTERNAL_FRIXIA_UDP_CODE_IS_OK(res.res.code))
     {
-        return retVal;
+        return INTERNAL_FRIXIA_FIFO_FD_RESULT(res);
     }
-    //TODO FIX THIS SHIT
+
+    int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
-    return retVal;
+    return INTERNAL_FRIXIA_FIFO_FD_RESULT(res);
 }
 
 FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
 {
-    FRIXIA_RESULT retVal;
-        
     FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,interval);
-    int fd = res.fd;
-    if(fd < 0)
+    if(INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.res.code))
     {
-        bool b = INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.code);
-        return retVal;
+        return INTERNAL_FRIXIA_TIMER_FD_RESULT(res);
     }
+
+    int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
@@ -371,61 +539,53 @@ FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int del
     sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
     register_callback_by_fd(fep_data,fd,sv);
 
-    //return INTERNAL_FRIXIA_TIMER_FD_RESULT(res);
-    return retVal;
+    return INTERNAL_FRIXIA_TIMER_FD_RESULT(res);
 }
 
 FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask)
-{
-    FRIXIA_RESULT retVal;
-    
-    FRIXIA_INODE_ADD_RESULT res = start_inode_listening(filepath,mask);
-    int fd = res.fd;
-    if( fd < 0)
+{  
+    FRIXIA_INODE_FD_RESULT res = start_inode_listening(filepath,mask);
+    if( INTERNAL_FRIXIA_INODE_CODE_IS_OK(res.res.code))
     {
-        printf("Error::frixia_add_inode. (rc:%d,file %s)\n",fd,filepath);
-        return retVal;
+        return INTERNAL_FRIXIA_INODE_FD_RESULT(res);
     }
 
+    int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
-    return retVal;
+    return INTERNAL_FRIXIA_INODE_FD_RESULT(res);
 }
 
 FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL sig)
 {
-    FRIXIA_RESULT retVal;
-    
-    FRIXIA_SIGNAL_ADD_RESULT res = start_signalfd_listening(sig);
-    int fd = res.fd;
-    if ( fd < 0 )
+    FRIXIA_SIGNAL_FD_RESULT res = start_signalfd_listening(sig); 
+    if ( INTERNAL_FRIXIA_SIGNAL_CODE_IS_OK(res.res.code) )
     {
-        printf("Error::frixia_add_eventfd");
-        return retVal;
+        return INTERNAL_FRIXIA_SIGNAL_FD_RESULT(res);
     }
 
+    int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
-    return retVal;
+
+    return INTERNAL_FRIXIA_SIGNAL_FD_RESULT(res);
 }
 
 FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env)
 {
-    FRIXIA_RESULT retVal;
-    
-    FRIXIA_ADD_FEVENTFD_RESULT res = start_eventfd_listening();
-    int fd = res.fd;
-    if ( fd < 0 )
+    FRIXIA_EVENTFD_FD_RESULT res = start_eventfd_listening();
+    if ( INTERNAL_FRIXIA_EVENTFD_CODE_IS_OK(res.res.code) )
     {
         printf("Error::frixia_add_eventfd");
-        return retVal;
+        return INTERNAL_FRIXIA_EVENTFD_FD_RESULT(res);
     }
 
+    int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
-    return retVal;
+    return INTERNAL_FRIXIA_EVENTFD_FD_RESULT(res);
 }
 
 void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg)

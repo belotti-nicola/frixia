@@ -10,19 +10,19 @@
 
 #include "fsignal_handler.h"
 
-FRIXIA_SIGNAL_ADD_RESULT CREATE_FRIXIA_SIGNAL_ADD_RESULT(int fd,FSIGNAL_CODE code,int errno_code)
+FRIXIA_SIGNAL_FD_RESULT CREATE_FRIXIA_SIGNAL_FD_RESULT(int fd,FSIGNAL_CODE code,int errno_code)
 {
-    FRIXIA_SIGNAL_ADD_RESULT retVal = 
+    FRIXIA_SIGNAL_FD_RESULT retVal = 
     {
         .fd = fd,
-        .code = code,
-        .errno_code = errno_code
+        .res.code = code,
+        .res.errno_code = errno_code
     };
     return retVal;
 }
 
 
-FRIXIA_SIGNAL_ADD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig)
+FRIXIA_SIGNAL_FD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig)
 {
     sigset_t mask;
     sigemptyset(&mask);
@@ -41,28 +41,28 @@ FRIXIA_SIGNAL_ADD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig)
     if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1) 
     {
         printf("sigprocmask error\n");
-        return CREATE_FRIXIA_SIGNAL_ADD_RESULT(-1,FERR_SIGNAL_SIGPROCMASK,errno);
+        return CREATE_FRIXIA_SIGNAL_FD_RESULT(-1,FERR_SIGNAL_SIGPROCMASK,errno);
     }
 
     // 3. Creiamo il signalfd
     int sfd = signalfd(-1, &mask, SFD_NONBLOCK);
     if (sfd == -1) 
     {
-        return CREATE_FRIXIA_SIGNAL_ADD_RESULT(-1,FERR_SIGNAL_CREATION,errno);
+        return CREATE_FRIXIA_SIGNAL_FD_RESULT(-1,FERR_SIGNAL_CREATION,errno);
     }
 
-    return CREATE_FRIXIA_SIGNAL_ADD_RESULT(sfd,FSIGNAL_OK,-1);
+    return CREATE_FRIXIA_SIGNAL_FD_RESULT(sfd,FSIGNAL_OK,-1);
 }
-FRIXIA_SIGNAL_ADD_RESULT stop_signalfd_listening(int closing_fd)
+FRIXIA_SIGNAL_FD_RESULT stop_signalfd_listening(int closing_fd)
 {
     int exit_code = close(closing_fd);
     if (exit_code == -1) 
     {
         printf("close error\n");
-        return CREATE_FRIXIA_SIGNAL_ADD_RESULT(-1,FERR_SIGNAL_CLOSE,errno);
+        return CREATE_FRIXIA_SIGNAL_FD_RESULT(-1,FERR_SIGNAL_CLOSE,errno);
     }
     
-    return CREATE_FRIXIA_SIGNAL_ADD_RESULT(-1,FSIGNAL_OK,-1);
+    return CREATE_FRIXIA_SIGNAL_FD_RESULT(-1,FSIGNAL_OK,-1);
 }
 
 int read_signalfd(int fd, int *signal)

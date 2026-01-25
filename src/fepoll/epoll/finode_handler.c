@@ -10,25 +10,25 @@
 #include <frixia/frixia_inode.h>
 #include "finode_handler.h"
 
-FRIXIA_INODE_ADD_RESULT CREATE_FRIXIA_INODE_ADD_RESULT(int fd,FINODE_CODE code, int errno_code)
+FRIXIA_INODE_FD_RESULT CREATE_FRIXIA_INODE_FD_RESULT(int fd,FINODE_CODE code, int errno_code)
 {
-    FRIXIA_INODE_ADD_RESULT retVal = 
+    FRIXIA_INODE_FD_RESULT retVal = 
     {
         .fd = fd,
-        .code = code,
-        .errno_code = errno_code
+        .res.code = code,
+        .res.errno_code = errno_code
     };
 
     return retVal;
 }
 
 
-FRIXIA_INODE_ADD_RESULT start_inode_listening(const char *path, FRIXIA_INODE_FLAG mask)
+FRIXIA_INODE_FD_RESULT start_inode_listening(const char *path, FRIXIA_INODE_FLAG mask)
 {
     int inotify_fd = inotify_init();
     if (inotify_fd == -1) 
     {
-        return CREATE_FRIXIA_INODE_ADD_RESULT(-1,FERR_START_INODE_INOTIFY_INIT,errno);
+        return CREATE_FRIXIA_INODE_FD_RESULT(-1,FERR_START_INODE_INOTIFY_INIT,errno);
     }
 
     printf("Computed mask %d\n\n",mask);
@@ -36,21 +36,21 @@ FRIXIA_INODE_ADD_RESULT start_inode_listening(const char *path, FRIXIA_INODE_FLA
     if (wd == -1) 
     {
         printf("inotify_init :: %s(mask %d, errno %d)\n",path,mask,errno);
-        return CREATE_FRIXIA_INODE_ADD_RESULT(-1,FERR_START_INODE_INOTIFY_ADD_WATCHDOG,errno);
+        return CREATE_FRIXIA_INODE_FD_RESULT(-1,FERR_START_INODE_INOTIFY_ADD_WATCHDOG,errno);
     }
 
     printf("start_inode_listening: fd %d, path %s\n",inotify_fd,path);
-    return CREATE_FRIXIA_INODE_ADD_RESULT(inotify_fd,FINODE_OK,-1);
+    return CREATE_FRIXIA_INODE_FD_RESULT(inotify_fd,FINODE_OK,-1);
 }
-FRIXIA_INODE_ADD_RESULT stop_inode_listening(int fd)
+FRIXIA_INODE_FD_RESULT stop_inode_listening(int fd)
 {
     int ret = close(fd);
     if(ret < 0)
     {
         printf("Error::start_inode_listening::inotify_add_watch :: errno %d\n",errno);
-        return CREATE_FRIXIA_INODE_ADD_RESULT(-1,FERR_STOP_INODE_LISTENING,errno);
+        return CREATE_FRIXIA_INODE_FD_RESULT(-1,FERR_STOP_INODE_LISTENING,errno);
     }
-    return CREATE_FRIXIA_INODE_ADD_RESULT(-1,FINODE_OK,errno);
+    return CREATE_FRIXIA_INODE_FD_RESULT(-1,FINODE_OK,errno);
     
 }
 int read_inode(int fd,char buf[],int max_size)

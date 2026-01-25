@@ -16,8 +16,8 @@ FRIXIA_TIMER_FD_RESULT CREATE_FRIXIA_TIMER_FD_RESULT(int fd,FTIMER_CODE code, in
     FRIXIA_TIMER_FD_RESULT retVal = 
     {
         .fd = fd,
-        .code = code,
-        .errno_code = errno
+        .res.code = code,
+        .res.errno_code = errno_code
     };
     return retVal;
 }

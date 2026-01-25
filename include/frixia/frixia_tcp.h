@@ -1,17 +1,21 @@
 #ifndef FRIXIA_TCP_H
 #define FRIXIA_TCP_H
 
+#include <frixia/frixia_result.h>
 #include <stdbool.h>
 
 typedef enum 
 {
-#define X(name,a,b) name,
-#include "internal/ftcp_codes.def"
-#undef X
+    #define X(name,a,b) name,
+    #include "internal/ftcp_codes.def"
+    #undef X
+    __FTCP_SENTINEL__
+
 } FTCP_CODE;
 
-bool        ftcp_code_is_ok(FTCP_CODE code);
-const char* ftcp_code_to_string(FTCP_CODE code);
+FRIXIA_RESULT_KIND ftcp_code_is_ok(FTCP_CODE code);
+const char*        ftcp_code_to_string(FTCP_CODE code);
+const char*        ftcp_code_description_string(FTCP_CODE code);
 
 typedef struct FRIXIA_TCP_RESULT
 {

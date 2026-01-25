@@ -1,17 +1,23 @@
 #ifndef FRIXIA_UDP_H
 #define FRIXIA_UDP_H
 
+#include <frixia/frixia_result.h>
 #include <stdbool.h>
 
 typedef enum 
 {
-#define X(name,a,b) name,
-#include "internal/fudp_codes.def"
-#undef X
+    #define X(name,a,b) name,
+    #include "internal/fudp_codes.def"
+    #undef X
+
+    __FUDP_SENTINEL__
+
 } FUDP_CODE;
 
-bool        fudp_code_is_ok(FUDP_CODE code);
-const char* fudp_code_to_string(FUDP_CODE code);
+FRIXIA_RESULT_KIND fudp_code_is_ok(FUDP_CODE code);
+const char*        fudp_code_to_string(FUDP_CODE code);
+const char*        fudp_code_string_description(FUDP_CODE code);
+
 
 typedef struct FRIXIA_UDP_RESULT
 {

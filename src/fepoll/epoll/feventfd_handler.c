@@ -7,18 +7,18 @@
 
 #include "feventfd_handler.h"
 
-FRIXIA_ADD_FEVENTFD_RESULT CREATE_FRIXIA_ADD_FEVENTFD_RESULT(int fd, FEVENTFD_CODE code, int errno_code)
+FRIXIA_EVENTFD_FD_RESULT CREATE_FRIXIA_ADD_FEVENTFD_RESULT(int fd, FEVENTFD_CODE code, int errno_code)
 {
-    FRIXIA_ADD_FEVENTFD_RESULT res = 
+    FRIXIA_EVENTFD_FD_RESULT res = 
     {
         .fd = fd,
-        .code = code,
-        .errno_code = code
+        .res.code = code,
+        .res.errno_code = code
     };
     return res;
 }
 
-FRIXIA_ADD_FEVENTFD_RESULT start_eventfd_listening()
+FRIXIA_EVENTFD_FD_RESULT start_eventfd_listening()
 {
     const int INITIAL_VALUE = 0;
     int efd = eventfd(INITIAL_VALUE, EFD_NONBLOCK);
@@ -54,7 +54,7 @@ int write_eventfd(int fd)
     return 0;
 }
 
-FRIXIA_ADD_FEVENTFD_RESULT close_eventfd(int fd)
+FRIXIA_EVENTFD_FD_RESULT close_eventfd(int fd)
 {
     int rc = close(fd);
     if(rc != 0)
