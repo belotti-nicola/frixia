@@ -6,7 +6,7 @@
 
 typedef enum 
 {
-    #define X(name,a,b) name,
+    #define X(name,value,desc) name,
     #include "internal/ftcp_codes.def"
     #undef X
     __FTCP_SENTINEL__

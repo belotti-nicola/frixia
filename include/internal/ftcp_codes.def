@@ -1,4 +1,4 @@
-X(FTCP_OK,FRIXIA_KO,"Frixia eventfd success")
+X(FTCP_OK,FRIXIA_OK,"Frixia operation success")
 X(ERR_FTCP_SOCKET,FRIXIA_KO,"Frixia eventfd success")
 X(ERR_FTCP_SETSOCKETOPT,FRIXIA_KO,"Frixia eventfd success")
 X(ERR_FTCP_BIND,FRIXIA_KO,"Frixia eventfd success")

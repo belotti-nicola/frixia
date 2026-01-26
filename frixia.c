@@ -460,8 +460,7 @@ int frixia_stop(frixia_environment_t *env)
 FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {   
     FRIXIA_TCP_FD_RESULT res = start_tcp_listening(ip,port);
-    
-    if(INTERNAL_FRIXIA_TCP_CODE_IS_OK(res.res.exit_code))
+    if( !INTERNAL_FRIXIA_TCP_CODE_IS_OK(res.res.exit_code))
     {
         return INTERNAL_FRIXIA_TCP_FD_RESULT(res);
     }
@@ -484,7 +483,7 @@ FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int byt
 FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
     FRIXIA_UDP_FD_RESULT udp_res = start_udp_listening(ip,port);
-    if(INTERNAL_FRIXIA_UDP_CODE_IS_OK(udp_res.res.exit_code))
+    if( !INTERNAL_FRIXIA_UDP_CODE_IS_OK(udp_res.res.exit_code))
     {
         return INTERNAL_FRIXIA_UDP_FD_RESULT(udp_res);
     }
@@ -507,7 +506,7 @@ FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int byt
 FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
 {
     FRIXIA_FIFO_FD_RESULT res = start_fifo_listening(file);
-    if(INTERNAL_FRIXIA_UDP_CODE_IS_OK(res.res.code))
+    if( !INTERNAL_FRIXIA_UDP_CODE_IS_OK(res.res.code))
     {
         return INTERNAL_FRIXIA_FIFO_FD_RESULT(res);
     }
@@ -522,7 +521,7 @@ FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int by
 FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
 {
     FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,interval);
-    if(INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.res.code))
+    if( !INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.res.code))
     {
         return INTERNAL_FRIXIA_TIMER_FD_RESULT(res);
     }
@@ -545,7 +544,7 @@ FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int del
 FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask)
 {  
     FRIXIA_INODE_FD_RESULT res = start_inode_listening(filepath,mask);
-    if( INTERNAL_FRIXIA_INODE_CODE_IS_OK(res.res.code))
+    if( !INTERNAL_FRIXIA_INODE_CODE_IS_OK(res.res.code))
     {
         return INTERNAL_FRIXIA_INODE_FD_RESULT(res);
     }
@@ -560,7 +559,7 @@ FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA
 FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL sig)
 {
     FRIXIA_SIGNAL_FD_RESULT res = start_signalfd_listening(sig); 
-    if ( INTERNAL_FRIXIA_SIGNAL_CODE_IS_OK(res.res.code) )
+    if ( !INTERNAL_FRIXIA_SIGNAL_CODE_IS_OK(res.res.code) )
     {
         return INTERNAL_FRIXIA_SIGNAL_FD_RESULT(res);
     }
@@ -575,9 +574,9 @@ FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXI
 FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env)
 {
     FRIXIA_EVENTFD_FD_RESULT res = start_eventfd_listening();
-    if ( INTERNAL_FRIXIA_EVENTFD_CODE_IS_OK(res.res.code) )
+    if ( !INTERNAL_FRIXIA_EVENTFD_CODE_IS_OK(res.res.code) )
     {
-        printf("Error::frixia_add_eventfd");
+        printf("Error::frixia_add_eventfd\n");
         return INTERNAL_FRIXIA_EVENTFD_FD_RESULT(res);
     }
 
