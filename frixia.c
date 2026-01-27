@@ -592,9 +592,26 @@ void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
     detached_shinsu_senju_load(ssd,fd,fun,arg);
 }
-bool frixia_result_is_ok(FRIXIA_RESULT r)
+bool frixia_result_is_ok(FRIXIA_RESULT code)
 {
-    return r.kind == FRIXIA_OK;
+    static const FRIXIA_RESULT_KIND map[] = {
+        #define X(name,value,desc) value,
+        #include <internal/ftcp_codes.def>
+        #include <internal/fudp_codes.def>
+        #include <internal/ffifo_codes.def>
+        #include <internal/finode_codes.def>
+        #include <internal/ftimer_codes.def>
+        #include <internal/fsignal_codes.def>
+        #include <internal/feventfd_codes.def>
+        #undef X
+    };
+
+    int i = code.result;
+    if ((int)i < 0 || i >= FRIXIA_ADD_RESULT_COUNT)
+    {
+        return false;
+    }
+    return map[i] == FRIXIA_OK;
 }
 int frixia_result_fd(FRIXIA_RESULT r)
 {
@@ -608,15 +625,15 @@ FRIXIA_ADD_RESULT frixia_result_to_code(FRIXIA_RESULT r)
 const char * frixia_result_to_string(FRIXIA_RESULT r)
 {
     const char *const frixia_add_result_str[] = {
-#define X(name,value,description) [FRIXIA_##name] = description,
-#include <internal/ftcp_codes.def>
-#include <internal/fudp_codes.def>
-#include <internal/ffifo_codes.def>
-#include <internal/finode_codes.def>
-#include <internal/ftimer_codes.def>
-#include <internal/fsignal_codes.def>
-#include <internal/feventfd_codes.def>
-#undef X
+    #define X(name,value,description) [FRIXIA_##name] = description,
+    #include <internal/ftcp_codes.def>
+    #include <internal/fudp_codes.def>
+    #include <internal/ffifo_codes.def>
+    #include <internal/finode_codes.def>
+    #include <internal/ftimer_codes.def>
+    #include <internal/fsignal_codes.def>
+    #include <internal/feventfd_codes.def>
+    #undef X
     };
 
     int index = r.result;

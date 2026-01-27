@@ -7,14 +7,14 @@ int main()
     
     FRIXIA_RESULT res;
     res = frixia_add_eventfd(fenv);
-    if( res.kind != FRIXIA_OK )
+    if( frixia_result_is_ok(res) )
     {
         printf("Error adding eventfd\n");
         return -1;
     }
 
     res = frixia_add_tcp(fenv,"127.0.0.1",18080,1024);
-    if( res.kind != FRIXIA_OK )
+    if( frixia_result_is_ok(res) )
     {
         printf("Error adding tcp\n");
         return -1;

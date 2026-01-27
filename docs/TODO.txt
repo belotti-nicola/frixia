@@ -21,6 +21,7 @@ FIX:
     search udp/fifo/tcp unique function
     
 REFACTORING
+    KIND REDUNDANT CODE!!!!!!!!!!!!!!!
     enum UPPERCASES
     name ENGINE_EVENT / PROGRAM_EVENT (1.ENUM 2.START_<t>_EVENT)
     STOPALL: no need to call functions? check
