@@ -3,7 +3,7 @@
 
 #include "frixia_dispatcher.h"
 
-frixia_dispatcher_t *create_frixia_dispatcher(int workers_number)
+frixia_dispatcher_t *create_frixia_dispatcher(int workers_number,void *arg)
 {
     frixia_dispatcher_t *ptr = malloc(sizeof(frixia_dispatcher_t));
     if(ptr == NULL)

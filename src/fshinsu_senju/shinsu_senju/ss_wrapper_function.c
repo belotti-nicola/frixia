@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <internal/ss_pool.h>
 
-#include <internal/ss_wrapper_function.h>
+#include <frixia/ss_wrapper_function.h>
 
 void *ss_worker_function(void *arg)
 {

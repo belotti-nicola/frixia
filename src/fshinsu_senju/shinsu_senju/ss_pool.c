@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <internal/ss_wrapper_function.h>
+#include <frixia/ss_wrapper_function.h>
 #include <internal/ss_pool.h>
 
 shinsu_senju_pool_t *ss_create(int max_threads)

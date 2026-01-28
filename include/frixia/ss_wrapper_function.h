@@ -1,6 +1,10 @@
 #ifndef SS_WRAPPER_FUNCTION_H
 #define SS_WRAPPER_FUNCTION_H
 
+//TODO
+//MAKE MORE FRIXIA_CALLBACK LIKE
+
+
 #include <internal/simple_valid_callback.h>
 #include <frixia/frixia_shinsu_senju_th.h>
 #include <internal/frixia_events_queue.h>

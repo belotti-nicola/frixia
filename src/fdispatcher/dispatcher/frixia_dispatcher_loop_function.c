@@ -12,9 +12,10 @@ int frixia_dispatcher_loop_function(void *arg)
     printf("frixia_dispatcher_loop_function started\n");
     frixia_dispatcher_data_t *dispatcher_data   = (frixia_dispatcher_data_t *)arg;
     frixia_dispatcher_t *dispatcher = dispatcher_data->dispatcher;
-    frixia_events_queue_t *events_queue = dispatcher->tasks;
     frixia_event_t *event;
     frixia_environment_t *fenv = (frixia_environment_t *)dispatcher_data->ctx;
+    frixia_events_queue_t *events_queue = fenv->fepoll_events;
+
     shinsu_senju_data_t *ssd = fenv->shinsu_senju_ctx;
     
     bool *keep_looping = dispatcher->keep_looping;

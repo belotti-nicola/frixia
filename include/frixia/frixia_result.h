@@ -13,7 +13,6 @@ typedef enum FRIXIA_RESULT_KIND
 
 typedef struct FRIXIA_RESULT
 {
-    FRIXIA_RESULT_KIND kind;
     int                fd;
     FRIXIA_ADD_RESULT  result;
     int                errno_code;

@@ -19,7 +19,7 @@ typedef struct frixia_dispatcher
 
 } frixia_dispatcher_t;
 
-frixia_dispatcher_t *create_frixia_dispatcher(int workers);
+frixia_dispatcher_t *create_frixia_dispatcher(int workers,void *arg);
 void                 destroy_frixia_dispatcher(frixia_dispatcher_t *p);
 
 #endif

@@ -86,7 +86,6 @@ FRIXIA_RESULT INTERNAL_FRIXIA_TCP_FD_RESULT(FRIXIA_TCP_FD_RESULT res)
     FRIXIA_RESULT retVal = 
     {
         .fd = res.fd,
-        .kind = INTERNAL_FRIXIA_TCP_CODE_IS_OK(res.res.exit_code)? FRIXIA_OK : FRIXIA_KO,
         .errno_code = res.res.errno_code,
         .result = INTERNAL_TCP_CODE_TO_ADD_RESULT(res.res.exit_code)
     };
@@ -99,7 +98,6 @@ FRIXIA_RESULT INTERNAL_FRIXIA_UDP_FD_RESULT(FRIXIA_UDP_FD_RESULT res)
     FRIXIA_RESULT retVal = 
     {
         .fd = res.fd,
-        .kind = INTERNAL_FRIXIA_UDP_CODE_IS_OK(res.res.exit_code)? FRIXIA_OK : FRIXIA_KO,
         .errno_code = res.res.errno_code,
         .result = INTERNAL_UDP_CODE_TO_ADD_RESULT(res.res.exit_code)
     };
@@ -111,7 +109,6 @@ FRIXIA_RESULT INTERNAL_FRIXIA_FIFO_FD_RESULT(FRIXIA_FIFO_FD_RESULT res)
     FRIXIA_RESULT retVal = 
     {
         .fd = res.fd,
-        .kind = INTERNAL_FRIXIA_FIFO_CODE_IS_OK(res.res.code)? FRIXIA_OK : FRIXIA_KO,
         .errno_code = res.res.errno_code,
         .result = INTERNAL_FIFO_CODE_TO_ADD_RESULT(res.res.code)
     };
@@ -123,7 +120,6 @@ FRIXIA_RESULT INTERNAL_FRIXIA_TIMER_FD_RESULT(FRIXIA_TIMER_FD_RESULT res)
     FRIXIA_RESULT retVal = 
     {
         .fd = res.fd,
-        .kind = INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.res.code)? FRIXIA_OK : FRIXIA_KO,
         .errno_code = res.res.errno_code,
         .result = INTERNAL_TIMER_CODE_TO_ADD_RESULT(res.res.code)
     };
@@ -135,7 +131,6 @@ FRIXIA_RESULT INTERNAL_FRIXIA_SIGNAL_FD_RESULT(FRIXIA_SIGNAL_FD_RESULT res)
     FRIXIA_RESULT retVal = 
     {
         .fd = res.fd,
-        .kind = INTERNAL_FRIXIA_SIGNAL_CODE_IS_OK(res.res.code)? FRIXIA_OK : FRIXIA_KO,
         .errno_code = res.res.errno_code,
         .result = INTERNAL_SIGNAL_CODE_TO_ADD_RESULT(res.res.code)
     };
@@ -147,7 +142,6 @@ FRIXIA_RESULT INTERNAL_FRIXIA_INODE_FD_RESULT(FRIXIA_INODE_FD_RESULT res)
     FRIXIA_RESULT retVal = 
     {
         .fd = res.fd,
-        .kind = INTERNAL_FRIXIA_INODE_CODE_IS_OK(res.res.code)? FRIXIA_OK : FRIXIA_KO,
         .errno_code = res.res.errno_code,
         .result = INTERNAL_INODE_CODE_TO_ADD_RESULT(res.res.code)
     };
@@ -159,7 +153,6 @@ FRIXIA_RESULT INTERNAL_FRIXIA_EVENTFD_FD_RESULT(FRIXIA_EVENTFD_FD_RESULT res)
     FRIXIA_RESULT retVal = 
     {
         .fd = res.fd,
-        .kind = INTERNAL_FRIXIA_EVENTFD_CODE_IS_OK(res.res.code)? FRIXIA_OK : FRIXIA_KO,
         .errno_code = res.res.errno_code,
         .result = INTERNAL_EVENTFD_CODE_TO_ADD_RESULT(res.res.code)
     };

@@ -5,7 +5,7 @@
 
 #include <frixia/frixia_dispatcher_th.h>
 
-frixia_dispatcher_data_t *create_frixia_dispatcher_data()
+frixia_dispatcher_data_t *create_frixia_dispatcher_data(void *arg)
 {
     frixia_dispatcher_data_t *p = malloc(sizeof(frixia_dispatcher_data_t));
     if ( p == NULL ) 
@@ -14,9 +14,9 @@ frixia_dispatcher_data_t *create_frixia_dispatcher_data()
         return NULL;
     }
 
-    p->dispatcher = create_frixia_dispatcher(1);
+    p->dispatcher = create_frixia_dispatcher(1,arg);
     p->started = false;
-    
+    p->ctx = arg;
     return p;
 }
 

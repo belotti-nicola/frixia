@@ -16,7 +16,7 @@ typedef struct frixia_dispatcher_data_t
     
 } frixia_dispatcher_data_t;
 
-frixia_dispatcher_data_t *create_frixia_dispatcher_data();
+frixia_dispatcher_data_t *create_frixia_dispatcher_data(void *arg);
 void destroy_frixia_dispatcher_data(frixia_dispatcher_data_t *p);
 
 int detached_start_frixia_dispatcher_new(frixia_dispatcher_data_t *data);

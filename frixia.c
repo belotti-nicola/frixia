@@ -36,7 +36,7 @@ void register_callback_by_fd(fepoll_th_data_t *th_data, int fd, sv_callback_t *s
     callbacks[fd] = *sv;
 }
 
-frixia_environment_t *frixia_environment_create()
+frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
 {
     frixia_environment_t *retVal = malloc(sizeof(frixia_environment_t));
     if ( retVal == NULL )
@@ -49,15 +49,13 @@ frixia_environment_t *frixia_environment_create()
 
     fepoll_th_data_t *fep_data = fepoll_th_data_create();
 
-    frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data();
-    frixia_dispatcher_t *disp = disp_data->dispatcher;
-    disp_data->dispatcher = disp;
-    disp_data->ctx = retVal;
+    frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data((void *)retVal);
 
-    shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(25,(void *)retVal);
+    shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(maximum_filedescriptors,(void *)retVal);
     
-    convoy_t *convoy = convoy_create(25);
+    convoy_t *convoy = convoy_create(maximum_filedescriptors);
 
+    retVal->maximum_filedescriptors = maximum_filedescriptors;
     retVal->fepoll_ctx = fep_data;
     retVal->fdispatcher_ctx = disp_data;
     retVal->fepoll_events = fepoll_events;

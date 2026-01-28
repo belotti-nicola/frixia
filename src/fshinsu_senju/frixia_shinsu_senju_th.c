@@ -1,5 +1,5 @@
 #include <internal/ss_pool.h>
-#include <internal/ss_wrapper_function.h>
+#include <frixia/ss_wrapper_function.h>
 #include "shinsu_senju/shinsu_senju_loop_function.h"
 #include <stdlib.h>
 
