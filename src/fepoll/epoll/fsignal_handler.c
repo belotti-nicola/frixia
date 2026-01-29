@@ -44,7 +44,6 @@ FRIXIA_SIGNAL_FD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig)
         return CREATE_FRIXIA_SIGNAL_FD_RESULT(-1,FERR_SIGNAL_SIGPROCMASK,errno);
     }
 
-    // 3. Creiamo il signalfd
     int sfd = signalfd(-1, &mask, SFD_NONBLOCK);
     if (sfd == -1) 
     {

@@ -58,7 +58,6 @@ void ss_start_new_thread(shinsu_senju_pool_t *ssp, int key,void *(fun)(void *),v
     }
     
     ssp->size+=1;
-    printf("Thread started...\n");
 }
 void ss_stop_thread(shinsu_senju_pool_t *ssp, int key)
 {

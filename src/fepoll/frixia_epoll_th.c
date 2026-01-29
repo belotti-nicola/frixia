@@ -6,7 +6,7 @@
 
 #include <internal/frixia_epoll_th.h>
 
-fepoll_th_data_t *fepoll_th_data_create()
+fepoll_th_data_t *fepoll_th_data_create(void *arg)
 {
     fepoll_th_data_t *p = malloc(sizeof(fepoll_th_data_t));
     if ( p == NULL )
@@ -37,6 +37,7 @@ fepoll_th_data_t *fepoll_th_data_create()
     {
         return NULL;
     }
+    p->fenv = (frixia_environment_t *)arg;
     p->callbacks = sv;
     return p;
 }
@@ -49,7 +50,7 @@ void *fepoll_th_data_destroy(fepoll_th_data_t *p)
 
 int detached_start_epoll(fepoll_th_data_t *fepoll_obj)
 {   
-        pthread_t epoll_thread;
+    pthread_t epoll_thread;
     int rc = pthread_create( &epoll_thread,
                              NULL,
                              (void *)fepoll_loop_function,
@@ -59,7 +60,7 @@ int detached_start_epoll(fepoll_th_data_t *fepoll_obj)
         printf("ERRORCODE1::%d\n",rc);
         return 0;
     }
-
+    fepoll_obj->th = epoll_thread;
 
     return 0;
 }
@@ -79,7 +80,7 @@ int detached_join_epoll(fepoll_th_data_t *fepoll_obj)
     int rc = pthread_join(th, NULL);
     if(rc != 0) 
     { 
-        printf("ERRORCODE2::%d\n",rc);
+        printf("ERRORCODE2 for epoll th::%d\n",rc);
     }
     return rc;
 }

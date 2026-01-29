@@ -22,7 +22,7 @@ typedef struct fepoll_th_data
 
 
 
-fepoll_th_data_t *fepoll_th_data_create();
+fepoll_th_data_t *fepoll_th_data_create(void *arg);
 void *fepoll_th_data_destroy(fepoll_th_data_t *p);
 
 int detached_start_epoll(fepoll_th_data_t *fepoll);

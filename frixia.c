@@ -47,7 +47,7 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
 
     frixia_events_queue_t *fepoll_events = frixia_events_queue_create();
 
-    fepoll_th_data_t *fep_data = fepoll_th_data_create();
+    fepoll_th_data_t *fep_data = fepoll_th_data_create((void *)retVal);
 
     frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data((void *)retVal);
 
@@ -61,6 +61,7 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
     retVal->fepoll_events = fepoll_events;
     retVal->shinsu_senju_ctx = ss_ctx;
     retVal->convoy = convoy;
+    sigemptyset(&(retVal->threads_sigset));
     return retVal;
 }
 void frixia_environment_destroy(frixia_environment_t *fenv)
@@ -551,10 +552,13 @@ FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
+    convoy_t *c = env->convoy;
+    convoy_add_inode_filedescriptor(c,fd,filepath); //todo inodeflag
+
     return INTERNAL_FRIXIA_INODE_FD_RESULT(res);
 }
 
-FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXIA_SIGNAL sig)
+FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, FRIXIA_SIGNAL sig)
 {
     FRIXIA_SIGNAL_FD_RESULT res = start_signalfd_listening(sig); 
     if ( !INTERNAL_FRIXIA_SIGNAL_CODE_IS_OK(res.res.code) )
@@ -565,6 +569,12 @@ FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, char *filepath, FRIXI
     int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
+
+    convoy_t *c = env->convoy;
+    convoy_add_signal_filedescriptor(c,fd,sig);
+
+    sigset_t frixia_threads_mask = env->threads_sigset;
+    sigaddset(&frixia_threads_mask, SIGINT);
 
     return INTERNAL_FRIXIA_SIGNAL_FD_RESULT(res);
 }
@@ -582,6 +592,9 @@ FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env)
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
+    convoy_t *c = env->convoy;
+    convoy_add_eventfd_filedescriptor(c,fd);
+
     return INTERNAL_FRIXIA_EVENTFD_FD_RESULT(res);
 }
 
@@ -590,6 +603,7 @@ void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
     detached_shinsu_senju_load(ssd,fd,fun,arg);
 }
+
 bool frixia_result_is_ok(FRIXIA_RESULT code)
 {
     static const FRIXIA_RESULT_KIND map[] = {
@@ -611,10 +625,12 @@ bool frixia_result_is_ok(FRIXIA_RESULT code)
     }
     return map[i] == FRIXIA_OK;
 }
+
 int frixia_result_fd(FRIXIA_RESULT r)
 {
     return r.fd;
 }
+
 FRIXIA_ADD_RESULT frixia_result_to_code(FRIXIA_RESULT r)
 {
     return r.fd;

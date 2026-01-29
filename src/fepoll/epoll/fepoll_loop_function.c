@@ -77,7 +77,8 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
     }
 
     convoy_t *convoy = fenv->convoy;
-    for(int i=0;i<25;i++)
+    int dim = convoy->maximum_size;
+    for(int i=0;i<dim;i++)
     {
         if ( convoy->filedescriptors[i].type != UNDEFINED )
         {

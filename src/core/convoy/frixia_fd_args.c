@@ -40,3 +40,9 @@ void set_frixia_inode_fd(frixia_fd_args_t *fd, char *filepath)
 {
     fd->inode_info.path = filepath;
 }
+
+void set_frixia_signal_fd(frixia_fd_args_t *fd, FRIXIA_SIGNAL sig)
+{
+    fd->signal_info.signal = sig;
+}
+

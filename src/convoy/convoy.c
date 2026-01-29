@@ -1,11 +1,10 @@
-#include <internal/convoy.h>
-
 #include <stdio.h>
 #include "frixia_fd_args.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <convoy.h>
+
+#include <internal/convoy.h>
 
 void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes)
 {
@@ -74,249 +73,60 @@ void convoy_add_timer_filedescriptor(convoy_t *c,int fd, int delay, int interval
     c->size = c->size +1;
     pthread_mutex_unlock(c->mutex);
 }
-void convoy_add_scheduler_filedescriptor(convoy_t *c, int fd, int tick)
+
+void convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath)
 {
-    // if( c->size == MAXIMUM_FD_NUMBER)
-    // {
-    //     printf("Convoy reached maximum size.\n");
-    //     return;
-    // }
-    // if( c->size == 0)
-    // {
-    //     c->filedescriptors[0].fd   = fd;
-    //     c->filedescriptors[0].type = SCHEDULER;
-    //     c->size++;
-    //     return;
-    // }
-    
-    // int target = c->size;
-    // for(int i=0;i<target;i++)
-    // {
-    //     if( c->filedescriptors[i].type == SCHEDULER)
-    //     {
-    //         printf("Convoy error: scheduler is already present (%d).\n",tick);
-    //         return;
-    //     }
-    // }
-    // c->filedescriptors[target].fd   = fd;
-    // c->filedescriptors[target].type = SCHEDULER;
-    // set_frixia_scheduler_fd(c->filedescriptors[target].type_data,tick);
-    // c->size = c->size +1;
+    pthread_mutex_lock(c->mutex);
+    int dim = c->maximum_size;
+    if( c->size == dim)
+    {
+        printf("Convoy reached maximum size.\n");
+        pthread_mutex_unlock(c->mutex);
+        return;
+    }
+
+    c->filedescriptors[fd].fd   = fd;
+    c->filedescriptors[fd].type = INODE;
+    set_frixia_inode_fd(c->filedescriptors[fd].type_data,filepath);
+    c->size = c->size +1;
+    pthread_mutex_unlock(c->mutex);
 }
-void convoy_add_scheduled_timer_filedescriptor(convoy_t *c,int fd)
+void convoy_add_signal_filedescriptor(convoy_t *c, int fd,FRIXIA_SIGNAL sig)
 {
-//     if( c->size == MAXIMUM_FD_NUMBER)
-//     {
-//         printf("Convoy reached maximum size.\n");
-//         return;
-//     }
-//     if( c->size == 0)
-//     {
-//         c->filedescriptors[0].fd   = fd;
-//         c->filedescriptors[0].type = EVENTFD;
-//         c->size = 1;
-//         return;
-//     }
-    
-//     int target = c->size;
-//     for(int i=0;i<target;i++)
-//     {
-//         if( c->filedescriptors[i].type == EVENTFD && c->filedescriptors[i].type_data->eventfd_info->fd == fd )
-//         {
-//             printf("Convoy error: eventfd is already present (%d).\n",fd);
-//             return;
-//         }
-//     }
-//     c->filedescriptors[target].fd   = fd;
-//     c->filedescriptors[target].type = EVENTFD;
-//     set_frixia_eventfd_fd(c->filedescriptors[target].type_data,fd);
-//     c->size = c->size +1;
- }
-void convoy_add_add_inode_filedescriptor(convoy_t *c,int fd, char *path)
-{
-    // if( c->size == MAXIMUM_FD_NUMBER)
-    // {
-    //     printf("Convoy reached maximum size.\n");
-    //     return;
-    // }
-    // if( c->size == 0)
-    // {
-    //     c->filedescriptors[0].fd   = fd;
-    //     c->filedescriptors[0].type = INODE;
-    //     set_frixia_inode_fd(c->filedescriptors[0].type_data,path);
-    //     c->size = 1;
-    //     return;
-    // }
-    
-    // int target = c->size;
-    // for(int i=0;i<target;i++)
-    // {
-    //     if( c->filedescriptors[i].type == INODE && c->filedescriptors[i].type_data->inode_info->path ==  path )
-    //     {
-    //         printf("Convoy error: eventfd is already present (%d).\n",fd);
-    //         return;
-    //     }
-    // }
-    // c->filedescriptors[target].fd   = fd;
-    // c->filedescriptors[target].type = EVENTFD;
-    // set_frixia_inode_fd(c->filedescriptors[target].type_data,path);
-    // c->size = c->size +1;
+    pthread_mutex_lock(c->mutex);
+    int dim = c->maximum_size;
+    if( c->size == dim)
+    {
+        printf("Convoy reached maximum size.\n");
+        pthread_mutex_unlock(c->mutex);
+        return;
+    }
+
+    c->filedescriptors[fd].fd   = fd;
+    c->filedescriptors[fd].type = SIGNAL;
+    set_frixia_signal_fd(c->filedescriptors[fd].type_data,sig);
+    c->size = c->size +1;
+    pthread_mutex_unlock(c->mutex);
 }
 
-// void convoy_register_http_method_callback(convoy_t *c,const char *ip, int port, const char *method,const char *path,void *(*fun)(void *), void *arg)
-// {
-//     int index = -1;
-//     int size  = c->size;
-//     for(int i=0; i<size; i++)
-//     {
-//         frixia_file_descriptor_t fd = c->filedescriptors[i];
-//         if ( fd.type != TCP )
-//         {
-//             continue;
-//         }
-//         frixia_tcp_t tcp_info = fd.type_data->tcp_info;
-//         if( strcmp(tcp_info.ip,ip) == 0 &&
-//             tcp_info.port == port )
-//         {
-//             index = i;
-//             printf("Entry found::%s %d %d\n",tcp_info->ip,tcp_info->port,tcp_info->read_size);
-//             break;
-//         }
-//     }
-//     if( index == -1 )
-//     {
-//         printf("HTTP Entry not present! %s %d\n",ip,port);
-//         return;
-//     }
-//     printf("index %d\n",index);
+void convoy_add_eventfd_filedescriptor(convoy_t *c, int fd)
+{
+    pthread_mutex_lock(c->mutex);
+    int dim = c->maximum_size;
+    if( c->size == dim)
+    {
+        printf("Convoy reached maximum size.\n");
+        pthread_mutex_unlock(c->mutex);
+        return;
+    }
 
-//     c->filedescriptors[index].protocol = HTTP;
-
-//     frixia_callback_t *cb = create_frixia_callback(fun,arg);
-//     int method_len = strlen(method);
-//     int path_len   = strlen(path);
-    
-//     char *key = calloc(sizeof(char),50);//TODO CHECK IF THE CALLOC IS NECESSARY: WHY NOT URL ONLY
-//     frixia_compute_http_key(key,50,method,method_len,path,path_len);
-//     HashEntry_t *he = create_hash_entry(key,cb);  
-//     void **ptr = c->filedescriptors[index].protocol_data;
-//     if( *ptr == NULL )
-//     {
-//         HashMap_t *hm = create_hash_map(16);
-//         add_entry(hm,he);
-//         *(c->filedescriptors[index].protocol_data) = hm; 
-//         printf("Creating HTTP structure %p\n",hm);
-//     }
-//     else 
-//     {
-//         void *hash_map_void = *ptr;
-//         HashMap_t *hm = (HashMap_t *) hash_map_void;
-//         add_entry(hm,he);
-//         printf("Adding to HTTP structure %p\n",hm);
-
-//     }
-// }
-
-// void convoy_register_fins_command_callback(convoy_t *c, enum FrixiaFDType type, const char *ip, int port, uint8_t first, uint8_t second,void *(*fun)(void *), void *arg)
-// {
-//     if ( type != TCP && type != UDP )
-//     {
-//         printf("Error registering FINS: type can be only TCP or UDP (value is instead: %d)\n",type);
-//         return;
-//     }
-
-//     int index = -1;
-//     int size  = c->size;
-//     for(int i=0; i<size; i++)
-//     {
-//         frixia_file_descriptor_t fd = c->filedescriptors[i];
-//         if ( type != fd.type )
-//         {
-//             continue;
-//         }
-//         if ( type == TCP )
-//         {
-//             frixia_tcp_t *tcp_info = fd.type_data->tcp_info;
-//             if( strcmp(tcp_info->ip,ip) == 0 &&
-//                 tcp_info->port == port )
-//             {
-//                 index = i;
-//                 break;
-//             }
-//         }
-//         if ( type == UDP )
-//         {
-//             frixia_udp_t *udp_info = fd.type_data->udp_info;
-//             if( strcmp(udp_info->ip,ip) == 0 &&
-//                 udp_info->port == port )
-//             {
-//                 index = i;
-//                 printf("Entry found::%s %d %d\n",udp_info->ip,udp_info->port,udp_info->read_size);
-//                 break;
-//             }
-//         }      
-//     }
-//     if( index == -1 )
-//     {
-//         printf("FINS Entry not present! %s %d %d\n",ip,port,type);
-//         return;
-//     }
-
-//     c->filedescriptors[index].protocol = FINS;
-//     frixia_callback_t *cb = create_frixia_callback(fun,arg);
-//     char *key = calloc(sizeof(char),16);
-//     frixia_compute_fins_key(key,first,second);
-//     HashEntry_t *he = create_hash_entry(key,cb);  
-//     void **ptr = c->filedescriptors[index].protocol_data;
-//     if( *ptr == NULL )
-//     {
-//         HashMap_t *hm = create_hash_map(16);
-//         add_entry(hm,he);
-//         *(c->filedescriptors[index].protocol_data) = hm; 
-//         printf("Creating FINS structure %p\n",hm);
-//     }
-//     else 
-//     {
-//         void *hash_map_void = *ptr;
-//         HashMap_t *hm = (HashMap_t *) hash_map_void;
-//         add_entry(hm,he);
-//         printf("Adding to FINS structure %p\n",hm);
-//     }
-// }
-// void convoy_register_noprotocol_tcp_callback(convoy_t *convoy,const char *ip,int port, void *(*fun)(void *), void *arg)
-// {
-//     int index = -1;
-//     int size  = convoy->size;
-//     for(int i=0; i<size; i++)
-//     {
-//         frixia_file_descriptor_t fd = convoy->filedescriptors[i];
-//         if ( TCP != fd.type )
-//         {
-//             continue;
-//         }
-//         frixia_tcp_t tcp_info = fd.type_data->tcp_info;
-//         if( strcmp(tcp_info.ip,ip) == 0 &&
-//             tcp_info.port == port )
-//         {
-//             index = i;
-//             break;
-//         }
-//     }
-//     if( index == -1 )
-//     {
-//         printf("NOPROTOCOL TCP Entry not present! %s %d\n",ip,port);
-//         return;
-//     }
-
-//     convoy->filedescriptors[index].protocol = NO_PROTOCOL;
-//     frixia_callback_t *cb = create_frixia_callback(fun,arg);
-//     *(convoy->filedescriptors[index].protocol_data) = cb; 
-// }
-
-// void convoy_register_timer_callback(convoy_t *c,const char *id,void *fun,void *arg)
-// {
-
-// }                                            
+    c->filedescriptors[fd].fd   = fd;
+    c->filedescriptors[fd].type = EVENTFD;
+    set_frixia_eventfd_fd(c->filedescriptors[fd].type_data,fd);
+    c->size = c->size +1;
+    pthread_mutex_unlock(c->mutex);
+}
+                                     
 void convoy_copy_fd(convoy_t *c, int source_fd, int destination_fd)
 {
     c->filedescriptors[destination_fd].fd        = destination_fd;

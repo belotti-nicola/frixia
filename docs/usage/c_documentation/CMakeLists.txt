@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
-project(c_poc LANGUAGES C)
+project(poc LANGUAGES C)
 
 find_package(Threads REQUIRED)
 
-add_executable(c_poc
+add_executable(poc
     main.c
 )
 
@@ -20,7 +20,7 @@ target_include_directories(frixia INTERFACE
     "${CMAKE_SOURCE_DIR}/../../../include"
 )
 
-target_link_libraries(c_poc
+target_link_libraries(poc
     PRIVATE
         frixia
         Threads::Threads

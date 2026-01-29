@@ -542,21 +542,44 @@ frixia_environment_t *frixia_environment_create()
     frixia_environment_t *retVal = malloc(sizeof(frixia_environment_t));
     if ( retVal == NULL )
     {
-        printf("Error creating frixia_environment");
+        printf("Error creating frixia_environment\n");
         return NULL;
     }
 
     frixia_events_queue_t *fepoll_events = frixia_events_queue_create();
+    if ( fepoll_events == NULL )
+    {
+        printf("Error creating fepoll_events\n");
+        return NULL;
+    }
 
-    frixia_epoll_t *fepoll = create_frixia_epoll();
-    fepoll_th_data_t *fep_data = fepoll_th_data_create(fepoll,NULL);
-    fep_data->context = retVal;
+    fepoll_th_data_t *fep_data = fepoll_th_data_create((void *)retVal);
+    if ( fep_data == NULL )
+    {
+        printf("Error creating fep_data\n");
+        return NULL;
+    }
 
     frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data((void *)retVal);
+    if ( disp_data == NULL )
+    {
+        printf("Error creating disp_data\n");
+        return NULL;
+    }
 
     shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(MAXIMUM_FD_NUMBER,(void *)retVal);
+    if ( disp_data == NULL )
+    {
+        printf("Error creating shinsu_senju_data_t\n");
+        return NULL;
+    }
     
     convoy_t *convoy = convoy_create();
+    if ( convoy == NULL )
+    {
+        printf("Error creating convoy\n");
+        return NULL;
+    }
 
     retVal->fepoll_ctx = fep_data;
     retVal->fdispatcher_ctx = disp_data;

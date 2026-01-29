@@ -35,6 +35,6 @@ int detached_stop_dispatcher(waitable_frixia_dispatcher_t *wait_disp)
 {
     pthread_t *t = wait_disp->thread;
     int rc = pthread_join(*t,NULL);
-    if(rc != 0) { printf("ERRORCODE2::%d\n",rc);}
+    if(rc != 0) { printf("ERRORCODE2 for dispatcher::%d\n",rc);}
     return 0;
 }

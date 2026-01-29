@@ -2,6 +2,7 @@
 #define CONVOY_H
 
 #include <internal/frixia_fd_args.h>
+#include <frixia/frixia_signal.h>
 #include <stdint.h>
 #include <pthread.h>
 
@@ -46,7 +47,8 @@ void convoy_add_udp_filedescriptor(convoy_t *c, int fd, const char *ip, int port
 void convoy_add_fifo_filedescriptor(convoy_t *c, int fd, const char *path, int bytes);
 void convoy_add_timer_filedescriptor(convoy_t *c, int fd, int delay, int interval);
 void convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath);
-void convoy_add_signal_filedescripor(convoy_t *c, int fd);
+void convoy_add_signal_filedescriptor(convoy_t *c, int fd,FRIXIA_SIGNAL sig);
+void convoy_add_eventfd_filedescriptor(convoy_t *c, int fd);
 
 void convoy_copy_fd(convoy_t *c, int source_fd, int destination_fd);
 void convoy_remove_fd(convoy_t *c, int fd);

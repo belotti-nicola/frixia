@@ -1,6 +1,8 @@
 #ifndef FRIXIA_FD_ARGS_H
 #define FRIXIA_FD_ARGS_H
 
+#include <frixia/frixia_signal.h>
+
 typedef struct frixia_tcp
 {
     const char *ip;
@@ -46,6 +48,12 @@ typedef struct frixia_inode
 
 }frixia_inode_t;
 
+typedef struct frixia_signal
+{
+    FRIXIA_SIGNAL signal;
+
+} frixia_signal_t;
+
 typedef union frixia_fd_args
 {
     frixia_tcp_t tcp_info;
@@ -55,6 +63,7 @@ typedef union frixia_fd_args
     frixia_scheduler_t scheduler_info;
     frixia_eventfd_t eventfd_info;
     frixia_inode_t inode_info;
+    frixia_signal_t signal_info; 
     
 } frixia_fd_args_t;
 
@@ -65,5 +74,6 @@ void set_frixia_timer_fd(frixia_fd_args_t *fd, int delay, int interval);
 void set_frixia_scheduler_fd(frixia_fd_args_t *fd, int tick);
 void set_frixia_eventfd_fd(frixia_fd_args_t *fd, int ev_fd);
 void set_frixia_inode_fd(frixia_fd_args_t *fd, char *filepath);
+void set_frixia_signal_fd(frixia_fd_args_t *fd, FRIXIA_SIGNAL sig);
 
 #endif

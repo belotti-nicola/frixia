@@ -11,7 +11,7 @@
 
 #include "detached_epoll_monitor.h"
 
-fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, void *ctx)
+fepoll_th_data_t *fepoll_th_data_create(void *ctx)
 {
     fepoll_th_data_t *p = malloc(sizeof(fepoll_th_data_t));
     if ( p == NULL )
@@ -20,8 +20,12 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, void *ctx)
         return NULL;
     }
 
-    p->fepoll = fepoll;
-    p->context = (void *)ctx;
+    frixia_epoll_t *fepoll = create_frixia_epoll();
+    if ( fepoll == NULL )
+    { 
+        printf("Error creating fepoll instance\n");
+        return NULL;
+    }
 
 
     bool *b = malloc(sizeof(bool));
@@ -31,16 +35,20 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_epoll_t *fepoll, void *ctx)
         return NULL;
     }
     *b = true;
-    p->keep_looping = b;
-    p->started = false;
 
+    
     sv_callback_t *sv = calloc(MAXIMUM_FD_NUMBER,sizeof(sv_callback_t));
     if ( sv == NULL )
     {
         return NULL;
     }
-    p->callbacks = sv;
 
+    p->fepoll = fepoll;
+    p->context = (void *)ctx;
+    p->keep_looping = b;
+    p->started = false;
+    p->callbacks = sv;
+    p->fepoll = fepoll;
     return p;
 }
 void *fepoll_th_data_destroy(fepoll_th_data_t *p)
@@ -85,7 +93,7 @@ int detached_join_epoll(fepoll_th_data_t *fepoll_obj)
     int rc = pthread_join(th, NULL);
     if(rc != 0) 
     { 
-        printf("ERRORCODE2::%d\n",rc);
+        printf("ERRORCODE2 for epoll::%d\n",rc);
     }
     return rc;
 }
