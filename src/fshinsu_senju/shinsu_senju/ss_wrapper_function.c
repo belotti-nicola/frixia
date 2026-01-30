@@ -1,5 +1,9 @@
 #include <stdlib.h>
 #include <internal/ss_pool.h>
+#include <frixia/frixia_environment.h>
+
+//TODO CLEAN
+#include <signal.h>
 
 #include <frixia/ss_wrapper_function.h>
 

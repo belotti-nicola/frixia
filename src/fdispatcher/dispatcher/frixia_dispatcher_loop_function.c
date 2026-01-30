@@ -5,6 +5,9 @@
 #include <frixia/frixia_shinsu_senju_th.h>
 #include <internal/frixia_epoll_th.h>
 
+//TODO CLEAN
+#include <signal.h>
+
 #include "frixia_dispatcher_loop_function.h"
 
 int frixia_dispatcher_loop_function(void *arg)
@@ -19,6 +22,7 @@ int frixia_dispatcher_loop_function(void *arg)
     shinsu_senju_data_t *ssd = fenv->shinsu_senju_ctx;
     
     bool *keep_looping = dispatcher->keep_looping;
+    
     while(*keep_looping)
     {
         printf("dispatcher loop. waiting\n");

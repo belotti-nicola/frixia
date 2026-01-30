@@ -147,7 +147,7 @@ void frixia_wake(frixia_epoll_t *fepoll)
     int rc = eventfd_write(wake_fd,1);
     if( rc < 0 )
     {
-        printf("Errorr!! %d\n",errno);
+        printf("Errorr frixia waking!! %d\n",errno);
     }
 }
 FRIXIA_FEPOLL_ADD_RESULT create_fepoll_add_result(int fd, FRIXIA_EPOLL_CODE_T code, int errno_code)

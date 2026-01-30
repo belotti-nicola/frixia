@@ -51,7 +51,7 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
 
     frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data(retVal);
 
-    shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(maximum_filedescriptors,(void *)retVal);
+    shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(maximum_filedescriptors,retVal);
     
     convoy_t *convoy = convoy_create(maximum_filedescriptors);
 
@@ -576,8 +576,10 @@ FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, FRIXIA_SIGNAL sig)
     convoy_t *c = env->convoy;
     convoy_add_signal_filedescriptor(c,fd,sig);
 
-    sigset_t frixia_threads_mask = env->threads_sigset;
-    sigaddset(&frixia_threads_mask, SIGINT);
+    frixia_events_queue_t *q = env->fepoll_events;
+    fepoll_th_data_t *fep_data = env->fepoll_ctx;
+    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+    register_callback_by_fd(fep_data,fd,sv);
 
     return INTERNAL_FRIXIA_SIGNAL_FD_RESULT(res);
 }

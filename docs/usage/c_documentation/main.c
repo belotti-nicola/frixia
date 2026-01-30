@@ -5,6 +5,7 @@
 #define MAXIMUM_FILE_DESCRIPTORS 25
 
 //TODO THIS IS GOING TO BE DELETED
+#include <signal.h>
 #define SECONDS 10
 #include <sys/socket.h>
 #include <string.h>
@@ -31,7 +32,7 @@ void *stop_in_seconds_cb(void *arg)
 
 void *engine_stop_cb(ss_worker_ctx_t *ctx)
 {
-    frixia_environment_t *fenv = (frixia_environment_t *)ctx->shinsu_senju_ctx->ctx;
+    frixia_environment_t *fenv = (frixia_environment_t *)ctx->shinsu_senju_ctx->fenv;
     frixia_stop(fenv);
     int rc = frixia_stop(fenv);
     if ( rc != 0 )
@@ -45,6 +46,19 @@ void *engine_stop_cb(ss_worker_ctx_t *ctx)
 
 int main()
 {
+    // BLOCK SIGINT AT FIRST
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+    int ret = pthread_sigmask(SIG_BLOCK, &mask, NULL);
+    if (ret != 0)
+    {
+        printf("Error blocking sigint\n");
+        return -1;
+    }
+
+    printf("pid %ld ppid %ld\n", (long)getpid(), (long)getppid());
+
     frixia_environment_t *fenv = frixia_environment_create(MAXIMUM_FILE_DESCRIPTORS);
     FRIXIA_RESULT frixia_waker_res = frixia_add_eventfd(fenv);
     if( !frixia_result_is_ok(frixia_waker_res) )
@@ -81,13 +95,15 @@ int main()
     }
     int sigint_fd = frixia_result_fd(SIGINT_RES);
     printf("%d sigint_fd\n",sigint_fd);
-    frixia_register_callback(fenv,sigint_fd,(void *)frixia_stop,fenv);
+    frixia_register_callback(fenv,sigint_fd,engine_stop_cb,fenv);
 
 
-    pthread_t th;
-    pthread_create(&th,NULL,stop_in_seconds_cb,fenv);
+    // pthread_t th;
+    // pthread_create(&th,NULL,stop_in_seconds_cb,fenv);
 
 
+
+    
     frixia_start(fenv);
     
     frixia_environment_destroy(fenv); 

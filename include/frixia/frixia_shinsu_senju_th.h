@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+typedef struct frixia_environment frixia_environment_t; 
 typedef struct shinsu_senju_pool shinsu_senju_pool_t;
 
 typedef struct shinsu_senju_data_t
@@ -14,11 +15,11 @@ typedef struct shinsu_senju_data_t
     bool *active;
     shinsu_senju_pool_t *pool;
     
-    void *ctx;
+    frixia_environment_t *fenv;
 
 } shinsu_senju_data_t;
 
-shinsu_senju_data_t *create_shinsu_senju_data(int workers, void *ctx);
+shinsu_senju_data_t *create_shinsu_senju_data(int workers, frixia_environment_t *fenv);
 void destroy_shinsu_senju_data(shinsu_senju_data_t *ssd);
 
 int  detached_shinsu_senju_start(shinsu_senju_data_t *fshinsu_senju);

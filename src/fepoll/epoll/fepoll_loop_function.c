@@ -7,6 +7,9 @@
 #include "event_context.h"
 #include "fctx.h"
 
+
+#include <signal.h>
+
 #include "fepoll_loop_function.h"
 
 void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_environment_t *fenv)

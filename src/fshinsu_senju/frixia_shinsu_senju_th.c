@@ -4,8 +4,9 @@
 #include <stdlib.h>
 
 #include <frixia/frixia_shinsu_senju_th.h>
+#include <frixia/frixia_environment.h>
 
-shinsu_senju_data_t *create_shinsu_senju_data(int workers, void *ctx)
+shinsu_senju_data_t *create_shinsu_senju_data(int workers, frixia_environment_t *fenv)
 {
     shinsu_senju_data_t *retVal = malloc(sizeof(shinsu_senju_data_t));
     if ( retVal == NULL )
@@ -25,7 +26,7 @@ shinsu_senju_data_t *create_shinsu_senju_data(int workers, void *ctx)
     retVal->maximum_workers = workers;
     retVal->pool = ssp;
     retVal->active = b;
-    retVal->ctx = ctx;
+    retVal->fenv = fenv;
     return retVal;
 }
 void destroy_shinsu_senju_data(shinsu_senju_data_t *ssd)
@@ -74,7 +75,7 @@ void detached_shinsu_senju_load(shinsu_senju_data_t *ssd,int key,void *(fun)(voi
     shinsu_senju_pool_t *ssp = ssd->pool;
     frixia_events_queue_t **q = ssp->queues + key;
     bool *keep_looping = ssd->active;
-    void *fenv = ssd->ctx;
+    void *fenv = ssd->fenv;
     sv_callback_t sv = 
     {
         .is_valid = true,
