@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include <pthread.h>
 
-typedef struct frixia_dispatcher frixia_dispatcher_t;
+typedef struct frixia_environment frixia_environment_t;
+typedef struct frixia_dispatcher  frixia_dispatcher_t;
 
 typedef struct frixia_dispatcher_data_t
 {
@@ -12,11 +13,11 @@ typedef struct frixia_dispatcher_data_t
     bool                 started;
     frixia_dispatcher_t *dispatcher;
 
-    void                *ctx;
+    frixia_environment_t *fenv;
     
 } frixia_dispatcher_data_t;
 
-frixia_dispatcher_data_t *create_frixia_dispatcher_data(void *arg);
+frixia_dispatcher_data_t *create_frixia_dispatcher_data(frixia_environment_t *fenv);
 void destroy_frixia_dispatcher_data(frixia_dispatcher_data_t *p);
 
 int detached_start_frixia_dispatcher_new(frixia_dispatcher_data_t *data);

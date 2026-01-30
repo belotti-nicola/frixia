@@ -1,4 +1,4 @@
-X(FUDP_OK,FRIXIA_KO,"Frixia eventfd success")
+X(FUDP_OK,FRIXIA_OK,"Frixia eventfd success")
 X(ERR_FUDP_START_SOCKET,FRIXIA_KO,"Frixia eventfd success")
 X(ERR_FUDP_START_BIND,FRIXIA_KO,"Frixia eventfd success")
 X(ERR_FUDP_START_LISTEN,FRIXIA_KO,"Frixia eventfd success")

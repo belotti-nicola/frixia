@@ -49,7 +49,7 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
 
     fepoll_th_data_t *fep_data = fepoll_th_data_create((void *)retVal);
 
-    frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data((void *)retVal);
+    frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data(retVal);
 
     shinsu_senju_data_t *ss_ctx = create_shinsu_senju_data(maximum_filedescriptors,(void *)retVal);
     
@@ -446,12 +446,15 @@ int frixia_stop(frixia_environment_t *env)
 {
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
     detached_stop_epoll(fep_data);
+    printf("fepoll joined\n");
 
     frixia_dispatcher_data_t *fdisp_data = env->fdispatcher_ctx;
     detached_stop_frixia_dispatcher_new(fdisp_data);
+    printf("fdisp joined\n");
 
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
     detached_shinsu_senju_stop(ssd);
+    printf("shinsu senju joined\n");
 
     return 0;
 }

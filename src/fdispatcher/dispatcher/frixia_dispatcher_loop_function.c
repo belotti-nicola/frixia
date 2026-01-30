@@ -13,7 +13,7 @@ int frixia_dispatcher_loop_function(void *arg)
     frixia_dispatcher_data_t *dispatcher_data   = (frixia_dispatcher_data_t *)arg;
     frixia_dispatcher_t *dispatcher = dispatcher_data->dispatcher;
     frixia_event_t *event;
-    frixia_environment_t *fenv = (frixia_environment_t *)dispatcher_data->ctx;
+    frixia_environment_t *fenv = dispatcher_data->fenv;
     frixia_events_queue_t *events_queue = fenv->fepoll_events;
 
     shinsu_senju_data_t *ssd = fenv->shinsu_senju_ctx;

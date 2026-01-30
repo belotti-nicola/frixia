@@ -4,10 +4,10 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-#include <frixia/frixia_environment.h>
 #include <internal/simple_valid_callback.h>
 
-typedef struct frixia_epoll frixia_epoll_t;
+typedef struct frixia_environment frixia_environment_t;
+typedef struct frixia_epoll       frixia_epoll_t;
 
 typedef struct fepoll_th_data
 {
@@ -22,7 +22,7 @@ typedef struct fepoll_th_data
 
 
 
-fepoll_th_data_t *fepoll_th_data_create(void *arg);
+fepoll_th_data_t *fepoll_th_data_create(frixia_environment_t *fenv);
 void *fepoll_th_data_destroy(fepoll_th_data_t *p);
 
 int detached_start_epoll(fepoll_th_data_t *fepoll);
