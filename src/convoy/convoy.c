@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <frixia/frixia_inode.h>
 #include <internal/convoy.h>
 
 void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes)
@@ -74,7 +75,7 @@ void convoy_add_timer_filedescriptor(convoy_t *c,int fd, int delay, int interval
     pthread_mutex_unlock(c->mutex);
 }
 
-void convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath)
+void convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath,FRIXIA_INODE_FLAG mask)
 {
     pthread_mutex_lock(c->mutex);
     int dim = c->maximum_size;
@@ -87,7 +88,7 @@ void convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath)
 
     c->filedescriptors[fd].fd   = fd;
     c->filedescriptors[fd].type = INODE;
-    set_frixia_inode_fd(c->filedescriptors[fd].type_data,filepath);
+    set_frixia_inode_fd(c->filedescriptors[fd].type_data,filepath,mask);
     c->size = c->size +1;
     pthread_mutex_unlock(c->mutex);
 }

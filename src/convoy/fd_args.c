@@ -36,9 +36,10 @@ void set_frixia_eventfd_fd(frixia_fd_args_t *fd, int ev_fd)
     fd->eventfd_info.fd = ev_fd;
 }
 
-void set_frixia_inode_fd(frixia_fd_args_t *fd, char *filepath)
+void set_frixia_inode_fd(frixia_fd_args_t *fd, char *filepath,FRIXIA_INODE_FLAG flag)
 {
     fd->inode_info.path = filepath;
+    fd->inode_info.flag = flag;
 }
 
 void set_frixia_signal_fd(frixia_fd_args_t *fd, FRIXIA_SIGNAL sig)

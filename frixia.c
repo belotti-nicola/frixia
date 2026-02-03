@@ -556,7 +556,12 @@ FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_inode_filedescriptor(c,fd,filepath); //todo inodeflag
+    convoy_add_inode_filedescriptor(c,fd,filepath,mask); 
+    
+    frixia_events_queue_t *q = env->fepoll_events;
+    fepoll_th_data_t *fep_data = env->fepoll_ctx;
+    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+    register_callback_by_fd(fep_data,fd,sv);
 
     return INTERNAL_FRIXIA_INODE_FD_RESULT(res);
 }
@@ -599,6 +604,11 @@ FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env)
 
     convoy_t *c = env->convoy;
     convoy_add_eventfd_filedescriptor(c,fd);
+
+    frixia_events_queue_t *q = env->fepoll_events;
+    fepoll_th_data_t *fep_data = env->fepoll_ctx;
+    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+    register_callback_by_fd(fep_data,fd,sv);
 
     return INTERNAL_FRIXIA_EVENTFD_FD_RESULT(res);
 }

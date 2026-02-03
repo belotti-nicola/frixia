@@ -1,6 +1,7 @@
 #ifndef FRIXIA_FD_ARGS_H
 #define FRIXIA_FD_ARGS_H
 
+#include <frixia/frixia_inode.h>
 #include <frixia/frixia_signal.h>
 
 typedef struct frixia_tcp
@@ -45,6 +46,7 @@ typedef struct frixia_eventfd
 typedef struct frixia_inode
 {
     char *path;
+    FRIXIA_INODE_FLAG flag;
 
 }frixia_inode_t;
 
@@ -73,7 +75,7 @@ void set_frixia_fifo_fd(frixia_fd_args_t *fd, const char *name, int read_size);
 void set_frixia_timer_fd(frixia_fd_args_t *fd, int delay, int interval);
 void set_frixia_scheduler_fd(frixia_fd_args_t *fd, int tick);
 void set_frixia_eventfd_fd(frixia_fd_args_t *fd, int ev_fd);
-void set_frixia_inode_fd(frixia_fd_args_t *fd, char *filepath);
+void set_frixia_inode_fd(frixia_fd_args_t *fd, char *filepath, FRIXIA_INODE_FLAG f);
 void set_frixia_signal_fd(frixia_fd_args_t *fd, FRIXIA_SIGNAL sig);
 
 #endif
