@@ -92,5 +92,6 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
     }
 
     fepoll_stop(fepoll);
+    printf("fepoll loop function ended...\n");
     return 0;
 }

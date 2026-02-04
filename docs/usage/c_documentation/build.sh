@@ -1,4 +1,4 @@
-cd ../../../scripts && ./build.sh
+cd ../../../scripts && ./test.sh
 cd ../docs/usage/c_documentation
 rm -rv build
 mkdir build && cd build

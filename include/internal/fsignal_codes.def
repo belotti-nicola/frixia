@@ -1,4 +1,5 @@
 X(FSIGNAL_OK,FRIXIA_OK,"Success")
-X(FERR_SIGNAL_SIGPROCMASK,FRIXIA_KO,"Error with sigprocsmask")
+X(FERR_SIGNAL_PTHREADSIGMASK,FRIXIA_KO,"Error with pthreadsigmask")
 X(FERR_SIGNAL_CREATION,FRIXIA_KO,"Error creating signal fd")
 X(FERR_SIGNAL_CLOSE,FRIXIA_KO,"Error closing signal fd")
+X(FERR_SIGNAL_READ,FRIXIA_KO,"Error reading signal filedescriptor")
