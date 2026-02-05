@@ -1,12 +1,11 @@
 TODO   
-    FEPOLL_TCP CODES
-    HANDLERS CODES
+    pretty bad error on JOINs
+    READ_UTILITY AND CTX
+    
+    LOGGING ACTIONS
     convoy refactoring (make it threadsafe if necessary)
   
     valgrind support
-    debug level prints
-    remove unnecessary elements
-    varie xmacro
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

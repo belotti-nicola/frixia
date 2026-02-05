@@ -517,6 +517,11 @@ FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int by
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
 
+    frixia_events_queue_t *q = env->fepoll_events;
+    fepoll_th_data_t *fep_data = env->fepoll_ctx;
+    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+    register_callback_by_fd(fep_data,fd,sv);
+
     return INTERNAL_FRIXIA_FIFO_FD_RESULT(res);
 }
 

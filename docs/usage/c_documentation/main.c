@@ -5,6 +5,7 @@
 #define MAXIMUM_FILE_DESCRIPTORS 25
 
 //TODO THIS IS GOING TO BE DELETED
+#include <errno.h>
 #include <frixia/frixia_signal.h>
 #include <signal.h>
 #define SECONDS 10
@@ -42,6 +43,38 @@ void *engine_stop_cb_sigint(ss_worker_ctx_t *ctx)
         return NULL;
     }
     printf("OK engine_stopper!\n");
+    return NULL;
+}
+
+void *engine_stop_cb_udp(ss_worker_ctx_t *ctx)
+{    
+    int fd = ctx->id;
+    //TODO THIS SUCKS   
+    int dim = ctx->shinsu_senju_ctx->fenv->convoy->filedescriptors[fd].type_data->udp_info.read_size;
+    char buffer[dim];
+    int read_bytes = read(fd,buffer,dim);
+    if (read_bytes < 0)
+    {
+        printf("Error engine_stopper::read! on fd %d(errno %d)\n",fd,errno);
+        return NULL;
+    }
+
+    int cmp = strncmp(buffer,"STOP",4);
+    if (cmp == 0)
+    {
+        frixia_environment_t *fenv = (frixia_environment_t *)ctx->shinsu_senju_ctx->fenv;
+        frixia_stop(fenv);
+        int rc = frixia_stop(fenv);
+        if ( rc != 0 )
+        {
+            printf("Error engine_stopper!\n");
+            return NULL;
+        }
+        printf("OK engine_stopper!\n");
+        return NULL;
+    }
+
+    printf("%s\n",buffer);
     return NULL;
 }
 
@@ -90,7 +123,7 @@ int main()
         return -1;
     }
     int udp_res = frixia_result_fd(UDP_RES);
-    frixia_register_callback(fenv,udp_res,engine_stop_cb_sigint,NULL);
+    frixia_register_callback(fenv,udp_res,engine_stop_cb_udp,NULL);
 
     FRIXIA_RESULT SIGINT_RES = frixia_add_signal(fenv,FSIGNAL_INT);
     if( !frixia_result_is_ok(SIGINT_RES) )
