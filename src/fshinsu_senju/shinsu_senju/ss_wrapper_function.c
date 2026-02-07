@@ -33,8 +33,8 @@ void *ss_worker_function(void *arg)
 
     shinsu_senju_pool_t *ssp = ssd->pool;
     ss_thread_ended(ssp);
-    destroy_ss_worker_ctx(ctx);
     printf("Worker %d ended...\n",ctx->id);
+    destroy_ss_worker_ctx(ctx);
     return NULL;
 }
 

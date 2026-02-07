@@ -32,7 +32,7 @@ int frixia_dispatcher_loop_function(void *arg)
             printf("WARNING: POPPING EVENTS QUEUE: element is NULL\n");
             continue;
         }
-        printf("\ndispatcher loop. fd event:%d\n\n",event->fd);
+        printf("dispatcher loop. fd event:%d\n",event->fd);
 
         detached_shinsu_senju_push(ssd,event->fd,event);
     }

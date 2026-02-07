@@ -34,8 +34,18 @@ void *stop_in_seconds_cb(void *arg)
 
 void *engine_stop_cb_sigint(ss_worker_ctx_t *ctx)
 {    
+    
     frixia_environment_t *fenv = (frixia_environment_t *)ctx->shinsu_senju_ctx->fenv;
-    frixia_stop(fenv);
+    int fd = ctx->id;
+
+    struct signalfd_siginfo si;
+    ssize_t r = read(fd, &si, sizeof(si));
+    if (r != sizeof(si))
+    {
+        return NULL;
+    }
+
+
     int rc = frixia_stop(fenv);
     if ( rc != 0 )
     {
@@ -141,8 +151,10 @@ int main()
 
     
     frixia_start(fenv);
-    
+    printf("started ended correctly.\n");
+
     frixia_environment_destroy(fenv); 
+
     printf("Ended correctly.\n");
     return 0;
 }

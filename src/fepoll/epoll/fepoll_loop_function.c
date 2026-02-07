@@ -56,7 +56,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
     bool *keep_looping = th_data->keep_looping;
     while( *keep_looping )
     {
-        printf("Waiting\n");
+        printf("Waiting %d\n",*keep_looping);
         frixia_event_t ev_q[50];
         int events_number = frixia_epoll_wait(fepoll,ev_q);
         printf("events_number :: %d\n",events_number);
@@ -77,6 +77,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
             do_callback_wrapper(&sv,event_fd,mask,fenv);
             printf("Event fd in epoll %d...\n",event_fd);
         }
+        printf("Callback ended %d\n",*keep_looping);
     }
 
     convoy_t *convoy = fenv->convoy;

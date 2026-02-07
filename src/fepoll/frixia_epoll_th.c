@@ -70,8 +70,8 @@ int detached_stop_epoll(fepoll_th_data_t *fepoll_obj)
 {   
     bool *b = fepoll_obj->keep_looping;
     *b = false;
-    //frixia_epoll_t *fepoll = fepoll_obj->fepoll;
-    //frixia_wake(fepoll);
+    frixia_epoll_t *fepoll = fepoll_obj->fepoll;
+    frixia_wake(fepoll);
     return 0;
 }
 

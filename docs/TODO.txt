@@ -1,5 +1,5 @@
 TODO   
-    pretty bad error on JOINs
+    push_q add on unused threads.
     READ_UTILITY AND CTX
     
     LOGGING ACTIONS
