@@ -150,14 +150,14 @@ void *concrete_http_callback_by_user(void *arg)
     ss_worker_ctx_t *ctx = (ss_worker_ctx_t *)arg;
 
     frixia_environment_t *fenv = (frixia_environment_t *)ctx->arg;
-    int fd = ctx->id;
+    int fd = ctx->fd;
 
     int dim = fenv->convoy->filedescriptors[fd].type_data->tcp_info.read_size;
     char buf[dim];
 
     printf("\n\n SIZE %d \n\n\n",dim);
 
-    FRIXIA_TCP_READ_RESULT read_result = read_tcp(ctx->id,buf,dim);
+    FRIXIA_TCP_READ_RESULT read_result = read_tcp(ctx->fd,buf,dim);
     if ( read_result.res.exit_code != FTCP_OK )
     {
         return NULL;
@@ -168,11 +168,11 @@ void *concrete_http_callback_by_user(void *arg)
     FHTTP_t parsed = frixia_parse_request(buf,bytes_read);
     if ( parsed.exit_code == false )
     {
-        write_tcp(ctx->id,HTTP_KO,strlen(HTTP_KO));
+        write_tcp(ctx->fd,HTTP_KO,strlen(HTTP_KO));
         return NULL;
     }
 
-    write_tcp(ctx->id,HTTP_OK,strlen(HTTP_OK));
+    write_tcp(ctx->fd,HTTP_OK,strlen(HTTP_OK));
 
     return NULL;
 }
@@ -183,7 +183,7 @@ void *http_callback(void *arg)
 
     frixia_environment_t *fenv = (frixia_environment_t *)ctx->arg;
 
-    int fd = ctx->id;
+    int fd = ctx->fd;
     int reply;
     accept_tcp(fd,&reply);
 
@@ -200,7 +200,7 @@ void *http_callback(void *arg)
 void *timer_callback(void *arg)
 {
     ss_worker_ctx_t *ctx = (ss_worker_ctx_t *)arg;
-    int fd = ctx->id;
+    int fd = ctx->fd;
     int *counter = (int *)ctx->callback.auxiliary;
     *counter += 1;
     char buf[8];

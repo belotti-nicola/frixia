@@ -11,7 +11,7 @@ void *ss_worker_function(void *arg)
 {
     ss_worker_ctx_t *ctx = (ss_worker_ctx_t *)arg;
     
-    printf("Worker %d started...\n",ctx->id);
+    printf("Worker %d started...\n",ctx->fd);
     bool *keep_looping = ctx->keep_looping;
     frixia_events_queue_t *q = ctx->events;
     shinsu_senju_data_t *ssd = ctx->shinsu_senju_ctx;
@@ -33,12 +33,12 @@ void *ss_worker_function(void *arg)
 
     shinsu_senju_pool_t *ssp = ssd->pool;
     ss_thread_ended(ssp);
-    printf("Worker %d ended...\n",ctx->id);
+    printf("Worker %d ended...\n",ctx->fd);
     destroy_ss_worker_ctx(ctx);
     return NULL;
 }
 
-ss_worker_ctx_t *create_ss_worker_ctx(int id, bool *kl, frixia_events_queue_t *e, shinsu_senju_data_t *ssd,sv_callback_t sv, void *arg)
+ss_worker_ctx_t *create_ss_worker_ctx(int fd, bool *kl, frixia_events_queue_t *e, shinsu_senju_data_t *ssd,sv_callback_t sv, frixia_environment_t *fenv)
 {
     ss_worker_ctx_t *ctx = malloc(sizeof(ss_worker_ctx_t));
     if ( ctx == NULL )
@@ -47,12 +47,12 @@ ss_worker_ctx_t *create_ss_worker_ctx(int id, bool *kl, frixia_events_queue_t *e
         return NULL;
     }
 
-    ctx->id = id;
+    ctx->fd = fd;
     ctx->events = e;
     ctx->keep_looping = kl;
     ctx->shinsu_senju_ctx = ssd;
     ctx->callback = sv;
-    ctx->arg = arg;
+    ctx->fenv = fenv;
     return ctx;
 }
 

@@ -62,6 +62,11 @@ int  detached_shinsu_senju_stop(shinsu_senju_data_t *fshinsu_senju)
     for (int i=0;i<dim;i++)
     {
         frixia_events_queue_t *q = *(fshinsu_senju->pool->queues + i);
+        if( q == NULL )
+        {
+            printf("Q for fd %d is null. continuing...\n",i);
+            continue;
+        }
         frixia_events_queue_push(q,NULL);
     }
 }
@@ -72,10 +77,13 @@ int  detached_shinsu_senju_join(shinsu_senju_data_t *fshinsu_senju)
 }
 void detached_shinsu_senju_load(shinsu_senju_data_t *ssd,int key,void *(fun)(void *), void *arg)
 {
-    shinsu_senju_pool_t *ssp = ssd->pool;
-    frixia_events_queue_t **q = ssp->queues + key;
+    shinsu_senju_pool_t    *ssp    = ssd->pool;
+    frixia_events_queue_t **queues = ssp->queues;
+    frixia_events_queue_t  *q      = frixia_events_queue_create();
+    *(queues+key) = q;
+
     bool *keep_looping = ssd->active;
-    void *fenv = ssd->fenv;
+    frixia_environment_t *fenv = ssd->fenv;
     sv_callback_t sv = 
     {
         .is_valid = true,
@@ -83,11 +91,12 @@ void detached_shinsu_senju_load(shinsu_senju_data_t *ssd,int key,void *(fun)(voi
         .auxiliary = arg
     };
     
-    ss_worker_ctx_t *ctx = create_ss_worker_ctx(key,keep_looping,*q, ssd,sv,fenv);
+    ss_worker_ctx_t *ctx = create_ss_worker_ctx(key,keep_looping,q, ssd,sv,fenv);
     ss_start_new_thread(ssp,key,fun,ctx);
 }
-void detached_shinsu_senju_push(shinsu_senju_data_t *ssd, int key, void *event)
+void detached_shinsu_senju_push(shinsu_senju_data_t *ssd, int fd, void *event)
 {
+    //fd is used as a key
     shinsu_senju_pool_t *ssp = ssd->pool;
-    ss_push_thread(ssp,key,event);
+    ss_push_thread(ssp,fd,event);
 }

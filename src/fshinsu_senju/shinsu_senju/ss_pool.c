@@ -35,8 +35,7 @@ shinsu_senju_pool_t *ss_create(int max_threads)
     }
     for( int i=0; i<max_threads;i++)
     {
-        frixia_events_queue_t *q = frixia_events_queue_create();
-        *(queues+i) = q;
+        
     }
 
     ssp->max_size = max_threads;

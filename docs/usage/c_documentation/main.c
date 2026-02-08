@@ -36,7 +36,7 @@ void *engine_stop_cb_sigint(ss_worker_ctx_t *ctx)
 {    
     
     frixia_environment_t *fenv = (frixia_environment_t *)ctx->shinsu_senju_ctx->fenv;
-    int fd = ctx->id;
+    int fd = ctx->fd;
 
     struct signalfd_siginfo si;
     ssize_t r = read(fd, &si, sizeof(si));
@@ -58,7 +58,7 @@ void *engine_stop_cb_sigint(ss_worker_ctx_t *ctx)
 
 void *engine_stop_cb_udp(ss_worker_ctx_t *ctx)
 {    
-    int fd = ctx->id;
+    int fd = ctx->fd;
     //TODO THIS SUCKS   
     int dim = ctx->shinsu_senju_ctx->fenv->convoy->filedescriptors[fd].type_data->udp_info.read_size;
     char buffer[dim];
