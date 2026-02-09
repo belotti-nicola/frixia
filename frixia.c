@@ -510,7 +510,7 @@ FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int byt
 FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
 {
     FRIXIA_FIFO_FD_RESULT res = start_fifo_listening(file);
-    if( !INTERNAL_FRIXIA_UDP_CODE_IS_OK(res.res.code))
+    if( !INTERNAL_FRIXIA_FIFO_CODE_IS_OK(res.res.code))
     {
         return INTERNAL_FRIXIA_FIFO_FD_RESULT(res);
     }
@@ -527,7 +527,7 @@ FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int by
     return INTERNAL_FRIXIA_FIFO_FD_RESULT(res);
 }
 
-FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env,const char *id, int delay, int interval)
+FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env, int delay, int interval)
 {
     FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,interval);
     if( !INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.res.code))

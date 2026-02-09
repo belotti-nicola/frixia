@@ -1,4 +1,4 @@
-X(TIMER_OK,FRIXIA_KO,"Frixia eventfd success")
+X(TIMER_OK,FRIXIA_OK,"Frixia eventfd success")
 X(ERR_TIMER_CREATE,FRIXIA_KO,"Frixia eventfd success")
 X(ERR_TIMERFD_SETTIME,FRIXIA_KO,"Frixia eventfd success")
 X(ERR_TIMERFD_CLOSE,FRIXIA_KO,"Frixia eventfd success")
