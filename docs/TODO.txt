@@ -1,8 +1,13 @@
 TODO   
     READ_UTILITY AND CTX
-    *_codes.def
     LOGGING ACTIONS
     valgrind support
+
+    warning
+    registering_fepoll_callback
+    registering_fdispatcher_callback
+    registering_fshinsu_senju
+    kill fshinsu_senju
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

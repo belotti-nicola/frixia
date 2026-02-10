@@ -622,6 +622,11 @@ FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env)
 
 void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg)
 {
+    if(fd < 0)
+    {
+        printf("frixia_register_callback error!! %d\n",fd);
+        return;
+    }
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
     detached_shinsu_senju_load(ssd,fd,fun,arg);
 }

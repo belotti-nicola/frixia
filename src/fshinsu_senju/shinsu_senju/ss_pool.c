@@ -83,6 +83,7 @@ void ss_thread_ended(shinsu_senju_pool_t *ssp)
         pthread_cond_t *cond = ssp->no_threads_running;
         pthread_cond_signal(cond);
     }
+    printf("ss_thread_ended. %d remaining threads\n",ssp->size);
 
     pthread_mutex_unlock(mutex);
 }
