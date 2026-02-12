@@ -14,7 +14,11 @@ extern "C" {
 #include <frixia/frixia_signal.h>
 #include <frixia/frixia_inode.h>
 #include <frixia/frixia_result.h>
-#include <frixia/ss_wrapper_function.h>//TODO SUCKS
+
+// =================================================================
+#include <frixia/ss_wrapper_function.h>
+#include <frixia/frixia_callbacks.h>
+// =================================================================
 
 
 #ifdef __cplusplus
