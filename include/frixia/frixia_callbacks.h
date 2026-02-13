@@ -1,7 +1,10 @@
 #ifndef FRIXIA_CALLBACK_H
 #define FRIXIA_CALLBACK_H
 
+
+//FORWARD DECLARATION
 #include <frixia/frixia_environment.h>
+#include <internal/frixia_callbacks_impl.h>
 
 typedef struct FRIXIA_CALLBACK_CTX
 {
@@ -32,10 +35,41 @@ typedef struct FRIXIA_SHINSU_SENJU_CALLBACK_CTX
 }
 FRIXIA_SHINSU_SENJU_CALLBACK_CTX;
 
+#define frixia_register_cb(env, fd, fun, arg) \
+    do { \
+        _Static_assert( \
+            __builtin_types_compatible_p(__typeof__(fun), void *(*)(FRIXIA_CALLBACK_CTX *)), \
+            "FRIXIA: tipo callback sbagliato" \
+        ); \
+        frixia_register_cb_impl(env, fd, fun, arg); \
+    } while(0)
 
-void frixia_register_cb(int fd, FRIXIA_CALLBACK_CTX cb);
-void frixia_register_fepoll_cb(int fd, FRIXIA_EPOLL_CALLBACK_CTX cb);
-void frixia_register_dispatcher_cb(int fd, FRIXIA_DISPATCHER_CALLBACK_CTX cb);
-void frixia_register_shinsu_senju_cb(int fd, FRIXIA_SHINSU_SENJU_CALLBACK_CTX cb);
+#define frixia_register_fepoll_cb(env, fd, fun, arg) \
+    do { \
+        _Static_assert( \
+            __builtin_types_compatible_p(__typeof__(fun), void *(*)(FRIXIA_FEPOLL_CALLBACK_CTX *)), \
+            "FRIXIA: tipo callback sbagliato" \
+        ); \
+        frixia_register_fepoll_cb_impl(env, fd, fun, arg); \
+    } while(0)
+
+#define frixia_register_dispatcher_cb(env, fd, fun, arg) \
+    do { \
+        _Static_assert( \
+            __builtin_types_compatible_p(__typeof__(fun), void *(*)(FRIXIA_DISPATCHER_CALLBACK_CTX *)), \
+            "FRIXIA: tipo callback sbagliato" \
+        ); \
+        frixia_register_dispatcher_cb_impl(env, fd, fun, arg); \
+    } while(0)
+
+#define frixia_register_shinsu_senju_cb(env, fd, fun, arg) \
+    do { \
+        _Static_assert( \
+            __builtin_types_compatible_p(__typeof__(fun), void *(*)(FRIXIA_SHINSU_SENJU_CALLBACK_CTX *)), \
+            "FRIXIA: tipo callback sbagliato" \
+        ); \
+        frixia_register_shinsu_senju_cb_impl(env, fd, fun, arg); \
+    } while(0)
+
 
 #endif

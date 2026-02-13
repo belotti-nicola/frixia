@@ -259,6 +259,8 @@ int main()
     int fifo_fd = frixia_result_fd(FIFO_RES);
     frixia_register_callback(fenv,fifo_fd,fifo_callback,NULL);
 
+    //togle to no compilation
+    //frixia_register_cb(fenv,2,fifo_callback,NULL);
 
     // pthread_t th;
     // pthread_create(&th,NULL,stop_in_seconds_cb,fenv);
