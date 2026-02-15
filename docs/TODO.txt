@@ -8,6 +8,7 @@ TODO
     registering_fdispatcher_callback
     registering_fshinsu_senju
     kill fshinsu_senju
+    test
 
 ISSUE:
     fifo seems controversial (EPOLLET only)

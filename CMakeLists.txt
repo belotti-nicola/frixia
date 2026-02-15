@@ -37,7 +37,6 @@ set(FRIXIA_SOURCES
     src/fepoll/epoll/fepoll.h
     src/fepoll/epoll/fctx.h
     src/fepoll/epoll/fctx.c
-    src/fepoll/epoll/ftcp_handler.h
     src/fepoll/epoll/ftcp_handler.c
     src/fepoll/epoll/fudp_handler.h
     src/fepoll/epoll/fudp_handler.c
@@ -66,6 +65,8 @@ set(FRIXIA_SOURCES
     src/utils/threadsafe_simple_queue.c
 
     src/internal_frixia.c
+
+    src/callbacks/frixia_callbacks.c
 )
 
 add_library(frixia

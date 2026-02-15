@@ -1,16 +1,16 @@
 #ifndef FRIXIA_CALLBACK_H
 #define FRIXIA_CALLBACK_H
 
-
-//FORWARD DECLARATION
 #include <frixia/frixia_environment.h>
 #include <internal/frixia_callbacks_impl.h>
+#include <internal/simple_valid_callback.h>
 
 typedef struct FRIXIA_CALLBACK_CTX
 {
     int fd;
     bool *keep_looping;
     frixia_environment_t *fenv;
+    sv_callback_t sv;
    
 } FRIXIA_CALLBACK_CTX;
 
@@ -38,7 +38,7 @@ FRIXIA_SHINSU_SENJU_CALLBACK_CTX;
 #define frixia_register_cb(env, fd, fun, arg) \
     do { \
         _Static_assert( \
-            __builtin_types_compatible_p(__typeof__(fun), void *(*)(FRIXIA_CALLBACK_CTX *)), \
+            __builtin_types_compatible_p(__typeof__(&(fun)), void *(*)(FRIXIA_CALLBACK_CTX *)), \
             "FRIXIA: tipo callback sbagliato" \
         ); \
         frixia_register_cb_impl(env, fd, fun, arg); \

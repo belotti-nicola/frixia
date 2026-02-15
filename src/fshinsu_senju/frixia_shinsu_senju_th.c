@@ -91,7 +91,7 @@ void detached_shinsu_senju_load(shinsu_senju_data_t *ssd,int key,void *(fun)(voi
         .auxiliary = arg
     };
     
-    ss_worker_ctx_t *ctx = create_ss_worker_ctx(key,keep_looping,q, ssd,sv,fenv);
+    FRIXIA_CALLBACK_CTX *ctx = create_ss_worker_ctx(key,keep_looping,q, ssd,sv,fenv);
     ss_start_new_thread(ssp,key,fun,ctx);
 }
 void detached_shinsu_senju_push(shinsu_senju_data_t *ssd, int fd, void *event)

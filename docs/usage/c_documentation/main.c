@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <sys/inotify.h>
+#include <frixia/ftcp_handler.h>
 #define NAME_MAX 10
 #define BUF_LEN (1 * (sizeof(struct inotify_event) + NAME_MAX + 1))
 char HTTP_OK[] = 
@@ -23,36 +24,21 @@ char HTTP_OK[] =
     "Greetings from frixia engine";
 //==================================================================================
 
-void *tcp_callback(ss_worker_ctx_t *ctx)
+void *tcp_callback(FRIXIA_CALLBACK_CTX *ctx)
 {
     frixia_environment_t *fenv = (frixia_environment_t *)ctx->fenv;
     int fd = ctx->fd;
     int dim = ctx->fenv->convoy->filedescriptors[fd].type_data->tcp_info.read_size;
     char buffer[dim];
 
-    int read_bytes = read(fd,buffer,dim);
-    if (read_bytes < 0)
-    {
-        printf("Error tcp_callback::read! on fd %d(errno %d)\n",fd,errno);
-        return NULL;
-    }
+    int reply;
+    accept_tcp(fd,&reply);
 
-    int cmp = strncmp(buffer,"STOP",4);
-    if (cmp == 0)
-    {
-        int rc = frixia_stop(fenv);
-        if ( rc != 0 )
-        {
-            printf("Error engine_stopper!\n");
-            return NULL;
-        }
-        printf("OK engine_stopper!\n");
-        return NULL;
-    }
+    //TODO: THIS GOES IN ANOTHER WORKER
+    read_tcp(reply,buffer,dim);
+    printf("tcp_callback: %s",buffer);
 
-    printf("%s\n",buffer);
     return NULL;
-
 }
 
 void *stop_in_seconds_cb(void *arg)
@@ -70,9 +56,9 @@ void *stop_in_seconds_cb(void *arg)
     return NULL;
 }
 
-void *engine_stop_cb_sigint(ss_worker_ctx_t *ctx)
+void *engine_stop_cb_sigint(FRIXIA_CALLBACK_CTX *ctx)
 {    
-    frixia_environment_t *fenv = (frixia_environment_t *)ctx->shinsu_senju_ctx->fenv;
+    frixia_environment_t *fenv = (frixia_environment_t *)ctx->fenv;
     int fd = ctx->fd;
 
     struct signalfd_siginfo si;
@@ -93,7 +79,7 @@ void *engine_stop_cb_sigint(ss_worker_ctx_t *ctx)
     return NULL;
 }
 
-void *udp_callback(ss_worker_ctx_t *ctx)
+void *udp_callback(FRIXIA_CALLBACK_CTX *ctx)
 {    
     int fd = ctx->fd;
     int dim = ctx->fenv->convoy->filedescriptors[fd].type_data->tcp_info.read_size;
@@ -108,7 +94,7 @@ void *udp_callback(ss_worker_ctx_t *ctx)
     int cmp = strncmp(buffer,"STOP",4);
     if (cmp == 0)
     {
-        frixia_environment_t *fenv = (frixia_environment_t *)ctx->shinsu_senju_ctx->fenv;
+        frixia_environment_t *fenv = (frixia_environment_t *)ctx->fenv;
         int rc = frixia_stop(fenv);
         if ( rc != 0 )
         {
@@ -123,7 +109,7 @@ void *udp_callback(ss_worker_ctx_t *ctx)
     return NULL;
 }
 
-void *timer_callback(ss_worker_ctx_t *ctx)
+void *timer_callback(FRIXIA_CALLBACK_CTX *ctx)
 {
     int fd = ctx->fd;
     char buf[8];
@@ -138,7 +124,7 @@ void *timer_callback(ss_worker_ctx_t *ctx)
     return NULL;
 }
 
-void *inode_callback(ss_worker_ctx_t *ctx)
+void *inode_callback(FRIXIA_CALLBACK_CTX *ctx)
 {
     int fd = ctx->fd;
     char buf[BUF_LEN] = {0};
@@ -159,7 +145,7 @@ void *inode_callback(ss_worker_ctx_t *ctx)
     );
 }
 
-void *fifo_callback(ss_worker_ctx_t *ctx)
+void *fifo_callback(FRIXIA_CALLBACK_CTX *ctx)
 {
     int fd = ctx->fd;
     char buf[256] = {0};
@@ -209,7 +195,7 @@ int main()
         return -1;
     }
     int tcp_fd = frixia_result_fd(TCP_RES);
-    frixia_register_callback(fenv,tcp_fd,tcp_callback,NULL);//TODO register_http...(1.1)
+    frixia_register_cb(fenv,tcp_fd,tcp_callback,NULL);
 
     FRIXIA_RESULT UDP_RES = frixia_add_udp(fenv,"127.0.0.1",19600,1024);
     if( !frixia_result_is_ok(UDP_RES) )

@@ -4,7 +4,7 @@
 #include <internal/frixia_events_queue.h>
 #include <internal/convoy.h>
 #include <frixia/frixia_tcp.h>
-#include "src/fepoll/epoll/ftcp_handler.h"
+#include <frixia/ftcp_handler.h>
 #include "src/fepoll/epoll/fudp_handler.h"
 #include "src/fepoll/epoll/ftimer_handler.h"
 #include "src/fepoll/epoll/fsignal_handler.h"

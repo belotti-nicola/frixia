@@ -7,8 +7,13 @@ add_executable(poc
     main.c
 )
 
+#compile or not warnings
+add_compile_options(-Werror)
+
+
 # Crea un target IMPORTED per la libreria .a
 add_library(frixia STATIC IMPORTED)
+
 
 # Dove si trova il file .a
 set_target_properties(frixia PROPERTIES

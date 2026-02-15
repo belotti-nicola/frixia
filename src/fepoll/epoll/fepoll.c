@@ -16,7 +16,7 @@
 #include <internal/frixia_event.h>
 #include <internal/frixia_events_queue.h>
 #include <errno.h>
-#include "ftcp_handler.h"
+#include <frixia/ftcp_handler.h>
 #include "fudp_handler.h"
 #include "ffifo_handler.h"
 #include "feventfd_handler.h"
