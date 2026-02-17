@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 
 project(frixia VERSION 1.0.0 DESCRIPTION "Engine for filedescriptors.")
 
+
+include(CTest)
 find_package(Threads REQUIRED)
 
 set(FRIXIA_SOURCES
@@ -68,6 +70,8 @@ set(FRIXIA_SOURCES
 
     src/callbacks/frixia_callbacks.c
 )
+
+add_subdirectory(test)
 
 add_library(frixia
     ${FRIXIA_SOURCES}
