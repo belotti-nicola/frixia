@@ -61,6 +61,7 @@ FRIXIA_UDP_FD_RESULT start_udp_listening(const char *ip, int port)
         return fudp_create_fd_result(-1, ERR_FUDP_START_BIND, errno);
     }
 
+    printf("Starting listening udp ip:%s. port:%d\n",ip,port);
     return fudp_create_fd_result(udp_fd, F_OK, -1);
 }
 int stop_udp_listening(int closing_fd)

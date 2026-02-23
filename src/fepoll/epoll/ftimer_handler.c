@@ -47,6 +47,7 @@ FRIXIA_TIMER_FD_RESULT start_timer_listening(int delay, int interval)
         return CREATE_FRIXIA_TIMER_FD_RESULT(-1,ERR_TIMERFD_SETTIME,-1);
     }
 
+    printf("Starting listening timer\n");
     return CREATE_FRIXIA_TIMER_FD_RESULT(tfd,TIMER_OK,-1);
 }
 

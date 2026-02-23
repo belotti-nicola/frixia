@@ -86,8 +86,9 @@ FRIXIA_TCP_FD_RESULT start_tcp_listening(const char *s, int port)
     if (listen(tcp_fd, 10) == -1)
     {
         return ftcp_create_fd_result(-1,ERR_FTCP_LISTEN,errno);
-    }   
-    
+    }
+
+    printf("Starting listening tcp ip:%s. port:%d (fd:%d)\n",s,port,tcp_fd);
     return ftcp_create_fd_result(tcp_fd,FTCP_OK,-1);
 }
 

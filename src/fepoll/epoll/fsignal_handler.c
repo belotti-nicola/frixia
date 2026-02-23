@@ -46,6 +46,7 @@ FRIXIA_SIGNAL_FD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig)
         return CREATE_FRIXIA_SIGNAL_FD_RESULT(-1,FERR_SIGNAL_CREATION,errno);
     }
 
+    printf("Starting listening signalfd\n");
     return CREATE_FRIXIA_SIGNAL_FD_RESULT(sfd,FSIGNAL_OK,-1);
 }
 FRIXIA_SIGNAL_FD_RESULT stop_signalfd_listening(int closing_fd)

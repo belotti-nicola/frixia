@@ -38,7 +38,8 @@ FRIXIA_FIFO_FD_RESULT start_fifo_listening(const char *name)
     {
         return CREATE_FIFO_FD_RESULT(-1,ERR_FFIFO_OPEN,errno);
     }
-    
+
+    printf("Starting listening fifo %s\n",name);
     return CREATE_FIFO_FD_RESULT(fd,FFIFO_OK,-1);
 }
 

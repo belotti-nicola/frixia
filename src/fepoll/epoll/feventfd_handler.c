@@ -28,6 +28,7 @@ FRIXIA_EVENTFD_FD_RESULT start_eventfd_listening()
         return CREATE_FRIXIA_ADD_FEVENTFD_RESULT(-1,INITIAL_VALUE,errno);
     }
 
+    printf("Starting listening event\n");
     return CREATE_FRIXIA_ADD_FEVENTFD_RESULT(efd,FEVENTFD_OK,-1);
 }
 
