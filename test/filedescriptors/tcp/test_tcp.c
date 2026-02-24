@@ -3,6 +3,7 @@
 #include <sys/eventfd.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <sys/signal.h>
 
 #define WAIT_SECONDS 2
 
@@ -11,6 +12,13 @@ void *WRITER(void *arg)
     sleep(WAIT_SECONDS);
 
     int fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket == -1)
+    {
+        perror("connect failed");
+        fflush(stdout);
+        return NULL;
+    }
+
 
     struct sockaddr_in addr = {0};
     addr.sin_family = AF_INET;
@@ -19,8 +27,8 @@ void *WRITER(void *arg)
 
     if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
     {
-        perror("connect");
-        close(fd);
+        perror("connect failed");
+        fflush(stdout);
         return NULL;
     }
 
@@ -28,11 +36,9 @@ void *WRITER(void *arg)
     if ( written_bytes != 2 )
     {
         perror("write");
-        close(fd);
         return NULL;
     }
 
-    close(fd);
     return NULL;
 }
 
@@ -54,6 +60,10 @@ void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
     char buffer[1024] = {0};
     printf("reading...\n");
     int read_bytes = read(reply,buffer,1024);
+    if ( read_bytes == -1 )
+    {
+        printf("Error reading!\n");
+    }
     
     int *counter = ctx->sv.auxiliary; 
     *counter += 1;
@@ -64,16 +74,13 @@ void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
 
 int main()
 {
+    signal(SIGPIPE, SIG_IGN);
+    setbuf(stdout, NULL);
+
     FRIXIA_RESULT res;
     int counter = 0;
     frixia_environment_t *fenv = frixia_environment_create(10);
-    FRIXIA_RESULT frixia_waker_res = frixia_add_eventfd(fenv);
-    if( !frixia_result_is_ok(frixia_waker_res) )
-    {
-        perror("Error adding eventfd\n");
-        return -1;
-    }
-
+    
     res = frixia_add_tcp(fenv,"0.0.0.0",18080,1024);
     if( !frixia_result_is_ok(res) )
     {
@@ -88,5 +95,7 @@ int main()
     frixia_start(fenv);
     frixia_environment_destroy(fenv);
     printf("End\n");
+
+    pthread_join(th, NULL);
     return 0;
 }

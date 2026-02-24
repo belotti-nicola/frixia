@@ -39,7 +39,7 @@ int wait_epoll_events(int epoll_fd, int max_events, frixia_event_t *fevents)
     int events_number = epoll_wait(epoll_fd, events, max_events, -1);
     if(events_number <= 0)
     {
-        printf("Error::wait_epoll_events:: epoll events waited number %d (<=0)\n",max_events);
+        printf("Error::wait_epoll_events:: epoll events waited number %d (<=0)\n",events_number);
         return -1;
     }
     for(int i=0;i<events_number && i<max_events;i++)

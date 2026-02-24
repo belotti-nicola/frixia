@@ -15,7 +15,10 @@ typedef struct frixia_epoll
     int                      maximum_filedescriptors;
     int                      filedescriptors_number;
     frixia_events_queue_t   *events_queue;
-    pthread_t               *th;   
+    pthread_t               *th;
+    
+    
+    int                      waking_fd;
     
     sv_callback_t           *fepoll_handlers;
 
@@ -37,6 +40,7 @@ FRIXIA_EPOLL_CODE_T fepoll_stop(frixia_epoll_t *fepoll);
 FRIXIA_EPOLL_CODE_T insert_into_pool(frixia_epoll_t *fepoll,int fd);
 FRIXIA_EPOLL_CODE_T insert_event(int epoll, int fd);
 int                 frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents);
+void                frixia_epoll_register_waking_fd(frixia_epoll_t *fepoll);
 void                frixia_wake(frixia_epoll_t *fepoll);
 
 FRIXIA_FEPOLL_ADD_RESULT create_fepoll_add_result(int fd, FRIXIA_EPOLL_CODE_T code, int errno_code);

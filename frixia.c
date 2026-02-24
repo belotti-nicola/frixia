@@ -62,6 +62,12 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
     retVal->shinsu_senju_ctx = ss_ctx;
     retVal->convoy = convoy;
     sigemptyset(&(retVal->threads_sigset));
+
+
+    //create waking mechanism
+    frixia_epoll_t *fepoll = fep_data->fepoll;
+    frixia_epoll_register_waking_fd(fepoll);
+    
     return retVal;
 }
 void frixia_environment_destroy(frixia_environment_t *fenv)
@@ -468,7 +474,7 @@ FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int byt
     {
         return INTERNAL_FRIXIA_TCP_FD_RESULT(res);
     }
-    
+
     int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);

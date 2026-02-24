@@ -33,7 +33,8 @@ fepoll_th_data_t *fepoll_th_data_create(frixia_environment_t *fenv)
     *b = true;
     p->keep_looping = b;
 
-    sv_callback_t *sv = calloc(25,sizeof(sv_callback_t));
+    int dim = fenv->maximum_filedescriptors;
+    sv_callback_t *sv = calloc(dim,sizeof(sv_callback_t));
     if ( sv == NULL )
     {
         return NULL;

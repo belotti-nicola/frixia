@@ -48,10 +48,13 @@ int read_eventfd(int fd)
 int write_eventfd(int fd)
 {
     int rc = eventfd_write(fd,1);
-    if( rc < 0 )
+    if( rc == -1 )
     {
-        printf("write_eventfd !!%d\n",errno);
+        printf("error write_eventfd !!%d\n",errno);
+        return -1;
     }
+
+    printf("written eventfd OK %d\n",rc);
     return 0;
 }
 

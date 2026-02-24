@@ -21,5 +21,6 @@ void *shinsu_senju_loop_function(void *arg)
         printf("Empty shinsu_senju\n");
     }
 
+    printf("shinsu_senju ended.\n");
     return NULL;
 }

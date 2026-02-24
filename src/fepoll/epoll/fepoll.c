@@ -58,6 +58,7 @@ frixia_epoll_t* create_frixia_epoll()
     }
     frixia_epoll->fepoll_handlers = cbs;
 
+
     return frixia_epoll;
 }
 FRIXIA_EPOLL_CODE_T destroy_frixia_epoll(frixia_epoll_t *fepoll)
@@ -141,14 +142,30 @@ int frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents)
     return events_number;
 }
 
+void frixia_epoll_register_waking_fd(frixia_epoll_t *fepoll)
+{
+    FRIXIA_EVENTFD_FD_RESULT res = start_eventfd_listening();
+    if ( res.fd <= 0 )
+    {
+        printf("frixia_epoll_register_waking_fd errno %d",errno);
+        return;
+    }
+
+    insert_event(fepoll->fd,res.fd);
+
+    fepoll->waking_fd = res.fd;
+}
+
 void frixia_wake(frixia_epoll_t *fepoll)
 {
-    int wake_fd = 4; //TODO 
-    int rc = eventfd_write(wake_fd,1);
+    int waking_fd = fepoll->waking_fd;
+    int rc = write_eventfd(waking_fd);
     if( rc < 0 )
     {
-        printf("Errorr frixia waking!! %d\n",errno);
+        printf("Errorr frixia waking!! %d (waking_fd: %d)\n",errno,waking_fd);
     }
+
+    printf("\tFEPOLL: %d EVENTFD:%d\n",fepoll->fd,fepoll->waking_fd);
 }
 FRIXIA_FEPOLL_ADD_RESULT create_fepoll_add_result(int fd, FRIXIA_EPOLL_CODE_T code, int errno_code)
 {
