@@ -12,20 +12,27 @@ void *WRITER(void *arg)
 
     int fd = socket(AF_INET, SOCK_STREAM, 0);
 
-    struct sockaddr_in addr;
+    struct sockaddr_in addr = {0};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(18080);
     inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 
-    connect(fd, (struct sockaddr*)&addr, sizeof(addr));
+    if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+    {
+        perror("connect");
+        close(fd);
+        return NULL;
+    }
 
     int written_bytes = write(fd,"AB",2);
     if ( written_bytes != 2 )
     {
-        perror("Error");
+        perror("write");
+        close(fd);
         return NULL;
     }
-    
+
+    close(fd);
     return NULL;
 }
 
@@ -38,13 +45,14 @@ void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
     socklen_t in_len;
 
     in_len = sizeof(in_addr);
-    
+    printf("accepting...\n");
     int reply = accept(fd, &in_addr, &in_len);
     if (reply == -1)
     {
         perror("Error in accept!\n");
     }
     char buffer[1024] = {0};
+    printf("reading...\n");
     int read_bytes = read(reply,buffer,1024);
     
     int *counter = ctx->sv.auxiliary; 
