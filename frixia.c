@@ -16,6 +16,7 @@
 #include "src/fepoll/epoll/fepoll.h"
 #include <signal.h> //TODO ONLY LINUX????
 #include <internal/internal_frixia.h>
+#include <frixia/frixia_environment.h>
 
 #include <frixia/frixia.h>
 
@@ -61,12 +62,12 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
     retVal->fepoll_events = fepoll_events;
     retVal->shinsu_senju_ctx = ss_ctx;
     retVal->convoy = convoy;
-    sigemptyset(&(retVal->threads_sigset));
 
 
     //create waking mechanism
     frixia_epoll_t *fepoll = fep_data->fepoll;
-    frixia_epoll_register_waking_fd(fepoll);
+    frixia_epoll_register_waking_fd(fepoll);//TODO check correct exit_code
+    convoy_add_eventfd_filedescriptor(convoy,fepoll->waking_fd);
     
     return retVal;
 }

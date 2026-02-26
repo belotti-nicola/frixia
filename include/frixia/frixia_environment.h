@@ -23,8 +23,6 @@ typedef struct frixia_environment
     shinsu_senju_data_t *shinsu_senju_ctx;
     convoy_t *convoy;
 
-    sigset_t threads_sigset;//TODO
-
 } frixia_environment_t;
 
 frixia_environment_t *frixia_environment_create(int maximum_filedescriptors);

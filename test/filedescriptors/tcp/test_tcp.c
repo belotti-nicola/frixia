@@ -5,14 +5,14 @@
 #include <arpa/inet.h>
 #include <sys/signal.h>
 
-#define WAIT_SECONDS 2
+#define WAIT_SECONDS 1
 
 void *WRITER(void *arg)
 {
     sleep(WAIT_SECONDS);
 
     int fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (socket == -1)
+    if (fd == -1)
     {
         perror("connect failed");
         fflush(stdout);
@@ -94,8 +94,13 @@ int main()
 
     frixia_start(fenv);
     frixia_environment_destroy(fenv);
-    printf("End\n");
-
+    
     pthread_join(th, NULL);
+
+    if ( counter != 1 )
+    {
+        printf("Error: test counter value is wrong after execution\n");
+        return 1;
+    }
     return 0;
 }
