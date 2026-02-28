@@ -17,6 +17,7 @@
 #include <signal.h> //TODO ONLY LINUX????
 #include <internal/internal_frixia.h>
 #include <frixia/frixia_environment.h>
+#include <internal/frixia_reader.h>
 
 #include <frixia/frixia.h>
 
@@ -45,10 +46,11 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
         printf("Error creating frixia_environment");
         return NULL;
     }
+    retVal->maximum_filedescriptors = maximum_filedescriptors;//ONLY FIELDS REQUIRING INITIALIZATIONS
 
     frixia_events_queue_t *fepoll_events = frixia_events_queue_create();
 
-    fepoll_th_data_t *fep_data = fepoll_th_data_create((void *)retVal);
+    fepoll_th_data_t *fep_data = fepoll_th_data_create(retVal);
 
     frixia_dispatcher_data_t *disp_data = create_frixia_dispatcher_data(retVal);
 
@@ -56,7 +58,6 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
     
     convoy_t *convoy = convoy_create(maximum_filedescriptors);
 
-    retVal->maximum_filedescriptors = maximum_filedescriptors;
     retVal->fepoll_ctx = fep_data;
     retVal->fdispatcher_ctx = disp_data;
     retVal->fepoll_events = fepoll_events;
@@ -689,4 +690,154 @@ const char * frixia_result_to_string(FRIXIA_RESULT r)
         return "UNKNOWN_FRIXIA_RESULT";
 
     return frixia_add_result_str[index];
+}
+
+
+int frixia_get_filedescription_read_size(frixia_environment_t *fenv,int fd)
+{
+    if (fd <= 0 || fd > fenv->maximum_filedescriptors)
+    {
+        printf("Error frixia_read_filedescriptor(reading fd %d)\n",fd);
+        return -1;
+    }
+
+    int retVal = -1;
+    convoy_t *convoy = fenv->convoy;
+    frixia_file_descriptor_t ffd = convoy->filedescriptors[fd];
+    FrixiaFDType TYPE = ffd.type;
+    switch(TYPE)
+    {
+        case TCP:
+        {
+            retVal = ffd.type_data->tcp_info.read_size;
+            break;
+        }
+        case UDP:
+        {            
+            retVal = ffd.type_data->udp_info.read_size;
+            break;
+        }
+        case FIFO:
+        {
+            retVal = ffd.type_data->fifo_info.read_size;
+            break;
+        }
+        case TIMER:
+        {
+            retVal = 1;
+            break;
+        }
+        case EVENTFD:
+        {
+            retVal = 1;
+            break;
+        }
+        case INODE:
+        {
+            retVal = 1;
+            break;
+        }
+        case SIGNAL:
+        {
+            retVal = 1;
+            break;
+        }
+        case STD_INPUT:
+        case STD_OUTPUT:
+        case STD_ERR:
+        default:
+            break;
+    }
+    return retVal;
+}
+
+void frixia_read_filedescriptor(frixia_environment_t *fenv,int fd, char *buffer, int maximum_size)
+{
+    if (fd <= 0 || fd > fenv->maximum_filedescriptors)
+    {
+        printf("Error frixia_read_filedescriptor(reading fd %d)\n",fd);
+        return;
+    }
+    if( buffer == NULL )
+    {
+        printf("Error null buffer!\n");
+        return;
+    }
+    if ( maximum_size <= 0 )
+    {
+        printf("Error tcp frixia_read_filedescriptor(dim 0 for fd %d)\n",fd);
+        return;
+    }
+
+    convoy_t *convoy = fenv->convoy;
+    frixia_file_descriptor_t ffd = convoy->filedescriptors[fd];
+    FrixiaFDType TYPE = ffd.type;
+    int read_bytes = -1;
+    switch(TYPE)
+    {
+        case TCP:
+        {
+            FRIXIA_TCP_READ_RESULT TCPRES = read_tcp(fd,buffer,maximum_size);
+            read_bytes = TCPRES.bytes_read;
+            break;
+        }
+        case UDP:
+        {            
+            read_bytes = read_udp(fd,buffer,maximum_size,NULL);
+            break;
+        }
+        case FIFO:
+        {
+            read_bytes = read_fifo(fd,buffer,maximum_size);
+            break;
+        }
+        case TIMER:
+        {
+            read_bytes = read_timer(fd,buffer);
+            break;
+        }
+        case EVENTFD:
+        {
+            read_bytes = read_eventfd(fd);
+            break;
+        }
+        case INODE:
+        {
+            read_bytes = read_inode(fd,buffer,maximum_size);
+            break;
+        }
+        case SIGNAL:
+        {
+            int tmp;
+            FRIXIA_SIGNAL_FD_RESULT SIGNALRES = read_signalfd(fd,&tmp);
+            read_bytes = 1;
+            break;
+        }
+        case STD_INPUT:
+        case STD_OUTPUT:
+        case STD_ERR:
+        default:
+            break;
+    }
+
+    printf("=============\n");
+    printf("fd %d,bytes read number:%d, bytes read:%.*s, maximum_size:%d\n",fd,read_bytes,read_bytes,buffer,maximum_size);
+    printf("=============\n");
+}
+
+void frixia_register_fepoll_events(frixia_environment_t *fenv,int fd)
+{
+    if ( fd < 0 || fd > fenv->maximum_filedescriptors )
+    {
+        printf("Error frixia_register_fepoll_events fd: %d\n",fd);
+        return;
+    }
+
+    frixia_events_queue_t *q = fenv->fepoll_events;
+    fepoll_th_data_t *fep_data = fenv->fepoll_ctx;
+    sv_callback_t *sv = sv_create_callback(handle_fepoll_push,q);
+    register_callback_by_fd(fep_data,fd,sv);
+
+    frixia_epoll_t *fepoll = fenv->fepoll_ctx->fepoll;
+    insert_event(fepoll->fd,fd);
 }

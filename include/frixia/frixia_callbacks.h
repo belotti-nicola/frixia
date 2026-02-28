@@ -11,6 +11,8 @@ typedef struct FRIXIA_CALLBACK_CTX
     bool *keep_looping;
     frixia_environment_t *fenv;
     sv_callback_t sv;
+    char *buffer;
+    int buffer_size;
    
 } FRIXIA_CALLBACK_CTX;
 

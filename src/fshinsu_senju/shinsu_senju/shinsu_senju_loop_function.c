@@ -6,9 +6,6 @@
 #include <frixia/frixia_environment.h>
 
 
-//TODO CLEAN
-#include <signal.h>
-
 void *shinsu_senju_loop_function(void *arg)
 {
     shinsu_senju_data_t *ssd = (shinsu_senju_data_t *)arg;

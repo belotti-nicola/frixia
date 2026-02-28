@@ -133,12 +133,12 @@ int read_udp(int fd, char *buf, int buf_size,struct sockaddr_in *client)
         &(client->sin_addr),
         client_ip, INET_ADDRSTRLEN);
     
-    /*
+    
     printf("Message received from %s:%d -> %s\n",
         client_ip,
         ntohs(client->sin_port),
         buf);
-    */
+    
 
     return read_bytes;
 }

@@ -16,13 +16,13 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_environme
 {
     if ( sv == NULL )
     {
-        printf("fepoll_loop_function.c::WRN::do_callback NULL!\n");
+        printf("fepoll_loop_function.c::WRN::do_callback NULL!(fd: %d)\n",fd);
         return;
     }
 
     if ( ! sv_is_valid( sv ) )
     {
-        printf("fepoll_loop_function.c::WRN::do_callback is not valid!\n");
+        printf("fepoll_loop_function.c::WRN::do_callback is not valid!(fd: %d)\n",fd);
         return;
     }
 
@@ -31,7 +31,7 @@ void do_callback_wrapper(sv_callback_t *sv, int fd, uint32_t m, frixia_environme
 
     if ( fun == NULL )
     {
-        printf("fepoll_loop_function.c::WRN::do_callback fun is null!\n");
+        printf("fepoll_loop_function.c::WRN::do_callback fun is null!(fd: %d)\n",fd);
         return;
     }
 
@@ -70,14 +70,14 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
         for(int i=0;i<events_number;i++)
         {
             int event_fd = ev_q->fd;
+            printf("Evetns for fd :: %d\n",event_fd);
             uint32_t mask = ev_q->events_maks;
             frixia_events_queue_t *events = fenv->fepoll_events;
 
             sv_callback_t sv = fenv->fepoll_ctx->callbacks[event_fd];
             do_callback_wrapper(&sv,event_fd,mask,fenv);
-            printf("Event fd in epoll %d...\n",event_fd);
+            printf("Callback ended, keep looping: %s\n",(*keep_looping?"true":"false"));
         }
-        printf("Callback ended %d\n",*keep_looping);
     }
 
     convoy_t *convoy = fenv->convoy;

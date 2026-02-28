@@ -4,6 +4,7 @@
 #include <frixia/frixia_environment.h>
 
 void FRIXIA_DELETE_ME_fepoll_register_push_callback(frixia_environment_t *fenv, int fd);
+void FRIXIA_DELETE_ME_insert_event(frixia_environment_t *fenv,int fd);
 
 
 #endif

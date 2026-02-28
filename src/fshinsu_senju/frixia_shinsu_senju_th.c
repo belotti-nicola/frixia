@@ -49,7 +49,6 @@ int  detached_shinsu_senju_start(shinsu_senju_data_t *fshinsu_senju)
         printf("ERRORCODE1::%d\n",rc);
         return 0;
     }
-
     fshinsu_senju->th = ss_thread;
     return 0;
 }
@@ -58,9 +57,10 @@ int  detached_shinsu_senju_stop(shinsu_senju_data_t *fshinsu_senju)
     bool *b = fshinsu_senju->active;
     *b = false;
 
-    int dim = fshinsu_senju->maximum_workers;
+    int dim = fshinsu_senju->fenv->maximum_filedescriptors;
     for (int i=0;i<dim;i++)
     {
+        printf("Waking %d worker...\n",i);
         frixia_events_queue_t *q = *(fshinsu_senju->pool->queues + i);
         if( q == NULL )
         {
@@ -92,6 +92,10 @@ void detached_shinsu_senju_load(shinsu_senju_data_t *ssd,int key,void *(fun)(voi
     };
     
     FRIXIA_CALLBACK_CTX *ctx = create_ss_worker_ctx(key,keep_looping,q, ssd,sv,fenv);
+    if (ctx == NULL )
+    {
+        printf("Error creating FRIXIA_CALLBACK_CTX\n");
+    }
     ss_start_new_thread(ssp,key,fun,ctx);
 }
 void detached_shinsu_senju_push(shinsu_senju_data_t *ssd, int fd, void *event)

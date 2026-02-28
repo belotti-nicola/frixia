@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <pthread.h>
 
-enum FrixiaFDType
+typedef enum FrixiaFDType
 {
     UNDEFINED,
 
@@ -21,7 +21,8 @@ enum FrixiaFDType
     EVENTFD,
     INODE,
     SIGNAL
-};
+    
+} FrixiaFDType;
 
 typedef struct frixia_file_descriptor
 {

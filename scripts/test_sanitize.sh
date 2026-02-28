@@ -10,5 +10,7 @@ mkdir -p ../build
 rm -rv ../build/*
 cd ../build || exit 1
 
-cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-make && ctest -VV --output-on-failure
+cmake -DCMAKE_C_FLAGS="-g -O0 -fsanitize=address -fno-omit-frame-pointer" \
+      -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address" \
+      ..
+make  && ctest -VV --output-on-failure

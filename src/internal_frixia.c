@@ -5,9 +5,22 @@
 #include <frixia/frixia_signal.h>
 #include <frixia/frixia_inode.h>
 #include <frixia/frixia_eventfd.h>
+#include <internal/convoy.h>
 
 #include <internal/internal_frixia.h>
 
+
+//TODO BETTER IMPLEMENTATIONS HERE FOR CODE STRUCTURE
+//===================================================
+#include <stdlib.h>
+#include <frixia/ftcp_handler.h>
+#include <frixia/fudp_handler.h>
+#include <frixia/ffifo_handler.h>
+#include <frixia/ftimer_handler.h>
+#include <frixia/feventfd_handler.h>
+#include <frixia/finode_handler.h>
+#include <frixia/fsignal_handler.h>
+//===================================================
 
 #define TCP_OFFSET       0
 #define UDP_OFFSET       0              + __FTCP_SENTINEL__

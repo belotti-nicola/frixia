@@ -38,6 +38,8 @@ FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA
 FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, FRIXIA_SIGNAL mask);
 FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env);
 
+
+void frixia_register_fepoll_events(frixia_environment_t *fenv,int fd);
 void frixia_register_callback(frixia_environment_t *env, int fd,void *(fun)(void *),void *arg);
 
 

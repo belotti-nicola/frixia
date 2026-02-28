@@ -1,5 +1,7 @@
-#include <frixia/frixia_callbacks.h>
 #include <frixia/frixia_environment.h>
+#include <stdio.h>
+
+#include <frixia/frixia_callbacks.h>
 
 void frixia_register_cb_impl(frixia_environment_t *env,int fd, void *(fun)(FRIXIA_CALLBACK_CTX *ctx), void *arg)
 {
@@ -7,6 +9,7 @@ void frixia_register_cb_impl(frixia_environment_t *env,int fd, void *(fun)(FRIXI
 
     shinsu_senju_data_t *ssd = env->shinsu_senju_ctx;
     detached_shinsu_senju_load(ssd,fd,f,arg);
+    printf("fd %d\n",fd);
 }
 void frixia_register_fepoll_cb_impl(frixia_environment_t *env,int fd,  void *(fun)(FRIXIA_EPOLL_CALLBACK_CTX *ctx), void *arg)
 {/*todo*/}

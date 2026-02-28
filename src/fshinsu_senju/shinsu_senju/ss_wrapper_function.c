@@ -1,10 +1,9 @@
 #include <stdlib.h>
+#include <frixia/frixia_callbacks.h>
 #include <internal/ss_pool.h>
 #include <frixia/frixia_environment.h>
 #include <frixia/frixia_callbacks.h>
-
-//TODO CLEAN
-#include <signal.h>
+#include <internal/frixia_reader.h>
 
 #include <frixia/ss_wrapper_function.h>
 
@@ -15,6 +14,7 @@ void *ss_worker_function(void *arg)
     int fd = ctx->fd;
     printf("Worker %d started...\n",fd);
     bool *keep_looping = ctx->keep_looping;
+    frixia_environment_t *fenv = ctx->fenv;
     frixia_events_queue_t **queues = ctx->fenv->shinsu_senju_ctx->pool->queues;
     frixia_events_queue_t  *q      = *(queues + fd); 
     shinsu_senju_data_t *ssd = ctx->fenv->shinsu_senju_ctx;
@@ -29,7 +29,7 @@ void *ss_worker_function(void *arg)
         {
             printf("Empty ss_worker_function\n");
             continue;
-        }
+        }      
         fun(ctx);
         printf("Callback done\n");
     }
