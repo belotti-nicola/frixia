@@ -6,11 +6,6 @@ function(add_frixia_test test_name source_file)
              COMMAND ${test_name})
 
     set_tests_properties(${test_name}
-        PROPERTIES TIMEOUT 10)
+        PROPERTIES TIMEOUT 5)
 endfunction()
-
-add_frixia_test(TestInstantiatorTcp         test_tcp.c)
-add_frixia_test(TestInstantiatorTermination test_termination.c)
-add_frixia_test(TestInstantiatorRead        test_read.c)
-add_frixia_test(TestInstantiatorClose       test_close.c)
 

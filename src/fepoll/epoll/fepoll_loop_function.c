@@ -70,7 +70,7 @@ int fepoll_loop_function(fepoll_th_data_t *th_data)
         for(int i=0;i<events_number;i++)
         {
             int event_fd = ev_q->fd;
-            printf("Evetns for fd :: %d\n",event_fd);
+            printf("Events for fd :: %d\n",event_fd);
             uint32_t mask = ev_q->events_maks;
             frixia_events_queue_t *events = fenv->fepoll_events;
 

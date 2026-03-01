@@ -5,15 +5,10 @@
 #include <arpa/inet.h>
 #include <sys/signal.h>
 #include <stdlib.h>
-
-//========================================
-//delete this
-#include <frixia/frixia_deleteme.h>
 #include <frixia/ftcp_handler.h>
 #include <frixia/frixia_reader.h>
-#include <sys/epoll.h>
-#include <errno.h>
-//========================================
+#include <string.h>
+
 
 #define WAIT_SECONDS 1
 
@@ -28,7 +23,6 @@ void *WRITER(void *arg)
         fflush(stdout);
         return NULL;
     }
-
 
     struct sockaddr_in addr = {0};
     addr.sin_family = AF_INET;
@@ -76,8 +70,8 @@ void *FDCALLBACK(FRIXIA_CALLBACK_CTX *ctx)
     convoy_add_tcp_filedescriptor(convoy,reply,ip,port,bytes);
 
     void *arg = ctx->sv.auxiliary;
-    frixia_register_cb(ctx->fenv,reply,TEST_CALLBACK,NULL);//todo use counter
-    
+    frixia_register_cb(ctx->fenv,reply,TEST_CALLBACK,NULL);
+
     frixia_register_fepoll_events(ctx->fenv,reply);
 
     return NULL;

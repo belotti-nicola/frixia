@@ -9,7 +9,6 @@
 #include <frixia/frixia_reader.h>
 #include <string.h>
 
-
 #define WAIT_SECONDS 1
 
 void *WRITER(void *arg)
@@ -51,13 +50,19 @@ void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
 {
     int max_dim = frixia_get_filedescription_read_size(ctx->fenv,ctx->fd);
     char *buf = malloc(sizeof(char) * max_dim);
-    frixia_read_filedescriptor(ctx->fenv,ctx->fd,buf,max_dim);
     
-    int *counter = (int *)ctx->sv.auxiliary;
-    *counter = *counter + 1; 
+    int read_bytes = frixia_read_filedescriptor(ctx->fenv,ctx->fd,buf,max_dim);
+    
+    char *buffer = (char *)ctx->sv.auxiliary;
+    for(int i=0;i<read_bytes;i++)
+    {
+        buffer[i] = buf[i];
+    }
     
     frixia_environment_t *fenv = ctx->fenv;
     frixia_stop(fenv);
+    
+    free(buf);
     return NULL;
 }
 
@@ -90,7 +95,7 @@ int main()
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
 
-    int counter = 0;
+    char test_buff[10] = {};
     FRIXIA_RESULT res;
     frixia_environment_t *fenv = frixia_environment_create(10);
     
@@ -100,7 +105,7 @@ int main()
         perror("Error adding tcp");
     }
     int fd = frixia_result_fd(res);
-    frixia_register_cb(fenv,fd,FDCALLBACK,&counter);
+    frixia_register_cb(fenv,fd,FDCALLBACK,&test_buff);
 
     pthread_t th;
     pthread_create(&th,NULL,WRITER,(void *)&fd);
@@ -110,7 +115,7 @@ int main()
     
     pthread_join(th, NULL);
 
-    if (counter != 1)
+    if (strncmp(test_buff,"AB",2) != 0 )
     {
         return 1;
     }

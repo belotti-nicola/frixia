@@ -3,7 +3,6 @@
 #include <internal/ss_pool.h>
 #include <frixia/frixia_environment.h>
 #include <frixia/frixia_callbacks.h>
-#include <internal/frixia_reader.h>
 
 #include <frixia/ss_wrapper_function.h>
 
@@ -27,15 +26,15 @@ void *ss_worker_function(void *arg)
         e = frixia_events_queue_pop(q);
         if ( e == NULL )
         {
-            printf("Empty ss_worker_function\n");
+            printf("Empty frixia events for worker %d\n",ctx->fd);
             continue;
         }      
         fun(ctx);
-        printf("Callback done\n");
+        printf("Callback done(worker %d)\n",fd);
     }
 
     shinsu_senju_pool_t *ssp = ssd->pool;
-    ss_thread_ended(ssp);
+    ss_thread_ended(ssp );
     printf("Worker %d ended...\n",ctx->fd);
     destroy_ss_worker_ctx(ctx);
     return NULL;
@@ -55,6 +54,17 @@ FRIXIA_CALLBACK_CTX *create_ss_worker_ctx(int fd, bool *kl, frixia_events_queue_
     ctx->sv = sv;
     ctx->fenv = fenv;
     return ctx;
+}
+
+void stop_ss_worker(FRIXIA_CALLBACK_CTX *ctx)
+{
+    bool *b = ctx->keep_looping;
+    *b = false;
+
+    frixia_events_queue_t **queues = ctx->fenv->shinsu_senju_ctx->pool->queues;
+    frixia_events_queue_t  *queue  = *(queues + ctx->fd);
+
+    frixia_events_queue_push(queue,NULL);
 }
 
 void destroy_ss_worker_ctx(FRIXIA_CALLBACK_CTX *ctx)

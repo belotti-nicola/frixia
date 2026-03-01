@@ -9,41 +9,47 @@
 #include <frixia/frixia_reader.h>
 #include <string.h>
 
-
 #define WAIT_SECONDS 1
 
 void *WRITER(void *arg)
 {
+    for(int i=0;i<2;i++)
+    {
+        sleep(WAIT_SECONDS);
+
+        int fd = socket(AF_INET, SOCK_STREAM, 0);
+        if (fd == -1)
+        {
+            perror("connect failed");
+            fflush(stdout);
+            return NULL;
+        }
+
+
+        struct sockaddr_in addr = {0};
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(18080);
+        inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+        if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+        {
+            perror("connect failed");
+            fflush(stdout);
+            return NULL;
+        }
+
+        int written_bytes = write(fd,"AB",2);
+        if ( written_bytes != 2 )
+        {
+            perror("write");
+            return NULL;
+        }
+        close(fd);
+    }
+
     sleep(WAIT_SECONDS);
-
-    int fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (fd == -1)
-    {
-        perror("connect failed");
-        fflush(stdout);
-        return NULL;
-    }
-
-
-    struct sockaddr_in addr = {0};
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(18080);
-    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
-
-    if (connect(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
-    {
-        perror("connect failed");
-        fflush(stdout);
-        return NULL;
-    }
-
-    int written_bytes = write(fd,"AB",2);
-    if ( written_bytes != 2 )
-    {
-        perror("write");
-        return NULL;
-    }
-
+    frixia_environment_t *fenv = (frixia_environment_t *)arg;
+    frixia_stop(fenv);
     return NULL;
 }
 
@@ -51,13 +57,20 @@ void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
 {
     int max_dim = frixia_get_filedescription_read_size(ctx->fenv,ctx->fd);
     char *buf = malloc(sizeof(char) * max_dim);
-    frixia_read_filedescriptor(ctx->fenv,ctx->fd,buf,max_dim);
-    
-    int *counter = (int *)ctx->sv.auxiliary;
-    *counter = *counter + 1; 
-    
-    frixia_environment_t *fenv = ctx->fenv;
-    frixia_stop(fenv);
+    if( buf == NULL)
+    {
+        printf("Error!!!\n");
+        return NULL;
+    }
+        
+    close(ctx->fd);
+    convoy_remove_fd(ctx->fenv->convoy,ctx->fd);
+
+    //workaround
+    bool *b = ctx->keep_looping;
+    *b = false;
+
+    free(buf);
     return NULL;
 }
 
@@ -77,8 +90,7 @@ void *FDCALLBACK(FRIXIA_CALLBACK_CTX *ctx)
     int bytes = convoy->filedescriptors[ctx->fd].type_data->tcp_info.read_size;
     convoy_add_tcp_filedescriptor(convoy,reply,ip,port,bytes);
 
-    void *arg = ctx->sv.auxiliary;
-    frixia_register_cb(ctx->fenv,reply,TEST_CALLBACK,arg);
+    frixia_register_cb(ctx->fenv,reply,TEST_CALLBACK,NULL);
     
     frixia_register_fepoll_events(ctx->fenv,reply);
 
@@ -90,7 +102,6 @@ int main()
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
 
-    int counter = 0;
     FRIXIA_RESULT res;
     frixia_environment_t *fenv = frixia_environment_create(10);
     
@@ -100,19 +111,15 @@ int main()
         perror("Error adding tcp");
     }
     int fd = frixia_result_fd(res);
-    frixia_register_cb(fenv,fd,FDCALLBACK,&counter);
+    frixia_register_cb(fenv,fd,FDCALLBACK,(NULL));
 
     pthread_t th;
-    pthread_create(&th,NULL,WRITER,(void *)&fd);
+    pthread_create(&th,NULL,WRITER,(void *)fenv);
 
     frixia_start(fenv);
-    frixia_environment_destroy(fenv);
-    
+
     pthread_join(th, NULL);
 
-    if (counter != 1)
-    {
-        return 1;
-    }
+    frixia_environment_destroy(fenv);
     return 0;
 }

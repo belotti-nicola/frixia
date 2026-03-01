@@ -1,5 +1,5 @@
 TODO   
-    READ_UTILITY AND CTX
+    shinsu_senju vs frixia_callback
     FRIXIA_HTTP_PARSE
     LOGGING ACTIONS
     valgrind support

@@ -17,7 +17,7 @@
 #include <signal.h> //TODO ONLY LINUX????
 #include <internal/internal_frixia.h>
 #include <frixia/frixia_environment.h>
-#include <internal/frixia_reader.h>
+#include <frixia/frixia_reader.h>
 
 #include <frixia/frixia.h>
 
@@ -751,22 +751,22 @@ int frixia_get_filedescription_read_size(frixia_environment_t *fenv,int fd)
     return retVal;
 }
 
-void frixia_read_filedescriptor(frixia_environment_t *fenv,int fd, char *buffer, int maximum_size)
+int frixia_read_filedescriptor(frixia_environment_t *fenv,int fd, char *buffer, int maximum_size)
 {
     if (fd <= 0 || fd > fenv->maximum_filedescriptors)
     {
         printf("Error frixia_read_filedescriptor(reading fd %d)\n",fd);
-        return;
+        return -1;
     }
     if( buffer == NULL )
     {
         printf("Error null buffer!\n");
-        return;
+        return -1;
     }
     if ( maximum_size <= 0 )
     {
         printf("Error tcp frixia_read_filedescriptor(dim 0 for fd %d)\n",fd);
-        return;
+        return -1;
     }
 
     convoy_t *convoy = fenv->convoy;
@@ -820,9 +820,10 @@ void frixia_read_filedescriptor(frixia_environment_t *fenv,int fd, char *buffer,
             break;
     }
 
-    printf("=============\n");
-    printf("fd %d,bytes read number:%d, bytes read:%.*s, maximum_size:%d\n",fd,read_bytes,read_bytes,buffer,maximum_size);
-    printf("=============\n");
+    // printf("=============\n");
+    // printf("fd %d,bytes read number:%d, bytes read:%.*s, maximum_size:%d\n",fd,read_bytes,read_bytes,buffer,maximum_size);
+    // printf("=============\n");
+    return read_bytes;
 }
 
 void frixia_register_fepoll_events(frixia_environment_t *fenv,int fd)

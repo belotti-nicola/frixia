@@ -60,13 +60,13 @@ int  detached_shinsu_senju_stop(shinsu_senju_data_t *fshinsu_senju)
     int dim = fshinsu_senju->fenv->maximum_filedescriptors;
     for (int i=0;i<dim;i++)
     {
-        printf("Waking %d worker...\n",i);
         frixia_events_queue_t *q = *(fshinsu_senju->pool->queues + i);
         if( q == NULL )
         {
             printf("Q for fd %d is null. continuing...\n",i);
             continue;
         }
+        printf("Waking %d worker...\n",i);
         frixia_events_queue_push(q,NULL);
     }
 }
