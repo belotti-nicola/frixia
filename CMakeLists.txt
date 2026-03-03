@@ -69,9 +69,14 @@ set(FRIXIA_SOURCES
     src/internal_frixia.c
 
     src/callbacks/frixia_callbacks.c
+
+    src/protocols/fins/fins_utility.c
+    src/protocols/http/http_utility.c
 )
 
 add_subdirectory(test)
+add_subdirectory(deps)
+
 
 add_library(frixia
     ${FRIXIA_SOURCES}
@@ -85,4 +90,5 @@ target_include_directories(frixia
 target_link_libraries(frixia
     PRIVATE
         Threads::Threads
+        picohttpparser
 )

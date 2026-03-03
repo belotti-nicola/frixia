@@ -1,0 +1,126 @@
+#include <frixia/frixia.h>
+#include <sys/socket.h>
+#include <sys/eventfd.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/signal.h>
+#include <stdlib.h>
+#include <frixia/ftcp_handler.h>
+#include <frixia/frixia_reader.h>
+#include <string.h>
+
+char *read_file(const char *filename, long *out_size) {
+    FILE *fp = fopen(filename, "rb");   // rb va bene sia per testo che binario
+    if (!fp) {
+        perror("fopen");
+        return NULL;
+    }
+
+    // Vai alla fine per calcolare la dimensione
+    if (fseek(fp, 0, SEEK_END) != 0) {
+        fclose(fp);
+        return NULL;
+    }
+
+    long size = ftell(fp);
+    if (size < 0) {
+        fclose(fp);
+        return NULL;
+    }
+
+    rewind(fp); // Torna all'inizio
+
+    // Alloca memoria (+1 per eventuale terminatore)
+    char *buffer = malloc(size + 1);
+    if (!buffer) {
+        fclose(fp);
+        return NULL;
+    }
+
+    size_t read_size = fread(buffer, 1, size, fp);
+    fclose(fp);
+
+    if (read_size != size) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[size] = '\0'; // utile se è testo
+
+    if (out_size)
+        *out_size = size;
+
+    return buffer;
+}
+
+void *CLIENT_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
+{
+    int fd = ctx->fd;
+    int max_dim = frixia_get_filedescription_read_size(ctx->fenv,ctx->fd);
+    char *buf = malloc(sizeof(char) * max_dim);
+    
+    int read_bytes = frixia_read_filedescriptor(ctx->fenv,ctx->fd,buf,max_dim);
+    if (read_bytes < 0 )
+    {
+        bool *b = ctx->keep_looping;
+        *b = false;
+        return NULL;
+    }
+    
+    long out_size;
+    char *buffer = read_file("../index.html",&out_size);
+    if (!content) {
+        fprintf(stderr, "Errore lettura file\n");
+        return 1;
+    }
+    
+    write_tcp(fd,buffer,out_size)
+    free(p);
+    close(fd);
+    bool *b = ctx->keep_looping;
+    *b = false;
+    return NULL;
+}
+
+
+void *SERVER_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
+{
+    int reply = -1;
+    FRIXIA_TCP_RESULT res = accept_tcp(ctx->fd,&reply);
+    if ( res.exit_code != FTCP_OK )
+    {
+        perror("Accept failed");
+    }
+
+    convoy_t *convoy = ctx->fenv->convoy;
+    const char *ip = convoy->filedescriptors[ctx->fd].type_data->tcp_info.ip;
+    int port = convoy->filedescriptors[ctx->fd].type_data->tcp_info.port;
+    int bytes = convoy->filedescriptors[ctx->fd].type_data->tcp_info.read_size;
+    convoy_add_tcp_filedescriptor(convoy,reply,ip,port,bytes);
+
+    void *arg = ctx->sv.auxiliary;
+    frixia_register_cb(ctx->fenv,reply,CLIENT_CALLBACK,arg);
+    
+    frixia_register_fepoll_events(ctx->fenv,reply);
+
+    return NULL;
+}
+
+int main()
+{
+    FRIXIA_RESULT res;
+    frixia_environment_t *fenv = frixia_environment_create(10);
+    
+    res = frixia_add_tcp(fenv,"0.0.0.0",8080,1024);
+    if( !frixia_result_is_ok(res) )
+    {
+        perror("Error adding tcp");
+    }
+    int fd = frixia_result_fd(res);
+    frixia_register_cb(fenv,fd,SERVER_CALLBACK,NULL);
+
+    frixia_start(fenv);
+    
+    frixia_environment_destroy(fenv);
+    return 0;
+}
