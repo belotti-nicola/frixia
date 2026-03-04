@@ -1,5 +1,7 @@
 #include <frixia/frixia_environment.h>
 #include <stdio.h>
+#include "../fepoll/epoll/fepoll.h"
+#include <internal/frixia_epoll_th.h>
 
 #include <frixia/frixia_callbacks.h>
 
@@ -23,3 +25,16 @@ void frixia_register_https_callback_impl(frixia_environment_t *env, int fd,  voi
 {/*todo*/}
 void frixia_register_fins_callback_impl(frixia_environment_t *env, int fd,  void *(fun)(FRIXIA_DISPATCHER_CALLBACK_CTX *ctx),void * arg)
 {/*todo*/}
+
+void frixia_stop_worker(FRIXIA_CALLBACK_CTX *ctx)
+{
+    int fd           = ctx->fd;
+    convoy_t *convoy = ctx->fenv->convoy;
+    frixia_epoll_t *fepoll = ctx->fenv->fepoll_ctx->fepoll;
+    
+    fepoll_remove_fd(fepoll,fd);
+    convoy_remove_fd(convoy,fd);
+
+    bool *b = ctx->keep_looping;
+    *b = false;
+}

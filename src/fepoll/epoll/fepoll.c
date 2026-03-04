@@ -167,6 +167,7 @@ void frixia_wake(frixia_epoll_t *fepoll)
 
     printf("\tFEPOLL: %d EVENTFD:%d\n",fepoll->fd,fepoll->waking_fd);
 }
+
 FRIXIA_FEPOLL_ADD_RESULT create_fepoll_add_result(int fd, FRIXIA_EPOLL_CODE_T code, int errno_code)
 {
     FRIXIA_FEPOLL_ADD_RESULT retVal = 
@@ -176,4 +177,28 @@ FRIXIA_FEPOLL_ADD_RESULT create_fepoll_add_result(int fd, FRIXIA_EPOLL_CODE_T co
         .fepoll_code = code,
     };
     return retVal;
+}
+
+int fepoll_remove_fd(frixia_epoll_t *fepoll, int fd)
+{
+    int ret;
+
+    int epoll = fepoll->fd;
+    struct epoll_event ev;
+    ev.events =  EPOLLIN | EPOLLET;//REGISTER THE FLAGS
+    ev.data.fd = fd;
+    ret = epoll_ctl(epoll, EPOLL_CTL_MOD, fd, &ev);
+    if(ret != -1)
+    {
+        printf("Error epoll_ctl (fd:%d, epollfd:%d, errno: %d)\n",fd,epoll,errno);
+        return -1;
+    }
+    
+    ret = close(fd);
+    if(ret != -1)
+    {
+        printf("Errorr closing %d (errno: %d)\n",fd,errno);
+    }
+
+    return 0;
 }

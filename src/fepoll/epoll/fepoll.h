@@ -42,6 +42,7 @@ FRIXIA_EPOLL_CODE_T insert_event(int epoll, int fd);
 int                 frixia_epoll_wait(frixia_epoll_t *fepoll, frixia_event_t *fevents);
 void                frixia_epoll_register_waking_fd(frixia_epoll_t *fepoll);
 void                frixia_wake(frixia_epoll_t *fepoll);
+int                 fepoll_remove_fd(frixia_epoll_t *fepoll, int fd);
 
 FRIXIA_FEPOLL_ADD_RESULT create_fepoll_add_result(int fd, FRIXIA_EPOLL_CODE_T code, int errno_code);
 

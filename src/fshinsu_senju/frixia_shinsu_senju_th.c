@@ -104,3 +104,9 @@ void detached_shinsu_senju_push(shinsu_senju_data_t *ssd, int fd, void *event)
     shinsu_senju_pool_t *ssp = ssd->pool;
     ss_push_thread(ssp,fd,event);
 }
+
+void detached_shinsu_senju_stop_worker(shinsu_senju_data_t *ssd, int fd)
+{
+    //TODO
+    detached_shinsu_senju_push(ssd,fd,NULL);
+}

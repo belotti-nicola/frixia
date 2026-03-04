@@ -74,4 +74,6 @@ FRIXIA_SHINSU_SENJU_CALLBACK_CTX;
     } while(0)
 
 
+void frixia_stop_worker(FRIXIA_CALLBACK_CTX *ctx);
+
 #endif

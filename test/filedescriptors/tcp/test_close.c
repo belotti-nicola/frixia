@@ -63,12 +63,7 @@ void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
         return NULL;
     }
         
-    close(ctx->fd);
-    convoy_remove_fd(ctx->fenv->convoy,ctx->fd);
-
-    //workaround
-    bool *b = ctx->keep_looping;
-    *b = false;
+    frixia_stop_worker(ctx);
 
     free(buf);
     return NULL;

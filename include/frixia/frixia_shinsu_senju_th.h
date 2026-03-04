@@ -27,6 +27,7 @@ int  detached_shinsu_senju_stop(shinsu_senju_data_t *fshinsu_senju);
 int  detached_shinsu_senju_join(shinsu_senju_data_t *fshinsu_senju);
 void detached_shinsu_senju_load(shinsu_senju_data_t *ssd,int key,void *(fun)(void *), void *arg);
 void detached_shinsu_senju_push(shinsu_senju_data_t *ssd, int key, void *event);
+void detached_shinsu_senju_stop_worker(shinsu_senju_data_t *ssd, int fd);
 
 
 #endif

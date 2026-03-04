@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include <frixia/frixia_inode.h>
+
 #include <internal/convoy.h>
 
 void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes)
