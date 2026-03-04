@@ -8,7 +8,7 @@
 #include <frixia/ftcp_handler.h>
 #include <frixia/frixia_reader.h>
 #include <string.h>
-#include <protocols/http/http_utility.h>
+#include <frixia/protocols/http/http_utility.h>
 
 
 const char *TEST_STRING = 

@@ -1,6 +1,5 @@
 TODO   
     shinsu_senju vs frixia_callback
-    FRIXIA_HTTP_PARSE
     LOGGING ACTIONS
     valgrind support
     FRIXIA_API_**** -> concrete_implementations

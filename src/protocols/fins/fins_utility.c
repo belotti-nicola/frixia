@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <protocols/fins/fins_utility.h>
+#include <frixia/protocols/fins/fins_utility.h>
 
 int parse_fins_message(char *s, size_t buffer_length, fins_message_t *message)
 {

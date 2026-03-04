@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include <protocols/http/http_utility.h>
+#include <frixia/protocols/http/http_utility.h>
 
 
 FHTTP_t frixia_parse_request(char *s,int bytesRead)
