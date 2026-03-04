@@ -13,7 +13,7 @@ typedef struct shinsu_senju_pool
     pthread_mutex_t        *mutex;
     pthread_cond_t         *no_threads_running;
     frixia_events_queue_t **queues;
-
+    bool                   *keep_loopings;
 
 } shinsu_senju_pool_t;
 

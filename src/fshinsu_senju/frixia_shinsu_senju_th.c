@@ -66,8 +66,7 @@ int  detached_shinsu_senju_stop(shinsu_senju_data_t *fshinsu_senju)
             printf("Q for fd %d is null. continuing...\n",i);
             continue;
         }
-        printf("Waking %d worker...\n",i);
-        frixia_events_queue_push(q,NULL);
+        detached_shinsu_senju_stop_worker(fshinsu_senju,i);
     }
 }
 int  detached_shinsu_senju_join(shinsu_senju_data_t *fshinsu_senju)
@@ -107,6 +106,6 @@ void detached_shinsu_senju_push(shinsu_senju_data_t *ssd, int fd, void *event)
 
 void detached_shinsu_senju_stop_worker(shinsu_senju_data_t *ssd, int fd)
 {
-    //TODO
+    ss_stop_thread(ssd->pool,fd);
     detached_shinsu_senju_push(ssd,fd,NULL);
 }

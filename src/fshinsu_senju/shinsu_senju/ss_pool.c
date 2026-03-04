@@ -33,16 +33,18 @@ shinsu_senju_pool_t *ss_create(int max_threads)
         printf("Error SSP QUEUES!\n");
         return NULL;
     }
-    for( int i=0; i<max_threads;i++)
+    bool *b = malloc(max_threads * sizeof(bool) );
+    if (  b == NULL )
     {
-        
+        printf("Error SSP KEEPLOOPINGS!\n");
+        return NULL;
     }
 
-    ssp->max_size = max_threads;
-    ssp->size     = 0;
-    ssp->mutex    = mutex;
-    ssp->queues   = queues;
-
+    ssp->max_size           = max_threads;
+    ssp->size               = 0;
+    ssp->mutex              = mutex;
+    ssp->queues             = queues;
+    ssp->keep_loopings      = b;
     ssp->no_threads_running = no_threads_running;
     return ssp;
 }
@@ -60,7 +62,10 @@ void ss_start_new_thread(shinsu_senju_pool_t *ssp, int key,void *(fun)(void *),v
 }
 void ss_stop_thread(shinsu_senju_pool_t *ssp, int key)
 {
-    return;
+    bool *keep_loopings = ssp->keep_loopings;
+    bool *keep_looping  = keep_loopings + key;
+
+    *keep_looping       = false;
 }
 
 void ss_destroy(shinsu_senju_pool_t *ssp)
@@ -69,6 +74,10 @@ void ss_destroy(shinsu_senju_pool_t *ssp)
     {
         return;
     }
+    free(ssp->mutex);
+    free(ssp->no_threads_running);
+    free(ssp->queues);
+    free(ssp->keep_loopings);
     free(ssp);
 }
 

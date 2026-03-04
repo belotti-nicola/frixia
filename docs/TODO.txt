@@ -5,7 +5,6 @@ TODO
     FRIXIA_API_**** -> concrete_implementations
     convoy return codes
     fepoll_remove_fd :: mask storage
-    frixia_ctx :: keep looping is centralized but we can need it's own 
 
     warning
     registering_fepoll_callback
