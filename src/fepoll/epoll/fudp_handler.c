@@ -110,35 +110,40 @@ char *get_fudp_code_string(FUDP_CODE c)
     }
 }
 
-int read_udp(int fd, char *buf, int buf_size,struct sockaddr_in *client)
+int read_udp(int fd, char *buf, int buf_size)
 {
-    char client_ip[16];
-    
-    memset(client, 0, sizeof(*client));
-    int len = sizeof(*client);
+    struct sockaddr_in client;
+    socklen_t len = sizeof(client);
+    char client_ip[INET_ADDRSTRLEN];
+
+    memset(&client, 0, sizeof(client));
+
     int read_bytes = recvfrom(
         fd,
-        (char *)buf,
+        buf,
         buf_size,
-        MSG_WAITALL,
-        (struct sockaddr *)client,
+        0,
+        (struct sockaddr *)&client,
         &len
     );
-    if ( read_bytes < 0 )
+
+    if (read_bytes < 0)
     {
         return ERR_FUDP_READING;
     }
 
-    inet_ntop(AF_INET,
-        &(client->sin_addr),
-        client_ip, INET_ADDRSTRLEN);
-    
-    
-    printf("Message received from %s:%d -> %s\n",
+    inet_ntop(
+        AF_INET,
+        &(client.sin_addr),
         client_ip,
-        ntohs(client->sin_port),
+        INET_ADDRSTRLEN
+    );
+
+    printf("Message received from %s:%d -> %.*s\n",
+        client_ip,
+        ntohs(client.sin_port),
+        read_bytes,
         buf);
-    
 
     return read_bytes;
 }

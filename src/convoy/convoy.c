@@ -26,7 +26,7 @@ void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port
 }
 void convoy_add_udp_filedescriptor(convoy_t *c,int fd,const char *ip,int port,int bytes)
 {
-        int dim = c->maximum_size;
+    int dim = c->maximum_size;
     if( c->size == dim)
     {
         printf("Convoy reached maximum size.\n");

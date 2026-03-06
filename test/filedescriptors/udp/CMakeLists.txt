@@ -9,3 +9,6 @@ function(add_frixia_test test_name source_file)
         PROPERTIES TIMEOUT 5)
 endfunction()
 
+
+add_frixia_test(TestInstantiatorUdpTermination test_termination.c)
+

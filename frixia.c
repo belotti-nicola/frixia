@@ -505,7 +505,7 @@ FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int byt
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read);
+    convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -526,6 +526,9 @@ FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int by
     int fd = res.fd;
     frixia_epoll_t *fepoll = env->fepoll_ctx->fepoll;
     insert_event(fepoll->fd,fd);
+
+    convoy_t *c = env->convoy;
+    convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -783,7 +786,7 @@ int frixia_read_filedescriptor(frixia_environment_t *fenv,int fd, char *buffer, 
         }
         case UDP:
         {            
-            read_bytes = read_udp(fd,buffer,maximum_size,NULL);
+            read_bytes = read_udp(fd,buffer,maximum_size);
             break;
         }
         case FIFO:
