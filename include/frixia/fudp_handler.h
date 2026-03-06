@@ -6,7 +6,7 @@
 
 FRIXIA_UDP_FD_RESULT start_udp_listening(const char *ip, int port);
 int stop_udp_listening(int target_fd);
-int read_udp(int fd, char *buf, int buf_size,struct sockaddr_in *client);
+int read_udp(int fd, char *buf, int buf_size);
 int write_udp(int fd, char buf[],int size,struct sockaddr_in *client);
 
 #endif

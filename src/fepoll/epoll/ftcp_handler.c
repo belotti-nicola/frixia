@@ -132,6 +132,21 @@ FRIXIA_TCP_READ_RESULT read_tcp(int filedescriptor,char buf[], int size)
     {
         return frixia_tcp_read_create(ERR_FTCP_READING,read_bytes,errno);
     }
+
+    struct sockaddr_in peer;
+    socklen_t len = sizeof(peer);
+    getpeername(filedescriptor, (struct sockaddr*)&peer, &len);
+
+    char ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &peer.sin_addr, ip, sizeof(ip));
+
+    printf("Message received from connection %s:%d -> %.*s\n",
+        ip,
+        ntohs(peer.sin_port),
+        read_bytes,
+        buf
+    );
+
     return frixia_tcp_read_create(FTCP_OK,read_bytes,-1);
 }
 
