@@ -31,7 +31,7 @@ FRIXIA_INODE_FD_RESULT start_inode_listening(const char *path, FRIXIA_INODE_FLAG
         return CREATE_FRIXIA_INODE_FD_RESULT(-1,FERR_START_INODE_INOTIFY_INIT,errno);
     }
 
-    printf("Computed mask %d\n\n",mask);
+    printf("Computed mask %d\n",mask);
     int wd = inotify_add_watch(inotify_fd, path, mask );
     if (wd == -1) 
     {

@@ -4,9 +4,9 @@
 #include <frixia/frixia_result.h>
 #include <stdbool.h>
 
-typedef enum FRIXIA_INODE_FLAG 
+typedef enum FRIXIA_INODE_FLAG
 {
-#define FINODE_FLAG_MACRO(name, value) name,
+#define FINODE_FLAG_MACRO(name, value) name = value,
 #include "internal/finode_flags.def"
 #undef FINODE_FLAG_MACRO
 } FRIXIA_INODE_FLAG;
