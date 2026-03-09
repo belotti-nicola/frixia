@@ -538,9 +538,9 @@ FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int by
     return INTERNAL_FRIXIA_FIFO_FD_RESULT(res);
 }
 
-FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env, int delay, int interval)
+FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env, int delay, int delay_nsec, int interval, int interval_nsec)
 {
-    FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,interval);
+    FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,delay_nsec,interval,interval_nsec);
     if( !INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.res.code))
     {
         return INTERNAL_FRIXIA_TIMER_FD_RESULT(res);

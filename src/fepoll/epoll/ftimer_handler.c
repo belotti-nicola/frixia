@@ -7,8 +7,8 @@
 #include <unistd.h>
 #include <time.h>
 #include <errno.h>
-
 #include <frixia/frixia_timer.h>
+
 #include "ftimer_handler.h"
 
 FRIXIA_TIMER_FD_RESULT CREATE_FRIXIA_TIMER_FD_RESULT(int fd,FTIMER_CODE code, int errno_code)
@@ -23,7 +23,7 @@ FRIXIA_TIMER_FD_RESULT CREATE_FRIXIA_TIMER_FD_RESULT(int fd,FTIMER_CODE code, in
 }
 
 
-FRIXIA_TIMER_FD_RESULT start_timer_listening(int delay, int interval)
+FRIXIA_TIMER_FD_RESULT start_timer_listening(int delay, int delay_nsec, int interval,int interval_nsec)
 {
     printf("Starting listening timer: %d %d\n",delay,interval);
     int tfd, epfd;
@@ -38,9 +38,9 @@ FRIXIA_TIMER_FD_RESULT start_timer_listening(int delay, int interval)
     }
 
     timer_spec.it_value.tv_sec = delay;
-    timer_spec.it_value.tv_nsec = 0;
+    timer_spec.it_value.tv_nsec = delay_nsec;
     timer_spec.it_interval.tv_sec = interval;
-    timer_spec.it_interval.tv_nsec = 0;
+    timer_spec.it_interval.tv_nsec = interval_nsec;
 
     if (timerfd_settime(tfd, 0, &timer_spec, NULL) != 0) {
         printf("ERROR start_timer_listening::timerfd_settime::%d\n",errno);
