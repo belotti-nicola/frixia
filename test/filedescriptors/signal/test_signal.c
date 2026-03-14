@@ -31,6 +31,18 @@ int test()
 }
 
 int main() {
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+    
+    int ret = pthread_sigmask(SIG_BLOCK, &mask, NULL);
+    if (ret != 0) 
+    {
+        printf("Error blocking sigint\n");
+        return -1;
+    }
+
+
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
 
@@ -42,7 +54,7 @@ int main() {
     }
 
     sleep(2);
-    kill(pid, SIGTERM);
+    kill(pid, SIGINT);
 
     int status;
     waitpid(pid, &status, 0);
