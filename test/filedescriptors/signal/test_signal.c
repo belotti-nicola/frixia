@@ -4,6 +4,8 @@
 
 #include <frixia/frixia.h>
 
+#define TEST_SIGNAL FSIGNAL_INT
+
 void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
 {
     frixia_environment_t *fenv = ctx->fenv;
@@ -16,10 +18,10 @@ int test()
     FRIXIA_RESULT res;
     frixia_environment_t *fenv = frixia_environment_create(10);
     
-    res = frixia_add_signal(fenv,FSIGNAL_TERM);
+    res = frixia_add_signal(fenv,TEST_SIGNAL);
     if( !frixia_result_is_ok(res) )
     {
-        perror("Error adding signal");
+        perror("Error adding signal\n");
         return -1;
     }
     int fd = frixia_result_fd(res);
@@ -31,21 +33,19 @@ int test()
 }
 
 int main() {
-    sigset_t mask;
-    sigemptyset(&mask);
-    sigaddset(&mask, SIGINT);
-    
-    int ret = pthread_sigmask(SIG_BLOCK, &mask, NULL);
-    if (ret != 0) 
-    {
-        printf("Error blocking sigint\n");
-        return -1;
-    }
-
-
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
 
+    //MANDATORY PART, UNSKIPPABLE
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, TEST_SIGNAL);    
+    int ret = pthread_sigmask(SIG_BLOCK, &mask, NULL);
+    if (ret != 0) 
+    {
+        printf("Error blocking TEST_SIGNAL\n");
+        return -1;
+    } 
 
     pid_t pid = fork();
 
@@ -54,12 +54,13 @@ int main() {
     }
 
     sleep(2);
-    kill(pid, SIGINT);
+    kill(pid, TEST_SIGNAL);
 
     int status;
     waitpid(pid, &status, 0);
 
-    if (WIFSIGNALED(status)) {
+    if (WIFSIGNALED(status)) 
+    {
         printf("Process killed by signal: %d\n", WTERMSIG(status));
         return 1;
     }

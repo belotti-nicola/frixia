@@ -8,7 +8,7 @@
 #include <frixia/frixia_signal.h>
 #include <errno.h>
 
-#include "fsignal_handler.h"
+#include <internal/fsignal_handler.h>
 
 FRIXIA_SIGNAL_FD_RESULT CREATE_FRIXIA_SIGNAL_FD_RESULT(int fd,FSIGNAL_CODE code,int errno_code)
 {
@@ -23,22 +23,52 @@ FRIXIA_SIGNAL_FD_RESULT CREATE_FRIXIA_SIGNAL_FD_RESULT(int fd,FSIGNAL_CODE code,
 
 
 FRIXIA_SIGNAL_FD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig)
-{    
+{   
+    int MAXIMUM_FSIGNAL = __FSIGNAL_SENTINEL__;
+    
+    
+    //1.check user has blocked the same mask as the incoming signalfd
+    sigset_t set;
+    pthread_sigmask(SIG_SETMASK, NULL, &set);
+    for(int i=0;i<MAXIMUM_FSIGNAL;i++)
+    {
+        if (fsig & (1 << i))
+        {
+            FRIXIA_SIGNAL f = (1 << i);
+            int signo = frixia_signal_to_unix(f);
+            if (signo <= 0 )
+            {
+                continue;
+            }
+            if (!sigismember(&set, signo))
+            {
+                printf("Error: current thread, does not has %d in mask!\n",fsig);
+                return CREATE_FRIXIA_SIGNAL_FD_RESULT(-1,FERR_THREAD_MASK,0);
+            }
+        }
+    }   
+       
+
+    //2.add the signals to the epoll
     sigset_t mask;
     sigemptyset(&mask);
-    sigaddset(&mask, SIGINT);
-
-    // TODO
-    // for (int i = 0; i < 64; i++)
-    // {
-    //     if (fsig & (1 << i))
-    //     {
-    //         FRIXIA_SIGNAL f = (1 << i);
-    //         int signo = frixia_signal_to_unix(f);
-    //         if (signo > 0 ){}
-    //             sigaddset(&mask, signo); TODO
-    //     }
-    // } 
+    for(int i=0;i<MAXIMUM_FSIGNAL;i++)
+    {
+        if (fsig & (1 << i))
+        {
+            FRIXIA_SIGNAL f = (1 << i);
+            int signo = frixia_signal_to_unix(f);
+            if (signo > 0 )
+            {
+                int ret= sigaddset(&mask, signo);
+                if ( ret != 0)
+                {
+                    printf("Error adding %d to %d",signo,mask);
+                    continue;
+                }
+            }
+        }
+    }   
 
     int sfd = signalfd(-1, &mask, SFD_NONBLOCK);
     if (sfd == -1) 
@@ -49,6 +79,7 @@ FRIXIA_SIGNAL_FD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig)
     printf("Starting listening signalfd\n");
     return CREATE_FRIXIA_SIGNAL_FD_RESULT(sfd,FSIGNAL_OK,-1);
 }
+
 FRIXIA_SIGNAL_FD_RESULT stop_signalfd_listening(int closing_fd)
 {
     int exit_code = close(closing_fd);

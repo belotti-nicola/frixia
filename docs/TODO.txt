@@ -1,4 +1,6 @@
-TODO   
+TODO
+    THREAD SLEEP REMOVAL!
+    SIGNAL 
     shinsu_senju vs frixia_callback
     LOGGING ACTIONS
     valgrind support

@@ -15,5 +15,7 @@ function(add_frixia_test test_name source_file)
 endfunction()
 
 add_frixia_test(TestInstantiatorSignalTermination test_signal.c)
+add_frixia_test(TestInstantiatorSignalLinux       test_linux.c)
+
 
 
