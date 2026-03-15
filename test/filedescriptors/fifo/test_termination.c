@@ -35,7 +35,12 @@ int main() {
     if (pid == 0) {
         sleep(1);
         int fd = open(FIFO, O_WRONLY);
-        write(fd, TEST_STRING, strlen(TEST_STRING));
+        int written = write(fd, TEST_STRING, strlen(TEST_STRING));
+        if (written < 0)
+        {
+            printf("Error writing on fifo!\n");
+            return 1;
+        }
         return 0;
     }
 
