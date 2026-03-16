@@ -29,6 +29,7 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors);
 void                  frixia_environment_destroy(frixia_environment_t *fenv);
 int                   frixia_start(frixia_environment_t *env);
 int                   frixia_stop(frixia_environment_t *env);
+int                   frixia_wait(frixia_environment_t *env);
 
 FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);
 FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read);

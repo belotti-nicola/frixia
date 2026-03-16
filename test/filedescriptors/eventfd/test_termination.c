@@ -10,12 +10,8 @@
 #include <string.h>
 #include <errno.h>
 
-
-#define WAIT_SECONDS 1
-
 void *WRITER(void *arg)
 {
-    sleep(1);
     int *fd = (int *)arg;
     uint64_t val = 1;
     int written_bytes = write(*fd, &val, sizeof(val));
@@ -49,11 +45,12 @@ int main()
     }
     int fd = frixia_result_fd(res);
     frixia_register_cb(fenv,fd,TEST_CALLBACK,NULL);
+    frixia_start(fenv);
 
     pthread_t th;
     pthread_create(&th,NULL,WRITER,(void *)&fd);
 
-    frixia_start(fenv);
+    frixia_wait(fenv);
     frixia_environment_destroy(fenv);
     
     pthread_join(th, NULL);

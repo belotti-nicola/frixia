@@ -92,11 +92,13 @@ int main()
     }
     int fd = frixia_result_fd(res);
     frixia_register_cb(fenv,fd,FDCALLBACK,NULL);
+    frixia_start(fenv);
+
 
     pthread_t th;
     pthread_create(&th,NULL,WRITER,(void *)&fd);
 
-    frixia_start(fenv);
+    frixia_wait(fenv);
     frixia_environment_destroy(fenv);
     
     pthread_join(th, NULL);

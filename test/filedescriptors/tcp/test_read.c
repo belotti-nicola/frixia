@@ -9,12 +9,8 @@
 #include <frixia/frixia_reader.h>
 #include <string.h>
 
-#define WAIT_SECONDS 1
-
 void *WRITER(void *arg)
 {
-    sleep(WAIT_SECONDS);
-
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd == -1)
     {
@@ -106,11 +102,12 @@ int main()
     }
     int fd = frixia_result_fd(res);
     frixia_register_cb(fenv,fd,FDCALLBACK,&test_buff);
+    frixia_start(fenv);
 
     pthread_t th;
     pthread_create(&th,NULL,WRITER,(void *)&fd);
 
-    frixia_start(fenv);
+    frixia_wait(fenv);
     frixia_environment_destroy(fenv);
     
     pthread_join(th, NULL);

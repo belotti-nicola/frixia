@@ -23,27 +23,7 @@ void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
 int main() {
     setbuf(stderr, NULL);
     setbuf(stdout, NULL);
-
-    // int ret_code = mkfifo(FIFO, 0600);
-    // if (ret_code != 0)
-    // {
-    //     printf("Error adding test fifo %d(%s)\n",errno,strerror(errno));
-    //     return -1;
-    // }
-
-    pid_t pid = fork();
-    if (pid == 0) {
-        sleep(1);
-        int fd = open(FIFO, O_WRONLY);
-        int written = write(fd, TEST_STRING, strlen(TEST_STRING));
-        if (written < 0)
-        {
-            printf("Error writing on fifo!\n");
-            return 1;
-        }
-        return 0;
-    }
-
+    
     frixia_environment_t *env = frixia_environment_create(10);
     FRIXIA_RESULT res = frixia_add_fifo(env,FIFO,500);
     if( !frixia_result_is_ok(res))
@@ -55,6 +35,21 @@ int main() {
     frixia_register_cb(env,fd,TEST_CALLBACK,NULL);
 
     frixia_start(env);
+
+    pid_t pid = fork();
+    if (pid == 0) 
+    {
+        int fd = open(FIFO, O_WRONLY);
+        int written = write(fd, TEST_STRING, strlen(TEST_STRING));
+        if (written < 0)
+        {
+            printf("Error writing on fifo!\n");
+            return 1;
+        }
+        return 0;
+    }
+
+    frixia_wait(env);
     frixia_environment_destroy(env);
     unlink(FIFO);
 

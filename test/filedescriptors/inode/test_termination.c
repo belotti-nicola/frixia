@@ -11,11 +11,9 @@
 #include <stdio.h>
 #include <limits.h>
 
-#define WAIT_SECONDS 2
 
 void *WRITER(void *arg)
 {
-    sleep(WAIT_SECONDS);
     printf("creating file\n");
     int fd = open("testfile.txt", O_RDWR | O_CREAT, 0644);
     printf("Done! %d\n", fd);
@@ -46,11 +44,12 @@ int main()
     }
     int fd = frixia_result_fd(res);
     frixia_register_cb(fenv,fd,TEST_CALLBACK,NULL);
+    frixia_start(fenv);
 
     pthread_t th;
     pthread_create(&th,NULL,WRITER,NULL);
 
-    frixia_start(fenv);
+    frixia_wait(fenv);
     frixia_environment_destroy(fenv);
     
     return 0;

@@ -52,6 +52,7 @@ int main()
 
 
     frixia_start(fenv);
+    frixia_wait(fenv);
     frixia_environment_destroy(fenv);
     
     return 0;
