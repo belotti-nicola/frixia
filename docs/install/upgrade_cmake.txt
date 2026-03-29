@@ -1,0 +1,6 @@
+sudo apt install pip
+sudo apt remove cmake -y
+sudo pip install cmake --upgrade
+sudo pip install cmake --upgrade
+./one_directory.sh edge_cases
+ 

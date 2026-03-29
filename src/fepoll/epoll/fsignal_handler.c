@@ -63,7 +63,7 @@ FRIXIA_SIGNAL_FD_RESULT start_signalfd_listening(FRIXIA_SIGNAL fsig)
                 int ret= sigaddset(&mask, signo);
                 if ( ret != 0)
                 {
-                    printf("Error adding %d to %d",signo,mask);
+                    printf("Error adding %d\n",signo);
                     continue;
                 }
             }
