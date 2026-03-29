@@ -10,12 +10,9 @@
 #include <string.h>
 
 
-#define WAIT_SECONDS 1
 
 void *WRITER(void *arg)
 {
-    sleep(WAIT_SECONDS);
-
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (fd == -1)
     {

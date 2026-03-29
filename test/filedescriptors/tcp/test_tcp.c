@@ -14,8 +14,6 @@
 
 void *WRITER(void *arg)
 {
-    sleep(WAIT_SECONDS);
-
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd == -1)
     {
