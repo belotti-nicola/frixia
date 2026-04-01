@@ -25,7 +25,6 @@ FRIXIA_TIMER_FD_RESULT CREATE_FRIXIA_TIMER_FD_RESULT(int fd,FTIMER_CODE code, in
 
 FRIXIA_TIMER_FD_RESULT start_timer_listening(int delay, int delay_nsec, int interval,int interval_nsec)
 {
-    printf("Starting listening timer: %d %d\n",delay,interval);
     int tfd, epfd;
     struct itimerspec timer_spec;
     struct epoll_event ev;
@@ -47,7 +46,7 @@ FRIXIA_TIMER_FD_RESULT start_timer_listening(int delay, int delay_nsec, int inte
         return CREATE_FRIXIA_TIMER_FD_RESULT(-1,ERR_TIMERFD_SETTIME,-1);
     }
 
-    printf("Starting listening timer\n");
+    printf("Starting listening timer: %d(delay) %d(delay nsec) %d(interval) %d(interval nsec)\n",delay,delay_nsec,interval,interval_nsec);
     return CREATE_FRIXIA_TIMER_FD_RESULT(tfd,TIMER_OK,-1);
 }
 

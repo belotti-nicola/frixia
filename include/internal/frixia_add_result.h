@@ -10,6 +10,8 @@ typedef enum {
 #include <internal/ftimer_codes.def>
 #include <internal/fsignal_codes.def>
 #include <internal/feventfd_codes.def>
+#include <internal/fconvoy_codes.def>
+
 #undef X
 
 FRIXIA_ADD_RESULT_COUNT //SENTINEL 

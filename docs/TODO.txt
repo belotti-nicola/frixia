@@ -1,6 +1,6 @@
 TODO
-    THREAD SLEEP REMOVAL!
-    SIGNAL 
+    CONVOY_CODES are internal
+
     shinsu_senju vs frixia_callback
     LOGGING ACTIONS
     valgrind support

@@ -9,10 +9,6 @@
 #include <frixia/frixia_reader.h>
 #include <string.h>
 
-
-#define WAIT_SECONDS 1
-
-
 void *TEST_CALLBACK(FRIXIA_CALLBACK_CTX *ctx)
 {
     frixia_environment_t *fenv = ctx->fenv;
@@ -45,7 +41,8 @@ int main()
     FRIXIA_RESULT res = frixia_add_timer(fenv,0,200,0,100);
     if( !frixia_result_is_ok(res) )
     {
-        perror("Error adding udp");
+        perror("Error adding timer");
+        return -1;
     }
     int fd = frixia_result_fd(res);
     frixia_register_cb(fenv,fd,TEST_CALLBACK,&test_counter);

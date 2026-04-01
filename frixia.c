@@ -18,6 +18,7 @@
 #include <internal/internal_frixia.h>
 #include <frixia/frixia_environment.h>
 #include <frixia/frixia_reader.h>
+#include <internal/convoy.h>
 
 #include <frixia/frixia.h>
 
@@ -40,6 +41,11 @@ void register_callback_by_fd(fepoll_th_data_t *th_data, int fd, sv_callback_t *s
 
 frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
 {
+    if(maximum_filedescriptors <= 0)
+    {
+        printf("Error creating frixia_environment (number of filedescriptors,%d , is negative)\n",maximum_filedescriptors);
+        return NULL;
+    }
     frixia_environment_t *retVal = malloc(sizeof(frixia_environment_t));
     if ( retVal == NULL )
     {
@@ -74,6 +80,11 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
 }
 void frixia_environment_destroy(frixia_environment_t *fenv)
 {
+    if(fenv == NULL)
+    {
+        return;
+    }
+    
     fepoll_th_data_t *fepoll_data = fenv->fepoll_ctx;
     fepoll_th_data_destroy(fepoll_data);
 

@@ -6,6 +6,17 @@
 #include <frixia/frixia_inode.h>
 #include <stdint.h>
 #include <pthread.h>
+#include <internal/frixia_add_result.h>
+
+typedef enum 
+{
+    #define X(name,a,b) name,
+    #include "internal/fconvoy_codes.def"
+    #undef X
+
+    __FCONVOY_CODE_SENTINEL__
+
+} FCONVOY_CODE;
 
 typedef enum FrixiaFDType
 {
@@ -36,24 +47,26 @@ typedef struct convoy
 {
     int maximum_size;
     int size;
-    frixia_file_descriptor_t filedescriptors[25];
+    frixia_file_descriptor_t *filedescriptors;
+    frixia_fd_args_t *fd_args;
 
-    pthread_mutex_t *mutex;
+    pthread_mutex_t mutex;
 
 } convoy_t;
 
 convoy_t *convoy_create(int dim);
 void convoy_destroy(convoy_t *convoy);
-void convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes);
-void convoy_add_udp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes);
-void convoy_add_fifo_filedescriptor(convoy_t *c, int fd, const char *path, int bytes);
-void convoy_add_timer_filedescriptor(convoy_t *c, int fd, int delay, int interval);
-void convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath,FRIXIA_INODE_FLAG flag);
-void convoy_add_signal_filedescriptor(convoy_t *c, int fd,FRIXIA_SIGNAL sig);
-void convoy_add_eventfd_filedescriptor(convoy_t *c, int fd);
+FCONVOY_CODE convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes);
+FCONVOY_CODE convoy_add_udp_filedescriptor(convoy_t *c, int fd, const char *ip, int port, int bytes);
+FCONVOY_CODE convoy_add_fifo_filedescriptor(convoy_t *c, int fd, const char *path, int bytes);
+FCONVOY_CODE convoy_add_timer_filedescriptor(convoy_t *c, int fd, int delay, int interval);
+FCONVOY_CODE convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath,FRIXIA_INODE_FLAG flag);
+FCONVOY_CODE convoy_add_signal_filedescriptor(convoy_t *c, int fd,FRIXIA_SIGNAL sig);
+FCONVOY_CODE convoy_add_eventfd_filedescriptor(convoy_t *c, int fd);
 
 void convoy_copy_fd(convoy_t *c, int source_fd, int destination_fd);
 void convoy_remove_fd(convoy_t *c, int fd);
+
 
 
 // void convoy_register_http_method_callback(convoy_t *c,const char *ip, int port, const char *method,const char *path,void *(*fun)(void *), void *arg);
