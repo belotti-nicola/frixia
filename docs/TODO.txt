@@ -1,5 +1,6 @@
 TODO
-    CONVOY_CODES are internal
+    cleanup for malloc / fail in frixia operations
+    FRIXIA_RESULT
 
     shinsu_senju vs frixia_callback
     LOGGING ACTIONS

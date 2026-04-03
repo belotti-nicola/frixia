@@ -64,6 +64,8 @@ FCONVOY_CODE convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath
 FCONVOY_CODE convoy_add_signal_filedescriptor(convoy_t *c, int fd,FRIXIA_SIGNAL sig);
 FCONVOY_CODE convoy_add_eventfd_filedescriptor(convoy_t *c, int fd);
 
+bool convoy_code_is_ok(FCONVOY_CODE fcode);
+
 void convoy_copy_fd(convoy_t *c, int source_fd, int destination_fd);
 void convoy_remove_fd(convoy_t *c, int fd);
 

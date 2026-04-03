@@ -198,3 +198,23 @@ void convoy_destroy(convoy_t *convoy)
     free(convoy->filedescriptors);
     free(convoy);
 }
+
+bool convoy_code_is_ok(FCONVOY_CODE fcode)
+{
+    static FCONVOY_CODE codes_map[] = {
+    #define X(code, status, msg) [code] = status,
+    #include "internal/fconvoy_codes.def"
+    #undef X
+    };
+
+    if(fcode < 0)
+    {
+        return false;
+    }
+    if(fcode > __FCONVOY_CODE_SENTINEL__)
+    {
+        return false;
+    }
+
+    return codes_map[fcode] == FRIXIA_OK;
+}

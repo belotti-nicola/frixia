@@ -43,7 +43,7 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
 {
     if(maximum_filedescriptors <= 0)
     {
-        printf("Error creating frixia_environment (number of filedescriptors,%d , is negative)\n",maximum_filedescriptors);
+        printf("Error creating frixia_environment (number of filedescriptors, %d, is negative or null)\n",maximum_filedescriptors);
         return NULL;
     }
     frixia_environment_t *retVal = malloc(sizeof(frixia_environment_t));
@@ -488,7 +488,11 @@ FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int byt
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read);//TODO
+    FCONVOY_CODE convoy_res = convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read);
+    if ( !convoy_code_is_ok(convoy_res) )
+    {
+        return INTERNAL_FRIXIA_FCONVOY_ERROR(convoy_res);
+    }
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -511,7 +515,11 @@ FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int byt
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
+    FCONVOY_CODE convoy_res = convoy_add_udp_filedescriptor(c,fd,ip,port,bytes_to_read);
+    if ( !convoy_code_is_ok(convoy_res) )
+    {
+        return INTERNAL_FRIXIA_FCONVOY_ERROR(convoy_res);
+    }
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -534,7 +542,11 @@ FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int by
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
+    FCONVOY_CODE convoy_res = convoy_add_fifo_filedescriptor(c,fd,file,bytes_to_read);
+    if ( !convoy_code_is_ok(convoy_res) )
+    {
+        return INTERNAL_FRIXIA_FCONVOY_ERROR(convoy_res);
+    }
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -557,7 +569,11 @@ FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env, int delay, int delay_n
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_timer_filedescriptor(c,fd,delay,interval);
+    FCONVOY_CODE convoy_res = convoy_add_timer_filedescriptor(c,fd,delay,interval);
+    if ( !convoy_code_is_ok(convoy_res) )
+    {
+        return INTERNAL_FRIXIA_FCONVOY_ERROR(convoy_res);
+    }
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -580,7 +596,11 @@ FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_inode_filedescriptor(c,fd,filepath,mask); 
+    FCONVOY_CODE convoy_res = convoy_add_inode_filedescriptor(c,fd,filepath,mask); 
+    if ( !convoy_code_is_ok(convoy_res) )
+    {
+        return INTERNAL_FRIXIA_FCONVOY_ERROR(convoy_res);
+    }
     
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -603,7 +623,11 @@ FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, FRIXIA_SIGNAL sig)
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_signal_filedescriptor(c,fd,sig);
+    FCONVOY_CODE convoy_res = convoy_add_signal_filedescriptor(c,fd,sig);
+    if ( !convoy_code_is_ok(convoy_res) )
+    {
+        return INTERNAL_FRIXIA_FCONVOY_ERROR(convoy_res);
+    }
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -627,7 +651,11 @@ FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env)
     insert_event(fepoll->fd,fd);
 
     convoy_t *c = env->convoy;
-    convoy_add_eventfd_filedescriptor(c,fd);
+    FCONVOY_CODE convoy_res = convoy_add_eventfd_filedescriptor(c,fd);
+    if ( !convoy_code_is_ok(convoy_res) )
+    {
+        return INTERNAL_FRIXIA_FCONVOY_ERROR(convoy_res);
+    }
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -659,6 +687,7 @@ bool frixia_result_is_ok(FRIXIA_RESULT code)
         #include <internal/ftimer_codes.def>
         #include <internal/fsignal_codes.def>
         #include <internal/feventfd_codes.def>
+        #include <internal/fconvoy_codes.def>
         #undef X
     };
 
@@ -691,6 +720,7 @@ const char * frixia_result_to_string(FRIXIA_RESULT r)
     #include <internal/ftimer_codes.def>
     #include <internal/fsignal_codes.def>
     #include <internal/feventfd_codes.def>
+    #include <internal/fconvoy_codes.def>
     #undef X
     };
 

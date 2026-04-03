@@ -11,4 +11,4 @@ rm -rv ../build/*
 cd ../build || exit 1
 
 cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-make && ctest -VV --output-on-failure
+make && ctest --output-on-failure

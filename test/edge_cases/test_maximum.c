@@ -11,13 +11,13 @@ int main()
     res = frixia_add_tcp(fenv,"0.0.0.0",18080,100);
     if (!frixia_result_is_ok(res) )
     {
-        printf("Error! cant add first fd\n");
+        printf("Error! cant add first fd\n(%d, %s)",frixia_result_to_code(res),frixia_result_to_string(res));
         return 1;
     }
     res = frixia_add_tcp(fenv,"0.0.0.0",18080,100);
     if ( frixia_result_is_ok(res) )
     {
-        printf("Error! it was possible to add the second fd\n");
+        printf("Error! it was possible to add the second fd\n(%d, %s)",frixia_result_to_code(res),frixia_result_to_string(res));
         return 1;
     }
     
