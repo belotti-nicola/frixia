@@ -11,11 +11,11 @@ FCONVOY_CODE convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, 
 {   
     pthread_mutex_lock(&c->mutex);
     int dim = c->maximum_size;
-    if( c->size == dim)
+    if ( fd > dim )
     {
-        printf("Convoy reached maximum size.\n");
+        printf("fd overflows maximum convoy size.\n");
         pthread_mutex_unlock(&c->mutex);
-        return FCONVOY_MAXIMUM_SIZE_REACHED;
+        return FCONVOY_MAXIMUM_OFFSET;
     }
 
     c->filedescriptors[fd].fd   = fd;
@@ -30,11 +30,11 @@ FCONVOY_CODE convoy_add_tcp_filedescriptor(convoy_t *c, int fd, const char *ip, 
 FCONVOY_CODE convoy_add_udp_filedescriptor(convoy_t *c,int fd,const char *ip,int port,int bytes)
 {
     int dim = c->maximum_size;
-    if( c->size == dim)
+    if ( fd > dim )
     {
-        printf("Convoy reached maximum size.\n");
+        printf("fd overflows maximum convoy size.\n");
         pthread_mutex_unlock(&c->mutex);
-        return FCONVOY_MAXIMUM_SIZE_REACHED;
+        return FCONVOY_MAXIMUM_OFFSET;
     }
 
     c->filedescriptors[fd].fd   = fd;
@@ -48,11 +48,11 @@ FCONVOY_CODE convoy_add_fifo_filedescriptor(convoy_t *c,int fd,const char *path,
 {
     pthread_mutex_lock(&c->mutex);
     int dim = c->maximum_size;
-    if( c->size == dim)
+    if ( fd > dim )
     {
-        printf("Convoy reached maximum size.\n");
+        printf("fd overflows maximum convoy size.\n");
         pthread_mutex_unlock(&c->mutex);
-        return FCONVOY_MAXIMUM_SIZE_REACHED;
+        return FCONVOY_MAXIMUM_OFFSET;
     }
 
     c->filedescriptors[fd].fd   = fd;
@@ -66,11 +66,11 @@ FCONVOY_CODE convoy_add_timer_filedescriptor(convoy_t *c,int fd, int delay, int 
 {
     pthread_mutex_lock(&c->mutex);
     int dim = c->maximum_size;
-    if( c->size == dim)
+    if ( fd > dim )
     {
-        printf("Convoy reached maximum size.\n");
+        printf("fd overflows maximum convoy size.\n");
         pthread_mutex_unlock(&c->mutex);
-        return FCONVOY_MAXIMUM_SIZE_REACHED;
+        return FCONVOY_MAXIMUM_OFFSET;
     }
 
     c->filedescriptors[fd].fd   = fd;
@@ -85,11 +85,11 @@ FCONVOY_CODE convoy_add_inode_filedescriptor(convoy_t *c, int fd, char *filepath
 {
     pthread_mutex_lock(&c->mutex);
     int dim = c->maximum_size;
-    if( c->size == dim)
+    if ( fd > dim )
     {
-        printf("Convoy reached maximum size.\n");
+        printf("fd overflows maximum convoy size.\n");
         pthread_mutex_unlock(&c->mutex);
-        return FCONVOY_MAXIMUM_SIZE_REACHED;
+        return FCONVOY_MAXIMUM_OFFSET;
     }
 
     c->filedescriptors[fd].fd   = fd;
@@ -103,11 +103,11 @@ FCONVOY_CODE convoy_add_signal_filedescriptor(convoy_t *c, int fd,FRIXIA_SIGNAL 
 {
     pthread_mutex_lock(&c->mutex);
     int dim = c->maximum_size;
-    if( c->size == dim)
+    if ( fd > dim )
     {
-        printf("Convoy reached maximum size.\n");
+        printf("fd overflows maximum convoy size.\n");
         pthread_mutex_unlock(&c->mutex);
-        return FCONVOY_MAXIMUM_SIZE_REACHED;
+        return FCONVOY_MAXIMUM_OFFSET;
     }
 
     c->filedescriptors[fd].fd   = fd;
@@ -122,11 +122,11 @@ FCONVOY_CODE convoy_add_eventfd_filedescriptor(convoy_t *c, int fd)
 {
     pthread_mutex_lock(&c->mutex);
     int dim = c->maximum_size;
-    if( c->size == dim)
+    if ( fd > dim )
     {
-        printf("Convoy reached maximum size.\n");
+        printf("fd overflows maximum convoy size.\n");
         pthread_mutex_unlock(&c->mutex);
-        return FCONVOY_MAXIMUM_SIZE_REACHED;
+        return FCONVOY_MAXIMUM_OFFSET;
     }
 
     c->filedescriptors[fd].fd   = fd;
@@ -201,7 +201,7 @@ void convoy_destroy(convoy_t *convoy)
 
 bool convoy_code_is_ok(FCONVOY_CODE fcode)
 {
-    static FCONVOY_CODE codes_map[] = {
+    static FRIXIA_RESULT_KIND codes_map[] = {
     #define X(code, status, msg) [code] = status,
     #include "internal/fconvoy_codes.def"
     #undef X

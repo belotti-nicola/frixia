@@ -177,7 +177,7 @@ FRIXIA_RESULT INTERNAL_FRIXIA_FCONVOY_ERROR(FCONVOY_CODE fcode)
 {
     FRIXIA_RESULT retVal =
     {
-        .fd = 0,
+        .fd = -1,
         .errno_code = 0,
         .result = fcode
     };

@@ -1,2 +1,2 @@
 X(FCONVOY_OK,FRIXIA_OK,"Frixia convoy command is ok")
-X(FCONVOY_MAXIMUM_SIZE_REACHED,FRIXIA_KO,"Frixia added already its maximum number of filedescriptors")
+X(FCONVOY_MAXIMUM_OFFSET,FRIXIA_KO,"Fd overflows convoy maximum index.")

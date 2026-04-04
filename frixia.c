@@ -52,6 +52,7 @@ frixia_environment_t *frixia_environment_create(int maximum_filedescriptors)
         printf("Error creating frixia_environment");
         return NULL;
     }
+    retVal->size = 0;
     retVal->maximum_filedescriptors = maximum_filedescriptors;//ONLY FIELDS REQUIRING INITIALIZATIONS
 
     frixia_events_queue_t *fepoll_events = frixia_events_queue_create();
@@ -477,6 +478,11 @@ int frixia_stop(frixia_environment_t *env)
 
 FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {   
+    if(env->size >= env->maximum_filedescriptors)
+    {
+        return frixia_result_create(-1,FRIXIA_MAXIMUM_SIZE_REACHED,0);
+    }
+    
     FRIXIA_TCP_FD_RESULT res = start_tcp_listening(ip,port);
     if( !INTERNAL_FRIXIA_TCP_CODE_IS_OK(res.res.exit_code))
     {
@@ -489,10 +495,6 @@ FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int byt
 
     convoy_t *c = env->convoy;
     FCONVOY_CODE convoy_res = convoy_add_tcp_filedescriptor(c,fd,ip,port,bytes_to_read);
-    if ( !convoy_code_is_ok(convoy_res) )
-    {
-        return INTERNAL_FRIXIA_FCONVOY_ERROR(convoy_res);
-    }
 
     frixia_events_queue_t *q = env->fepoll_events;
     fepoll_th_data_t *fep_data = env->fepoll_ctx;
@@ -504,6 +506,11 @@ FRIXIA_RESULT frixia_add_tcp(frixia_environment_t *env,char *ip,int port,int byt
 }
 FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int bytes_to_read)
 {
+    if(env->size >= env->maximum_filedescriptors)
+    {
+        return frixia_result_create(-1,FRIXIA_MAXIMUM_SIZE_REACHED,0);
+    }
+
     FRIXIA_UDP_FD_RESULT udp_res = start_udp_listening(ip,port);
     if( !INTERNAL_FRIXIA_UDP_CODE_IS_OK(udp_res.res.exit_code))
     {
@@ -531,6 +538,11 @@ FRIXIA_RESULT frixia_add_udp(frixia_environment_t *env,char *ip,int port,int byt
 
 FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int bytes_to_read)
 {
+    if(env->size >= env->maximum_filedescriptors)
+    {
+        return frixia_result_create(-1,FRIXIA_MAXIMUM_SIZE_REACHED,0);
+    }
+
     FRIXIA_FIFO_FD_RESULT res = start_fifo_listening(file);
     if( !INTERNAL_FRIXIA_FIFO_CODE_IS_OK(res.res.code))
     {
@@ -558,6 +570,11 @@ FRIXIA_RESULT frixia_add_fifo(frixia_environment_t *env,const char *file, int by
 
 FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env, int delay, int delay_nsec, int interval, int interval_nsec)
 {
+    if(env->size >= env->maximum_filedescriptors)
+    {
+        return frixia_result_create(-1,FRIXIA_MAXIMUM_SIZE_REACHED,0);
+    }
+    
     FRIXIA_TIMER_FD_RESULT res = start_timer_listening(delay,delay_nsec,interval,interval_nsec);
     if( !INTERNAL_FRIXIA_TIMER_CODE_IS_OK(res.res.code))
     {
@@ -584,7 +601,12 @@ FRIXIA_RESULT frixia_add_timer(frixia_environment_t *env, int delay, int delay_n
 }
 
 FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA_INODE_FLAG mask)
-{  
+{
+    if(env->size >= env->maximum_filedescriptors)
+    {
+        return frixia_result_create(-1,FRIXIA_MAXIMUM_SIZE_REACHED,0);
+    }
+   
     FRIXIA_INODE_FD_RESULT res = start_inode_listening(filepath,mask);
     if( !INTERNAL_FRIXIA_INODE_CODE_IS_OK(res.res.code))
     {
@@ -612,6 +634,11 @@ FRIXIA_RESULT frixia_add_inode(frixia_environment_t *env, char *filepath, FRIXIA
 
 FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, FRIXIA_SIGNAL sig)
 {
+    if(env->size >= env->maximum_filedescriptors)
+    {
+        return frixia_result_create(-1,FRIXIA_MAXIMUM_SIZE_REACHED,0);
+    }
+ 
     FRIXIA_SIGNAL_FD_RESULT res = start_signalfd_listening(sig); 
     if ( !INTERNAL_FRIXIA_SIGNAL_CODE_IS_OK(res.res.code) )
     {
@@ -639,6 +666,11 @@ FRIXIA_RESULT frixia_add_signal(frixia_environment_t *env, FRIXIA_SIGNAL sig)
 
 FRIXIA_RESULT frixia_add_eventfd(frixia_environment_t *env)
 {
+    if(env->size >= env->maximum_filedescriptors)
+    {
+        return frixia_result_create(-1,FRIXIA_MAXIMUM_SIZE_REACHED,0);
+    }
+ 
     FRIXIA_EVENTFD_FD_RESULT res = start_eventfd_listening();
     if ( !INTERNAL_FRIXIA_EVENTFD_CODE_IS_OK(res.res.code) )
     {
@@ -729,6 +761,18 @@ const char * frixia_result_to_string(FRIXIA_RESULT r)
         return "UNKNOWN_FRIXIA_RESULT";
 
     return frixia_add_result_str[index];
+}
+
+FRIXIA_RESULT frixia_result_create(int fd, FRIXIA_ADD_RESULT add, int errno_code)
+{
+    FRIXIA_RESULT retVal = 
+    {
+        .fd = fd,
+        .result = add,
+        .errno_code = errno_code
+    };
+
+    return retVal;
 }
 
 

@@ -15,6 +15,7 @@ typedef struct fepoll_th_data fepoll_th_data_t;
 typedef struct frixia_events_queue frixia_events_queue_t;
 typedef struct frixia_environment
 {
+    int size;
     int maximum_filedescriptors;
     int filedescriptors; 
     frixia_events_queue_t *fepoll_events;

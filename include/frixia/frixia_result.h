@@ -24,4 +24,6 @@ int               frixia_result_fd(FRIXIA_RESULT r);
 FRIXIA_ADD_RESULT frixia_result_to_code(FRIXIA_RESULT r);
 const char *      frixia_result_to_string(FRIXIA_RESULT r);
 
+FRIXIA_RESULT     frixia_result_create(int fd, FRIXIA_ADD_RESULT add, int errno);
+
 #endif
