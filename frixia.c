@@ -744,7 +744,7 @@ FRIXIA_ADD_RESULT frixia_result_to_code(FRIXIA_RESULT r)
 const char * frixia_result_to_string(FRIXIA_RESULT r)
 {
     const char *const frixia_add_result_str[] = {
-    #define X(name,value,description) [FRIXIA_##name] = description,
+    #define X(name,value,description) [FRIXIA_##name] = #name,
     #include <internal/ftcp_codes.def>
     #include <internal/fudp_codes.def>
     #include <internal/ffifo_codes.def>
