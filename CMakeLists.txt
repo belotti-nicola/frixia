@@ -7,7 +7,7 @@ include(CTest)
 find_package(Threads REQUIRED)
 
 set(FRIXIA_SOURCES
-    frixia.c
+    src/frixia.c
     src/convoy/convoy.c
     src/convoy/fd_args.c
     src/fevent/frixia_event.c

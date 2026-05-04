@@ -24,6 +24,6 @@ int main()
     const char *res_to_string = frixia_result_to_string(res);
     //printf("%s",res_to_string);
 
-    //frixia_environment_destroy(fenv);
+    frixia_environment_destroy(fenv);
     return 0;
 }
